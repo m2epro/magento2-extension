@@ -1,0 +1,73 @@
+#template_payment_data_container,
+#template_shipping_data_container,
+#template_return_policy_data_container,
+#template_description_data_container,
+#template_selling_format_data_container {
+    border: 1px solid #D6D6D6;
+    padding: 0 20px;
+}
+
+#template_payment_data_container .admin__collapsible-block-wrapper:last-child,
+#template_shipping_data_container .admin__collapsible-block-wrapper:last-child,
+#template_return_policy_data_container .admin__collapsible-block-wrapper:last-child,
+#template_description_data_container .admin__collapsible-block-wrapper:last-child,
+#template_selling_format_data_container .admin__collapsible-block-wrapper:last-child {
+    border-bottom: 0;
+}
+
+#template_payment_nick_label,
+#template_shipping_nick_label,
+#template_return_policy_nick_label,
+#template_selling_format_nick_label,
+#template_description_nick_label,
+#template_synchronization_nick_label {
+    float: left;
+    padding-right: 10px;
+}
+#template_payment_buttons_container,
+#template_shipping_buttons_container,
+#template_return_policy_buttons_container,
+#template_selling_format_buttons_container,
+#template_description_buttons_container {
+    margin-top: 10px !important;
+    margin-bottom: 30px !important;
+}
+.template-switcher-container {
+    margin-bottom: 30px;
+}
+.template-switcher-container .content-header {
+    border-bottom: 0;
+    margin: 10px 0 5px 0 !important
+}
+.template-switcher-container .content-header table {
+    table-layout: fixed;
+    width: 100%;
+}
+.template-switcher-container .template-switcher-td {
+    padding-left: 30px !important;
+    width: 250px;
+}
+.template-switcher {
+    width: 100%;
+}
+.template-title-td {
+    padding-left: 10px;
+    width: 100px;
+}
+.template-title {
+    color: gray;
+    font-style: italic;
+}
+.template-nick-td {
+    padding-left: 10px;
+    width: 100%;
+}
+.template-nick-td .template, .template-nick-td .policy {
+    font-size: 11px;
+    font-style: italic;
+    color: gray;
+}
+.template-nick-td .parent {
+    font-size: 11px;
+    color: red;
+}

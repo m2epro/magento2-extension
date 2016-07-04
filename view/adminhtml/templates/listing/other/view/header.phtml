@@ -1,0 +1,77 @@
+<style type="text/css">
+
+    div.listing-view-header {
+        background: none repeat scroll 0 0 #FAFAFA !important;
+        border-top: 1px solid #D6D6D6 !important;
+        border-bottom: 1px solid #D6D6D6 !important;
+        margin-bottom: 15px !important;
+        padding: 10px 15px !important;
+    }
+
+    div.listing-view-header span.label {
+        font-weight: bold;
+    }
+
+    div.listing-view-header span.value {
+        color: #8e9393;
+    }
+
+    div.listing-view-header ul {
+        text-align: justify;
+        line-height: 0;
+        font-size: 1px;
+    }
+
+    div.listing-view-header ul:after {
+        width: 100%;
+        height: 0;
+        visibility: hidden;
+        overflow: hidden;
+        content: '';
+        display: inline-block;
+    }
+
+    div.listing-view-header ul li {
+        display: inline-block;
+        text-align: left;
+        line-height: normal;
+        font-size: 12px;
+        vertical-align: top;
+    }
+
+</style>
+
+<div class="m2epro-box-style listing-view-header">
+    <ul>
+        <li>
+            <label>
+                <span class="label">
+                    <?php echo $block->__('Account'); ?>:&nbsp;
+                </span>
+                <span class="value">
+                    <?php echo $block->getAccountTitle(); ?>
+                </span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <span class="label">
+                    <?php echo $block->__('Marketplace'); ?>:&nbsp;
+                </span>
+                <span class="value">
+                    <?php echo $block->getMarketplaceTitle(); ?>
+                </span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <span class="label">
+                    <?php echo $block->__('Magento Store View'); ?>:&nbsp;
+                </span>
+                <span class="value">
+                    <?php echo $block->getStoreViewBreadcrumb(); ?>
+                </span>
+            </label>
+        </li>
+    </ul>
+</div>

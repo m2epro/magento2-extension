@@ -1,0 +1,75 @@
+<?php
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
+ */
+
+namespace Ess\M2ePro\Model\Order;
+
+class Log extends \Ess\M2ePro\Model\Log\AbstractLog
+{
+    protected $initiator = NULL;
+
+    //########################################
+
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('Ess\M2ePro\Model\ResourceModel\Order\Log');
+    }
+
+    //########################################
+
+    /**
+     * @param int $initiator
+     * @return $this
+     */
+    public function setInitiator($initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN)
+    {
+        $this->initiator = (int)$initiator;
+        return $this;
+    }
+
+    // ########################################
+
+    public function addMessage($orderId, $description, $type, array $additionalData = array())
+    {
+        $dataForAdd = $this->makeDataForAdd($orderId, $description, $type, $additionalData);
+        $this->createMessage($dataForAdd);
+    }
+
+    // ########################################
+
+    protected function createMessage($dataForAdd)
+    {
+        $dataForAdd['initiator'] = $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
+        $dataForAdd['component_mode'] = $this->getComponentMode();
+
+        $this->setId(null)
+            ->setData($dataForAdd)
+            ->save();
+    }
+
+    protected function makeDataForAdd($orderId, $description, $type, array $additionalData = array())
+    {
+        $dataForAdd = array(
+            'order_id'        => $orderId,
+            'description'     => $description,
+            'type'            => (int)$type,
+            'additional_data' => json_encode($additionalData)
+        );
+
+        return $dataForAdd;
+    }
+
+    //########################################
+
+    public function delete()
+    {
+        return parent::delete();
+    }
+
+    //########################################
+}

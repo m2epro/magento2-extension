@@ -1,0 +1,351 @@
+<?php
+
+namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
+
+class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
+{
+    //########################################
+
+    public function execute()
+    {
+        if (is_null($this->getRequest()->getParam('id'))) {
+            return $this->_redirect('*/amazon_listing/index');
+        }
+
+        if ($this->getRequest()->getParam('clear')) {
+            $this->clearSession();
+            $this->getRequest()->setParam('clear',null);
+            return $this->_redirect('*/*/*',array('_current' => true));
+        }
+
+        $listing = $this->getListing();
+
+        $this->getHelper('Data\GlobalData')->setValue('listing_for_products_add', $listing);
+
+        $step = (int)$this->getRequest()->getParam('step');
+
+        switch ($step) {
+            case 1:
+                $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Add Magento Products'));
+                $this->sourceMode();
+                break;
+            case 2:
+                $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
+
+                switch ($this->getRequest()->getParam('source')) {
+                    case \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT:
+                        $this->stepOneSourceProducts();
+                        break;
+
+                    case \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY:
+                        $this->stepOneSourceCategories();
+                        break;
+                    default:
+                        return $this->_redirect('*/*/index', array('_current' => true,'step' => 1));
+                }
+                break;
+            case 3:
+                $this->asinSearchView();
+                break;
+            case 4:
+                $this->addNewAsinView();
+                break;
+            case 5:
+                $this->review();
+                break;
+            // ....
+            default:
+                return $this->_redirect('*/*/index', array('_current' => true,'step' => 1));
+        }
+
+        return $this->getResult();
+    }
+
+    //########################################
+
+    public function sourceMode()
+    {
+        $this->setWizardStep('sourceMode');
+
+        if ($this->getRequest()->isPost()) {
+
+            $source = $this->getRequest()->getParam('source');
+
+            if (!empty($source)) {
+                return $this->_redirect('*/*/index', array('_current' => true, 'step' => 2, 'source' => $source));
+
+            }
+
+            return $this->_redirect('*/*/index',array('clear'=>'yes'));
+        }
+
+        $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SourceMode'));
+        $this->setComponentPageHelpLink('Add+Magento+Products');
+    }
+
+    //########################################
+
+    public function stepOneSourceProducts()
+    {
+        $this->setWizardStep('productSelection');
+
+        if (is_null($this->getRequest()->getParam('id'))) {
+            return $this->_redirect('*/amazon_listing/index');
+        }
+
+        if ($this->getRequest()->getParam('clear')) {
+            $this->clearSession();
+            $this->getRequest()->setParam('clear',null);
+            return $this->_redirect('*/*/*',array('_current' => true));
+        }
+
+        $this->getHelper('Data\Session')->setValue('temp_products', array());
+        $this->getHelper('Data\Session')->setValue(
+            'products_source', \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
+        );
+
+        $prefix = $this->getHideProductsInOtherListingsPrefix();
+
+        if ($this->getRequest()->isPost()) {
+            $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
+            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $grid = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Product\Grid');
+
+            $this->setAjaxContent($grid->toHtml());
+            return;
+        }
+
+        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Adding+Products+from+the+List');
+
+        $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SourceMode\Product'));
+    }
+
+    public function stepOneSourceCategories()
+    {
+        $this->setWizardStep('productSelection');
+
+        if (is_null($this->getRequest()->getParam('id'))) {
+            return $this->_redirect('*/amazon_listing/index');
+        }
+
+        if ($this->getRequest()->getParam('clear')) {
+            $this->clearSession();
+            $this->getRequest()->setParam('clear',null);
+            return $this->_redirect('*/*/*',array('_current' => true));
+        }
+
+        $this->getHelper('Data\Session')->setValue('temp_products', array());
+        $this->getHelper('Data\Session')->setValue(
+            'products_source',
+            \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
+        );
+
+        $prefix = $this->getHideProductsInOtherListingsPrefix();
+
+        if ($this->getRequest()->isPost()) {
+            $hideProductsOtherParam = $this->getRequest()->getPost('hide_products_others_listings', 1);
+            $this->getHelper('Data\Session')->setValue($prefix, $hideProductsOtherParam);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('hide_products_others_listings_prefix', $prefix);
+
+        $tempSession = $this->getSessionValue('source_categories');
+        $selectedProductsIds = !isset($tempSession['products_ids']) ? array() : $tempSession['products_ids'];
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+
+            if ($this->getRequest()->getParam('current_category_id')) {
+                $this->setSessionValue('current_category_id', $this->getRequest()->getParam('current_category_id'));
+            }
+
+            /* @var $grid \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Grid */
+            $grid = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category\Grid');
+
+            $grid->setSelectedIds($selectedProductsIds);
+            $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
+
+            $this->setAjaxContent($grid->toHtml());
+
+            return;
+        }
+
+        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Adding+Products+from+Category');
+
+        $gridContainer = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category');
+        $this->addContent($gridContainer);
+
+        /* @var $treeBlock \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
+        $treeBlock = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category\Tree', '', [
+            'data' => [
+                'tree_settings' => [
+                    'show_products_amount' => true,
+                    'hide_products_this_listing' => true
+                ]
+            ]
+        ]);
+
+        if (is_null($this->getSessionValue('current_category_id'))) {
+            $currentNode = $treeBlock->getRoot()->getChildren()->getIterator()->current();
+            if (!$currentNode) {
+                throw new \Ess\M2ePro\Model\Exception('No Categories found');
+            }
+            $this->setSessionValue('current_category_id', $currentNode->getId());
+        }
+
+        $treeBlock->setGridId($gridContainer->getChildBlock('grid')->getId());
+        $treeBlock->setSelectedIds($selectedProductsIds);
+        $treeBlock->setCurrentNodeById($this->getSessionValue('current_category_id'));
+
+        $gridContainer->getChildBlock('grid')->setTreeBlock($treeBlock);
+        $gridContainer->getChildBlock('grid')->setSelectedIds($selectedProductsIds);
+        $gridContainer->getChildBlock('grid')->setCurrentCategoryId($this->getSessionValue('current_category_id'));
+    }
+
+    //########################################
+
+    protected function asinSearchView()
+    {
+        $this->setWizardStep('searchAsin');
+
+        $listingProductsIds = $this->getAddedListingProductsIds();
+
+        if (empty($listingProductsIds)) {
+            $this->_redirect('*/amazon_listing/view', array('id' => $this->getRequest()->getParam('id')));
+            return;
+        }
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $grid = $this->createBlock('Amazon\Listing\Product\Add\SearchAsin\Grid');
+            $this->setAjaxContent($grid);
+
+            return;
+        }
+
+        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=18188583');
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend(
+            $this->__('Search Existing Amazon Products (ASIN/ISBN)')
+        );
+
+        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=19728181');
+
+        $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SearchAsin'));
+    }
+
+    protected function addNewAsinView()
+    {
+        $this->setWizardStep('newAsin');
+
+        $listingProductsIds = $this->getAddedListingProductsIds();
+
+        if (empty($listingProductsIds)) {
+            $this->_redirect('*/amazon_listing/view', array('id' => $this->getRequest()->getParam('id')));
+            return;
+        }
+
+        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=18188493');
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
+
+        $this->addContent($this->createBlock('Amazon\Listing\Product\Add\NewAsin'));
+    }
+
+    //----------------------------------------
+
+    protected function getAddedListingProductsIds()
+    {
+        $listingProductsIds = $this->getHelper('Data\Session')->getValue('temp_products');
+
+        if (empty($listingProductsIds)) {
+
+            $listingProductsIds = $this->getListing()->getSetting('additional_data', 'adding_listing_products_ids');
+
+        } else {
+
+            $this->getListing()
+                ->setSetting('additional_data', 'adding_listing_products_ids', $listingProductsIds)->save();
+
+            $this->getHelper('Data\Session')->setValue('temp_products', array());
+        }
+
+        return $listingProductsIds;
+    }
+
+    //########################################
+
+    protected function review()
+    {
+        $this->endWizard();
+
+        $this->getHelper('Data\Session')->setValue('products_source', '');
+
+        $listing = $this->getListing();
+
+        $this->getHelper('Data\Session')->setValue(
+            'added_products_ids',
+            $listing->getSetting('additional_data', 'adding_listing_products_ids')
+        );
+
+        $listing->setSetting('additional_data', 'adding_listing_products_ids', array());
+        $listing->setSetting('additional_data', 'adding_new_asin_listing_products_ids', array());
+        $listing->setSetting('additional_data', 'auto_search_was_performed', 0);
+        $listing->save();
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
+
+        $this->addContent($this->createBlock('Amazon\Listing\Product\Add\Review'));
+    }
+
+    //########################################
+
+    protected function getHideProductsInOtherListingsPrefix()
+    {
+        $id = $this->getRequest()->getParam('id');
+
+        $prefix = 'amazon_hide_products_others_listings_';
+        $prefix .= is_null($id) ? 'add' : $id;
+        $prefix .= '_listing_product';
+
+        return $prefix;
+    }
+
+    //########################################
+
+    protected function filterProductsForSearch($productsIds)
+    {
+        $productsIds = $this->getHelper('Component\Amazon\Variation')->filterProductsByStatus($productsIds);
+
+        $unsetProducts = $this->getLockedProductsInAction($productsIds);
+        $unsetProducts = array_unique($unsetProducts);
+
+        foreach ($unsetProducts as $id) {
+            $key = array_search($id, $productsIds);
+            unset($productsIds[$key]);
+        }
+
+        return $productsIds;
+    }
+
+    //########################################
+
+    protected function getLockedProductsInAction($productsIds)
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $table = $connection->getTableName('m2epro_processing_lock');
+
+        $select = $connection->select();
+        $select->from(array('pl' => $table), array('object_id'))
+            ->where('model_name = "Listing\Product"')
+            ->where('object_id IN (?)', $productsIds)
+            ->where('tag = "in_action"');
+
+        return $connection->fetchCol($select);
+    }
+
+    //########################################
+}

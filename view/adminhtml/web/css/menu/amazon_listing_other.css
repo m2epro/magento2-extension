@@ -1,0 +1,11 @@
+.item-amazon-listings-other {
+    cursor: not-allowed;
+}
+
+.item-amazon-listings-other a {
+    cursor: not-allowed;
+}
+
+.item-amazon-listings-other span {
+    color: gray;
+}

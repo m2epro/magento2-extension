@@ -1,0 +1,76 @@
+#system-requirements table {
+    width: 100%;
+    margin: 0 auto 2em;
+    font-size: 1em;
+}
+
+#system-requirements .admin__table-primary th {
+    border-top: none;
+}
+
+#cron-job-info {
+    width: 90%;
+    margin: auto;
+}
+
+#cron-job-info table tr th:first-child,
+#cron-job-info table tr td:first-child,
+#system-requirements table tr th:first-child,
+#system-requirements table tr td:first-child {
+    text-align: left;
+    padding-left: 0;
+}
+
+#cron-job-info table tr th,
+#cron-job-info table tr td,
+#system-requirements table tr th,
+#system-requirements table tr td {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.column_condition {
+    color: gray;
+}
+.column_value_fail {
+    color: red;
+}
+.column_value_success {
+    color: green;
+}
+
+#text-block {
+    font-size: 1.5rem;
+    background: #F8F8F8;
+    padding: 1.8rem 4rem 1.8rem 2.5rem;
+    border-bottom: 1px solid #e3e3e3;
+    border-top: 1px solid #e3e3e3;
+    margin-bottom: 30px;
+}
+
+#developers_tab_container .ui-tabs-panel {
+    padding-top: 0;
+}
+
+.field-recommendation_message .control {
+    margin-left: 17% !important;
+    width: 78% !important;
+}
+
+#synchronizationLogGrid_table th,
+#synchronizationLogGrid_table td{
+    word-break: break-all;
+}
+
+#synchronizationLogGrid_table .grid-listing-column-task {
+    width: 30%;
+}
+
+.width-800 > .modal-inner-wrap {
+    width: 800px !important;
+}
+
+#helpCenter_cron_job_info_content #cron_job_details,
+#helpCenter_direct_database_changes_content #block_notice_configuration_advanced_settings {
+    margin-top: 0;
+}

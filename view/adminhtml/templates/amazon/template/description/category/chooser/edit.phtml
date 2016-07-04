@@ -1,0 +1,28 @@
+<?php
+    $selectedCategory = $this->getSelectedCategory();
+?>
+
+<div id="selected_category_container">
+    <table>
+        <tr>
+            <td>
+                <strong id="category_title_container"><?php echo $this->__('Category'); ?>:</strong>
+            </td>
+            <td>
+                <span id="selected_category_path">
+                    <?php if (!empty($selectedCategory)): ?>
+                        <?php echo $this->getHelper('Data')->escapeHtml("{$selectedCategory['categoryPath']} ({$selectedCategory['browseNodeId']})"); ?>
+                    <?php else: ?>
+                        <span style="color: grey; font-style: italic"><?php echo $this->__('Not Selected'); ?></span>
+                    <?php endif; ?>
+                </span>
+            </td>
+            <td>
+                <a href="javascript:void(0)" id="category_reset_link" <?php if (empty($selectedCategory)): ?>style="display: none"<?php endif; ?> onclick="AmazonTemplateDescriptionCategoryChooserObj.unSelectCategory()"><?php echo $this->__('Reset') ?></a>
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<input type="hidden" id="category_validation" value="" class="required-entry">

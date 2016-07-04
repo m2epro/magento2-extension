@@ -1,0 +1,15 @@
+<span style="float:right;">
+    <a title="<?php echo $block->getTip(); ?>"
+       id="grid_help_icon_open_<?php echo $block->getEntityId(); ?>"
+       href="javascript:void(0);"
+       onclick="<?php echo $block->getViewHelpHandler(); ?>('<?php echo $block->getEntityId(); ?>', '<?php echo $block->getEncodedRows(); ?>', <?php echo $block->getHideViewLogLink(); ?>)">
+        <img src="<?php echo $block->getIconSrc(); ?>" alt="<?php echo $block->getTip(); ?>" />
+    </a>
+    <a title="<?php echo $block->getTip(); ?>"
+       id="grid_help_icon_close_<?php echo $block->getEntityId(); ?>"
+       style="display: none;"
+       href="javascript:void(0);"
+       onclick="<?php echo $block->getCloseHelpHandler(); ?>('<?php echo $block->getEntityId(); ?>')">
+        <img src="<?php echo $block->getIconSrc(); ?>" alt="<?php echo $block->getTip(); ?>" />
+    </a>
+</span>

@@ -1,0 +1,21 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Order\NotCreatedFilter $block */ ?>
+
+<p class="switcher" style="margin-top: 7px;">
+    <input
+        id="switcher_not_created_filter"
+        type="checkbox"
+        class="admin__control-checkbox"
+        <?php if ($block->isChecked()): ?>checked="checked"<?php endif; ?>
+        onclick="setLocation('<?php echo $block->getFilterUrl(); ?>');"
+    >
+    <label for="switcher_not_created_filter" class="admin__field-label">
+        <span><?php echo $block->__('Show Orders without Magento Orders'); ?></span>
+    </label>
+
+    <?php echo $block->getTooltipHtml($block->__(
+        'Check this box to filter for Orders that don\'t have a matching Magento Order.<br/>
+                    Magento Orders might not be created for Channel Orders for a number of reasons, including incomplete information or
+                    further Action being required to complete the Order.<br/><br/>
+                    <b>View Order Details</b> for detailed information on individual Orders and the Action needed to create the matching Magento Order.'
+    )); ?>
+</p>

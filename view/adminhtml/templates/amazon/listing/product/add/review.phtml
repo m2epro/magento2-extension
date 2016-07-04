@@ -1,0 +1,48 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Review $block */
+
+$block->css->add(
+    <<<CSS
+    .block_notices {
+        margin-bottom: 15px;
+    }
+    
+    .decorated-list li{
+        margin-bottom: .5em;
+    }
+CSS
+);
+
+?>
+
+<?php echo $this->getChildHtml('view_header'); ?>
+
+<div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
+
+    <?php
+        $helpBlockContent = $block->__(
+            'Products were successfully added to M2E Pro Listing.<br/><br/>
+            You can <strong>Review Your Products</strong> before Listing them on Amazon or <strong>List Added Products Now</strong>. <br/>
+            If you choose <b>List Added Products Now</b>, they will be Listed by the following procedure (sorted by priority):
+            <ul class="list decorated-list">
+                <li><span>Using ASIN/ISBN that has been assigned to the Magento Product via M2E Pro ASIN/ISBN Search Tool whether by Manual or Automatic Search.</span></li>
+                <li><span>Using Listing Search Settings. This Option will be used by M2E Pro in case there were no ASIN/ISBN assigned via Search Tool, the Search Settings are valid and the respective Attributes of Magento Product contain the correct values</span></li>
+                <li><span>Creating new ASIN/ISBN on Amazon. This method assumes that the Products, you are trying to list, have the assigned Description Policy with New ASIN/ISBN creation feature activated.</span></li>
+            </ul>
+        
+            <b>Note:</b> This method can only be used by M2E Pro in case there is no way to link your Magento Product to the existing Amazon Product, i.e.  ASIN/ISBN was not set by via the Search Tool and the Listing Search Settings are not set.
+            <br/><br/>
+            <div>%1% &nbsp; or &nbsp; %2%</div>
+            ',
+            $this->getChildHtml('review'),
+            $this->getChildHtml('list')
+        );
+
+        echo $block->createBlock('HelpBlock')->addData([
+            'no_collapse' => true,
+            'no_hide' => true,
+            'content' => $helpBlockContent
+        ])->toHtml();
+
+    ?>
+</div>

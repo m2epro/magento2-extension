@@ -1,0 +1,307 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser $block */
+
+    $internalData = !is_null($block->getInternalData()) ? $block->getInternalData() : array();
+    $selectCallback = $block->getSelectCallback();
+    $unselectCallback = $block->getUnselectCallback();
+    $attributes = $block->getAttributes();
+    $isSingleCategoryMode = $block->isSingleCategoryMode();
+    $singleCategoryType = $block->getSingleCategoryType();
+    $isShowEditLinks = $block->isShowEditLinks();
+
+    $block->jsPhp->addConstants($block->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Category'));
+    $block->jsPhp->addConstants($block->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Category'));
+
+    $block->jsUrl->addUrls($block->getHelper('Data')->getControllerActions('Ebay\Category'));
+    $block->jsUrl->addUrls($block->getHelper('Data')->getControllerActions('Ebay\Marketplace'));
+
+    $block->jsTranslator->addTranslations([
+        'Select' => $block->__('Select'),
+        'Reset' => $block->__('Reset'),
+        'No recently used Categories' => $block->__('No recently used Categories'),
+        'Edit' => $block->__('Edit'),
+        'Category' => $block->__('Category'),
+        'Not Selected' => $block->__('Not Selected'),
+        'No results' => $block->__('No results'),
+        'Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a> and repeate the Search.' => $block->__('Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a> and repeate the Search.'),
+        'Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a> and repeate the Search.' => $block->__('Try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a> and repeate the Search.'),
+    ]);
+
+    $categoryTitlesJson = json_encode($block->getHelper('Component\Ebay\Category')->getCategoryTitles());
+    $internalDataJson = json_encode($block->getInternalData());
+    $attributesJson = json_encode($attributes);
+    $isWizardMode = json_encode(!$block->getHelper('View\Ebay')->isInstallationWizardFinished());
+    $isShowEditLinksJson = json_encode($isShowEditLinks);
+
+    $js = '';
+
+    $js .= <<<JS
+    window.EbayListingProductCategorySettingsChooserObj = new EbayListingProductCategorySettingsChooser('{$block->getDivId()}', '{$block->getMarketplaceId()}', '{$block->getAccountId()}');
+    EbayListingProductCategorySettingsChooserObj.setCategoryTitles({$categoryTitlesJson});
+    EbayListingProductCategorySettingsChooserObj.setSelectedCategories({$internalDataJson});
+    EbayListingProductCategorySettingsChooserObj.setAttributes({$attributesJson});
+    EbayListingProductCategorySettingsChooserObj.setIsWizardMode({$isWizardMode});
+    EbayListingProductCategorySettingsChooserObj.setShowEditLinks({$isShowEditLinksJson});
+JS;
+
+    if ($isSingleCategoryMode) {
+        $isSingleCategoryModeJson = json_encode($isSingleCategoryMode);
+        $singleCategoryTypeJson = json_encode($singleCategoryType);
+
+        $js .= <<<JS
+    EbayListingProductCategorySettingsChooserObj.setSingleCategoryMode({$isSingleCategoryModeJson});
+    EbayListingProductCategorySettingsChooserObj.setSingleCategoryType({$singleCategoryTypeJson});
+JS;
+
+    }
+
+    if (!empty($selectCallback)) {
+        $js .= <<<JS
+    EbayListingProductCategorySettingsChooserObj.setSelectCallback({$selectCallback});
+JS;
+    }
+
+    if (!empty($unselectCallback)) {
+        $js .= <<<JS
+    EbayListingProductCategorySettingsChooserObj.setUnselectCallback({$unselectCallback});
+JS;
+    }
+
+    $block->js->add(<<<JS
+require([
+    'M2ePro/Ebay/Listing/Product/Category/Settings/Chooser'
+], function(){
+
+    {$js}
+    
+});
+JS
+);
+
+?>
+
+<style>
+    table.m2e-category-chooser td {
+        padding-bottom: 3px;
+    }
+    table.m2e-category-chooser .validation-advice {
+        color: red;
+    }
+</style>
+
+<?php if (!$block->_isAjax): ?>
+    <div id="<?php echo $block->getDivId(); ?>">
+<?php endif; ?>
+
+<?php echo $block->getHelpBlockHtml(); ?>
+
+<div id="ebay_category_chooser" class="ebay_category_chooser">
+
+    <?php if (!$singleCategoryType || in_array($singleCategoryType, $block->getHelper('Component\Ebay\Category')->getEbayCategoryTypes())): ?>
+
+        <div class="entry-edit" id="magento_block_ebay_listing_category_chooser_ebay" style="padding-top: 5px;">
+
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $block->__('eBay Catalog'); ?></h4>
+            </div>
+
+        <div class="fieldset">
+            <div class="hor-scroll">
+
+                <table class="m2e-category-chooser" cellspacing="0" cellpadding="0" style="margin-left: 26px">
+
+                    <?php if (!$isSingleCategoryMode || $singleCategoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN): ?>
+
+                        <tr>
+                            <?php if (!$isSingleCategoryMode): ?>
+                                <td class="label" style="width: 110px;">
+                                    <?php echo $block->__('Primary'); ?> <span class="required">*</span>
+                                </td>
+                            <?php endif; ?>
+
+                            <td class="value" style="min-width: 300px;">
+                                <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['mode'])
+                                          && $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+                                    <?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['path']; ?>
+                                <?php else: ?>
+                                    <span style="font-style: italic; color: grey"><?php echo $block->__('Not Selected'); ?></span>
+                                <?php endif; ?>
+                            </td>
+                            <?php if ($isShowEditLinks): ?>
+                                <td class="value" style="padding-left: 15px;">
+                                    <a href="#" onclick="EbayListingProductCategorySettingsChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <tr>
+                            <td class="label"></td>
+                            <td class="value">
+                                <?php if (!isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['mode']) ||
+                                     $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+
+                                    <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['message'])): ?>
+                                        <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['message']; ?></div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <div class="validation-advice main-empty-advice" style="display: none;"><?php echo $block->__('eBay Primary Category must be selected.') ?></div>
+                            <td></td>
+                        </tr>
+
+                    <?php endif; ?>
+
+                    <?php if (!$isSingleCategoryMode || $singleCategoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY): ?>
+
+                        <tr>
+                            <?php if (!$isSingleCategoryMode): ?>
+                                <td class="label" style="width: 110px;">
+                                    <?php echo $block->__('Secondary'); ?>
+                                </td>
+                            <?php endif; ?>
+                            <td class="value" style="min-width: 300px;">
+                                <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['mode'])
+                                    && $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+                                    <?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['path']; ?>
+                                <?php else: ?>
+                                    <span style="font-style: italic; color: grey"><?php echo $block->__('Not Selected'); ?></span>
+                                <?php endif; ?>
+                            </td>
+                            <?php if ($isShowEditLinks): ?>
+                                <td class="value" style="padding-left: 15px;">
+                                    <a href="#" onclick="EbayListingProductCategorySettingsChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                </td>
+                            <?php endif; ?>
+                        </tr>
+                        <tr>
+                            <td class="label"></td>
+                            <td class="value">
+                                <?php if (!isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['mode'])
+                                    || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+
+                                    <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['message'])): ?>
+                                        <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['message']; ?></div>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <td></td>
+                        </tr>
+
+                    <?php endif; ?>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+
+    <?php endif; ?>
+
+    <?php if ($block->isShowStoreCatalog()): ?>
+
+        <?php if (!$isSingleCategoryMode || in_array($singleCategoryType, $block->getHelper('Component\Ebay\Category')->getStoreCategoryTypes())): ?>
+
+        <div class="entry-edit" id="magento_block_ebay_listing_category_chooser_store" style="padding-top: 25px;">
+
+            <div class="entry-edit-head">
+                <h4 class="icon-head head-edit-form fieldset-legend"><?php echo $block->__('Store Catalog'); ?></h4>
+            </div>
+
+            <div class="fieldset">
+                <div class="hor-scroll">
+
+                    <table class="m2e-category-chooser" cellspacing="0" cellpadding="0" style="margin-left: 26px">
+
+                        <?php if (!$isSingleCategoryMode || $singleCategoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN): ?>
+
+                            <tr>
+                                <?php if (!$isSingleCategoryMode): ?>
+                                    <td class="label" style="width: 110px;">
+                                        <?php echo $block->__('Primary'); ?>
+                                    </td>
+                                <?php endif; ?>
+
+                                <td class="value" style="min-width: 300px;">
+                                    <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['mode'])
+                                              && $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+                                        <?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['path']; ?>
+                                    <?php else: ?>
+                                        <span style="font-style: italic; color: grey" id="magento_block_ebay_listing_category_chooser_store_primary_not_selected"><?php echo $block->__('Not Selected'); ?></span>
+                                    <?php endif; ?>
+                                </td>
+                                <?php if ($isShowEditLinks): ?>
+                                    <td class="value" style="padding-left: 15px;">
+                                        <a href="#" onclick="EbayListingProductCategorySettingsChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                    </td>
+                                <?php endif; ?>
+                            </tr>
+                            <tr>
+                                <td class="label"></td>
+                                <td class="value">
+                                    <?php if (!isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['mode'])
+                                        || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+
+                                        <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['message'])): ?>
+                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['message']; ?></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                    <div class="validation-advice main-store-empty-advice" style="display: none;"><?php echo $block->__('eBay Primary Store Category must be selected.') ?></div>
+                                <td></td>
+                            </tr>
+
+                        <?php endif; ?>
+
+                        <?php if (!$isSingleCategoryMode || $singleCategoryType == \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY): ?>
+
+                            <tr>
+                                <?php if (!$isSingleCategoryMode): ?>
+                                    <td class="label" style="width: 110px;">
+                                        <?php echo $block->__('Secondary'); ?>
+                                    </td>
+                                <?php endif; ?>
+
+                                <td class="value" style="min-width: 300px;">
+                                    <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['mode'])
+                                        && $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+                                        <?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['path']; ?>
+                                    <?php else: ?>
+                                        <span style="font-style: italic; color: grey" id="magento_block_ebay_listing_category_chooser_store_secondary_not_selected"><?php echo $block->__('Not Selected'); ?></span>
+                                        <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message'])): ?>
+                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message']; ?></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                </td>
+                                <?php if ($isShowEditLinks): ?>
+                                    <td class="value" style="padding-left: 15px;">
+                                        <a href="#" onclick="EbayListingProductCategorySettingsChooserObj.showEditPopUp(<?php echo \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY; ?>)"><?php echo $block->__('Edit'); ?></a>
+                                    </td>
+                                <?php endif; ?>
+                            </tr>
+                            <tr>
+                                <td class="label"></td>
+                                <td class="value">
+                                    <?php if (!isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['mode'])
+                                        || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
+
+                                        <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message'])): ?>
+                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message']; ?></div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                <td></td>
+                            </tr>
+
+                        <?php endif; ?>
+
+                    </table>
+
+                </div>
+            </div>
+
+        </div>
+
+        <?php endif; ?>
+
+    <?php endif; ?>
+
+    </div>
+
+<?php if (!$block->_isAjax): ?>
+    </div>
+<?php endif; ?>

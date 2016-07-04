@@ -1,0 +1,7 @@
+<div id="chooser_search_input_container">
+    <input id="query" type="text" placeholder="<?php echo $block->__('Enter keyword(s) or Category ID...'); ?>" onkeypress="EbayListingProductCategorySettingsChooserObj.keyPressQuery(event)">
+    <button class="action primary" onclick="EbayListingProductCategorySettingsChooserObj.search()"><?php echo $block->__('Search'); ?></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a onclick="EbayListingProductCategorySettingsChooserObj.searchReset()"><?php echo $this->__('Reset'); ?></a>
+</div>
+<div id="chooser_search_results"></div>

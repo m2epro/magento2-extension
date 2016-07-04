@@ -1,0 +1,56 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Tabs\Browse $block */
+
+    $categoryType = $block->getHelper('Data\GlobalData')->getValue('chooser_category_type');
+    $ebayCategoryTypes =  $block->getHelper('Component\Ebay\Category')->getEbayCategoryTypes();
+    $isWizard = !$block->getHelper('View\Ebay')->isInstallationWizardFinished();
+
+    $block->jsUrl->add($this->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
+
+    $block->js->add(<<<JS
+require([
+    'M2ePro/Ebay/Listing/Product/Category/Settings/Chooser/Tabs/Browse'
+], function(){
+
+    window.EbayListingProductCategorySettingsChooserTabsBrowseObj = new EbayListingProductCategorySettingsChooserTabsBrowse();
+
+    EbayListingProductCategorySettingsChooserTabsBrowseObj.setMarketplaceId(EbayListingProductCategorySettingsChooserObj.getMarketplaceId());
+    EbayListingProductCategorySettingsChooserTabsBrowseObj.renderTopLevelCategories('chooser_browser');
+    EbayListingProductCategorySettingsChooserTabsBrowseObj.observe('leaf_selected', function(selected) {
+        var leafId = selected[selected.length-1];
+        EbayListingProductCategorySettingsChooserObj.selectCategory(M2ePro.php.constant('\\\\Ess\\\\M2ePro\\\\Model\\\\Ebay\\\\Template\\\\Category::CATEGORY_MODE_EBAY'), leafId);
+    });
+      
+});
+JS
+);
+
+?>
+
+<style>
+    .category-children-block {
+        display: inline-block;
+        margin-left: 10px;
+    }
+</style>
+
+<?php
+
+    $helpBlock = $this->createBlock('HelpBlock');
+
+    if (in_array($categoryType, $ebayCategoryTypes)) {
+        $helpBlock->setData([
+            'no_collapse' => true,
+            'content' => $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a>.')
+        ]);
+    } else {
+        $helpBlock->setData([
+            'no_collapse' => true,
+            'content' => $block->__('If you cannot find necessary Store Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a>.')
+        ]);
+    }
+
+    echo $helpBlock->toHtml();
+?>
+
+<div id="chooser_browser"></div>

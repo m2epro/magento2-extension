@@ -1,0 +1,131 @@
+td.help_line {
+    text-align: center;
+    padding: 5px 20px 10px;
+    border: 1px solid silver;
+    position: relative;
+}
+
+td.help_line .hl_header {
+    padding: 10px 0;
+    text-align: center;
+}
+
+td.help_line .hl_header a {
+    text-decoration: none;
+}
+
+td.help_line .hl_title {
+    font-weight: bold;
+    font-size: 14px;
+    color: gray;
+}
+
+td.help_line .hl_close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin-top: 1.7rem;
+    margin-right: 2rem;
+    font-size: 14px;
+    text-decoration: none;
+    font-family: 'Admin Icons';
+}
+
+td.help_line .hl_container {
+    text-align: left;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+td.help_line .hl_container_success {
+    border: 1px dashed #04DD04;
+    background-color: #E7FFE5;
+}
+
+td.help_line .hl_container_warning {
+    border: 1px dashed #FCE220;
+    background-color: #FFFFE2;
+}
+
+td.help_line .hl_container_error {
+    border: 1px dashed #FF7A7A;
+    background-color: #FFF7EA;
+}
+
+td.help_line .hl_date {
+    float: left;
+    width: 175px;
+    height: 25px;
+    text-align: center;
+    border-right: 1px solid silver;
+    border-bottom: 1px solid silver;
+    font-weight: bold;
+}
+
+td.help_line .hl_action {
+    display: table;
+    margin-left: 200px;
+    height: 25px;
+    border-bottom: 1px solid silver;
+    color: black;
+}
+
+td.help_line .hl_messages_type {
+    float: left;
+    width: 175px;
+    text-align: center;
+}
+
+td.help_line .hl_messages_type span {
+    font-weight: bold;
+}
+
+td.help_line .hl_messages_text {
+    margin-left: 200px;
+}
+
+td.help_line .hl_footer {
+    float: right;
+}
+
+.data-grid input[type=text] {
+    width: 100%;
+}
+
+.grid-listing-column-product_id {
+    width: 110px;
+}
+
+.grid-listing-column-entity_id {
+    width: 110px;
+}
+.data-grid-not-hovered tr:hover td {
+    background: #FFF;
+}
+.data-grid-not-hovered td {
+    border-left-style: solid;
+}
+.data-grid-not-bordered td {
+    border: none !important;
+}
+.data-grid-striped tr:nth-child(even) td {
+    background-color: #f5f5f5;
+}
+.data-grid tr.grid_help_content td, .data-grid tr.grid_help_content td:hover {
+    background-color: #FFF !important;
+}
+.admin__data-grid-wrap-static tbody tr:not(:only-child):hover td:not(:only-child) {
+    background-color: #e5f7fe !important;
+}
+
+.grid-listing-column-listing_id {
+    width: 150px;
+}
+
+.grid-listing-column-store_name {
+    width: 200px;
+}
+
+.grid-listing-column-products_total_count {
+    width: 200px;
+}

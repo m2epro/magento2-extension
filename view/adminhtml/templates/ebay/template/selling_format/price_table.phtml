@@ -1,0 +1,708 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\SellingFormat\Edit\Form\PriceTable $block */
+
+$magentoAttributeHelper = $block->getHelper('Magento\Attribute');
+$attributes = $this->getHelper('Data\GlobalData')->getValue('ebay_attributes');
+
+$currency = $block->getData('currency');
+
+$formData = $block->getData('form_data');
+$default = $block->getData('default');
+$formData = array_merge($default, $formData);
+
+$attributesByInputTypes = $block->getData('attributes_by_input_types');
+
+?>
+
+<table class="data-grid data-grid-not-hovered" id="price_table" cellpadding="0" cellspacing="0">
+    <thead>
+    <tr class="headings">
+        <th class="data-grid-th" style="width: 150px"><?php echo $block->__('Price'); ?></th>
+        <?php if (!is_null($currency)) : ?>
+            <th class="data-grid-th" style="width: 95px">
+                <?php echo $block->__('Currency'); ?>
+                <?php echo $block->getTooltipHtml($block->__(
+                    'The Currency for eBay Listings. Automatically set based on the Marketplace you chose earlier.'
+                ), true); ?>
+            </th>
+        <?php endif; ?>
+        <th class="data-grid-th" style="width: 305px"><?php echo $block->__('Source'); ?></th>
+        <th class="data-grid-th" style="width: 325px">
+            <?php echo $block->__('Price Change'); ?>
+            <?php $currencyPlaceholder = is_null($currency) ? $block->__('[CURRENCY]') : $block->getCurrencySymbol($currency); ?>
+            <?php echo $block->getTooltipHtml($block->__(
+                'A value you want the Magento Price to be modified while Listing on eBay.<br/>
+                Price change Settings apply after VAT has been added.<br/><br/>
+                <b>Absolute Value increase</b><br/>
+                This will increase the Price on eBay compared to the Price on Magento.<br/>
+                <b>Absolute Value decrease</b><br/>
+                This will reduce the Price on eBay compared to the Price on Magento.<br/>
+                <b>Percentage increase (%)</b><br/>
+                This will increase the Price on eBay compared to the Price on Magento.<br/>
+                <b>Percentage decrease (%)</b><br/>
+                This will reduce the Price on eBay compared to the Price on Magento.',
+                $currencyPlaceholder)); ?>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <tr id="fixed_price_tr">
+
+        <td class="value remove_bottom_border">
+            <label for="fixed_price_mode"
+                   id="fixed_price_label"><?php echo $block->__('Price'); ?>:</label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value add_rowspan" style="text-align: center; vertical-align: middle;">
+                <div id="fixed_price_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value remove_bottom_border">
+            <select id="fixed_price_mode" name="selling_format[fixed_price_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['fixed_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Product Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['fixed_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['fixed_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['fixed_price_custom_attribute'], $attributes) && $formData['fixed_price_custom_attribute'] != ''): ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['fixed_price_custom_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['fixed_price_custom_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute): ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['fixed_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['fixed_price_custom_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+            <?php echo $block->getTooltipHtml($block->__(
+                'The Price for Fixed Price Items.'
+            )); ?>
+
+            <input type="hidden" name="selling_format[fixed_price_custom_attribute]"
+                   id="fixed_price_custom_attribute"/>
+
+        </td>
+
+        <td class="value add_rowspan" style="vertical-align: middle;">
+            <div id="fixed_price_change_td" style="position: relative;">
+                <div class="price_change_container">
+                    <select id="fixed_price_coefficient_mode"
+                            name="selling_format[fixed_price_coefficient_mode]"
+                            class="select admin__control-select M2ePro-validate-price-coefficient price_coefficient_mode required-entry"
+                            style="width: 200px;">
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE; ?>" <?php if ($formData['fixed_price_coefficient'] == ''): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*$/', $formData['fixed_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*$/', $formData['fixed_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value decrease'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*%$/', $formData['fixed_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*%$/', $formData['fixed_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage decrease'); ?></option>
+                    </select>
+                            <span id="fixed_price_example_container">
+                                <?php echo $block->getTooltipHtml(
+                                    '<span class="fixed_price_example"
+                                          id="fixed_price_example_absolute_increase">' .  $block->__(
+                                    'If you wish to increase the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                ) . '</span>'
+                                    . '<span class="fixed_price_example"
+                                          id="fixed_price_example_absolute_decrease">' . $block->__(
+                                    'If you wish to reduce the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                ) . '</span>' .
+                                    '<span class="fixed_price_example"
+                                          id="fixed_price_example_percentage_increase">' . $block->__(
+                                    'You wish to increase by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type “10”. The Item will then go on sale for %currency% 2.2 on eBay.', $currencyPlaceholder
+                                ) . '</span>'
+                                    . '<span class="fixed_price_example"
+                                          id="fixed_price_example_percentage_decrease">' . $block->__(
+                                    'You wish to reduce by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type: “10”. The Item will then go on sale for %currency% 1.80 on eBay.', $currencyPlaceholder
+                                ). '</span>'
+                                ); ?>
+                            </span>
+                </div>
+
+                <div id="fixed_price_coefficient_input_div" class="price_coefficient_container">
+                    <div style="width: 10px;">
+                        <span id="fixed_price_coefficient_sign_span"></span>
+                    </div>
+                    <input name="selling_format[fixed_price_coefficient]"
+                           value="<?php echo $block->escapeHtml(preg_replace('/(%$|^[+-])/', '', $formData['fixed_price_coefficient'])); ?>"
+                           type="text" class="admin__control-text M2ePro-validation-float input-text coef"/>
+                    <span id="fixed_price_coefficient_percent_span" style="padding-left: 2px;"></span>
+                </div>
+            </div>
+        </td>
+
+    </tr>
+
+    <tr id="variation_price_tr">
+
+        <td class="value" style="padding-left: 25px !important;">
+            <label for="price_variation_mode"><?php echo $block->__('Variation Price'); ?>:</label>
+        </td>
+
+        <td class="value">
+            <select id="price_variation_mode" name="selling_format[price_variation_mode]"
+                    class="select admin__control-select required-entry">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_PARENT; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_PARENT == $formData['price_variation_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Main Product'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_CHILDREN; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_VARIATION_MODE_CHILDREN == $formData['price_variation_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Associated Products'); ?></option>
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__('Choose the Magento Product Attribute to use for the Price for Bundle Product Options.')); ?>
+        </td>
+
+    </tr>
+
+    <tr id="start_price_tr">
+
+        <td class="value">
+            <label for="start_price_mode"><?php echo $block->__('Start Price'); ?>:</label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value" style="text-align: center">
+                <div id="start_price_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value">
+            <select id="start_price_mode" name="selling_format[start_price_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['start_price_mode']): echo ' selected="selected"'; endif; ?>>
+                    <?php echo $block->__('Product Price'); ?>
+                </option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['start_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['start_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['start_price_custom_attribute'], $attributes) && $formData['start_price_custom_attribute'] != ''): ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['start_price_custom_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['start_price_custom_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute) : ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['start_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['start_price_custom_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__('The starting Price at which bidding begins.')); ?>
+
+            <input type="hidden" name="selling_format[start_price_custom_attribute]"
+                   id="start_price_custom_attribute"/>
+
+        </td>
+
+        <td class="value">
+            <div id="start_price_change_td" style="position: relative;">
+                <div class="price_change_container">
+                    <select id="start_price_coefficient_mode"
+                            name="selling_format[start_price_coefficient_mode]"
+                            class="select admin__control-select M2ePro-validate-price-coefficient price_coefficient_mode required-entry"
+                            style="width: 200px;">
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE; ?>" <?php if ($formData['start_price_coefficient'] == ''): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*$/', $formData['start_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*$/', $formData['start_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value decrease'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*%$/', $formData['start_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*%$/', $formData['start_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage decrease'); ?></option>
+                    </select>
+                            <span id="start_price_example_container">
+                                <?php echo $block->getTooltipHtml(
+                                    '<span class="start_price_example"
+                                          id="start_price_example_absolute_increase">' .  $block->__(
+                                        'If you wish to increase the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="start_price_example"
+                                          id="start_price_example_absolute_decrease">' . $block->__(
+                                        'If you wish to reduce the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>' .
+                                    '<span class="start_price_example"
+                                          id="start_price_example_percentage_increase">' . $block->__(
+                                        'You wish to increase by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type “10”. The Item will then go on sale for %currency% 2.2 on eBay.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="start_price_example"
+                                          id="start_price_example_percentage_decrease">' . $block->__(
+                                        'You wish to reduce by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type: “10”. The Item will then go on sale for %currency% 1.80 on eBay.', $currencyPlaceholder
+                                    ). '</span>'
+                                ); ?>
+                            </span>
+                </div>
+
+                <div id="start_price_coefficient_input_div" class="price_coefficient_container">
+                    <div style="width: 10px;">
+                        <span id="start_price_coefficient_sign_span"></span>
+                    </div>
+                    <input name="selling_format[start_price_coefficient]"
+                           value="<?php echo $block->escapeHtml(preg_replace('/(%$|^[+-])/', '', $formData['start_price_coefficient'])); ?>"
+                           type="text" class="admin__control-text M2ePro-validation-float input-text coef"/>
+                    <span id="start_price_coefficient_percent_span" style="padding-left: 2px;"></span>
+                </div>
+            </div>
+        </td>
+
+    </tr>
+
+    <tr id="reserve_price_tr">
+
+        <td class="value">
+            <label for="reserve_price_mode"><?php echo $block->__('Reserve Price'); ?>
+                :</label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value" style="text-align: center">
+                <div id="reserve_price_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value">
+            <select id="reserve_price_mode" name="selling_format[reserve_price_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE == $formData['reserve_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['reserve_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Product Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['reserve_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['reserve_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['reserve_price_custom_attribute'], $attributes) && $formData['reserve_price_custom_attribute'] != '') : ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['reserve_price_custom_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['reserve_price_custom_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute) : ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['reserve_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['reserve_price_custom_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__('The lowest Price at which you are selling an Item.<br/><b>Note:</b> eBay charges some additional fee for using this Option.')); ?>
+
+            <input type="hidden" name="selling_format[reserve_price_custom_attribute]"
+                   id="reserve_price_custom_attribute"/>
+
+        </td>
+
+        <td class="value">
+            <div id="reserve_price_change_td" style="position: relative;">
+                <div class="price_change_container">
+                    <select id="reserve_price_coefficient_mode"
+                            name="selling_format[reserve_price_coefficient_mode]"
+                            class="select admin__control-select M2ePro-validate-price-coefficient price_coefficient_mode required-entry"
+                            style="width: 200px;">
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE; ?>" <?php if ($formData['reserve_price_coefficient'] == ''): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*$/', $formData['reserve_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*$/', $formData['reserve_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value decrease'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*%$/', $formData['reserve_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*%$/', $formData['reserve_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage decrease'); ?></option>
+                    </select>
+                            <span id="reserve_price_example_container">
+                                <?php echo $block->getTooltipHtml(
+                                    '<span class="reserve_price_example"
+                                          id="reserve_price_example_absolute_increase">' .  $block->__(
+                                        'If you wish to increase the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="reserve_price_example"
+                                          id="reserve_price_example_absolute_decrease">' . $block->__(
+                                        'If you wish to reduce the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>' .
+                                    '<span class="reserve_price_example"
+                                          id="reserve_price_example_percentage_increase">' . $block->__(
+                                        'You wish to increase by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type “10”. The Item will then go on sale for %currency% 2.2 on eBay.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="reserve_price_example"
+                                          id="reserve_price_example_percentage_decrease">' . $block->__(
+                                        'You wish to reduce by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type: “10”. The Item will then go on sale for %currency% 1.80 on eBay.', $currencyPlaceholder
+                                    ). '</span>'
+                                ); ?>
+                            </span>
+                </div>
+
+                <div id="reserve_price_coefficient_input_div" class="price_coefficient_container">
+                    <div style="width: 10px;">
+                        <span id="reserve_price_coefficient_sign_span"></span>
+                    </div>
+                    <input name="selling_format[reserve_price_coefficient]"
+                           value="<?php echo $block->escapeHtml(preg_replace('/(%$|^[+-])/', '', $formData['reserve_price_coefficient'])); ?>"
+                           type="text" class="admin__control-text M2ePro-validation-float input-text coef"/>
+                    <span id="reserve_price_coefficient_percent_span" style="padding-left: 2px;"></span>
+                </div>
+            </div>
+        </td>
+
+    </tr>
+
+    <tr id="buyitnow_price_tr">
+
+        <td class="value">
+            <label for="buyitnow_price_mode"><?php echo $block->__('"Buy It Now" Price'); ?>
+                :</label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value" style="text-align: center">
+                <div id="buyitnow_price_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value">
+            <select id="buyitnow_price_mode" name="selling_format[buyitnow_price_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE == $formData['buyitnow_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['buyitnow_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Product Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['buyitnow_price_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['buyitnow_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['buyitnow_price_custom_attribute'], $attributes) && $formData['buyitnow_price_custom_attribute'] != ''): ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['buyitnow_price_custom_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['buyitnow_price_custom_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute): ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['buyitnow_price_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['buyitnow_price_custom_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__('The Fixed Price for immediate purchase.<br/>Find out more about <a href="http://sellercentre.ebay.co.uk/add-buy-it-now-price-auction" target="_blank">adding a Buy It Now Price</a> to your Listing.')); ?>
+
+            <input type="hidden" name="selling_format[buyitnow_price_custom_attribute]"
+                   id="buyitnow_price_custom_attribute"/>
+
+        </td>
+
+        <td class="value add_rowspan" style="vertical-align: middle;">
+            <div id="buyitnow_price_change_td" style="position: relative;">
+                <div class="price_change_container">
+                    <select id="buyitnow_price_coefficient_mode"
+                            name="selling_format[buyitnow_price_coefficient_mode]"
+                            class="select admin__control-select M2ePro-validate-price-coefficient price_coefficient_mode required-entry"
+                            style="width: 200px;">
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_NONE; ?>" <?php if ($formData['buyitnow_price_coefficient'] == ''): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*$/', $formData['buyitnow_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_ABSOLUTE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*$/', $formData['buyitnow_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Absolute Value decrease'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_INCREASE; ?>" <?php if (preg_match('/^\+[0-9.,]*%$/', $formData['buyitnow_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage increase'); ?></option>
+                        <option
+                            value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_COEFFICIENT_PERCENTAGE_DECREASE; ?>" <?php if (preg_match('/^\-[0-9.,]*%$/', $formData['buyitnow_price_coefficient'])): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Percentage decrease'); ?></option>
+                    </select>
+                            <span id="buyitnow_price_example_container">
+
+                                <?php echo $block->getTooltipHtml(
+                                    '<span class="buyitnow_price_example"
+                                          id="buyitnow_price_example_absolute_increase">' .  $block->__(
+                                        'If you wish to increase the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="buyitnow_price_example"
+                                          id="buyitnow_price_example_absolute_decrease">' . $block->__(
+                                        'If you wish to reduce the Price of an Item selling on eBay by %currency% 1.50, type “1.5” into the box.', $currencyPlaceholder
+                                    ) . '</span>' .
+                                    '<span class="buyitnow_price_example"
+                                          id="buyitnow_price_example_percentage_increase">' . $block->__(
+                                        'You wish to increase by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type “10”. The Item will then go on sale for %currency% 2.2 on eBay.', $currencyPlaceholder
+                                    ) . '</span>'
+                                    . '<span class="buyitnow_price_example"
+                                          id="buyitnow_price_example_percentage_decrease">' . $block->__(
+                                        'You wish to reduce by 10% the Price of a %currency% 2.00 Item selling on your Magento Store.
+                                        In the box type: “10”. The Item will then go on sale for %currency% 1.80 on eBay.', $currencyPlaceholder
+                                    ). '</span>'
+                                ); ?>
+                            </span>
+                </div>
+
+                <div id="buyitnow_price_coefficient_input_div" class="price_coefficient_container">
+                    <div style="width: 10px;">
+                        <span id="buyitnow_price_coefficient_sign_span"></span>
+                    </div>
+                    <input name="selling_format[buyitnow_price_coefficient]"
+                           value="<?php echo $block->escapeHtml(preg_replace('/(%$|^[+-])/', '', $formData['buyitnow_price_coefficient'])); ?>"
+                           type="text" class="admin__control-text M2ePro-validation-float input-text coef"/>
+                    <span id="buyitnow_price_coefficient_percent_span" style="padding-left: 2px;"></span>
+                </div>
+            </div>
+        </td>
+
+    </tr>
+
+    <tr id="price_discount_stp_tr" class="simple_mode_disallowed">
+
+        <td class="value remove_bottom_border">
+            <label><?php echo $block->__('Strike-Through Price'); ?>:</label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value" style="text-align: center; vertical-align: middle;" rowspan="2">
+                <div id="price_discount_stp_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value remove_bottom_border">
+            <select id="price_discount_stp_mode" name="selling_format[price_discount_stp_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE == $formData['price_discount_stp_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['price_discount_stp_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Product Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['price_discount_stp_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['price_discount_stp_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['price_discount_stp_attribute'], $attributes) && $formData['price_discount_stp_attribute'] != ''): ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['price_discount_stp_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['price_discount_stp_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute): ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['price_discount_stp_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['price_discount_stp_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__(
+                    'The Strike-Through Price is the original Price of a Product that is discounted shown with a line through it.
+                                    It is only available to certain Sellers who have been pre-approved by eBay.<br/><br/>
+                                    If you qualify to display Strike-Through Price choose the Magento Attribute you want to use for it.'
+                )); ?>
+
+            <input type="hidden" name="selling_format[price_discount_stp_attribute]"
+                   id="price_discount_stp_attribute"/>
+        </td>
+
+        <td class="remove_bottom_border">
+        </td>
+
+    </tr>
+
+    <tr id="price_discount_stp_reason_tr" class="simple_mode_disallowed">
+
+        <td class="value" style="padding-left: 25px !important;">
+            <label><?php echo $block->__('Reason (UK, DE only)'); ?>: </label>
+        </td>
+
+        <td class="value">
+            <select name="selling_format[price_discount_stp_type]" class="select admin__control-select required-entry"
+                    style="width: 80%;">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_RRP; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_RRP == $formData['price_discount_stp_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Recommended Retail Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_EBAY; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_EBAY == $formData['price_discount_stp_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Previous Selling Price used on eBay'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_OFF_EBAY; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_OFF_EBAY == $formData['price_discount_stp_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Previous Selling Price used beyond eBay'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_BOTH; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_STP_TYPE_SOLD_ON_BOTH == $formData['price_discount_stp_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Previous Selling Price used both'); ?></option>
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__(
+                '<strong>Recommended Retail Price</strong><br/>
+                This Price is recommended by the manufacturer to be used at the initial sale.<br/>
+                <strong>Previous Selling Price used on eBay</strong><br/>
+                This Price was used in another Listing on eBay 30 days prior to Listing the Item, excluding shipping and handling.<br/>
+                <strong>Previous Selling Price used beyond eBay</strong><br/>
+                This Price was used beyond eBay either online or offline 30 days prior to Listing the Item, excluding shipping and handling.<br/>
+                <strong>Previous Selling Price used both on and beyond eBay</strong><br/>
+                    This Price was used both on and beyond eBay 30 days prior to Listing the Item, excluding shipping and handling.'
+            )); ?>
+
+        </td>
+
+        <td>
+        </td>
+
+    </tr>
+    <tr></tr>
+    <tr id="price_discount_map_tr" class="simple_mode_disallowed">
+
+        <td class="value remove_bottom_border bottom_border_disabled">
+            <label><?php echo $block->__('Minimum Advertised Price'); ?>: </label>
+        </td>
+
+        <?php if (!is_null($currency)) : ?>
+            <td class="value" style="text-align: center; vertical-align: middle;" rowspan="2">
+                <div id="price_discount_map_currency_td">
+                    <span><?php echo $currency; ?></span>
+                </div>
+            </td>
+        <?php endif; ?>
+
+        <td class="value remove_bottom_border bottom_border_disabled">
+            <select id="price_discount_map_mode" name="selling_format[price_discount_map_mode]"
+                    class="select admin__control-select required-entry M2ePro-custom-attribute-can-be-created"
+                    allowed_attribute_types="text,price" style="width: 80%">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE == $formData['price_discount_map_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT == $formData['price_discount_map_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Product Price'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL; ?>" <?php if (\Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL == $formData['price_discount_map_mode']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Special Price'); ?></option>
+
+                <optgroup class="simple_mode_disallowed M2ePro-custom-attribute-optgroup"
+                          label="Magento Attribute">
+                    <?php if ($formData['price_discount_map_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && !$magentoAttributeHelper->isExistInAttributesArray($formData['price_discount_map_attribute'], $attributes) && $formData['price_discount_map_attribute'] != ''): ?>
+                        <option
+                            attribute_code="<?php echo $block->escapeHtml($formData['price_discount_map_attribute']) ?>"
+                            selected="selected"
+                            value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE ?>">
+                            <?php echo $block->escapeHtml($magentoAttributeHelper->getAttributeLabel($formData['price_discount_map_attribute'])) ?>
+                        </option>
+                    <?php endif; ?>
+                    <?php foreach ($attributesByInputTypes['text_price'] as $attribute): ?>
+                        <option class="simple_mode_disallowed"
+                                attribute_code="<?php echo $attribute['code']; ?>"
+                                value="<?php echo \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE; ?>"
+                                <?php if ($formData['price_discount_map_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE && $attribute['code'] == $formData['price_discount_map_attribute']): ?>selected="selected"<?php endif; ?>>
+                            <?php echo $block->escapeHtml($attribute['label']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </optgroup>
+
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__(
+                'This determines where the Minimum Advertised Price should be taken from.'
+            )); ?>
+
+            <input type="hidden" name="selling_format[price_discount_map_attribute]"
+                   id="price_discount_map_attribute"/>
+        </td>
+
+        <td class="remove_bottom_border bottom_border_disabled">
+        </td>
+
+    </tr>
+
+    <tr id="price_discount_map_exposure_tr" class="simple_mode_disallowed">
+
+        <td class="value" style="padding-left: 25px !important;">
+            <label><?php echo $block->__('Exposure'); ?>: </label>
+        </td>
+
+        <td class="value">
+            <select name="selling_format[price_discount_map_exposure_type]" class="select admin__control-select required-entry"
+                    style="width: 80%;">
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_NONE; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_NONE == $formData['price_discount_map_exposure_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('None'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_DURING_CHECKOUT == $formData['price_discount_map_exposure_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('During Checkout'); ?></option>
+                <option
+                    value="<?php echo \Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT; ?>" <?php if (\Ess\M2ePro\Model\Ebay\Template\SellingFormat::PRICE_DISCOUNT_MAP_EXPOSURE_PRE_CHECKOUT == $formData['price_discount_map_exposure_type']): echo ' selected="selected"'; endif; ?>><?php echo $block->__('Pre-Checkout'); ?></option>
+            </select>
+
+            <?php echo $block->getTooltipHtml($block->__(
+                '<strong>None</strong><br/>
+                                    Discounted Price will not be shown during either Pre-Checkout or Checkout. A Buyer will be aware of discount before the payment is done.<br/>
+                                    <strong>During Checkout</strong><br/>
+                                    Discounted Price will be shown on the eBay Checkout flow Page. A Buyer will be aware of discount before the purchase is confirmed.<br/>
+                                    <strong>PreCheckout</strong><br/>
+                                    The information of discounted Price will be available on the Product Page. A Buyer will be aware of discount before he decides to make a purchase by clicking "See Price" link. Discounted Price will be shown in a pop-up window.'
+            )); ?>
+
+        </td>
+
+        <td>
+        </td>
+
+    </tr>
+
+    </tbody>
+    <tfoot>
+    </tfoot>
+</table>

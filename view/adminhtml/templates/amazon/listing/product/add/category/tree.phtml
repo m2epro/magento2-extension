@@ -1,0 +1,233 @@
+<?php
+/* @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode\Category\Tree */
+?>
+
+<div style="margin-top: 11px; width: 86%; padding: 6px 0 6px 10px; background: none repeat scroll 0 0 #FAFAFA; border: 1px solid #D6D6D6;">
+    <?php echo $block->__('Selected Products: ') ?><span id="total_products_count">0</span>
+    <br/>
+    <?php echo $block->__('Selected Categories: ') ?><span id="total_categories_count">0</span>
+
+    <span id="view_categories_summary">
+        [ <a href="javascript:" onclick="saveSelectedProducts(showCategoriesSummary)"><?php echo $block->__('view') ?></a> ]
+    </span>
+</div>
+
+<div class="content-header" style="padding-top: 10px;">
+    <h3 class="icon-head head-categories" style="margin-bottom: 10px;"><?php echo $block->__('Categories'); ?></h3>
+</div>
+
+<div class="categories-side-col">
+    <div class="tree-holder">
+        <div id="tree-div" style="width: 100%; overflow: auto;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    require([
+        'Magento_Ui/js/modal/modal',
+        'extjs/ext-tree-checkbox'
+    ], function (modal) {
+
+        var tree,
+            treeInfo = <?php echo $block->getInfoJson() ?>;
+
+        Ext.EventManager.onDocumentReady(function () {
+
+            var categoryLoader = new Ext.tree.TreeLoader({
+                dataUrl: '<?php echo $block->getLoadTreeUrl(); ?>',
+                createNode: createNodeByConfig,
+                requestMethod: 'GET'
+            });
+
+            categoryLoader.on("beforeload", function (treeLoader, node) {
+                treeLoader.baseParams.category = node.attributes.id;
+            });
+
+            categoryLoader.on("load", function (treeLoader, node, config) {
+                updateInfo();
+                varienWindowOnload();
+            });
+
+            tree = new Ext.tree.TreePanel('tree-div', {
+                animate: true,
+                loader: categoryLoader,
+                enableDD: false,
+                containerScroll: true,
+                rootVisible: false
+            });
+
+            tree.on('click', categoryClick.bind(tree));
+
+            // set the root node
+            var root = new Ext.tree.TreeNode({
+                text: 'root',
+                draggable: false,
+                id: <?php echo $block->getRoot()->getId() ?>
+            });
+
+            tree.setRootNode(root);
+
+            buildCategoryTree(root, <?php echo $block->getTreeJson() ?>);
+
+            // render the tree
+            tree.render();
+            root.expand();
+
+            var currentNode = tree.getNodeById('<?php echo $block->getCurrentNodeId(); ?>') || root.firstChild;
+
+            tree.selectPath(currentNode.getPath());
+
+            updateInfo();
+        });
+
+        createNodeByConfig = function (config)
+        {
+            var node = Object.clone(config);
+
+            if (node.children && !node.children.length) {
+                delete(node.children);
+                node = new Ext.tree.AsyncTreeNode(node);
+            } else {
+                node = new Ext.tree.TreeNode(node);
+            }
+
+            return node;
+        };
+
+        buildCategoryTree = function (parent, config)
+        {
+            if (!config) return;
+
+            if (parent && config && config.length) {
+                for (var i = 0; i < config.length; i++) {
+
+                    var node = createNodeByConfig(config[i]);
+
+                    parent.appendChild(node);
+                    node.loader = node.getOwnerTree().loader;
+
+                    if (config[i].children) {
+                        buildCategoryTree(node, config[i].children);
+                    }
+                }
+            }
+        };
+
+        categoryClick = function (node, event)
+        {
+            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+
+            saveSelectedProducts(function (transport) {
+
+                gridObj.reloadParams['category_change'] = 1;
+                gridObj.reloadParams['current_category_id'] = node.id;
+                gridObj.reload();
+
+            });
+        };
+
+        updateInfo = function ()
+        {
+            $$('span[category_id]').each(function (element) {
+                element.update('(' + treeInfo['category_products'][element.readAttribute('category_id')]);
+            });
+
+            $('total_products_count').update(treeInfo['total_products_count']);
+            $('total_categories_count').update(treeInfo['total_categories_count']);
+
+            if (treeInfo['total_categories_count'] > 0) {
+                $('view_categories_summary').show();
+            } else {
+                $('view_categories_summary').hide();
+            }
+
+        };
+
+        saveSelectedProducts = function (callback)
+        {
+            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+            var massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
+
+            var checkedString = massGridObj['checkedString'];
+            var initialCheckedString = massGridObj['initialCheckedString'];
+
+            massGridObj['checkedString'] = '';
+            massGridObj['initialCheckedString'] = '';
+
+            new Ajax.Request('<?php echo $block->getUrl('*/*/saveProductsToSessionAndGetInfo', array('_current' => true)) ?>', {
+                method: 'post',
+                parameters: {
+                    checked_ids: checkedString,
+                    initial_checked_ids: initialCheckedString
+                },
+                onSuccess: function (transport) {
+                    treeInfo = transport.responseText.evalJSON();
+                    updateInfo();
+                    callback && callback(transport);
+                    gridObj.reloadParams['category_change'] = 0;
+                }
+            });
+        };
+
+        showCategoriesSummary = function ()
+        {
+            var gridObj = window['<?php echo $block->getGridId() ?>JsObject'];
+            var massGridObj = window['<?php echo $block->getGridId() ?>_massactionJsObject'];
+
+            new Ajax.Request('<?php echo $block->getUrl('*/*/getCategoriesSummaryHtml', array('_current' => true)); ?>', {
+                method: 'get',
+                parameters: {
+                    categories_ids: getExpandedCategoriesIds().join(',')
+                },
+                onSuccess: function (transport) {
+                    if (!$('m2epro-popup')) {
+                        $('html-body').insert({bottom: '<div id="m2epro-popup"></div>'});
+                    }
+
+                    $('m2epro-popup').update();
+                    $('m2epro-popup').insert(transport.responseText);
+
+                    var popup = jQuery('#m2epro-popup');
+
+                    modal({
+                        title: '<?php echo $block->__('Categories') ?>',
+                        type: 'slide',
+                        closed: function(){
+                            var url = '<?php echo $block->getUrl('*/*/getTreeInfo', array('_current' => true)); ?>';
+                            new Ajax.Request(url, {
+                                method: 'get',
+                                onSuccess: function (transport) {
+                                    treeInfo = transport.responseText.evalJSON();
+                                    updateInfo();
+                                    massGridObj.unselectAll();
+                                    gridObj.reloadParams['category_change'] = 1;
+                                    gridObj.reload();
+                                    gridObj.reloadParams['category_change'] = 0;
+                                }
+                            });
+                        },
+                        buttons: []
+                    }, popup);
+
+                    popup.modal('openModal');
+                }
+            });
+
+        };
+        
+        closeCategoriesPopup = function()
+        {
+            jQuery('#m2epro-popup').modal('closeModal')
+        };
+
+        getExpandedCategoriesIds = function () {
+            var categoriesIds = [];
+            for (var categoryId in tree.nodeHash) {
+                categoriesIds.push(categoryId);
+            }
+            return categoriesIds;
+        };
+    });
+
+</script>

@@ -1,0 +1,59 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Order\Debug $block */ ?>
+
+<div id="magento_block_debug_information" class="entry-edit box-left" collapseable="no">
+
+    <div class="entry-edit-head">
+        <h4><?php echo $block->__('Store Debug Information');?></h4>
+    </div>
+
+    <div class="fieldset">
+
+        <table cellspacing="0" width="100%" class="form-list">
+            <tbody>
+
+                <tr>
+                    <td class="label">Tax Calculation Method Based On:</td>
+                    <td class="value"><?php echo $block->getData('store_tax_calculation_algorithm') ?></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Tax Calculation Based On:</td>
+                    <td class="value"><?php echo ucfirst($block->getData('store_tax_calculation_based_on')) ?> Address</td>
+                </tr>
+
+                <tr>
+                    <td class="label">Catalog Prices:</td>
+                    <td class="value"><?php echo $block->getData('store_price_includes_tax') == 1 ? 'Including Tax' : 'Excluding Tax' ?></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Shipping Prices:</td>
+                    <td class="value"><?php echo $block->getData('store_shipping_price_includes_tax') == 1 ? 'Including Tax' : 'Excluding Tax' ?></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Store Shipping Tax Class:</td>
+                    <td class="value"><?php echo $block->getData('store_shipping_tax_class') != '' ? $block->getData('store_shipping_tax_class') : 'None' ?></td>
+                </tr>
+
+                <tr>
+                    <td class="label">Store Shipping Tax Rate:</td>
+                    <td class="value"><?php echo $block->getData('store_shipping_tax_rate') ?>%</td>
+                </tr>
+
+                <tr>
+                    <td class="label">Actions:</td>
+                    <td class="value">
+                        <?php $deleteUrl = $block->getUrl('*/*/delete', array('id' => $block->getRequest()->getParam('id'))); ?>
+                        <a href="javascript:void(0);" onclick="if (!confirm('Are you sure?')) return; setLocation('<?php echo $deleteUrl; ?>')">Delete Order</a>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>
+
+<div style="clear: both;"></div>

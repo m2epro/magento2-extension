@@ -1,0 +1,92 @@
+<?php /* @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Manage */?>
+<div id="variation_individual_manage_popup">
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'style' => 'margin-bottom: 15px',
+        'content' => $block->__('On this Tab the specific Magento Variation can be chosen for selling on %component% as an Individual Product.
+        To do so, you need to set values for all the Configurable Attributes that exist in this Magento Variation Product. You can add multiple Variations at the same time. <br/><br/>
+
+        There are two shortcut Options available to speed up the process of Adding Specific Variations to the list:
+        <ul style="margin: 10px 0 0 0 !important; padding-left: 30px !important;list-style-type: decimal;">
+            <li><strong>Generate All Variations</strong> – generates all the unique combinations of Configurable Attributes values of this Magento Variational Product.</li>
+            <li><strong>Generate Non-Existing Variations</strong> – generates all the Variations of this Magento Product that are not presented in this Listing.</li>
+        </ul>',
+        $block->getHelper('Component\Amazon')->getChannelTitle())
+    ])->toHtml(); ?>
+
+    <div style="margin-bottom: 10px">
+
+        <?php echo $block->getChildHtml('variation_manage_generate_all'); ?>
+        &nbsp;
+        <?php echo $block->getChildHtml('variation_manage_generate_unique'); ?>
+
+    </div>
+
+    <form id="variation_manage_form">
+        <div style="overflow-y: auto;">
+
+            <table id="variation_manage" class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0">
+                <thead>
+                    <tr class="headings">
+
+                        <?php foreach ($block->getMagentoVariationsSets() as $attribute => $values) { ?>
+
+                            <th class="data-grid-th" style="width: <?php echo round(97/count($block->getMagentoVariationsSets()));?>%" attribute="<?php echo $attribute; ?>">
+                                <?php echo $attribute; ?>
+                                <span class="required">*</span>
+                            </th>
+
+                        <?php } ?>
+
+                        <th style="width: 3%">&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody id="variation_manage_tbody">
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="<?php echo count($block->getMagentoVariationsSets()) + 1;?>" class="a-right">
+                            <?php echo $block->getChildHtml('add_more_variation_button'); ?>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+
+    </form>
+
+    <style>
+        a.remove-variation {
+            display: inline-block;
+            font-size: 1.6rem;
+            font-family: 'Admin Icons';
+            vertical-align: middle;
+            text-align: center;
+            overflow: hidden;
+            font-weight: normal;
+            line-height: 1;
+            speak: none;
+            text-decoration: none !important;
+        }
+
+
+        a.remove-variation:before {
+            color: #514943;
+            content: '\e632';
+            font-size: 1.5rem;
+        }
+    </style>
+    
+    <script type="text/javascript">
+
+        AmazonListingProductVariationObj.setNeededVariationData(
+            <?php echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
+            <?php echo json_encode($block->getMagentoVariationsTree()); ?>
+        );
+        AmazonListingProductVariationObj.managePopupInit();
+
+    </script>
+    
+</div>

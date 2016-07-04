@@ -1,0 +1,29 @@
+<?php /* @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Variation\Individual\Edit */?>
+<div id="variation_individual_edit_popup">
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'style' => 'margin-bottom: 15px',
+        'content' => $block->__('Magento Variation, to which this Product is linked to, can be changed here.')
+    ])->toHtml(); ?>
+
+    <div style="overflow-y: auto;">
+        <form id="variation_edit_form">
+            <table id="variation_edit_container" class="data-grid data-grid-not-hovered data-grid-not-bordered" cellspacing="0" cellpadding="0">
+
+            </table>
+        </form>
+    </div>
+
+    <script type="text/javascript">
+
+        AmazonListingProductVariationObj.setNeededVariationData(
+            <?php echo json_encode(array_keys($block->getMagentoVariationsSets())); ?>,
+            <?php echo json_encode($block->getMagentoVariationsTree()); ?>
+        );
+        AmazonListingProductVariationObj.editPopupInit(
+            <?php echo json_encode($block->currentVariation); ?>
+        );
+
+    </script>
+
+</div>

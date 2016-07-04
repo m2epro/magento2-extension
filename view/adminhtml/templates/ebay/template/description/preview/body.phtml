@@ -1,0 +1,8 @@
+<?php if (($title = $this->getData('title'))) { ?>
+
+    <div class="entry-edit" id="magento_block_ebay_template_description_preview" style="padding: 5px;">
+        <h2 style="color: maroon; margin-bottom: 5px;"><?php echo Mage::helper('M2ePro')->escapeHtml($title); ?></h2>
+        <hr /><?php echo $this->getData('description'); ?>
+    </div>
+
+<?php } ?>

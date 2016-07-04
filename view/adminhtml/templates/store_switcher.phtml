@@ -1,0 +1,68 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\StoreSwitcher $this */ ?>
+
+<?php if ($websites = $this->getWebsites()): ?>
+
+    <select
+        id="<?php echo $this->getStoreSelectId(); ?>"
+        name="<?php echo $this->getStoreSelectName(); ?>"
+        style="width: 250px;"
+        class="select admin__control-select <?php echo $this->getClass(); ?> <?php if ($this->isRequiredOption()) : ?> M2ePro-store-switcher-validation<?php endif; ?>"
+    >
+
+        <?php if ($this->hasEmptyOption()): ?>
+            <option value="-1"></option>
+        <?php endif; ?>
+
+        <?php if ($this->hasDefaultOption() && $this->isDisplayDefaultStoreModeUp()): ?>
+            <option value="<?php echo $this->getDefaultStoreId(); ?>"><?php echo $this->getDefaultStoreName(); ?></option>
+        <?php endif; ?>
+
+        <?php foreach ($websites as $website): ?>
+            <?php $showWebsite=false; ?>
+            <?php foreach ($website->getGroups() as $group): ?>
+                <?php $showGroup=false; ?>
+                <?php foreach ($this->getStores($group) as $store): ?>
+                    <?php if ($showWebsite == false): ?>
+                        <?php $showWebsite = true; ?>
+                        <optgroup label="<?php echo $website->getName(); ?>"></optgroup>
+                    <?php endif; ?>
+                    <?php if ($showGroup == false): ?>
+                        <?php $showGroup = true; ?>
+                        <optgroup label="&nbsp;&nbsp;&nbsp;<?php echo $group->getName(); ?>">
+                    <?php endif; ?>
+                    <option value="<?php echo $store->getId(); ?>"<?php if($this->getStoreId() == $store->getId()): ?> selected="selected"<?php endif; ?>>&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $store->getName(); ?></option>
+                <?php endforeach; ?>
+                <?php if ($showGroup): ?>
+                    </optgroup>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endforeach; ?>
+
+        <?php if ($this->hasDefaultOption() && $this->isDisplayDefaultStoreModeDown()): ?>
+            <option value="<?php echo $this->getDefaultStoreId(); ?>"><?php echo $this->getDefaultStoreName(); ?></option>
+        <?php endif; ?>
+
+    </select>
+
+    <script type="text/javascript">
+//todo
+//        function switchStore(obj)
+//        {
+//            var storeParam = obj.value ? 'store/'+obj.value + '/' : '';
+//
+//            if(obj.switchParams){
+//                storeParam+= obj.switchParams;
+//            }
+//
+//            <?php //if($this->getUseConfirm()): ?>
+//              $('edit_form').action = "<?php //echo $this->getSwitchUrl(); ?>//"+storeParam;
+//              $('edit_form').submit();
+//            <?php //else: ?>
+//                setLocation('<?php //echo $this->getSwitchUrl(); ?>//'+storeParam);
+//            <?php //endif; ?>
+//        }
+//
+
+    </script>
+
+<?php endif; ?>

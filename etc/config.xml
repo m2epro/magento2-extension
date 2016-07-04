@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <m2eproshipping>
+                <active>1</active>
+                <allowed_methods>m2eproshipping</allowed_methods>
+                <methods>m2eproshipping</methods>
+                <sallowspecific>0</sallowspecific>
+                <model>Ess\M2ePro\Model\Magento\Shipping</model>
+                <name>M2E Pro Shipping</name>
+                <title>M2E Pro Shipping</title>
+                <handling_type>F</handling_type>
+            </m2eproshipping>
+        </carriers>
+        <payment>
+            <m2epropayment>
+                <active>1</active>
+                <model>Ess\M2ePro\Model\Magento\Payment</model>
+                <order_status>pending</order_status>
+                <title>M2E Pro Payment</title>
+                <allowspecific>0</allowspecific>
+                <sort_order>1</sort_order>
+            </m2epropayment>
+        </payment>
+    </default>
+</config>

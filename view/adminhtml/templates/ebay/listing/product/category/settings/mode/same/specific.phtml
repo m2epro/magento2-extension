@@ -1,0 +1,10 @@
+<?php echo $this->getChildHtml('view_header'); ?>
+
+<?php if (!is_null($this->_selectedCategoryPath)): ?>
+    <div class="m2epro-box-style listing-view-header">
+        <span style="font-size: 1em; font-weight: bold;"><?php echo $block->__('eBay Category'); ?>:</span>&nbsp;&nbsp;&nbsp;
+        <span style="font-size: 1.1em"><?php echo $this->_selectedCategoryPath; ?></span>
+    </div>
+<?php endif; ?>
+
+<?php echo $this->getChildHtml('category_specific'); ?>

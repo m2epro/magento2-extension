@@ -1,0 +1,66 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Switcher $block */
+?>
+
+<?php if ($items = $block->getItems()) { ?>
+
+    <p class="switcher">
+
+        <label for="<?php echo $block->getParamName(); ?>_switcher"><?php echo $block->getLabel(); ?></label>
+
+        <select id="<?php echo $block->getParamName(); ?>_switcher" name="<?php echo $block->getParamName(); ?>_switcher" onchange="return <?php echo $block->getSwitchCallback() ?>(this);" class="admin__control-select">
+            <?php if ($block->hasDefaultOption()) { ?>
+                <option value="<?php echo $block->getDefaultOptionValue(); ?>"><?php echo $block->getHelper('Data')->escapeHtml($block->getDefaultOptionName()); ?></option>
+            <?php } ?>
+
+            <?php foreach ($items as $item) { ?>
+
+                <?php if (count($items) > 1) { ?>
+                    <optgroup label="<?php echo $item['label'] ?>">
+                <?php } ?>
+
+                <?php foreach ($item['value'] as $nestedItem) { ?>
+                    <option value="<?php echo $nestedItem['value'] ?>" <?php if ($block->getSelectedParam() == $nestedItem['value']) echo ' selected="selected"' ?>><?php echo $nestedItem['label'] ?></option>
+                <?php } ?>
+
+                <?php if (count($items) > 1) { ?>
+                    </optgroup>
+                <?php } ?>
+
+            <?php } ?>
+        </select>
+
+    </p>
+
+    <script type="text/javascript">
+
+        <?php echo $block->getSwitchCallback() ?> = function(obj)
+        {
+            var switchUrl        = '<?php echo $block->getHelper('Data')->escapeJs($block->getSwitchUrl()); ?>';
+            var paramName        = '<?php echo $block->getHelper('Data')->escapeJs($block->getParamName()); ?>';
+            var paramPlaceHolder = '<?php echo $block->getHelper('Data')->escapeJs($block->getParamPlaceHolder()); ?>';
+
+            if (obj.value == '<?php echo $block->getDefaultOptionValue(); ?>') {
+                switchUrl = switchUrl.replace(paramName +'/'+ paramPlaceHolder +'/', '');
+            } else {
+                switchUrl = switchUrl.replace(paramPlaceHolder, obj.value);
+            }
+
+            <?php if ($block->getUseConfirm()) { ?>
+
+                if (confirm('<?php echo $block->getHelper('Data')->escapeJs($block->getConfirmMessage()) ?>')){
+                    setLocation(switchUrl);
+                    return true;
+                } else {
+                    obj.value = '<?php echo $block->getHelper('Data')->escapeJs($block->getSelectedParam()); ?>';
+                }
+                return false;
+
+            <?php } else { ?>
+                setLocation(switchUrl);
+            <?php } ?>
+        }
+
+    </script>
+
+<?php } ?>

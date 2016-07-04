@@ -1,0 +1,32 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Recent $this */
+?>
+
+<div id="chooser_recent">
+    <table id="chooser_recent_table">
+
+        <?php if (count($this->getCategories()) <= 0) : ?>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <strong><?php echo $this->__('No recently used Categories'); ?></strong>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+        <?php foreach ($this->getCategories() as $category) : ?>
+
+            <?php $nodeId       = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($category['browsenode_id'])); ?>
+            <?php $categoryPath = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($category['path'])); ?>
+
+            <tr>
+                <td>
+                    <?php echo $category['path'] .' ('.$category['browsenode_id'].')'; ?>
+                </td>
+                <td>
+                    <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.recentClickCategory('<?php echo $nodeId; ?>','<?php echo $categoryPath; ?>');"><?php echo $this->__('Select'); ?></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+
+    </table>
+</div>

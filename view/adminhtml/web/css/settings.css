@@ -1,0 +1,63 @@
+#tabs_container .admin__fieldset > .field-info_container > .admin__field-control {
+    width: auto;
+    margin: 0 auto !important;
+}
+
+#tabs_container .field-restore_block_notices > div {
+    margin-left: 35% !important;
+}
+
+#tabs_container #associated_email,
+#tabs_container #ip_field {
+    display: inline-block;
+}
+
+#tabs_container #ip_field {
+    margin-right: 1.5em;
+}
+
+#tabs_container .field-license_buttons .admin__field-control  {
+    margin-left: 20% !important;
+}
+
+#tabs_container #configuration_settings_tabs_synchronization_content form,
+#tabs_container #configuration_settings_tabs_main_content form {
+    margin-top: -20px;
+}
+
+#tabs_container #configuration_settings_tabs_interface_content,
+#tabs_container #configuration_settings_tabs_magento_inventory_content,
+#tabs_container #configuration_settings_tabs_logs_clearing_content,
+#tabs_container #configuration_settings_tabs_license_content {
+    padding-top: 0;
+
+}
+#tabs_container #configuration_settings_tabs_interface_content #global_messages,
+#tabs_container #configuration_settings_tabs_magento_inventory_content #global_messages,
+#tabs_container #configuration_settings_tabs_logs_clearing_content #global_messages,
+#tabs_container #configuration_settings_tabs_license_content #global_messages {
+    margin-right: -20px;
+    margin-bottom: 20px;
+}
+
+#configuration_settings_tabs_logs_clearing_content select + .addafter .m2epro-field-tooltip {
+    width: auto;
+    line-height: 1;
+    margin-right: 20px;
+}
+
+#configuration_settings_tabs_logs_clearing_content select + .addafter .m2epro-field-tooltip .admin__field-tooltip-action {
+    margin-left: 0;
+}
+
+#configuration_settings_tabs_logs_clearing_content select + .addafter .admin__field-tooltip .admin__field-tooltip-content:after,
+#configuration_settings_tabs_logs_clearing_content select + .addafter .admin__field-tooltip .admin__field-tooltip-content:before {
+    right: 66px;
+}
+
+#modal_popup .field-new_license_key {
+    margin: 2em 0 0;
+}
+#modal_popup .field-new_license_key input[type="text"].input-text {
+    width: 100%;
+}

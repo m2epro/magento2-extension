@@ -1,0 +1,35 @@
+<?php
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Search\Main */
+?>
+<div id="productSearch_pop_up_content" style="display: none;">
+    <div class="hor-scroll" style="margin-bottom: 0;">
+
+        <div id="productSearch_error_block" class="error-msg" style="display:none; margin-bottom: 10px;">
+            <div style="margin: 10px 0 10px 35px">
+                <div id="productSearch_error_message" style="font-weight:bold"></div>
+            </div>
+        </div>
+
+        <div id="productSearch_form" style="float:none; margin-bottom:30px;" >
+            <label for="query"><?php echo $this->__('Enter Product Title, ASIN, ISBN, UPC, EAN or Keywords'); ?></label>
+            <input id="query" type="text" name="query" class="input-text admin__control-text" style="margin: 0 10px 0 10px; width: 300px" />
+
+            <?php echo $this->getChildHtml('productSearch_submit_button'); ?>&nbsp;&nbsp;
+            <a href="javascript:void(0)" id="productSearch_reset_button"><?php echo $this->__('Reset'); ?></a>
+        </div>
+        <div id="suggested_asin_grid_help_block" style="display: none">
+            <?php echo $block->createBlock('HelpBlock')->setData([
+                'style' => 'margin-bottom: 10px;',
+                'no_collapse' => true,
+                'no_hide' => true,
+                'content' => $this->__('Automatic ASIN/ISBN Search was performed according to the Listing Search Settings.
+        The results of the Search are displayed in the Grid below. You can Assign appropriate ASIN/ISBN to the selected Magento Product or "Clear Search Results".')
+            ])->toHtml() ?>
+        </div>
+
+        <div id="productSearch_grid">
+        </div>
+
+        <div class="clear"></div>
+    </div>
+</div>

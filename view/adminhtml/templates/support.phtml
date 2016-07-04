@@ -1,0 +1,48 @@
+<div class="box-left" style="width: calc((100% / 2) - 10px); float: left;">
+    <div id="support_system_requirements_container" class="entry-edit table_container">
+
+        <div class="entry-edit-head">
+            <span class="block_title"><?php echo $this->__('System Requirements'); ?></span>
+        </div>
+
+        <div class="fieldset">
+            <div class="hor-scroll">
+                <?php echo $this->getChildHtml('system_requirements'); ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="box-right" style="width: calc((100% / 2) - 10px); float: right">
+    <div id="support_cron_info_container" class="entry-edit table_container">
+
+        <div class="entry-edit-head">
+            <span class="block_title"><?php echo $this->__('Cron Info'); ?></span>
+        </div>
+
+        <div class="fieldset">
+            <div class="hor-scroll">
+                <?php echo $this->getChildHtml('cron_info'); ?>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div style="clear: both;"></div>
+
+<?php echo $this->getChildHtml('help'); ?>
+
+<div id="support_input_query_container">
+    <input onkeypress="SupportObj.keyPressQuery(event)" type="text" placeholder="<?php echo $this->__('Enter keywords to search'); ?>" name="query" id="query">
+    <?php echo $this->getChildHtml('user_voice_search'); ?>
+    <?php if ($this->getHelper('Module\Support')->isTypePremium()) : ?>
+        <span style="font-weight: bold; padding-left: 10px;"><?php echo $this->__('or'); ?></span>
+        <?php echo $this->getChildHtml('force_show_contact_support_button'); ?>
+    <?php endif; ?>
+</div>
+
+<div id="support_other_container" <?php if (!$this->isFromError): echo 'style="display: none;"'; endif; ?>>
+    <?php echo $this->getChildHtml('tabs'); ?>
+    <div id="support_tab_container"></div>
+</div>

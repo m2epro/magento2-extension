@@ -1,0 +1,23 @@
+/* price info */
+/* ================================================ */
+.m2epro-field-tooltip-price-info.admin__field-tooltip .admin__field-tooltip-action:before {
+    font-size: 1.5rem;
+}
+
+.m2epro-field-tooltip-price-info a.admin__field-tooltip-action:before {
+    content: '\e61a';
+    margin-top: -12px;
+}
+
+.m2epro-field-tooltip-price-info.admin__field-tooltip .admin__field-tooltip-action {
+    margin-left: -8px;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.m2epro-field-tooltip-price-info.admin__field-tooltip .admin__field-tooltip-content {
+    bottom: 40px;
+    right: -37px;
+    width: 200px;
+}
+/* ================================================ */

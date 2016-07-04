@@ -1,0 +1,170 @@
+<?php
+    /** @var $this \Magento\Framework\View\TemplateEngine\Php  */
+    /** @var $block \Ess\M2ePro\Block\Adminhtml\System\Config\Tab\License */
+?>
+
+<div class="accordion">
+    <div class="entry-edit form-inline">
+        <div class="entry-edit-head admin__collapsible-block">
+            <a id="general-head" href="#" onclick="Fieldset.toggleCollapse('general'); return false;">
+                <?php echo __('General'); ?>
+            </a>
+        </div>
+
+        <fieldset id="general" class="config admin__collapsible-block">
+            <table cellspacing="0" class="form-list">
+                <colgroup class="label"></colgroup>
+                <colgroup class="value"></colgroup>
+                <colgroup class="scope-label"></colgroup>
+                <colgroup class=""></colgroup>
+                <tbody>
+                    <tr>
+                        <td class="label">
+                            <label><?php echo __('License Key') ?></label>
+                        </td>
+                        <td class="value">
+                            <span class="table-str-value-span">
+                                <?php echo $this->key; ?>
+                            </span>
+                        </td>
+                        <td class="scope-label">
+                            <?php if (!$this->status): ?>
+                                &nbsp;<span style="color: red;">(<?php echo __('Suspended') ?>)</span>
+                            <?php endif; ?>
+                        </td>
+                        <td class=""></td>
+                    </tr>
+
+                    <?php if ($this->licenseData['info']['email'] != '') { ?>
+                        <tr>
+                            <td class="label">
+                                <label><?php echo __('Associated Email'); ?>: </label>
+                            </td>
+                            <td class="value">
+                                <span class="table-str-value-span"><?php echo $this->licenseData['info']['email']; ?></span>
+                                <p class="note">
+                                    <span>
+                                        <?php echo __('This e-mail address associated to your License. <br/>
+                                        Also you can use this e-mail to enter a <a href="#TODO_LINK">clients portal</a>'); ?>
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                    <?php } ?>
+
+                    <?php if ($this->key != '') { ?>
+                        <tr>
+                            <td class="label"></td>
+                            <td class="value">
+                                <a href="#TODO_LINK" target="_blank"><?php echo __('Manage License'); ?></a>
+                            </td>
+                        </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <?php if ($this->licenseData['domain'] != '' || $this->licenseData['ip'] != '') { ?>
+
+            <div class="entry-edit-head admin__collapsible-block">
+                <a id="license_valid-head" href="#" onclick="Fieldset.toggleCollapse('license_valid'); return false;">
+                    <?php echo __('Valid Location'); ?>
+                </a>
+            </div>
+
+            <fieldset id="license_valid" class="config admin__collapsible-block">
+                <table cellspacing="0" class="form-list">
+                    <colgroup class="label"></colgroup>
+                    <colgroup class="value"></colgroup>
+                    <colgroup class="scope-label"></colgroup>
+                    <colgroup class=""></colgroup>
+                    <tbody>
+                        <?php if ($this->licenseData['domain'] != '') { ?>
+                            <tr>
+                                <td class="label">
+                                    <label><?php echo __('Domain'); ?>:</label>
+                                </td>
+                                <td class="value">
+                                    <span class="table-str-value-span" <?php echo $this->licenseData['valid']['domain'] ? '' : 'style="color: red;"'?>>
+                                        <?php echo $this->licenseData['domain']; ?>
+                                    </span>
+                                </td>
+                                <td class="scope-label">
+                                    <?php if (!$this->licenseData['valid']['domain'] &&
+                                        !is_null($this->licenseData['connection']['domain'])): ?>
+                                        <span> (<?php echo __('Your Domain') . ': ' . $block->escapeHtml($this->licenseData['connection']['domain']);?>)</span>
+                                    <?php endif;?>
+                                </td>
+                                <td class=""></td>
+                            </tr>
+                        <?php } ?>
+
+                        <?php if ($this->licenseData['ip'] != '') { ?>
+                            <tr>
+                                <td class="label">
+                                    <label><?php echo __('IP(s)'); ?>: </label>
+                                </td>
+                                <td class="value">
+                                    <span class="table-str-value-span" <?php echo $this->licenseData['valid']['ip'] ? '' : 'style="color: red;"'?>>
+                                        <?php echo $this->licenseData['ip']; ?>
+                                    </span>
+
+                                    <?php if (!$this->licenseData['valid']['ip'] &&
+                                        !is_null($this->licenseData['connection']['ip'])): ?>
+                                        <span> (<?php echo __('Your IP') . ': ' . $block->escapeHtml($this->licenseData['connection']['ip']);?>)</span>
+                                    <?php endif;?>
+                                </td>
+                                <td class="scope-label">
+                                    <?php echo $block->getChildHtml('refresh_status'); ?>
+                                </td>
+                                <td class=""></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            </fieldset>
+
+        <?php } ?>
+
+        <div class="entry-edit-head admin__collapsible-block">
+            <a id="configuration_license-head" href="#" onclick="Fieldset.toggleCollapse('configuration_license'); return false;">
+                <?php $title = $this->key == '' ? 'General' : 'Additional';?>
+                <?php echo __($title);?>
+            </a>
+        </div>
+
+        <fieldset id="configuration_license" class="config admin__collapsible-block">
+            <table cellspacing="0" class="form-list">
+                <colgroup class="label"></colgroup>
+                <colgroup class="value"></colgroup>
+                <colgroup class="scope-label"></colgroup>
+                <colgroup class=""></colgroup>
+                <tbody>
+                    <tr>
+                        <td class="label">
+                        </td>
+                        <td class="value">
+                            <?php echo $block->getChildHtml('new_license'); ?>&nbsp;
+                            <?php echo $block->getChildHtml('change_license'); ?>
+                        </td>
+                        <td class="scope-label">
+                        </td>
+                        <td class=""></td>
+                    </tr>
+                </tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+
+<script type="text/javascript">
+require(["prototype"], function(){
+    $('general-head').collapsed = 0;
+    $('license_valid-head').collapsed = 0;
+    $('configuration_license-head').collapsed = 0;
+
+    Fieldset.applyCollapse("general");
+    Fieldset.applyCollapse("license_valid");
+    Fieldset.applyCollapse("configuration_license");
+});
+</script>

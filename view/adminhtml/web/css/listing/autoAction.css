@@ -1,0 +1,116 @@
+#block-title-top {
+    margin: 0 0 20px 0;
+    overflow: hidden;
+}
+
+#block-content-wrapper input[name='auto_mode'] + label {
+    font-weight: bold;
+}
+
+#block-content-wrapper input[name='auto_mode'] + label:before {
+    margin-right: 1.5rem;
+    margin-top: 2px;
+}
+
+#block-content-wrapper [id^='note_'] {
+    margin: 0.5rem 3rem 1rem;
+}
+.breadcrumb {
+    width: 33.1%;
+}
+
+.left {
+    float: left;
+}
+
+#listingAutoActionModeCategoryGroupGrid table tr.headings th {
+    padding: 1px 4px 0 4px;
+}
+
+#listingAutoActionModeCategoryGroupGrid table tr.filter th, #listingAutoActionModeCategoryGroupGrid table td {
+    padding: 5px;
+}
+
+#listingAutoActionModeCategoryGroupGrid td.label {
+    width: 100px;
+}
+
+#magento_block_ebay_category_specific_item_specifics table td, #magento_block_ebay_category_specific_item_specifics table th {
+    padding: 5px;
+}
+
+#magento_block_ebay_category_specific_item_specifics td.label, #magento_block_ebay_category_specific_item_specifics td.label {
+    width: 100px;
+}
+
+#listingAutoActionModeCategoryGroupGrid table tr.headings th {
+    padding: 1px 4px 0 4px;
+}
+
+#listingAutoActionModeCategoryGroupGrid table tr.filter th, #listingAutoActionModeCategoryGroupGrid table td {
+    vertical-align: middle;
+    padding: 5px;
+}
+
+#listingAutoActionModeCategoryGroupGrid td.label {
+    width: 100px;
+}
+
+#category_tree_container:hover {
+    overflow: auto;
+}
+
+#category_tree_container {
+    float: left;
+    width: 230px;
+    max-height: 350px;
+    overflow: hidden;
+    border-right: 1px solid #e0e0e0;
+}
+
+#category_form_container {
+    float: left;
+    padding: 0 10px;
+}
+
+#custom_listing_auto_action_mode_category.admin__field-value {
+    padding-top: 0px;
+}
+
+#magento_block_ebay_category_specific_item_specifics table tr.headings th {
+    padding: 1px 4px 0 4px;
+}
+
+#magento_block_ebay_category_specific_item_specifics table tr.filter th, #magento_block_ebay_category_specific_item_specifics table td {
+    padding: 5px;
+}
+
+#magento_block_ebay_category_specific_item_specifics td.label, #magento_block_ebay_category_specific_item_specifics td.label {
+    width: 100px;
+}
+
+#category_modal_auto_action .field-custom_listing_auto_action_mode_category > .admin__field-control {
+    width: 100%;
+}
+
+#category_modal_auto_action #listingAutoActionModeCategoryGroupGrid .grid-listing-column-action {
+    width: 20%;
+}
+
+#category_form_container_field .admin__field-control {
+    width: calc( (100%) * 0.64444444 - 30px );
+}
+
+#reset_button_wrapper .m2epro-field-tooltip {
+    width: auto;
+    margin-top: 0;
+}
+
+#reset_button_wrapper .admin__field-tooltip-content {
+    right: auto;
+}
+
+#reset_button_wrapper .admin__field-tooltip-content:after,
+#reset_button_wrapper .admin__field-tooltip-content:before {
+    right: 90.2%;
+}

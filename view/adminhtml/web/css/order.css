@@ -1,0 +1,79 @@
+table.form-list td.label {
+    width: 275px;
+}
+
+table.order-info .label{
+    vertical-align: baseline;
+}
+
+table.order-info tr{
+    line-height: 35px;
+}
+
+.main-col>.col-m-6:nth-child(even)
+{
+    padding-left: 5px;
+}
+
+.main-col>.col-m-6:nth-child(odd)
+{
+    padding-right: 5px;
+}
+
+.grid-listing-column-action select {
+    width: 40px;
+}
+
+/* grid */
+
+.filter_block .m2epro-field-tooltip {
+    margin-top: 7px;
+}
+
+.filter_block p {
+    float: left;
+    margin-bottom: 0;
+}
+
+.filter_block p:not(:first-child) {
+    margin-left: 40px;
+}
+
+.filter_block select {
+    margin-left: 10px;
+}
+.page-main-actions._hidden .filter_block {
+    display: none;
+}
+
+/* order view */
+
+.m2epro-order-totals {
+    padding: 30px;
+    background: #fffbbb;
+    text-align: right;
+}
+.m2epro-order-totals .form-list td.label {
+    width: auto;
+}
+.m2epro-order-totals table {
+    width: 100%;
+}
+
+.grid-listing-column-product_id {
+    width: 100px;
+}
+.grid-listing-column-title {
+    width: 500px;
+}
+
+.grid-listing-column-products {
+    width: 650px;
+}
+.grid-listing-column-create_date {
+    width: 175px;
+}
+.grid-listing-column-message{
+    width: 260px;
+    word-break: break-word;
+}

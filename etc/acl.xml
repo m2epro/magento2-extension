@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+
+                <resource id="Ess_M2ePro::ebay" title="eBay Integration (Beta)" sortOrder="31">
+                    <resource id="Ess_M2ePro::ebay_listings" title="Listings" sortOrder="1">
+                        <resource id="Ess_M2ePro::ebay_listings_m2epro" title="M2E Pro" sortOrder="1" />
+                        <resource id="Ess_M2ePro::ebay_listings_other" title="3rd Party" sortOrder="2" />
+                        <resource id="Ess_M2ePro::ebay_listings_search" title="Search Products" sortOrder="3" />
+                        <resource id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" sortOrder="4" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::ebay_sales" title="Sales" sortOrder="2">
+                        <resource id="Ess_M2ePro::ebay_sales_orders" title="Orders" sortOrder="1" />
+                        <resource id="Ess_M2ePro::ebay_sales_logs" title="Logs &#38; Events" sortOrder="2" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::ebay_configuration" title="Configuration" sortOrder="3">
+                        <resource id="Ess_M2ePro::ebay_configuration_accounts" title="Accounts" sortOrder="1" />
+                        <resource id="Ess_M2ePro::ebay_configuration_marketplaces" title="Marketplaces" sortOrder="2" />
+                        <resource id="Ess_M2ePro::ebay_configuration_templates" title="Policies" sortOrder="3" />
+                        <resource id="Ess_M2ePro::ebay_configuration_settings" title="Settings" sortOrder="4" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::ebay_help_center" title="Help Center" sortOrder="4">
+                        <resource id="Ess_M2ePro::ebay_help_center_documentation" title="Documentation" sortOrder="1" />
+                        <resource id="Ess_M2ePro::ebay_help_center_ideas_workshop" title="Ideas Workshop" sortOrder="2" />
+                        <resource id="Ess_M2ePro::ebay_help_center_knowledge_base" title="Knowledge Base" sortOrder="3" />
+                        <resource id="Ess_M2ePro::ebay_help_center_community_forum" title="Community Forum" sortOrder="4" />
+                        <resource id="Ess_M2ePro::ebay_help_center_for_developers" title="For Developers" sortOrder="5" />
+                        <resource id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" sortOrder="6" />
+                    </resource>
+                </resource>
+
+                <resource id="Ess_M2ePro::amazon" title="Amazon Integration (Beta)" sortOrder="32">
+                    <resource id="Ess_M2ePro::amazon_listings" title="Listings" sortOrder="1">
+                        <resource id="Ess_M2ePro::amazon_listings_m2epro" title="M2E Pro" sortOrder="1" />
+                        <resource id="Ess_M2ePro::amazon_listings_other" title="3rd Party" sortOrder="2" />
+                        <resource id="Ess_M2ePro::amazon_listings_search" title="Search Products" sortOrder="3" />
+                        <resource id="Ess_M2ePro::amazon_listings_logs" title="Logs &#38; Events" sortOrder="4" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::amazon_sales" title="Sales" sortOrder="2">
+                        <resource id="Ess_M2ePro::amazon_sales_orders" title="Orders" sortOrder="1" />
+                        <resource id="Ess_M2ePro::amazon_sales_logs" title="Logs &#38; Events" sortOrder="2" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::amazon_configuration" title="Configuration" sortOrder="3">
+                        <resource id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" sortOrder="1" />
+                        <resource id="Ess_M2ePro::amazon_configuration_marketplaces" title="Marketplaces" sortOrder="2" />
+                        <resource id="Ess_M2ePro::amazon_configuration_templates" title="Policies" sortOrder="3" />
+                        <resource id="Ess_M2ePro::amazon_configuration_settings" title="Settings" sortOrder="4" />
+                    </resource>
+
+                    <resource id="Ess_M2ePro::amazon_help_center" title="Help Center" sortOrder="4">
+                        <resource id="Ess_M2ePro::amazon_help_center_documentation" title="Documentation" sortOrder="1" />
+                        <resource id="Ess_M2ePro::amazon_help_center_ideas_workshop" title="Ideas Workshop" sortOrder="2" />
+                        <resource id="Ess_M2ePro::amazon_help_center_knowledge_base" title="Knowledge Base" sortOrder="3" />
+                        <resource id="Ess_M2ePro::amazon_help_center_community_forum" title="Community Forum" sortOrder="4" />
+                        <resource id="Ess_M2ePro::amazon_help_center_for_developers" title="For Developers" sortOrder="5" />
+                        <resource id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" sortOrder="6" />
+                    </resource>
+                </resource>
+
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Ess_M2ePro::system_configuration" title="Multi Channels" sortOrder="450" />
+                        </resource>
+                    </resource>
+                </resource>
+
+            </resource>
+        </resources>
+    </acl>
+</config>

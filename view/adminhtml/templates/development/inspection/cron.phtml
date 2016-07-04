@@ -1,0 +1,119 @@
+<table>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Type'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->cronCurrentRunner; ?>
+        </td>
+    </tr>
+
+    <?php if ($this->getHelper('Module\Cron')->isRunnerService() && !$this->getData('is_support_mode')) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Service Auth Key'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $this->cronServiceAuthKey; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Last Run'); ?>: </label>
+        </td>
+        <?php
+            $style = '';
+            if ($this->cronIsNotWorking) {
+                $style = ' style="color: red"';
+            }
+        ?>
+        <td class="value">
+            <span<?php echo $style; ?>><?php echo $this->cronLastRunTime ?></span>
+            <?php
+                if ($this->cronIsNotWorking) {
+                    echo ' (' . $this->__('not working') . ')';
+                }
+            ?>
+        </td>
+    </tr>
+
+    <?php if (!$this->getData('is_support_mode') && $this->isServiceCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Service Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $this->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if (!$this->getData('is_support_mode') && $this->isMagentoCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Magento Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $this->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($this->isShownRecommendationsMessage()) : ?>
+        <tr>
+            <td class="label" colspan="2" style="font-weight: 600;">
+                <span><?php echo $this->__('We recommend to set up your Cron Job to be run every 1 minute (e.g. * * * * *).'); ?></span>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('PHP Command'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $this->cronPhp; ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('GET Command'); ?>: </label>
+            </td>
+            <td class="value">
+                <?php echo $this->cronGet; ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($this->isShownServiceDescriptionMessage()) : ?>
+        <tr>
+            <td class="label" colspan="2" style="width: 600px">
+                <strong><?php echo $this->__('What is the Cron Type Service?'); ?></strong>
+            </td>
+        </tr>
+        <tr>
+            <td class="label" colspan="2" style="width: 600px">
+                <?php echo $this->__(
+                    'It is M2E Pro Cron System where you were registered automatically during the Extension Installation.
+                    No additional Settings are required. Our Service does HTTP calls to your Magento from IP address: <b>%server_ip%</b>.',
+                    $this->cronServiceIp
+                ); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if (!$this->getData('is_support_mode')) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Cron Schedule Table'); ?>: </label>
+            </td>
+            <td class="value">
+                <a href="<?php echo $this->getUrl('*/development_inspection/cronScheduleTable'); ?>" target="_blank"><?php echo $this->__('Show') ?></a>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+</table>

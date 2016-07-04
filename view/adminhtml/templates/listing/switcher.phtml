@@ -1,0 +1,71 @@
+<style type="text/css">
+    #listing_switcher_add_new_drop_down ul li {
+        padding: 2px 5px 2px 10px !important;
+    }
+    #listing-profile-title_drop_down ul li {
+        font-size: 12px !important;
+    }
+</style>
+<div id="listing-switcher-add-new" style="display: none;">
+    <ul>
+        <li style="background: #eaeaea;">
+            <a href="<?php echo $this->getUrl($this->getAddListingUrl()) ?>">
+                <span style="font-weight: bold; font-size: 12px; font-style: italic; color: #ea7601;">+ <?php echo Mage::helper('M2ePro')->__('Add New Listing') ?></span>
+            </a>
+        </li>
+    </ul>
+</div>
+<script type="text/javascript">
+    M2ePro.addListingVisible = false;
+
+    Event.observe(window, 'load', function() {
+        $('listing-profile-title').observe('click', function() {
+            var dropDown = $('listing-profile-title_drop_down');
+            var title = $('listing-profile-title');
+
+            if ($('listing_switcher_add_new_drop_down')) {
+                $('listing_switcher_add_new_drop_down').remove();
+            }
+
+            if (M2ePro.addListingVisible) {
+                M2ePro.addListingVisible = false;
+                return;
+            }
+
+            var offset = title.cumulativeOffset();
+
+            var width = dropDown ? dropDown.style.width : '200px';
+            var left  = offset.left + 'px';
+            var top   = (offset.top + title.getHeight()) + 'px';
+
+            var addNewContent = $('listing-switcher-add-new').innerHTML;
+            var addNew = '<div style="overflow: auto; display: block; position: absolute; width: %width%; left: %left%; top: %top%;" id="listing_switcher_add_new_drop_down" class="drop_down_menu">%content%</div>'
+                .replace('%width%', width)
+                .replace('%left%', left)
+                .replace('%top%', top)
+                .replace('%content%', addNewContent);
+
+            if (dropDown) {
+                dropDown.setStyle({
+                    top: (parseInt(top) + 30) + 'px'
+                });
+            }
+
+            var observer = function() {
+                $$('.drop_down_menu').each(Element.hide);
+                $(document).stopObserving('click', observer);
+                M2ePro.addListingVisible = false;
+            };
+
+            setTimeout(function() {
+                $(document).observe('click', observer);
+            }, 100);
+
+            title.insert({
+                after: addNew
+            });
+
+            M2ePro.addListingVisible = true;
+        });
+    });
+</script>

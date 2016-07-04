@@ -1,0 +1,146 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Chooser\Edit $block */
+
+    $selectedCategory = $this->getSelectedCategory();
+?>
+
+<style>
+
+    .m2epro-tabs-horizontal + div .ui-tabs-panel {
+        margin-top: 10px;
+    }
+
+    #selected_category_container {
+        border: 1px solid #e3e3e3;
+        background-color: #ffffff;
+        margin-bottom: 30px;
+    }
+
+    #selected_category_container table td:first-child {
+        padding: 1em .5em 1em 1.8rem;
+    }
+
+    #chooser_browser {
+        white-space: nowrap;
+        overflow: hidden;
+        overflow-x: auto;
+    }
+
+    #chooser_tabs_container {
+        height: 250px;
+    }
+
+    #chooser_search_results {
+        height: 239px;
+        overflow: auto;
+        margin-top: 16px;
+        border: 1px solid #e3e3e3;
+    }
+
+    #chooser_search_input_container {
+        height: 23px;
+    }
+
+    #chooser_search_input_container > button:nth-child(2) {
+        margin-right: -0.85em;
+    }
+
+    #query {
+        width: 520px;
+        box-sizing: border-box;
+        border: 1px solid #adadad;
+        border-radius: 1px;
+        padding: 4px;
+        color: #303030;
+        background-color: #fff;
+        font-weight: 500;
+        font-size: 14px;
+        height: 33px;
+    }
+
+    #search_results_table,
+    #chooser_attributes_table {
+        width: 100%;
+    }
+    #search_results_table tr:last-child td,
+    #chooser_attributes_table tr:last-child td {
+        border-bottom: 1px solid #fff;
+    }
+
+    #search_results_table td,
+    #chooser_attributes_table td {
+        padding: 1em 2.5em !important;
+        border-bottom: 1px solid #e3e3e3;
+        background-color: #f8f8f8;
+    }
+
+    #chooser_recent {
+        max-height: 240px;
+        border: 1px solid #e3e3e3;
+        overflow: auto;
+    }
+
+    #chooser_buttons_container {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        padding: 15px 24px;
+    }
+
+    #chooser_recent_table {
+        width: 100%;
+    }
+
+    #chooser_recent_table td {
+        padding: 1em 1.8rem !important;
+        border-bottom: 1px solid #e3e3e3;
+        background-color: #f8f8f8;
+    }
+
+    #chooser_recent_table tr:last-child td {
+        border-bottom: 1px solid #f8f8f8;
+    }
+
+    .category-children-block {
+        display: inline-block;
+        margin-left: 10px;
+    }
+
+    tr.search_results_results_tr td {
+        padding: 2px !important;
+    }
+
+    #chooser_attributes {
+        max-height: 300px;
+        overflow: auto;
+        border: 1px solid #e3e3e3;
+    }
+</style>
+
+<div id="selected_category_container">
+    <table>
+        <tr>
+            <td style="vertical-align: middle;">
+                <strong id="category_title_container">
+                    <?php echo $this->getCategoryTitle(); ?>
+                </strong>
+            </td>
+            <td style="vertical-align: middle; padding-left: 5px">
+                <span id="selected_category_path">
+                    <?php if (!empty($selectedCategory)): ?>
+                        <?php echo $selectedCategory['path']; ?>
+                    <?php else: ?>
+                        <span style="color: grey; font-style: italic"><?php echo $this->__('Not Selected'); ?></span>
+                    <?php endif; ?>
+                </span>
+            </td>
+            <td style="width: 60px; vertical-align: middle; padding-left: 15px">
+                <a href="javascript:void(0)" id="category_reset_link" <?php if (empty($selectedCategory)): ?>style="display: none"<?php endif; ?> onclick="EbayListingProductCategorySettingsChooserObj.unSelectCategory()"><?php echo $block->__('Reset') ?></a>
+            </td>
+
+        </tr>
+    </table>
+</div>
+
+<input type="hidden" id="category_type" value="<?php echo $this->getCategoryType(); ?>">
+<input type="hidden" id="category_validation" value="" class="required-entry">

@@ -1,0 +1,17 @@
+/* General Styles */
+/* ================================================ */
+
+.area_wrapper {
+    position: absolute !important;
+    z-index: 300 !important;
+    opacity: 0.4 !important;
+    filter: alpha(opacity=40) !important;
+    background-color: #f8fcfd !important;
+
+    width: 100%;
+    height: 100%;
+    left: 0px;
+    top: 0px;
+}
+
+/* ================================================ */

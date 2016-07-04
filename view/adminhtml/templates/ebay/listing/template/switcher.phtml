@@ -1,0 +1,114 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $block */
+?>
+
+<style>
+    .template-nick-td .m2epro-field-tooltip {
+         width: auto;
+         margin-top: 0;
+    }
+
+    .template-nick-td .admin__field-tooltip-action {
+        margin-left: 5px;
+    }
+
+    .template-nick-td .admin__field-tooltip-content:before,
+    .template-nick-td .admin__field-tooltip-content:after {
+        right: 65px;
+    }
+
+</style>
+
+<div class="template-switcher-container">
+
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td class="template-header" style="width: <?php echo $block->getHeaderWidth() ?>px;">
+                    <h3 style="margin: 0;"><?php echo $block->getHeaderText() ?></h3>
+                </td>
+
+                <?php $display = $block->canDisplaySwitcher() ? '' : 'none'; ?>
+                <td class="template-switcher-td" style="display: <?php echo $display ?>;">
+                    <select name="<?php echo $block->getSwitcherName() ?>" id="<?php echo $block->getSwitcherId() ?>" class="template-switcher M2ePro-validate-ebay-template-switcher select admin__control-select">
+                        <?php if ($block->canDisplayUseDefaultOption() && $block->isTemplateModeParentForced()): ?>
+                            <option value="<?php echo base64_encode(json_encode(array('mode' => null))) ?>" selected="selected" class="template-switcher-empty-option empty"></option>
+                        <?php endif; ?>
+
+                        <?php
+                        $value = base64_encode(json_encode(array(
+                            'id' => $block->isTemplateModeCustom() ? $block->getTemplateId() : null,
+                            'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM,
+                            'nick' => $block->getTemplateNick()
+                        )));
+                        $selected = $block->isTemplateModeCustom();
+                        ?>
+
+                        <option value="<?php echo $value ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-custom-option">
+                            <?php echo $block->__('Custom Settings') ?>
+                        </option>
+
+                        <?php if ($block->canDisplayUseDefaultOption()): ?>
+                            <?php
+                            $value = base64_encode(json_encode(array(
+                                'id' => null,
+                                'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_PARENT,
+                                'nick' => $block->getTemplateNick()
+                            )));
+                            $selected = $block->isTemplateModeParent() && !$block->isTemplateModeParentForced();
+                            ?>
+                            <option value="<?php echo $value; ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-parent-option">
+                                <?php echo $block->__('Use From Listing Settings') ?>
+                            </option>
+                        <?php endif; ?>
+
+                        <?php $templates = $block->getTemplates(); ?>
+
+                        <?php if (count($templates) > 0): ?>
+                            <optgroup label="<?php echo $block->getHelper('Data')->escapeHtml($block->__('Policies')) ?>" class="templates-group">
+                                <?php foreach ($templates as $template): ?>
+                                    <?php
+                                    $value = base64_encode(json_encode(array(
+                                        'id' => $template->getId(),
+                                        'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,
+                                        'nick' => $block->getTemplateNick()
+                                    )));
+                                    $selected = $block->isTemplateModeTemplate() && $block->getTemplateId() == $template->getId();
+                                    ?>
+                                    <option value="<?php echo $value; ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?> class="template-switcher-template-option">
+                                        <?php echo $block->getHelper('Data')->escapeHtml($template->getTitle()) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </optgroup>
+                        <?php endif; ?>
+                    </select>
+                </td>
+
+                <td style="padding-left: 10px; width: 100%;" class="template-nick-td">
+
+                    <div id="template_<?php echo $block->getTemplateNick() ?>_nick_label" style="display: none;">
+                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/note_cell_bg.gif'); ?>" />
+                        <span class="template" style="display: none;"><?php echo $block->__('Policy') ?></span>
+                        <?php if ($block->isTemplateModeParentForced()): ?>
+                            <span class="parent" style="display: none;"><?php echo $block->__('Please, specify a value suitable for all chosen Products.') ?></span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div id="template_<?php echo $block->getTemplateNick() ?>_edit" style="display: none;">
+                        <a href="javascript: void(0);" onclick="EbayListingTemplateSwitcherObj.editTemplate('<?php echo $block->getTemplateNick() ?>');"><?php echo $block->__('View') ?>&nbsp;/&nbsp;<?php echo $block->__('Edit') ?></a>
+                        <?php echo $block->getTooltipHtml('You can edit the saved Policy any time you need. However, the changes you make will automatically affect all of the Products which are listed using this Policy.'); ?>
+                        &nbsp;<?php echo $block->__('or') ?>&nbsp;
+                        <a href="javascript: void(0);" onclick="EbayListingTemplateSwitcherObj.customizeTemplate('<?php echo $block->getTemplateNick() ?>');"><?php echo $block->__('Use Custom Settings') ?></a>
+                        <?php echo $block->getTooltipHtml('Use this option if nonsignificant changes have to be made to this Policy while the set of settings will be applied only to the current M2E Pro Listing.'); ?>
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td id="template_switcher_<?php echo $block->getTemplateNick() ?>_messages" colspan="2" class="value" style="padding-left: 30px;"></td>
+            </tr>
+        </table>
+    </div>
+
+</div>

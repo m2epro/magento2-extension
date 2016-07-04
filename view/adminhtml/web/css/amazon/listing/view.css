@@ -1,0 +1,82 @@
+.page-main-actions .m2epro-field-tooltip.admin__field-tooltip {
+    position: absolute;
+    left: 26%;
+    padding-top: 5px;
+}
+
+.page-main-actions .admin__field-tooltip-content {
+    left: 70px;
+    bottom: -10em;
+}
+
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:after,
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:before {
+    left: -31px;
+    right: 0;
+    top: 59%;
+    border-right-color: #afadac;
+    border-top-color: transparent;
+}
+
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:after {
+    border-right-color: #fffbbb;
+    border-top-color: transparent;
+}
+
+#amazonProductSearchGrid .grid-listing-column-actions {
+    text-align: left !important;
+}
+
+#amazonProductSearchGrid [id^="map_link_error_icon_"] {
+    position: relative;
+    bottom: 7px;
+    right: 15px;
+}
+#amazonProductSearchGrid [id^="map_link_error_icon_"] .admin__field-tooltip-content {
+    right: -55px;
+}
+#amazonProductSearchGrid [id^="map_link_error_icon_"] .admin__field-tooltip-content:before,
+#amazonProductSearchGrid [id^="map_link_error_icon_"] .admin__field-tooltip-content:after {
+    right: 5px;
+}
+#amazonProductSearchGrid [id^="map_link_error_icon_"] a.admin__field-tooltip-action:before {
+    content: '\e623';
+    color: #EB5202;
+    font-size: 2rem;
+}
+#amazonProductSearchGrid [id^="map_link_"] {
+    display: inline-block;
+}
+
+a.amazon-listing-view-icon {
+    color: #514943;
+    vertical-align: initial;
+    display: inline-block;
+    font-size: 1.5rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+a.amazon-listing-view-icon.amazon-listing-view-generalId-search-error:before {
+    content: '\e623';
+    color: #e22626;
+}
+
+a.amazon-listing-view-icon.amazon-listing-view-generalId-search-data:before {
+    content: '\e631';
+    color: #EB5202;
+}
+
+a.amazon-listing-view-icon.amazon-listing-view-generalId-search:before {
+    content: '\e61d';
+}
+
+a.amazon-listing-view-icon.amazon-listing-view-generalId-remove:before {
+    content: '\e632';
+}

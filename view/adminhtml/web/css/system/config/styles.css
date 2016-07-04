@@ -1,0 +1,23 @@
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
+ */
+
+.button-container button {
+    float: right;
+}
+
+.table-str-value-span {
+    display: inline-block;
+    padding-top: 7px;
+}
+
+.small-config-btn {
+    line-height: 1.1;
+    padding: 0.1rem 0.5em 0.1rem !important;
+}
+
+.admin__collapsible-block ~ .admin__collapsible-block {
+    padding: 0 0 0;
+}

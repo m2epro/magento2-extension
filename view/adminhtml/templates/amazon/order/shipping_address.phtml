@@ -1,0 +1,77 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress $block */ ?>
+
+<table cellspacing="0" class="form-list order-info">
+    <tbody>
+
+    <tr>
+        <td class="label"><?php echo $block->__('Customer Name'); ?></td>
+        <td class="value">
+            <strong>
+                <?php if ($block->getOrder()->getChildObject()->getData('buyer_name') == '') {
+                    echo $block->__('N/A');
+                } else {
+                    echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getData('buyer_name'));
+                } ?>
+            </strong>
+        </td>
+    </tr>
+
+    <?php if ($block->getOrder()->getChildObject()->getData('buyer_email') != '') { ?>
+        <tr>
+            <td class="label"><?php echo $block->__('Buyer Email');?></td>
+            <td class="value">
+                <strong>
+                    &lt;<?php echo $block->getHelper('Data')->escapeHtml($block->getOrder()->getChildObject()->getData('buyer_email')); ?>&gt;
+                </strong>
+            </td>
+        </tr>
+    <?php } ?>
+
+    <tr>
+        <td class="label"><?php echo $block->__('Shipping Address');?></td>
+        <td class="value">
+            <strong>
+
+                <?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['recipient_name']) ?>
+
+                <?php if (!empty($block->getShippingAddress()['country_code']) || !empty($block->getShippingAddress()['city'])): ?>
+
+                    <?php if (!empty($block->getShippingAddress()['street'][0])): ?>
+                        <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][0]); ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($block->getShippingAddress()['street'][1])): ?>
+                        <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][1]); ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($block->getShippingAddress()['street'][2])): ?>
+                        <br/><?php echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['street'][2]); ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($block->getShippingAddress()['city'])): ?>
+                        <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', array($block->getShippingAddress()['city'], $block->getShippingAddress()['state'], $block->getShippingAddress()['postal_code']))) ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($block->getShippingAddress()['country_name'])): ?>
+                        <br/>
+                        <?php
+                        if (!empty($block->getShippingAddress()['country_name'])) {
+                            echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['country_name']);
+                        } else {
+                            echo $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['country_code']);
+                        }
+                        ?>
+                    <?php endif; ?>
+
+                    <?php if (!empty($block->getShippingAddress()['phone'])): ?>
+                        <br/><?php echo 'T: ' . $block->getHelper('Data')->escapeHtml($block->getShippingAddress()['phone']); ?>
+                    <?php endif; ?>
+
+                <?php endif; ?>
+
+            </strong>
+        </td>
+    </tr>
+
+    </tbody>
+</table>

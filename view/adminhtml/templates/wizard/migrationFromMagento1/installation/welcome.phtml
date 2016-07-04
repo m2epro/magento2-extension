@@ -1,0 +1,155 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Welcome\Content $block */ ?>
+
+<div class="wizard_block">
+
+    <h2>
+        <?php echo $block->__('Congratulations! You have successfully proceeded to M2E Pro Data migration from Magento v 1.x to Magento v 2.x.'); ?>
+    </h2>
+
+    <h3>
+        <?php echo $block->__('What was changed?'); ?>
+    </h3>
+
+    <ol class="migration-notes">
+        <li>
+            <?php echo $block->__(<<<HTML
+Currently, some of the features from M2E Pro versions for Magento v 1.x. are not available in M2E Pro for Magento v 2.x. You can find the list of the temporary unavailable properties below.<br/><br/>
+Please be advised that the missing features have been scheduled for development and will be added shortly.
+HTML
+); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+The eBay Listing Simple Mode functionality is no longer supported because a number of modifications were implemented in order to simplify and make work with M2E Pro more convenient. As the current configurations do not require any special skills or advanced experience, the Simple Mode is not going to be of use any longer.
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+The concept of M2E Pro global settings was changed. Now, only the ability to enable/disable Channels is available in general Magento Configurations (in Stores > Settings > Configuration > Multi Channels section).<br/><br/>
+Moreover, the License management options, Logs Clearing configurations, Synchronization Logs, etc. are available in M2E&nbsp;Pro menu for each Integration separately. Navigate to Configuration > Settings section of the Integration you are using to specify the settings which will best suit your needs.
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+The Listing section was improved. Now, you can manage M2E Pro and 3rd party Listings as well as use the Product Search tool independently on separate pages.
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+The User Interface was totally re-arranged by re-grouping the features, settings, etc.  in attempt to simplify and make it more understandable.
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+M2E Pro Documentation was re-written and a separate section for M2E Pro Magento v 2.x was created along with the changes made to the Knowledge Base articles.
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+Logs section was fully changed. The Logs & Events data is currently available for 3 different sections: Listing Logs & Events, Orders Logs & Events and Synchronization Logs (available in Help Center > For Developers > Synchronization Log tab).
+HTML
+            ); ?>
+        </li>
+        <li>
+            <?php echo $block->__(<<<HTML
+The information which could be helpful for Developers and Magento Administrators is gathered in a single section and available in the Help Center > For Developers section of the menu,  etc.
+HTML
+            ); ?>
+        </li>
+    </ol>
+
+    <br/>
+
+    <h3>
+        <?php echo $block->__('The List of Temporary Unavailable features'); ?>
+    </h3>
+    <h5>
+        <?php echo $block->__('Development and implementation of these features is scheduled for Q3, 2016'); ?>
+    </h5>
+
+    <ul class="migration-notes">
+        <li>
+            <?php echo $block->__('ability to use a Magento View Mode in Listing grids;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to switch between Listings using an arrow next to the Listing Title at the top of the Listing page;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to add "Custom Inserts" into the Custom Description for eBay Items;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to apply the Schedule settings for List/Relist actions in the Synchronization Policy;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to create Custom Description via WYSWYG editor using an eBay Description Policy settings;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to add Watermark feature for eBay Items using Description Policy settings;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to use a Charity feature for eBay Items;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to switch Amazon Products into AFN/MFN state;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to override the shipping settings using Amazon Shipping Override Policy;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to manage Amazon products via M2E Pro Amazon Repricing Service;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to search for the products using Advanced Product Filter;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to create suitable Magento Attribute on-the-fly;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('Preview options for eBay Items;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to use Parts Compatibility options for eBay Items;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to set Custom Settings for selected Products in eBay Listing;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability manage customer Feedback for eBay Integration.'); ?>
+        </li>
+    </ul>
+
+    <br/>
+
+    <h5>
+        <?php echo $block->__('Development and implementation of the features below is scheduled for Q4, 2016'); ?>
+    </h5>
+
+    <ul class="migration-notes">
+        <li>
+            <?php echo $block->__('ability to apply In-Store Pickup Service;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to manage eBay Categories in Sell on eBay > Configuration > Categories in Use section;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to assign eBay Category using a Get Suggested Category feature;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('\'Estimate\' feature to analyze eBay Item Fee;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('eBay \'Sell on another Marketplace\' feature'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('ability to apply Amazon\'s Shipping Service feature;'); ?>
+        </li>
+        <li>
+            <?php echo $block->__('Rakuten Integrations.'); ?>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,64 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Edit\Tabs\Specifics $block */ ?>
+
+<input id="encoded_specifics_data" type="hidden" name="specifics[encoded_data]" value="">
+
+<div class="field-row">
+    <?php echo $block->getChildHtml('help_block'); ?>
+</div>
+
+<div class="fieldset">
+    <div class="hor-scroll" style="padding-bottom: 10px;">
+        <div id="specifics_container">
+
+        </div>
+    </div>
+</div>
+
+<!-- specifics grid template start -->
+<!-- ########################################################## -->
+<div id="specifics_list_grid_template" style="display: none;">
+
+    <table class="form-list entry-edit" cellspacing="0" cellpadding="0" style="width: 100%;">
+
+        <tr class="item-specifics-tr">
+            <td class="grid admin__data-grid-wrap specifics-grid" colspan="2">
+
+                <table class="border data-grid data-grid-not-hovered data-grid-striped" cellpadding="0" cellspacing="0">
+                    <thead>
+                    <tr class="headings">
+                        <th style="width: 35%;"><?php echo $block->__('Name'); ?></th>
+                        <th style="width: 26%;"><?php echo $block->__('Mode'); ?></th>
+                        <th style="width: 30%;"><?php echo $block->__('Value'); ?></th>
+                        <th style="width: 8%; text-align: center;">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <!-- #specific_table_row_template inserts here -->
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+
+    </table>
+</div>
+<!-- ########################################################## -->
+
+<!-- specifics add ror start -->
+<!-- ########################################################## -->
+<div id="specifics_add_row_template" style="display: none;">
+
+    <table style="width: 100%; background-color: #EFEFEF;margin-bottom: 30px;" cellpadding="0" cellspacing="0">
+        <tfoot>
+        <tr>
+            <td valign="middle" align="right" style="vertical-align: middle; padding: 1.5em; text-align: center;">
+                <button title="Add Specifics" type="button" class="scalable add add_custom_specific_button primary" style="margin-right: 15px;">
+                    <span><span><span><?php echo $block->__('Add Specifics'); ?></span></span></span>
+                </button>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+
+</div>
+<!-- ########################################################## -->

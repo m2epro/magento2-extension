@@ -1,0 +1,38 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Review $block */
+
+$block->css->add(
+<<<CSS
+    .block_notices {
+        margin-bottom: 15px;
+    }
+CSS
+);
+
+$buttons = "<br/><br/><div>{$block->getChildHtml('review')} &nbsp; ";
+if (!$this->getRequest()->getParam('disable_list', false)) {
+    $buttons .= "{$block->__('or')} &nbsp; {$block->getChildHtml('save_and_list')}";
+}
+// TODO NOT SUPPORTED FEATURE ebay preview items feature
+// $buttons .= $block->getChildHtml('preview');
+$buttons .= '</div>';
+
+?>
+
+<?php echo $block->getChildHtml('view_header'); ?>
+
+<div class="block_notices_module" title="" subtitle="" collapseable="no" hideblock="no" always_show="yes">
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'no_collapse' => true,
+        'no_hide' => true,
+        'content' => $block->__(
+            'Product(s) have been <strong>Successfully Added</strong> to the M2E Pro Listing.<br/><br/>
+            At this point you can either <strong>Go To The Listing</strong>, or <strong>List Added Products</strong> Now.<br/><br/>
+            <strong>Note:</strong> Products that do not have a Primary eBay Category specified will not be Listed.
+            You will have a chance to set the Primary eBay Category later in the Listing Settings if you need to. %1%',
+            $buttons
+        ),
+    ])->toHtml(); ?>
+
+</div>

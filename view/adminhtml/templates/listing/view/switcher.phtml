@@ -1,0 +1,9 @@
+<?php
+    /** @var $this \Magento\Framework\View\TemplateEngine\Php  */
+    /** @var $block \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher */
+?>
+<select name="listing_view_mode_switcher" id="listing_view_mode_switcher" class="admin__control-select">
+    <?php foreach ($block->getItems() as $item): ?>
+        <option value="<?php echo $block->getHelper('Data')->escapeHtml($item['value']) ?>" <?php if ($block->getCurrentViewMode() == $item['value']): ?>selected="selected"<?php endif; ?>><?php echo $block->getHelper('Data')->escapeHtml($item['label']); ?></option>
+    <?php endforeach; ?>
+</select>

@@ -1,0 +1,61 @@
+<?php
+    $stepsCount = count($block->getSteps());
+    $width = 100 / $stepsCount - 0.25;
+
+    $containerStyles = $block->getContainerData('style');
+    $containerIdPrefix = $block->getContainerData('id_prefix');
+
+    $id = $containerIdPrefix ? $containerIdPrefix.'_breadcrumb_container' : 'breadcrumb_container';
+?>
+
+<style type="text/css">
+    [id$='breadcrumb_container'] {
+        margin: 10px 0;
+        overflow: hidden;
+    }
+    .breadcrumb {
+        width: <?php echo $width; ?>%;
+        padding: 12px 0;
+        color: #aaa;
+        font-size: 14px;
+        text-align: center;
+        background: #f8f8f8;
+        border-top: 1px solid #e3e3e3;
+        border-bottom: 1px solid #e3e3e3;
+        margin-left: 0.25%;
+        float: left;
+    }
+
+    .breadcrumb:first-child {
+        margin-left: 0;
+    }
+    .space {
+        width: 0.3%;
+        height: 40px;
+        background: white;
+    }
+    .selected {
+        color: white;
+        background: #514943;
+        font-weight: bold;
+        border-top: 1px solid #8a837f;
+        border-bottom: 1px solid #8a837f;
+    }
+</style>
+
+<div id="<?php echo $id; ?>" <?php echo $containerStyles ? 'style="'.$containerStyles.'"' : ''; ?>>
+
+    <?php foreach($block->getSteps() as $step) :?>
+        <div id="step_<?php echo $step['id']; ?>" class="breadcrumb <?php if ($block->getSelectedStep() === $step['id']) echo 'selected' ?>">
+
+        <span>
+            <?php echo $step['title'] ?>:
+        </span>
+        <span>
+            <?php echo $step['description'] ?>
+        </span>
+
+        </div>
+    <?php endforeach; ?>
+
+</div>

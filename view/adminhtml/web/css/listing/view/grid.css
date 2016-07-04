@@ -1,0 +1,53 @@
+.grid-listing-column-product_id {
+    width: 125px;
+}
+
+.grid-listing-column-name {
+    min-width: 191px;
+}
+
+.grid-listing-column-available_qty {
+    width: 130px;
+}
+
+.grid-listing-column-actions {
+    width: 100px;
+}
+
+/* ================================================ */
+
+/* Variation product manage variations */
+/* ================================================ */
+
+#modal_variation_product_manage .attributes-options-filter img {
+    cursor: pointer;
+}
+
+#modal_variation_product_manage .attributes-options-filter-values .filter-param-remove {
+    padding-left: 5px;
+}
+
+#modal_variation_product_manage .attributes-options-filter-values input {
+    width: 87%;
+    margin-top: 3px;
+}
+
+#modal_variation_product_manage .product-options-main select {
+    width: 185px;
+}
+
+#modal_variation_product_manage .manage-variations.form-list td.value select {
+    width: 225px;
+}
+
+#modal_variation_product_manage form select:disabled {
+    background: rgba(0,0,0,0.1);
+}
+
+#modal_variation_product_manage form[id^="variation_identifiers"] input[type="text"] {
+    width: 80%;
+    padding: 2px;
+    font-size: 11px;
+}
+
+/* ================================================ */

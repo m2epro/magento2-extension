@@ -1,0 +1,163 @@
+<?php
+    /** @var $this \Magento\Framework\View\TemplateEngine\Php  */
+    /** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Category\Settings\Specific */
+
+    $isCompactMode = $block->isCompactMode();
+
+    $uniqueId      = $block->getUniqueId();
+
+    $requiredDetailsFields = $block->getRequiredDetailsFields();
+?>
+
+<?php if (!$block->_isAjax): ?>
+    <?php echo '<div id="category_specific_box' . $uniqueId . '">'; ?>
+<?php endif; ?>
+
+<?php if ($requiredDetailsFields) {
+    $block->getChildBlock('messages')->addNotice($block->__('
+                    You selected an eBay Category where %UPC% Value is required.<br/>
+
+                    <strong>Note:</strong> also do not forget to check setting in eBay Catalog Identifiers block of
+                    Description Policy you are using.',
+        implode(', ', $requiredDetailsFields)
+    ));
+    echo $block->getChildHtml('messages');
+} ?>
+
+<form id="<?php echo $uniqueId; ?>category_specific_form">
+
+<div id="<?php echo $uniqueId; ?>listing_category_specific_item_specifics_container">
+
+    <?php if (!$isCompactMode) {
+
+        $helpBlockContent = $block->__(
+            '<p>One of the modes below can be used to set up Item Specifics for the eBay listings:</p>
+            <ul>
+            <li><p>eBay Specifics - the list of Specifics predefined by eBay for the selected Category. The Specifics marked with the * are the required ones and the appropriate values must be provided for them. A value for each Specific can be selected from the list of eBay recommended options or from the Magento Product data.</p></li>
+            <li><p>Custom Specifics - if you would like to include Item Specifics which are missing from list of eBay Specifics, you can add your own custom item specifics. You can provide a Specific Label and value manually or by using a Magento Attribute.</p></li>
+            </ul>
+            
+            <p>More detailed information you can find <a href="%utl%" target="_blank">here</a>.</p>',
+            $block->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/lgItAQ')
+        );
+
+        echo $block->getChildBlock('specifics_help_block')->addData([
+            'content' => $helpBlockContent
+        ])->toHtml();
+
+    ?>
+    
+    <div>
+
+    <?php } ?>
+
+        <table  id="<?php echo $uniqueId; ?>item_specifics_table" class="data-grid data-grid-not-hovered" cellpadding="0" cellspacing="0" style="width: 100%">
+            <thead>
+            <tr class="headings">
+                <th class="data-grid-th" style="width:30%"><?php echo $block->__('Name'); ?></th>
+                <th class="data-grid-th" style="width:30%"><?php echo $block->__('Mode'); ?></th>
+                <th class="data-grid-th" style="width:37%"><?php echo $block->__('Value'); ?></th>
+                <th id="<?php echo $uniqueId; ?>item_specifics_table_th_remove" class="data-grid-th" style="width:3%;"></th>
+            </tr>
+            </thead>
+            <tbody id="<?php echo $uniqueId; ?>item_specifics_tbody">
+            <!-- #specific_table_row_template inserts here -->
+            </tbody>
+            <tfoot id="<?php echo $uniqueId; ?>add_custom_container">
+            <tr>
+                <td colspan="4" style="border-top: 0.1rem solid #d6d6d6 !important;">
+
+                    <?php if (!$isCompactMode): ?>
+                        <div style="float: left; font-size: 12px; margin-top: 15px">
+                            <?php echo $block->__('You can add your own Item Specific using a Magento Attribute or by specifying a custom Label and value for it manually.') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <div style="float: right">
+                        <?php echo $block->getChildHtml('add_custom_specific_button'); ?>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+
+    <?php if (!$isCompactMode): ?>
+    </div>
+    <?php endif; ?>
+
+    <div style="display: none;" class="validation-advice" id="<?php echo $uniqueId; ?>maximum_specifics_error" >
+        <?php echo $block->__('You can select not more than 25 specifics.'); ?>
+    </div>
+
+</div>
+
+<script type="text/m2e-template-html" id="<?php echo $uniqueId; ?>specific_template">
+
+    <tr style="display: none;">
+        <td style="display: none;">
+            <input id="<?php echo $uniqueId; ?>item_specifics_attribute_title_%i%" name="item_specifics_attribute_title_%i%" value="%attribute_title%" type="hidden" />
+            <input id="<?php echo $uniqueId; ?>item_specifics_mode_%i%" name="item_specifics_mode_%i%" value="%relation_mode%" type="hidden" />
+        </td>
+    </tr>
+
+    <tr id="<?php echo $uniqueId; ?>specific_%i%_row" class="specific-row not-custom" style="height: 25px;">
+        <td style="vertical-align:middle;">
+            <span id="<?php echo $uniqueId; ?>attribute_title_%i%">%attribute_title%%required%</span>
+            <input id="<?php echo $uniqueId; ?>custom_item_specifics_label_custom_value_%i%" name="custom_item_specifics_label_custom_value_%i%" type="text" style="display: none; width: 97%;" class="admin__control-text input-text M2ePro-required-when-visible custom-item-specific" />
+            <input id="<?php echo $uniqueId; ?>custom_item_specifics_label_custom_label_attribute_%i%" name="custom_item_specifics_label_custom_label_attribute_%i%" type="text" style="display: none; width: 97%;" class="input-text M2ePro-required-when-visible custom-item-specific admin__control-text" />
+            <span id="<?php echo $uniqueId; ?>custom_item_specifics_label_custom_attribute_%i%" style="display:none;"><strong>From Attribute label</strong></span>
+        </td>
+        <td style="vertical-align:top;">
+            <select id="<?php echo $uniqueId; ?>item_specifics_value_mode_%i%" name="item_specifics_value_mode_%i%" class="admin__control-select" style="width: 100%; margin-bottom: 2px;" onchange="EbayListingProductCategorySettingsSpecific<?php echo $uniqueId; ?>Obj.dictionarySpecificModeChange(this);">
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_NONE ?>" class="specific-mode-none"><?php echo $block->__('None'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_EBAY_RECOMMENDED ?>" class="specific-mode-recommended"><?php echo $block->__('eBay Recommended'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE ?>" class="specific-mode-custom-value"><?php echo $block->__('Custom Value'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_ATTRIBUTE ?>" class="custom-specific-mode-custom-attribute"><?php echo $block->__('Custom Attribute'); ?></option>
+            </select>
+            <select id="<?php echo $uniqueId; ?>custom_item_specifics_value_mode_%i%" name="custom_item_specifics_value_mode_%i%" class="admin__control-select" style="display: none; width: 100%;margin-bottom: 2px;" onchange="EbayListingProductCategorySettingsSpecific<?php echo $uniqueId; ?>Obj.customSelectedSpecificChange(this);">
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_ATTRIBUTE ?>" class="custom-specific-mode-custom-attribute"><?php echo $block->__('Custom Attribute'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE ?>" class="custom-specific-mode-custom-value"><?php echo $block->__('Custom Value'); ?></option>
+                <option value="<?php echo \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_LABEL_ATTRIBUTE ?>" class="custom-specific-mode-custom-label-attribute"><?php echo $block->__('Custom Label / Attribute'); ?></option>
+            </select>
+        </td>
+        <td id="<?php echo $uniqueId; ?>specific_value_%i%_cell" style="vertical-align:top; text-align: left;">
+            <div id="<?php echo $uniqueId; ?>item_specifics_custom_value_%i%" style="display: none;">
+                <table style="border:none; border-spacing: 0 2px; width: 100%">
+                    <tbody id="<?php echo $uniqueId; ?>item_specifics_custom_value_tbody_%i%" data-min_values="%min_values%" data-max_values="%max_values%">
+                        <!-- #specific_custom_value_table_row_template inserts here -->
+                    </tbody>
+                </table>
+                <a id="<?php echo $uniqueId; ?>add_item_specifics_custom_value_button_%i%"
+                   data-counter="%i%"
+                   href="javascript: void(0);"
+                   style="display:none; float:right; font-size:11px;"
+                   onclick="EbayListingProductCategorySettingsSpecific<?php echo $uniqueId; ?>Obj.addItemSpecificsCustomValueRow(this);">
+                   <?php echo $block->__('Add more'); ?>
+                </a>
+            </div>
+            <select id="<?php echo $uniqueId; ?>item_specifics_value_ebay_recommended_%i%" name="item_specifics_value_ebay_recommended_%i%" style="display: none; width: 100%;" class="M2ePro-required-when-visible item-specific admin__control-select "></select>
+            <select id="<?php echo $uniqueId; ?>item_specifics_value_custom_attribute_%i%" class="M2ePro-custom-attribute-can-be-created admin__control-select" name="item_specifics_value_custom_attribute_%i%" apply_to_all_attribute_sets="0" style="display: none; width: 100%;"></select>
+        </td>
+        <td id="<?php echo $uniqueId; ?>custom_item_specific_remove_%i%" style="text-align: center; vertical-align: middle;">
+            <?php echo $block->getChildBlock('remove_custom_specific_button')->addData(['id' => $uniqueId. 'custom_item_specific_remove_button_%i%'])->toHtml(); ?>
+        </td>
+    </tr>
+
+</script>
+
+<script type="text/m2e-template-html" id="<?php echo $uniqueId; ?>specific_custom_value_template">
+    <tr>
+        <td style="border: none; width: 100%; vertical-align:top; text-align: left; padding: 0; ">
+            <input id="<?php echo $uniqueId; ?>item_specifics_value_custom_value_%i%_%position%" name="item_specifics_value_custom_value_%i%[]" type="text" style="width: 99%; padding-left: 2px; padding-right: 0;" class="input-text M2ePro-required-when-visible item-specific admin__control-text" />
+        </td>
+        <td id="<?php echo $uniqueId; ?>item_specifics_custom_value_remove_%i%_%position%" class="btn_value_remove" style="display: none; padding:0; border: none;">
+            <?php echo $block->getChildHtml('remove_item_specifics_custom_value_button'); ?>
+        </td>
+    </tr>
+</script>
+
+</form>
+
+<?php if (!$block->_isAjax): ?>
+    <?php echo '</div>'; ?>
+<?php endif; ?>

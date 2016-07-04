@@ -1,0 +1,117 @@
+<?php
+    /** @var $block Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Options\Mapping */
+?>
+
+<style type="text/css">
+
+    .popup-window .magento_message {
+        padding: 0;
+    }
+
+    .buttons-container {
+        padding: 10px;
+        text-align: right;
+    }
+
+</style>
+
+<div id="product_options_mapping_content" class="hor-scroll" style="">
+
+    <?php echo $block->getChildHtml('product_mapping_options_help_block'); ?>
+
+    <input type="hidden" name="order_item_id" class="form-element" value="<?php echo $block->getHelper('Data\GlobalData')->getValue('order_item')->getId() ?>" />
+
+    <br/>
+
+    <h4><?php echo $block->__('Channel Options') ?></h4>
+
+    <div style="border-bottom: 1px solid #E7E7E7; padding: 5px 5px;">
+
+        <?php if (count($block->getData('channel_options')) == 0): ?>
+            <span style="font-style: italic;">
+                <?php echo $block->__('No Channel Options are available.'); ?>
+            </span>
+        <?php else: ?>
+
+            <dl>
+
+            <?php foreach ($block->getData('channel_options') as $channelOption): ?>
+                <dt>
+                    <label>
+                        <span style="font-weight: bold; font-style: italic;">
+                            <?php echo $block->getHelper('Data')->escapeHtml($channelOption['label']); ?>:
+                        </span>
+                        <span>
+                            &nbsp;<?php echo $block->getHelper('Data')->escapeHtml($channelOption['value']); ?>
+                        </span>
+                    </label>
+                </dt>
+            <?php endforeach; ?>
+
+            </dl>
+
+        <?php endif; ?>
+
+    </div>
+
+    <br/>
+
+    <h4><?php echo $block->getHelper('Data')->escapeHtml($block->getProductTypeHeader()) ?></h4>
+
+    <div>
+
+        <dl>
+
+        <?php foreach ($block->getData('magento_options') as $option): ?>
+            <dt>
+                <label>
+                    <span style="color: #eb5202">*</span>&nbsp;<?php echo $block->getHelper('Data')->escapeHtml($option['label']); ?>
+                </label>
+            </dt>
+            <dd style="border-bottom: 1px solid #E7E7E7; margin: 5px 0 15px; padding: 0 0 12px;">
+                <div class="input-box">
+                    <select name="option_id[<?php echo (int)$option['option_id']; ?>]" class="form-element select admin__control-select required-entry">
+                        <option value="" class="empty"><?php echo $block->__('Select Option...'); ?></option>
+                        <?php foreach ($option['values'] as $value): ?>
+                            <?php
+                                $optionValue = json_encode(array(
+                                    'value_id' => $value['value_id'],
+                                    'product_ids' => $value['product_ids']
+                                ));
+                                $optionLabel = $value['label'];
+
+                                $selected = $block->isMagentoOptionSelected($option, $value);
+                            ?>
+                            <option value="<?php echo $block->getHelper('Data')->escapeHtml($optionValue); ?>" <?php if ($selected): ?>selected="selected"<?php endif; ?>>
+                                <?php echo $block->getHelper('Data')->escapeHtml($optionLabel); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </dd>
+        <?php endforeach; ?>
+
+        </dl>
+
+    </div>
+
+    <div id="selected_product_option_is_out_of_stock" style="display: none;">
+        <?php echo $block->getChildHtml('product_mapping_options_out_of_stock_message'); ?>
+    </div>
+
+    <?php if (count($block->getData('channel_options')) > 0): ?>
+
+        <div style="padding-top: 5px;">
+            <input
+                id="save_matching"
+                type="checkbox"
+                class="form-element admin__control-checkbox"
+                name="save_matching"
+            >
+            <label for="save_matching" class="admin__field-label">
+                <span><?php echo $block->__('Save selection for subsequent Orders'); ?></span>
+            </label>
+        </div>
+
+    <?php endif; ?>
+</div>

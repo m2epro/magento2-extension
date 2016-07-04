@@ -1,0 +1,28 @@
+.admin__field .control-value {
+    display: inline-block;
+}
+
+.admin__control-select {
+    width: 240px;
+}
+
+.run_single_button {
+    margin-left: 15px;
+}
+
+.changed:before {
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.4rem;
+    line-height: 1;
+    color: #514943;
+    content: '\e631';
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+    margin-left: 10px;
+    margin-bottom: 3px;
+}

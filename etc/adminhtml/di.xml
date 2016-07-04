@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\CatalogInventory\Model\Stock\Item">
+        <plugin name="m2epro_catalogintventory_stock_item_plugin" type="Ess\M2ePro\Plugin\Model\Stock\Item" />
+    </type>
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="m2epro_quote_item_toOrderItem_plugin" type="Ess\M2ePro\Plugin\Model\Quote\Item\ToOrderItem" />
+    </type>
+    <type name="Magento\Backend\Model\Menu\Config">
+        <plugin name="m2epro_menu" type="Ess\M2ePro\Plugin\Model\Menu" />
+    </type>
+    <type name="Magento\Backend\Model\Menu\Item">
+        <plugin name="m2epro_menu_item" type="Ess\M2ePro\Plugin\Model\Menu\Item" />
+    </type>
+    <type name="Magento\Config\Controller\Adminhtml\System\Config\Save">
+        <plugin name="m2epro_configuration" type="Ess\M2ePro\Plugin\Controller\Adminhtml\System\Config\Save" />
+    </type>
+    <type name="Magento\Config\Controller\Adminhtml\System\Config\Edit">
+        <plugin name="m2epro_configuration" type="Ess\M2ePro\Plugin\Controller\Adminhtml\System\Config\Edit" />
+    </type>
+</config>

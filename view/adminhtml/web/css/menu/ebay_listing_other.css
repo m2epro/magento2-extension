@@ -1,0 +1,11 @@
+.item-ebay-listings-other {
+    cursor: not-allowed;
+}
+
+.item-ebay-listings-other a {
+    cursor: not-allowed;
+}
+
+.item-ebay-listings-other span {
+    color: gray;
+}

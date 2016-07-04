@@ -1,0 +1,58 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\General $this */ ?>
+
+<script type="text/javascript">
+
+    <?php if ($this->getIsAjax()): ?>
+
+    BlockNoticeObj.init(true);
+
+    <?php echo
+        $this->jsPhp->render()
+        . $this->jsTranslator->render()
+        . $this->jsUrl->render()
+        . $this->js->render();
+    ?>
+
+    initCollapsable();
+
+    <?php else: ?>
+
+    var BLOCK_NOTICES_SHOW = <?php echo $this->block_notices_show ? 'true' : 'false'; ?>;
+    var BLOCK_NOTICES_DISABLE_COLLAPSE = <?php echo $this->block_notices_disable_collapse; ?>;
+
+    var IS_VIEW_EBAY = <?php echo json_encode($this->getHelper('View')->isCurrentViewEbay()); ?>;
+    var IS_VIEW_AMAZON = <?php echo json_encode($this->getHelper('View')->isCurrentViewAmazon()); ?>;
+    var IS_VIEW_CONFIGURATION = <?php echo json_encode($this->getHelper('View')->isCurrentViewConfiguration()); ?>;
+
+    var M2ePro = {};
+
+    require(['M2ePro/M2ePro'], function(_M2ePro) {
+        M2ePro = _M2ePro;
+
+        // backward compatibility
+        M2ePro.text       = {};
+        M2ePro.formData   = {};
+        M2ePro.customData = {};
+
+        <?php echo $this->jsPhp->render(); ?>
+        <?php echo $this->jsTranslator->render(); ?>
+        <?php echo $this->jsUrl->render(); ?>
+
+        window.CommonObj = new window.Common();
+        CommonObj.initCommonValidators();
+
+        window.BlockNoticeObj = new BlockNotice();
+        BlockNoticeObj.init();
+
+        <?php echo $this->js->render(); ?>
+
+        initCollapsable();
+    });
+
+    <?php endif; ?>
+
+</script>
+
+<style type="text/css">
+    <?php echo $this->css->render(); ?>
+</style>

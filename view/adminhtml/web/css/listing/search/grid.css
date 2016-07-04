@@ -1,0 +1,31 @@
+.filter_block .m2epro-field-tooltip {
+    margin-top: 7px;
+}
+
+.filter_block p {
+    float: left;
+    margin-bottom: 0;
+}
+
+.filter_block p:not(:first-child) {
+    margin-left: 40px;
+}
+
+.filter_block select {
+    margin-left: 10px;
+}
+
+.page-main-actions._hidden .filter_block {
+    display: none;
+}
+
+.grid-listing-column-product_name {
+    width: 300px;
+}
+.grid-listing-column-online_qty {
+    width: 130px;
+}
+
+.grid-listing-column-online_price {
+    width: 130px;
+}

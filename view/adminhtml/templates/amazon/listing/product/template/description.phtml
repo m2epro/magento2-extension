@@ -1,0 +1,20 @@
+<?php 
+    /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\Description $block */ 
+?>
+
+<div id="template_description_pop_up_content">
+    <div style="padding: 5px 0;">
+
+        <?php if(count($block->getMessages()) > 0) : ?>
+            <div id="template_description_error_block">
+                <?php echo $this->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->getChildHtml('help_block'); ?>
+
+        <div id="template_description_grid">
+        </div>
+
+    </div>
+</div>

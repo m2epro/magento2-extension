@@ -1,0 +1,29 @@
+<div id="chooser_search_input_container">
+    <input id="query" type="text" class="admin__control-text" placeholder="<?php echo $this->__('Enter keyword(s) or browsenode ID...'); ?>" onkeypress="AmazonTemplateDescriptionCategoryChooserObj.keyPressQuery(event)">
+    <button class="primary" onclick="AmazonTemplateDescriptionCategoryChooserObj.search()"><?php echo $this->__('Search'); ?></button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <a onclick="AmazonTemplateDescriptionCategoryChooserObj.searchReset()"><?php echo $this->__('Reset'); ?></a>
+</div>
+
+<div id="chooser_search_results">
+    <table id="search_results_table" >
+
+        <tr id="search_results_no_results_tr" style="display: none;">
+            <td colspan="2" style="text-align: center;">
+                <strong><?php echo $this->__('No Results'); ?></strong>
+            </td>
+        </tr>
+
+        <tr id="search_results_update_sites_data_tr" style="display: none;">
+            <td colspan="2" style="text-align: center;">
+                <?php echo $this->__('Try to <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.refreshAmazonCategories()">Update Amazon Marketplaces data</a> and repeate the Search.'); ?>
+            </td>
+        </tr>
+
+        <!--  Placeholder  -->
+        <tr class="search_results_results_tr">
+
+        </tr>
+
+    </table>
+</div>

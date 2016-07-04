@@ -1,0 +1,16 @@
+<?php
+    $helpBlock = $this->createBlock('HelpBlock');
+    $helpBlock->setData([
+        'no_collapse' => true,
+        'content' => $block->__('The only common (presented in all Attribute sets) "Text Field" or "Dropdown" Attributes available for selection.')
+    ]);
+    echo $helpBlock->toHtml();
+?>
+<div id="chooser_attributes">
+    <table id="chooser_attributes_table">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>

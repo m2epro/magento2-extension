@@ -1,0 +1,47 @@
+<div style="height: 300px;">
+
+    <input id="specific_popup_title" type="hidden" value="<?php echo $block->escapeHtml($block->getData('additional_title') ? $block->__('Add Specifics to "%additional_title%" Block', $block->getData('additional_title')) : $block->__('Add Specifics')); ?>">
+
+    <div id="selected_specifics_container" class="switcher m2epro-box-style" style="display: none;">
+
+        <div>
+            <div class="selected_specifics_container_label_container">
+                <label><span><?php echo $block->__('Selected Specifics') ?></span></label>
+            </div>
+            <div id="selected_specifics_box">
+                <!-- #selected specifics inserts here -->
+            </div>
+            <div style="float: right; line-height: 2;">
+                <a style="margin-top: 5px;" class="specifics_reset_selected_button" href="javascript:void(0);"><?php echo $this->__('Reset'); ?></a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="specifics_search_input_container">
+        <div class="admin__field-control control left">
+            <input id="query" type="text" class="admin__control-text input-text" placeholder="<?php echo $block->__('Enter specific Title ...'); ?>">
+        </div>
+        <div class="admin__field admin__field-option left" style="margin-left: 20px;">
+            <input id="only_desired" class="admin__control-checkbox" type="checkbox" />
+            <label for="only_desired" class="label admin__field-label">
+                <span><?php echo $block->__('Only Desired'); ?> </span>
+            </label>
+        </div>
+        <div class="right">
+            <button class="action-secondary specifics_filter_button"><?php echo $block->__('Filter'); ?></button>
+            <button class="action-tertiary specifics_reset_filter_button"><?php echo $block->__('Reset'); ?></button>
+        </div>
+    </div>
+
+    <div class="hor-scroll" style="margin-top: 8px; clear: both;">
+
+        <div id="specifics_grid_container" style="height: 370px;">
+            <div class="grid-wrapper">
+                <?php echo $block->getChildHtml('specifics_grid'); ?>
+            </div>
+        </div>
+
+    </div>
+
+</div>

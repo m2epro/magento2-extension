@@ -1,0 +1,234 @@
+<?php
+    /** @var $this \Magento\Framework\View\TemplateEngine\Php  */
+    /** @var $block \Ess\M2ePro\Block\Adminhtml\System\Config\Tab\Components */
+?>
+
+<div id="block_notice_system_config_componentsl" class="block_notices_module" title="<?php echo __('Channels'); ?>">
+    <p><?php echo __('
+        <b>Enable</b> the Channels you want to sell on, then click <b>Save Config</b>.<br/><br/>
+        More detailed information about ability to work with this Page you can find <a href="%url%" target="_blank">here</a>.',
+        '#TODO_LINK'
+    ); ?></p>
+</div>
+
+<div class="accordion">
+    <div class="entry-edit form-inline">
+        <div class="entry-edit-head admin__collapsible-block">
+            <a id="ebay_channel-head" href="#" onclick="Fieldset.toggleCollapse('ebay_channel'); return false;">
+                <?php echo __('ebay Channel'); ?>
+            </a>
+        </div>
+
+        <fieldset id="ebay_channel" class="config admin__collapsible-block">
+            <table cellspacing="0" class="form-list">
+                <colgroup class="label"></colgroup>
+                <colgroup class="value"></colgroup>
+                <colgroup class="scope-label"></colgroup>
+                <colgroup class=""></colgroup>
+                <tbody>
+                <?php  if ($this->component_ebay_allowed) { ?>
+                    <tr>
+                        <td class="label">
+                            <label for="ebay_channel_default">Status</label>
+                        </td>
+                        <td class="value">
+                            <select id="ebay_channel_default" name="ebay_channel"
+                                    class=" select admin__control-select"
+                                    data-ui-id="select-groups-country-fields-default-value">
+                                <option value="0" <?php if (!$this->component_ebay_mode) echo 'selected="selected"'; ?>><?php echo __('Disabled') ?></option>
+                                <option value="1" <?php if ($this->component_ebay_mode) echo 'selected="selected"'; ?>><?php echo __('Enabled') ?></option>
+                            </select>
+                            <p class="note">
+                                <span><?php echo __('eBay Channel Status.') ?></span>
+                            </p>
+                        </td>
+                        <td class="scope-label"></td>
+                        <td class=""></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </fieldset>
+
+        <div class="entry-edit-head admin__collapsible-block">
+            <a id="other_channels-head" href="#" onclick="Fieldset.toggleCollapse('other_channels'); return false;" class="open">
+                <?php echo __('Other Channels'); ?>
+            </a>
+        </div>
+
+        <fieldset id="other_channels" class="config admin__collapsible-block">
+            <table cellspacing="0" class="form-list">
+
+                <colgroup class="label"></colgroup>
+                <colgroup class="value"></colgroup>
+                <colgroup class="scope-label"></colgroup>
+                <colgroup class=""></colgroup>
+
+                <tbody>
+
+                <?php if ($this->component_amazon_allowed) { ?>
+                    <tr>
+                        <td class="label">
+                            <label>Amazon: </label>
+                        </td>
+                        <td class="value">
+                            <select id="component_amazon_mode" name="component_amazon_mode" class="M2ePro-component-other">
+                                <option value="0" <?php if (!$this->component_amazon_mode) echo 'selected="selected"'; ?>><?php echo __('Disabled') ?></option>
+                                <option value="1" <?php if ($this->component_amazon_mode) echo 'selected="selected"'; ?>><?php echo __('Enabled') ?></option>
+                            </select>
+                            <p class="note">
+                                <span><?php echo __('Amazon Channel Status.') ?></span>
+                            </p>
+                        </td>
+                        <td class="scope-label"></td>
+                        <td class=""></td>
+                    </tr>
+                <?php } ?>
+
+                </tbody>
+
+            </table>
+
+            <?php if ($this->component_group_rakuten_allowed) { ?>
+                <table class="form-list" cellspacing="0" cellpadding="0">
+
+                    <colgroup class="label"></colgroup>
+                    <colgroup class="value"></colgroup>
+                    <colgroup class="scope-label"></colgroup>
+                    <colgroup class=""></colgroup>
+
+                    <tbody>
+                        <tr>
+                            <td class="label"><b><?php echo __('Rakuten'); ?>: </b></td>
+                            <td class="value"></td>
+                            <td class="scope-label"></td>
+                            <td class=""></td>
+                        </tr>
+
+                        <?php if ($this->component_group_rakuten_allowed) { ?>
+                            <tr>
+                                <td class="label"></td>
+                                <td class="value">
+                                    <div class="custom-options">
+                                        <div class="option-box">
+
+                                            <table class="form-list" cellspacing="0" cellpadding="0">
+
+                                                <colgroup class="label"></colgroup>
+                                                <colgroup class="value"></colgroup>
+                                                <colgroup class="scope-label"></colgroup>
+                                                <colgroup class=""></colgroup>
+
+                                                <tbody>
+
+                                                <?php if ($this->component_buy_allowed) { ?>
+                                                    <tr>
+                                                        <td class="label">
+                                                            <label>Buy: </label>
+                                                        </td>
+                                                        <td class="value">
+                                                            <select id="component_buy_mode" name="component_buy_mode" class="M2ePro-component-other">
+                                                                <option value="0" <?php if (!$this->component_buy_mode) echo 'selected="selected"'; ?>><?php echo __('Disabled') ?></option>
+                                                                <option value="1" <?php if ($this->component_buy_mode) echo 'selected="selected"'; ?>><?php echo __('Enabled') ?></option>
+                                                            </select>
+                                                            <p class="note">
+                                                                <span><?php echo __('Rakuten.com Channel Status.') ?></span>
+                                                            </p>
+                                                        </td>
+                                                        <td class="scope-label"></td>
+                                                        <td class=""></td>
+                                                    </tr>
+                                                <?php } ?>
+
+                                                <tr>
+                                                    <td class="label">
+                                                        <label><?php echo __('Rakuten.co.uk'); ?>: </label>
+                                                    </td>
+                                                    <td class="value">
+                                                        <select id="component_rde_mode" name="component_rde_mode" disabled="disabled" class="M2ePro-component-other">
+                                                            <option value="0"><?php echo __('Disabled - Coming Soon...') ?></option>
+                                                        </select>
+                                                        <p class="note">
+                                                            <span><?php echo __('Rakuten.co.uk Channel Status.') ?></span>
+                                                        </p>
+                                                    </td>
+                                                    <td class="scope-label"></td>
+                                                    <td class=""></td>
+                                                </tr>
+
+                                                <tr>
+                                                    <td class="label">
+                                                        <label><?php echo __('Rakuten.de'); ?>: </label>
+                                                    </td>
+                                                    <td class="value">
+                                                        <select id="component_rde_mode" name="component_rde_mode" disabled="disabled" class="M2ePro-component-other">
+                                                            <option value="0"><?php echo __('Disabled - Coming Soon...') ?></option>
+                                                        </select>
+                                                        <p class="note">
+                                                            <span><?php echo __('Rakuten.de Channel Status.') ?></span>
+                                                        </p>
+                                                    </td>
+                                                    <td class="scope-label"></td>
+                                                    <td class=""></td>
+                                                </tr>
+
+                                                </tbody>
+
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="scope-label"></td>
+                                <td class=""></td>
+                            </tr>
+                        <?php } ?>
+                    </tbody>
+                </table>
+            <?php } ?>
+
+            <table class="form-list" cellspacing="0" cellpadding="0">
+
+                <colgroup class="label"></colgroup>
+                <colgroup class="value"></colgroup>
+                <colgroup class="scope-label"></colgroup>
+                <colgroup class=""></colgroup>
+
+                <tbody>
+
+                <tr id="view_common_component_default_tr">
+                    <td class="label">
+                        <label for="view_common_component_default"><?php echo __('Default Channel'); ?>:</label>
+                    </td>
+                    <td class="value">
+                        <select id="view_common_component_default" name="view_common_component_default">
+                            <option value="" <?php if ($this->view_common_component_default == '') echo 'selected="selected"'; ?>>Amazon</option>
+                            <option value="" <?php if ($this->view_common_component_default == '1') echo 'selected="selected"'; ?>>Buy</option>
+                        </select>
+                        <p class="note">
+                            <span><?php echo __('Open Tab by default.'); ?></span>
+                        </p>
+                    </td>
+                    <td class="scope-label"></td>
+                    <td class=""></td>
+                </tr>
+
+                </tbody>
+
+            </table>
+
+            <input type="hidden" name="validate_default_component" value="" class="M2ePro-check-default-component" />
+
+        </fieldset>
+    </div>
+</div>
+
+<script type="text/javascript">
+require(["prototype"], function(){
+    $('ebay_channel-head').collapsed = 0;
+    $('other_channels-head').collapsed = 0;
+
+    Fieldset.applyCollapse("ebay_channel");
+    Fieldset.applyCollapse("other_channels");
+});
+</script>

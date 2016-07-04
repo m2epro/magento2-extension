@@ -1,0 +1,186 @@
+<?php
+use Ess\M2ePro\Model\Ebay\Template\Shipping\Service;
+/** @var $block \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form\Data */
+?>
+
+<div class="entry-edit form-inline">
+    <?php echo $block->getFormHtml();?>
+</div>
+<?php echo $block->getChildHtml('form_after');?>
+
+<table id="block_listing_template_shipping_table_row_template_table" style="display: none;">
+
+    <tbody>
+
+    <tr id="shipping_variant_%type%_%i%_tr" class="shipping-variant" style="border-top: 1px solid #d6d6d6">
+        <td style="text-align: center;">
+            <select style="width: 100%;" name="shipping[shipping_service][%i%]" class="shipping-service M2ePro-validate-shipping-service select admin__control-select" onchange="EbayTemplateShippingObj.serviceChange.call(this)"></select>
+        </td>
+        <td style="text-align: center;">
+            <input name="shipping[shipping_type][%i%]" value="%type%" type="hidden" />
+            <select style="width: 100%" name="shipping[cost_mode][%i%]" class="cost-mode select admin__control-select" onchange="EbayTemplateShippingObj.serviceCostModeChange.call(this)">
+                <option value="<?php echo Service::COST_MODE_FREE ?>" class="shipping-mode-option-free"><?php echo $block->__('Free'); ?></option>
+                <option value="<?php echo Service::COST_MODE_CUSTOM_VALUE ?>" class="shipping-mode-option-notcalc"><?php echo $block->__('Custom Value'); ?></option>
+                <option value="<?php echo Service::COST_MODE_CUSTOM_ATTRIBUTE ?>" class="shipping-mode-option-notcalc"><?php echo $block->__('Custom Attribute'); ?></option>
+                <option value="<?php echo Service::COST_MODE_CALCULATED ?>" class="shipping-mode-option-calc"><?php echo $block->__('Calculated'); ?></option>
+            </select>
+        </td>
+        <td style="text-align: center;">
+            <input name="shipping[shipping_cost_value][%i%]" type="text" style="width: 100%; display: none;" class="shipping-cost-cv input-text M2ePro-required-when-visible M2ePro-validation-float admin__control-text a-right" />
+                <span class="shipping-cost-ca">
+                    <!-- shipping_cost_attribute[%i%] -->
+                </span>
+        </td>
+        <td style="text-align: center;">
+            <input name="shipping[shipping_cost_additional_value][%i%]" type="text" style="width: 100%; display: none;" class="shipping-cost-additional input-text M2ePro-validation-float admin__control-text a-right" />
+                <span class="shipping-cost-additional-ca">
+                    <!-- shipping_cost_additional_attribute[%i%] -->
+                </span>
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->marketplaceData['currency'] ?>
+        </td>
+        <td style="text-align: center;">
+            <input name="shipping[shipping_priority][%i%]" type="text" class="shipping-priority input-text admin__control-text a-right" />
+        </td>
+        <td style="text-align: center;">
+            <?php echo $block->getChildHtml('remove_shipping_method_button'); ?>
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+
+<table id="block_shipping_table_locations_row_template_table" style="display: none;">
+
+    <tbody>
+
+    <tr id="shipping_variant_locations_%i%_tr" class="shipping-variant">
+        <td colspan="7">
+            <!-- locations will be rendered here -->
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+
+<table id="block_shipping_table_cost_surcharge_row_template_table" style="display: none;">
+
+    <tbody>
+
+    <tr id="shipping_variant_cost_surcharge_%i%_tr" class="shipping-variant" style="display: none;">
+        <td colspan="7">
+
+            <table class="data-grid-not-bordered" cellspacing="0" cellpadding="0" style="width: auto; margin:5px 0;">
+
+                <tr class="local-shipping-tr">
+                    <td class="label" style="width: auto;">
+                        <label style="width: auto;" for="shipping_cost_surcharge_value"><?php echo $block->__('Add a surcharge for Alaska, Hawaii, and Puerto Rico'); ?>:</label>
+                    </td>
+                    <td class="value" style="width: auto;">
+                        <input style="width: 80px;" name="shipping[shipping_cost_surcharge_value][%i%]" type="text" style="display: none;" class="shipping-cost-surcharge input-text M2ePro-validation-float admin__control-text a-right" />
+                            <span style="width: auto;" class="shipping-cost-surcharge-ca">
+                                <!-- shipping_cost_surcharge_attribute[%i%] -->
+                            </span>
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+
+<div style="display: none" id="magento_block_ebay_template_shipping_form_data_exclude_locations_popup">
+    <div id="magento_block_ebay_template_shipping_form_data_exclude_locations_popup_content" class="entry-edit" style="padding: 7px; overflow-y: auto; overflow-x: hidden;">
+
+        <div id="excluded_locations_popup_content_general" style="min-height: 380px;">
+<!--            <div id="block_notice_ebay_template_shipping_general_exclude_locations_popup" class="block_notices_module" title="--><?php //echo $block->__('Excluded Shipping Locations'); ?><!--">-->
+<!--                --><?php //echo $block->__('Select the Regions or Countries you don\'t ship to.'); ?>
+<!--            </div>-->
+
+            <input type="hidden" id="excluded_locations_popup_hidden" value='' />
+
+            <div id="exclude_locations_popup_domestic">
+                <?php if (!empty($block->marketplaceData['locations_exclude']['domestic'])) : ?>
+
+                    <h4><?php echo $block->__('Domestic'); ?></h4>
+
+                    <?php foreach ($block->marketplaceData['locations_exclude']['domestic'] as $locationCode => $locationTitle) : ?>
+                        <div class="checkbox_container" style="width: 200px;">
+                            <input id="shipping_excluded_location_domestic_<?php echo $locationCode; ?>" class="shipping_excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" location_type="domectic" />
+                            <label for="shipping_excluded_location_domestic_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                        </div>
+                    <?php endforeach; ?>
+
+                <?php endif; ?>
+            </div>
+
+            <div id="exclude_locations_popup_international">
+                <?php if (!empty($block->marketplaceData['locations_exclude']['international'])) : ?>
+
+                    <h4><?php echo $block->__('International'); ?></h4>
+
+                    <div id="exclude_locations_international_regions">
+                        <?php foreach ($block->marketplaceData['locations_exclude']['international'] as $regionCode => $regionTitle) : ?>
+                            <div class="checkbox_container shipping_excluded_location_region_link" style="display: block;" region="<?php echo $regionCode; ?>">
+                                <input id="shipping_excluded_location_international_<?php echo $regionCode; ?>" class="shipping_excluded_location shipping_excluded_region admin__control-checkbox" type="checkbox" value="<?php echo $regionCode; ?>" location_type="international" />
+                                <label for="shipping_excluded_location_international_<?php echo $regionCode; ?>" class="admin__field-label"><span><?php echo $regionTitle; ?></span></label>
+                                <span style="display: none;">(selected)</span>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div id="exclude_locations_international_locations">
+                        <?php foreach ($block->marketplaceData['locations_exclude']['international'] as $regionCode => $regionTitle) : ?>
+                            <?php if (isset($block->marketplaceData['locations_exclude'][$regionCode])) : ?>
+                                <div class="shipping_excluded_location_region" id="shipping_excluded_location_international_region_<?php echo $regionCode; ?>" style="display: none;">
+                                    <?php foreach ($block->marketplaceData['locations_exclude'][$regionCode] as $locationCode => $locationTitle) : ?>
+                                        <div class="checkbox_container" style="display: block;">
+                                            <input id="shipping_excluded_location_international_<?php echo $locationCode; ?>" class="shipping_excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" region="<?php echo $regionCode; ?>" location_type="international" />
+                                            <label for="shipping_excluded_location_international_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+
+                    <div style="clear: both;"></div>
+
+                <?php endif; ?>
+            </div>
+
+            <div id="exclude_locations_popup_additional">
+                <?php if (!empty($block->marketplaceData['locations_exclude']['additional'])) : ?>
+
+                    <h4><?php echo $block->__('Additional'); ?></h4>
+
+                    <?php foreach ($block->marketplaceData['locations_exclude']['additional'] as $locationCode => $locationTitle) : ?>
+                        <div class="checkbox_container" style="width: 145px;">
+                            <input id="shipping_excluded_location_additional_<?php echo $locationCode; ?>" class="shipping_excluded_location admin__control-checkbox" type="checkbox" value="<?php echo $locationCode; ?>" location_type="additional" />
+                            <label for="shipping_excluded_location_additional_<?php echo $locationCode; ?>" class="admin__field-label"><span><?php echo $locationTitle; ?></span></label>
+                        </div>
+                    <?php endforeach; ?>
+
+                <?php endif; ?>
+            </div>
+
+            <div class="fieldset" style="margin-top: 15px; padding-top: 10px; border-top: 1px solid #e3e3e3;">
+                <p style="margin: 0;">
+                    <span style="font-style: italic; color: grey;"><?php echo $block->__('Selected Options'); ?>:&nbsp;</span>
+                    <span id="excluded_locations_popup_titles"></span>
+                <span id="excluded_locations_reset_link" style="display: none; float:right; padding-left: 10px;">
+                    <a href="javascript:void(0);" onclick="EbayTemplateShippingObj.resetExcludeLocationsList('popup');"><?php echo $block->__('Reset'); ?></a>
+                </span>
+                    <span style="display: block; clear: both;"></span>
+                </p>
+            </div>
+        </div>
+
+    </div>
+</div>

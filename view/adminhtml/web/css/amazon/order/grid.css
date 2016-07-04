@@ -1,0 +1,18 @@
+.grid-listing-column-action select {
+    width: 40px;
+}
+.grid-listing-column-magento_order_num {
+    width: 180px;
+}
+.grid-listing-column-amazon_order_id {
+    width: 180px;
+}
+.grid-listing-column-is_afn_channel {
+    width: 120px;
+}
+.grid-listing-column-reservation_state {
+    width: 120px;
+}
+.grid-listing-column-status {
+    width: 120px;
+}

@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+
+    <!-- products -->
+
+    <event name="catalog_product_save_before">
+        <observer name="ess_m2epro_catalog_product_save_before"
+                  instance="Ess\M2ePro\Model\Observer\Product\AddUpdate\Before" />
+    </event>
+    <event name="catalog_product_save_after">
+        <observer name="ess_m2epro_catalog_product_save_after"
+                  instance="Ess\M2ePro\Model\Observer\Product\AddUpdate\After" />
+    </event>
+    <event name="catalog_product_delete_before">
+        <observer name="ess_m2epro_catalog_product_delete_before"
+                  instance="Ess\M2ePro\Model\Observer\Product\Delete" />
+    </event>
+
+    <!-- attributes -->
+
+    <event name="catalog_product_attribute_update_before">
+        <observer name="ess_m2epro_catalog_product_attribute_update_before"
+                  instance="Ess\M2ePro\Model\Observer\Product\Attribute\Update\Before" />
+    </event>
+
+    <!-- categories & stock items -->
+
+    <event name="catalog_category_change_products">
+        <observer name="ess_m2epro_catalog_category_change_products"
+                  instance="Ess\M2ePro\Model\Observer\Category" />
+    </event>
+    <event name="cataloginventory_stock_item_save_before">
+        <observer name="ess_m2epro_cataloginventory_stock_item_save_before"
+                  instance="Ess\M2ePro\Model\Observer\StockItem\Save\Before" />
+    </event>
+    <event name="cataloginventory_stock_item_save_after">
+        <observer name="ess_m2epro_cataloginventory_stock_item_save_after"
+                  instance="Ess\M2ePro\Model\Observer\StockItem\Save\After" />
+    </event>
+
+    <!-- synchronization -->
+
+    <event name="ess_synchronization_before_start">
+        <observer name="ess_m2epro_synchronization_before_start"
+                  instance="Ess\M2ePro\Model\Observer\Indexes\Disable" />
+    </event>
+    <event name="ess_synchronization_after_end">
+        <observer name="ess_m2epro_synchronization_after_end"
+                  instance="Ess\M2ePro\Model\Observer\Indexes\Enable" />
+    </event>
+
+    <!-- external orders -->
+
+    <event name="sales_order_invoice_pay">
+        <observer name="ess_m2epro_sales_order_invoice_pay"
+                  instance="Ess\M2ePro\Model\Observer\Invoice" />
+    </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="ess_m2epro_sales_order_shipment_save_after"
+                  instance="Ess\M2ePro\Model\Observer\Shipment" />
+    </event>
+    <event name="sales_order_shipment_track_save_after">
+        <observer name="ess_m2epro_sales_order_shipment_track_save_after"
+                  instance="Ess\M2ePro\Model\Observer\Shipment\Track" />
+    </event>
+    <event name="sales_order_creditmemo_refund">
+        <observer name="ess_m2epro_sales_order_creditmemo_refund"
+                  instance="Ess\M2ePro\Model\Observer\CreditMemo" />
+    </event>
+    <event name="sales_order_save_after">
+        <observer name="ess_m2epro_sales_order_save_after_ebay_order"
+                  instance="Ess\M2ePro\Model\Observer\Ebay\Order" />
+    </event>
+    <!--This event replaced in magento 2 so we used plugin instead of this event -->
+    <!--<event name="sales_convert_quote_item_to_order_item">-->
+        <!--<observer name="ess_m2epro_sales_convert_quote_item_to_order_item"-->
+                  <!--instance="Ess\M2ePro\Model\Observer\Order\Quote" />-->
+    <!--</event>-->
+    <event name="layout_render_before_sales_order_view">
+        <observer name="ess_m2epro_controller_action_layout_render_before_adminhtml_sales_order_view"
+                  instance="Ess\M2ePro\Model\Observer\Order\View\Before" />
+    </event>
+    <event name="layout_render_before_adminhtml_order_shipment_view">
+        <observer name="ess_m2epro_controller_action_layout_render_before_adminhtml_sales_order_shipment_view"
+                  instance="Ess\M2ePro\Model\Observer\Shipment\View" />
+    </event>
+    <event name="layout_render_before_sales_order_invoice_view">
+        <observer name="ess_m2epro_controller_action_layout_render_before_adminhtml_sales_order_invoice_view"
+                  instance="Ess\M2ePro\Model\Observer\Invoice\View" />
+    </event>
+    <event name="layout_render_before_sales_order_creditmemo_view">
+        <observer name="ess_m2epro_controller_action_layout_render_before_adminhtml_sales_order_creditmemo_view"
+                  instance="Ess\M2ePro\Model\Observer\CreditMemo\View" />
+    </event>
+    <event name="core_layout_block_create_after">
+        <observer name="ess_m2epro_core_layout_block_create_after_order"
+                  instance="Ess\M2ePro\Model\Observer\Order\View\After" />
+        <observer name="ess_m2epro_core_layout_block_create_after_shipment"
+                  instance="Ess\M2ePro\Model\Observer\Shipment\View\Before" />
+        <observer name="ess_m2epro_core_block_abstract_to_html_after"
+                  instance="Ess\M2ePro\Model\Observer\Shipment\View\After" />
+    </event>
+
+    <!-- internal orders -->
+
+    <event name="ess_associate_ebay_order_item_to_product">
+        <observer name="ess_m2epro_associate_ebay_order_item_to_product"
+                  instance="Ess\M2ePro\Model\Observer\Ebay\Order\Item" />
+    </event>
+    <event name="ess_associate_amazon_order_item_to_product">
+        <observer name="ess_m2epro_associate_amazon_order_item_to_product"
+                  instance="Ess\M2ePro\Model\Observer\Amazon\Order\Item" />
+    </event>
+
+     <!--amazon orders -->
+
+    <event name="ess_amazon_fba_magento_order_place_after">
+        <observer name="ess_m2epro_amazon_fba_magento_order_place_after"
+                  instance="Ess\M2ePro\Model\Observer\Amazon\Order" />
+    </event>
+
+</config>

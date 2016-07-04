@@ -1,0 +1,415 @@
+.v-top { vertical-align:top; }
+.v-middle { vertical-align:middle !important; }
+.v-bottom { vertical-align:bottom; }
+.a-left { text-align:left; }
+.a-center { text-align:center; }
+.a-right { text-align:right; }
+.left { float:left; }
+.right { float:right; }
+
+.required {
+    color: #eb5202;
+}
+
+#globalMessages {
+    margin-top: 1px;
+}
+
+.m2epro-box-style {
+    background-color: #f8f8f8 !important;
+    border-top: 1px solid #e3e3e3 !important;
+    border-bottom: 1px solid #e3e3e3 !important;
+}
+
+.admin__old .fieldset > .legend {
+    position: static;
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0;
+    border-bottom: 1px solid #cac3b4;
+    margin: 0 0 18px;
+}
+
+.admin__old .fieldset > .legend span {
+    color: #303030;
+    font-size: 1.7rem;
+    font-weight: 600;
+    padding: 7px 0 10px;
+    display: inline-block;
+}
+
+.forward:after {
+    display: inline-block;
+    content: '\e626';
+    margin-left: .5em;
+    position: relative;
+    top: 1px;
+    transform: rotate(180deg);
+    -webkit-font-smoothing: antialiased;
+    font-family: 'Admin Icons';
+    line-height: 1;
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
+}
+
+.icon-warning:before {
+    font-family: 'Admin Icons';
+    margin-right: 5px;
+    position: relative;
+    top: 3px;
+    content: '\e623';
+    color: #EB5202;
+    font-size: 2rem;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.modals-wrapper a, .main-col a:not(.ui-tabs-anchor) {
+    cursor: pointer;
+    text-decoration: underline;
+}
+.modal-popup .modal-footer .action-primary {
+    background: #eb5202 !important;
+    border-color: #eb5202 !important;
+}
+.invalid-row {
+    background-color: #ffcdbd !important;
+}
+.m2epro-fieldset-table .admin__field-control {
+    width: calc( 100% - 30px ) !important;
+    margin-left: 15px !important;
+}
+.m2epro-fieldset-table.admin__field {
+    margin-left: 10px !important;
+ }
+.m2epro-fieldset-table .admin__field-value {
+    padding: 0 2em !important;
+}
+.m2epro-fieldset-table td {
+    vertical-align: middle;
+}
+
+.m2epro-custom-container-full-width .admin__field-control {
+    width: 95% !important;
+}
+
+.multiselect {
+    max-height: 115px
+}
+.admin__field.with-note .note {
+    color: #303030;
+    font-size: 12px;
+    font-weight: 400;
+    margin: 5px 0;
+}
+.ui-tabs-panel {
+    padding: 2rem 0 0 2rem;
+}
+.m2epro-tabs-horizontal ~ div .ui-tabs-panel {
+    padding: 30px 0;
+    min-height: 8rem;
+}
+.m2epro-tabs-horizontal ~ div .ui-tabs-panel .ui-tabs-panel {
+    padding: 2rem 0 0 2rem;
+}
+.modal-content .m2epro-tabs-horizontal + div .ui-tabs-panel {
+    padding: 25px 0;
+}
+.m2epro-tabs-horizontal + div .ui-tabs-panel:empty {
+    background: url(../images/ajax-loader-big.gif) no-repeat 50% 100%;
+    background-size: 40px;
+}
+.m2epro-tabs-horizontal li.ui-state-disabled a {
+    cursor: not-allowed;
+}
+.m2epro-separator hr {
+    border-style: solid;
+    border-color: #CCCCCC;
+    margin-bottom: 25px;
+    border-bottom-width: 0;
+    width: 70%;
+    margin-left: 70px;
+}
+
+select.locked_selected {
+    color: gray !important;
+    font-weight: bold !important;
+}
+
+select.locked_selected option[value="0"] {
+    color: black !important;
+    font-weight: normal !important;
+}
+
+select.hightlight_selected {
+    color: green !important;
+    font-weight: bold !important;
+}
+
+select.hightlight_selected option[value="0"] {
+    color: black !important;
+    font-weight: normal !important;
+}
+
+select.lacklustre_selected {
+    color: black !important;
+}
+
+select.lacklustre_selected option[value="1"] {
+    color: green !important;
+    font-weight: bold !important;
+}
+
+.no-margin-bottom {
+    margin-bottom: 0 !important;
+}
+.no-margin-top {
+    margin-top: 0 !important;
+}
+.bold {
+    font-weight: bold;
+}
+
+.main-col:not(:only-child) .m2epro-fieldset input[type="text"].input-text,
+#container:not(:only-child) .m2epro-fieldset input[type="text"].input-text {
+    width: 50%;
+}
+
+.m2epro-fieldset input[type="text"].input-text {
+    width: 70%;
+}
+
+#container:not(:only-child) .m2epro-fieldset label.label,
+.main-col:not(:only-child) .m2epro-fieldset label.label {
+    width: 35%;
+}
+
+#container:not(:only-child) .admin__scope-old .form-inline .no-label .control,
+.main-col:not(:only-child) .admin__scope-old .form-inline .no-label .control {
+    margin-left: 40%;
+}
+
+a.hover-underline {
+    text-decoration: none !important;
+}
+
+a.hover-underline:hover {
+    text-decoration: underline !important;
+}
+
+/* popup width classes */
+/* ================================================ */
+
+.width-50 > .modal-inner-wrap {
+    width: 50%
+}
+
+.width-50 .admin__fieldset > .admin__field > .admin__field-control {
+    width: calc( (100%) * 0.77777777  - 30px );
+}
+
+.width-50 .admin__fieldset > .admin__field > .admin__field-label {
+    width: calc( (100%) * 0.22222222 - 30px );
+}
+
+.width-50 label.error {
+    display: block;
+    padding-top: 3px;
+}
+
+
+.width-500 > .modal-inner-wrap {
+    width: 600px;
+}
+
+.magento-attribute-btn {
+    margin-left: .5em;
+}
+
+/* Errors Summary */
+/* ================================================ */
+
+.errors_summary {
+    padding: 8px 15px !important;
+    margin: 30px 0 !important;
+    border: 1px dashed #FF7A7A !important;
+    background-color: #FFF7EA !important;
+}
+
+.errors_summary_title {
+    margin-bottom: 10px !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    color: gray !important;
+}
+
+.errors_summary_title a {
+    text-decoration: none !important;
+}
+
+.errors_summary_close {
+    float: right !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    text-decoration: none !important;
+}
+
+.errors_summary_content {
+    max-height: 125px !important;
+    overflow: auto !important;
+}
+
+.errors_summary_line {
+    margin-bottom: 5px !important;
+}
+
+.errors_summary_type {
+    float: left !important;
+    width: 135px !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    color: red !important;
+}
+
+.errors_summary_text {
+    margin-left: 150px !important;
+}
+
+label.mage-error > a:before {
+    content: '\e632';
+    display: block;
+    font-family: 'Admin Icons';
+    font-size: 6px;
+    color: #ee7d7d;
+    cursor: pointer;
+    line-height: 2;
+    margin-left: -10px;
+    position: absolute;
+    left: 100%;
+    top: 2%;
+}
+
+/* Variation product manage variations */
+/* ================================================ */
+
+.attributes-options-filter img {
+    cursor: pointer;
+}
+
+.attributes-options-filter-values .filter-param-remove {
+    padding-left: 5px;
+}
+
+.attributes-options-filter-values input {
+    width: 87%;
+    margin-top: 3px;
+}
+
+.product-options-main select {
+    width: 185px;
+}
+
+.manage-variations.form-list td.value select {
+    width: 225px;
+}
+
+.m2ePro-variation-attributes
+{
+    font-size: 11px;
+}
+
+.m2ePro-variation-attributes a
+{
+    text-decoration: none;
+    color: grey;
+}
+
+.m2ePro-variation-attributes a:hover
+{
+    text-decoration: underline;
+}
+
+.grid-listing-column-identifiers {
+    width: 200px;
+}
+
+/* ================================================ */
+
+
+/* Amazon Individual Variation */
+/* ================================================ */
+a.amazon-listing-view-edit-variation {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+
+a.amazon-listing-view-edit-variation:before {
+    color: #514943;
+    content: '\e631';
+    font-size: 1.5rem;
+}
+
+a.amazon-listing-view-add-variation {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+
+a.amazon-listing-view-add-variation:before {
+    color: #514943;
+    content: '\e61d';
+    font-size: 1.5rem;
+}
+
+a.amazon-listing-view-switch-variation-mode {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+
+a.amazon-listing-view-switch-variation-mode:before {
+    color: #514943;
+    content: '\e610';
+    font-size: 1.5rem;
+}
+/* ================================================ */
+
+.categories-side-col a {
+    text-decoration: none !important;
+}
+
+#productSearch_grid .admin__data-grid-wrap {
+    padding-top: 0;
+    overflow: visible;
+}
+
+#container .admin__field-tooltip-content strong {
+    background-color: transparent;
+}

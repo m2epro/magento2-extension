@@ -1,0 +1,359 @@
+<?php
+    /** @var $block Ess\M2ePro\Block\Adminhtml\Amazon\Order\View\Form */
+    echo $block->getChildHtml('item_edit');
+
+    $currency = $block->order->getChildObject()->getData('currency');
+    if (empty($currency)) {
+        $currency = $block->order->getMarketplace()->getChildObject()->getDefaultCurrency();
+    }
+?>
+
+<!-- ########################################################################################### -->
+
+<div class="col-m-6">
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_general" collapseable="no" magento_block="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title">
+                <span>
+                    <?php echo $block->__('Amazon Order');?> # <?php echo $block->order->getChildObject()->getData('amazon_order_id'); ?>
+                    <?php if ($block->order->getChildObject()->isPrime()): ?>
+                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/prime.png'); ?>" />
+                    <?php endif; ?>
+                </span>
+            </strong>
+            <div style="float: right;">
+                <?php $url = $block->getHelper('Component\Amazon')->getOrderUrl($block->order->getChildObject()->getAmazonOrderId(), $block->order->getMarketplaceId()); ?>
+                <a href="<?php echo $url ?>" target="_blank"><?php echo $block->__('View On Amazon') ?></a>
+            </div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table cellspacing="0" class="form-list order-info">
+                    <tbody>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Magento Order #');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if (!is_null($block->realMagentoOrderId)) { ?>
+
+                                        <?php if (!is_null($block->realMagentoOrderId)) { ?>
+                                            <a href="<?php echo $block->getUrl('sales/order/view', array('order_id' => $block->order->getData('magento_order_id'))); ?>" target="_blank"><?php echo $block->realMagentoOrderId; ?></a>
+                                        <?php } else { ?>
+                                            <?php echo $block->order->getData('magento_order_id'); ?>
+                                        <?php } ?>
+
+                                    <?php } else { ?>
+
+                                        <?php echo $block->__('N/A'); ?>
+
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Sale Time');?></td>
+                            <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getData('purchase_create_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Update Time');?></td>
+                            <td class="value"><strong><?php echo $block->formatDate($block->order->getChildObject()->getData('purchase_update_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                        </tr>
+
+                        <?php if (!is_null($block->order->getData('reservation_start_date'))): ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Reservation Time') ?></td>
+                                <td class="value"><strong><?php echo $block->formatDate($block->order->getData('reservation_start_date'), \IntlDateFormatter::MEDIUM, true); ?></strong></td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Order Status'); ?></td>
+                            <td class="value">
+                                <strong>
+
+                                    <?php if ($block->order->getChildObject()->isPending()) { ?>
+                                        <span style="color: gray;"><?php echo $block->__('Pending') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isUnshipped()) { ?>
+                                        <span><?php echo $block->__('Unshipped') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isPartiallyShipped()) { ?>
+                                        <span><?php echo $block->__('Partially Shipped') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isShipped()) { ?>
+                                        <span style="color: green;"><?php echo $block->__('Shipped') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isUnfulfillable()) { ?>
+                                        <span><?php echo $block->__('Unfulfillable') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isInvoiceUnconfirmed()) { ?>
+                                        <span><?php echo $block->__('Invoice Unconfirmed') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->getChildObject()->isCanceled()) { ?>
+                                        <span style="color: red;"><?php echo $block->__('Canceled') ?></span>
+                                    <?php } ?>
+
+                                    <?php if ($block->order->isSetProcessingLock('update_shipping_status')) { ?>
+                                        &nbsp;[<span style="color: gray;"><?php echo $block->__('Status Update in Progress...') ?></span>]
+                                    <?php } ?>
+
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Account');?></td>
+                            <td class="value">
+                                <strong>
+
+                                    <?php if (!$block->order->getAccount()->getId()) { ?>
+                                        <span style="color: red;"><?php echo $block->__('Deleted'); ?></span>
+
+                                    <?php } else { ?>
+
+                                        <a href="<?php echo $block->getUrl('*/amazon_account/edit', array('id' => $block->order->getAccount()->getId())); ?>" target="_blank"><?php echo $block->getHelper('Data')->escapeHtml($block->order->getAccount()->getTitle()); ?></a>
+
+                                    <?php }?>
+
+                                </strong>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6">
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_buyer" collapseable="no" magento_block="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Buyer Information');?></span></strong>
+            <?php if (!$block->order->getChildObject()->isPending()): ?>
+                <div style="float: right; margin-bottom: -15px; margin-top: -5px;">
+                    <?php echo $block->getChildHtml('edit_shipping_info'); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div id="shipping_address_container" class="hor-scroll">
+                <?php echo $block->getChildHtml('shipping_address'); ?>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6" style="margin-top: 30px">
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_payment" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Payment Information');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table cellspacing="0" class="form-list order-info">
+                    <tbody>
+                        <tr>
+                            <td class="label"><?php echo $block->__('Order Currency');?></td>
+                            <td class="value">
+                                <?php if ($block->order->getChildObject()->getData('currency')): ?>
+                                    <strong>
+                                        <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getData('currency')); ?>
+                                    </strong>
+
+                                    <?php
+                                        if (!$block->isCurrencyAllowed()) {
+                                            echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('Order Currency is not enabled in Magento. Please, enable it in System > Configuration > Currency Setup.');
+                                        } elseif (!$block->hasCurrencyConversionRate()) {
+                                            echo '<br/><b>' . $block->__('Attention!') . '</b> ' . $block->__('There\'s no rate for Order Currency in Magento. Please, add Currency convert rate in System > Manage Currency > Rates.');
+                                        }
+                                    ?>
+                                <?php else: ?>
+                                    <strong><?php echo $block->__('N/A'); ?><strong>
+                                <?php endif; ?>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6" style="margin-top: 30px">
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_shipping" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Shipping & Handling Information');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="form-list order-info" cellspacing="0">
+                    <tbody>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Shipping Service');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if (is_null($block->order->getChildObject()->getData('shipping_service'))) { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->getHelper('Data')->escapeHtml($block->order->getChildObject()->getData('shipping_service')); ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="label"><?php echo $block->__('Shipping Cost');?></td>
+                            <td class="value">
+                                <strong>
+                                    <?php if (!$block->order->getChildObject()->getData('shipping_price')) { ?>
+                                        <?php echo $block->__('N/A'); ?>
+                                    <?php } else { ?>
+                                        <?php echo $block->formatPrice($currency, $block->order->getChildObject()->getData('shipping_price')); ?>
+                                    <?php } ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php if ($block->getChild('resubmit_shipping_info')): ?>
+                            <tr>
+                                <td></td>
+                                <td class="value">
+                                    <?php echo $block->getChildHtml('resubmit_shipping_info') ?>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                        <?php
+                        // TODO NOT SUPPORTED FEATURES
+                        // MFFSS
+                        ?>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-m-12">
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_transaction" collapseable="no">
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title" style="margin-bottom: 0">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Transaction Item(s)'); ?></span></strong>
+        </div>
+    </div>
+
+    <div class="fieldset-wrapper-content admin__fieldset-wrapper-content grid np">
+        <div class="hor-scroll">
+             <?php echo $block->getChildHtml('item'); ?>
+        </div>
+    </div>
+</div>
+<div></div>
+
+<div class="col-m-6">
+
+    <div class="fieldset-wrapper" id="magento_block_amazon_orders_history" collapseable="no">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title"><span><?php echo $block->__('Order Log');?></span></strong>
+            <div class="form-buttons"></div>
+        </div>
+
+        <a name="order_log"></a>
+
+        <div class="fieldset">
+            <?php echo $block->getChildHtml('log'); ?>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="col-m-6 fieldset-wrapper" collapseable="no">
+
+    <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+        <strong><span><?php echo $block->__('Order Totals');?></span></strong>
+    </div>
+
+    <div class="m2epro-order-totals">
+        <table cellspacing="0" width="100%" class="order-info form-list">
+            <tbody>
+
+                <tr>
+                    <td class="label"><?php echo $block->__('Subtotal'); ?></td>
+                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getSubtotalPrice());?></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><?php echo $block->__('Shipping &amp; Handling'); ?></td>
+                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getData('shipping_price')); ?></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><?php echo $block->__('Promotions'); ?></td>
+                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getPromotionDiscountAmount() + $block->order->getChildObject()->getShippingDiscountAmount()); ?></span></td>
+                </tr>
+
+                <tr>
+                    <td class="label"><?php echo $block->__('Tax'); ?></td>
+                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getProductPriceTaxAmount()); ?></span></td>
+                </tr>
+
+            </tbody>
+
+            <tfoot>
+
+                <tr>
+                    <td class="label">
+                        <strong><big><?php echo $block->__('Grand Total');?></big></strong>
+                    </td>
+                    <td class="emph">
+                        <big>
+                            <strong>
+                                <span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getGrandTotalPrice());?></span>
+                            </strong>
+                        </big>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="label"><small><?php echo $block->__('Amount Paid'); ?></small></td>
+                    <td><span class="price"><small><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getData('paid_amount'));?></small></span></td>
+                </tr>
+
+            </tfoot>
+        </table>
+
+    </div>
+</div>

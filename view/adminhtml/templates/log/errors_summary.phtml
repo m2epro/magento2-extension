@@ -1,0 +1,28 @@
+<div class="errors_summary_title">
+    <?php echo $this->__('Errors Summary'); ?>
+    <a href="javascript:void(0);" onclick="$('listing_container_errors_summary').hide();" title="<?php echo $this->__('Close'); ?>">
+        <span class="errors_summary_close">&times;</span>
+    </a>
+</div>
+
+<div class="errors_summary_content">
+
+    <?php foreach($this->errors as $error) { ?>
+
+        <div class="errors_summary_line">
+            <div class="errors_summary_type">
+                <?php if ((int)$error['count_products'] == 0) { ?>
+                    <?php echo $this->__('Global'); ?>
+                <?php } else { ?>
+                    <?php echo (int)$error['count_products']; ?>
+                    <?php echo $this->__('Product(s)'); ?>
+                <?php } ?>
+            </div>
+            <div class="errors_summary_text">
+                <?php echo $error['description']; ?>
+            </div>
+        </div>
+
+    <?php } ?>
+
+</div>

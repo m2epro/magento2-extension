@@ -1,0 +1,43 @@
+<?php
+
+/** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Synchronization\Content $block */
+
+$ebayMarketplaces = $block->getEbayMarketplaces();
+$amazonMarketplaces = $block->getAmazonMarketplaces();
+
+?>
+
+<div class="wizard_block">
+
+    <div class="marketplaces">
+        <?php if (!empty($ebayMarketplaces)): ?>
+            <h3>
+                <?php echo $block->__('Enabled eBay Marketplaces'); ?>
+            </h3>
+            <ul>
+                <?php foreach ($ebayMarketplaces as $marketplace): ?>
+                    <li>
+                        <span id="marketplace_<?php echo $marketplace->getId(); ?>"><?php echo $marketplace->getTitle(); ?></span>
+                        <input type="hidden" class="marketplace-id" component="<?php echo $marketplace->getComponentTitle(); ?>" value="<?php echo $marketplace->getId(); ?>">
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+
+        <br/>
+
+        <?php if (!empty($amazonMarketplaces)): ?>
+            <h3>
+                <?php echo $block->__('Enabled Amazon Marketplaces'); ?>
+            </h3>
+            <ul>
+                <?php foreach ($amazonMarketplaces as $marketplace): ?>
+                    <li>
+                        <span id="marketplace_<?php echo $marketplace->getId(); ?>"><?php echo $marketplace->getTitle(); ?></span>
+                        <input type="hidden" class="marketplace-id" component="<?php echo $marketplace->getComponentTitle(); ?>" value="<?php echo $marketplace->getId(); ?>">
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        <?php endif; ?>
+    </div>
+</div>

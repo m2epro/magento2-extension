@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="../../../Backend/etc/menu.xsd">
+    <menu>
+        <!--Ebay Menu-->
+        <add id="Ess_M2ePro::ebay" title="Integration (Beta)" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
+
+        <add id="Ess_M2ePro::ebay_listings" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay" title="Listings" resource="Ess_M2ePro::ebay_listings" />
+        <add id="Ess_M2ePro::ebay_listings_m2epro" title="M2E Pro" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing/index" resource="Ess_M2ePro::ebay_listings_m2epro" />
+        <add id="Ess_M2ePro::ebay_listings_other" title="3rd Party" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing_other/index" resource="Ess_M2ePro::ebay_listings_other" />
+        <add id="Ess_M2ePro::ebay_listings_search" title="Search Products" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing_search/index" resource="Ess_M2ePro::ebay_listings_search" />
+        <add id="Ess_M2ePro::ebay_listings_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_listings" action="m2epro/ebay_listing_log/index" resource="Ess_M2ePro::ebay_listings_logs" />
+
+        <add id="Ess_M2ePro::ebay_sales" title="Sales" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay" resource="Ess_M2ePro::ebay_sales" />
+        <add id="Ess_M2ePro::ebay_sales_orders" title="Orders" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_sales" action="m2epro/ebay_order/index" resource="Ess_M2ePro::ebay_sales_orders" />
+        <add id="Ess_M2ePro::ebay_sales_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_sales" action="m2epro/ebay_order_log/index/" resource="Ess_M2ePro::ebay_sales_logs" />
+
+        <add id="Ess_M2ePro::ebay_configuration" title="Configuration" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay" resource="Ess_M2ePro::ebay_configuration" />
+        <add id="Ess_M2ePro::ebay_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_account/index" resource="Ess_M2ePro::ebay_configuration_accounts" />
+        <add id="Ess_M2ePro::ebay_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_marketplace/index" resource="Ess_M2ePro::ebay_configuration_marketplaces" />
+        <add id="Ess_M2ePro::ebay_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_template/index" resource="Ess_M2ePro::ebay_configuration_templates" />
+        <add id="Ess_M2ePro::ebay_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::ebay_configuration" action="m2epro/ebay_settings/index" resource="Ess_M2ePro::ebay_configuration_settings" />
+
+        <add id="Ess_M2ePro::ebay_help_center" title="Help Center" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay" resource="Ess_M2ePro::ebay_help_center" />
+        <add id="Ess_M2ePro::ebay_help_center_documentation" title="Documentation" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_documentation" />
+        <add id="Ess_M2ePro::ebay_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_knowledge_base" />
+        <add id="Ess_M2ePro::ebay_help_center_ideas_workshop" title="Ideas Workshop" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_ideas_workshop" />
+        <add id="Ess_M2ePro::ebay_help_center_community_forum" title="Community Forum" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_community_forum" />
+        <add id="Ess_M2ePro::ebay_help_center_for_developers" title="For Developers" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::ebay_help_center" action="m2epro/developers/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_for_developers" />
+        <add id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::ebay_help_center" action="m2epro/support/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_contact_us" />
+
+        <!--Amazon Menu-->
+        <add id="Ess_M2ePro::amazon" title="Integration (Beta)" module="Ess_M2ePro" sortOrder="32" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::amazon" />
+
+        <add id="Ess_M2ePro::amazon_listings" title="Listings" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_listings" />
+        <add id="Ess_M2ePro::amazon_listings_m2epro" title="M2E Pro" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_listings" action="m2epro/amazon_listing/index" resource="Ess_M2ePro::amazon_listings_m2epro" />
+        <add id="Ess_M2ePro::amazon_listings_other" title="3rd Party" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_listings" action="m2epro/amazon_listing_other/index" resource="Ess_M2ePro::amazon_listings_other" />
+        <add id="Ess_M2ePro::amazon_listings_search" title="Search Products" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_listings" action="m2epro/amazon_listing_search/index" resource="Ess_M2ePro::amazon_listings_search" />
+        <add id="Ess_M2ePro::amazon_listings_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_listings" action="m2epro/amazon_listing_log/index" resource="Ess_M2ePro::amazon_listings_logs" />
+
+        <add id="Ess_M2ePro::amazon_sales" title="Sales" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_sales" />
+        <add id="Ess_M2ePro::amazon_sales_orders" title="Orders" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_sales" action="m2epro/amazon_order/index" resource="Ess_M2ePro::amazon_sales_orders" />
+        <add id="Ess_M2ePro::amazon_sales_logs" title="Logs &#38; Events" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_sales" action="m2epro/amazon_order_log/" resource="Ess_M2ePro::amazon_sales_logs" />
+
+        <add id="Ess_M2ePro::amazon_configuration" title="Configuration" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_configuration" />
+        <add id="Ess_M2ePro::amazon_configuration_accounts" title="Accounts" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_account" resource="Ess_M2ePro::amazon_configuration_accounts" />
+        <add id="Ess_M2ePro::amazon_configuration_marketplaces" title="Marketplaces" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_marketplace/" resource="Ess_M2ePro::amazon_configuration_marketplaces" />
+        <add id="Ess_M2ePro::amazon_configuration_templates" title="Policies" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_template/index" resource="Ess_M2ePro::amazon_configuration_templates" />
+        <add id="Ess_M2ePro::amazon_configuration_settings" title="Settings" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::amazon_configuration" action="m2epro/amazon_settings/index" resource="Ess_M2ePro::amazon_configuration_settings" />
+
+        <add id="Ess_M2ePro::amazon_help_center" title="Help Center" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon" resource="Ess_M2ePro::amazon_help_center" />
+        <add id="Ess_M2ePro::amazon_help_center_documentation" title="Documentation" module="Ess_M2ePro" sortOrder="10" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_documentation" />
+        <add id="Ess_M2ePro::amazon_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_knowledge_base" />
+        <add id="Ess_M2ePro::amazon_help_center_ideas_workshop" title="Ideas Workshop" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_ideas_workshop" />
+        <add id="Ess_M2ePro::amazon_help_center_community_forum" title="Community Forum" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_community_forum" />
+        <add id="Ess_M2ePro::amazon_help_center_for_developers" title="For Developers" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::amazon_help_center" action="m2epro/developers/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_for_developers" />
+        <add id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::amazon_help_center" action="m2epro/support/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_contact_us" />
+    </menu>
+</config>

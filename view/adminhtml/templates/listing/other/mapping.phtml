@@ -1,0 +1,24 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping $block */ ?>
+
+<div id="pop_up_content" style="display: none;">
+    <div class="hor-scroll" style="padding-top: 15px; ">
+
+        <div style="display: none;" >
+            <label for="product_id"><?php echo $block->__('Enter Product ID'); ?></label>
+            <input id="product_id" type="text" name="product_id" class="input-text" style="margin: 0 10px 0 10px; width: 75px" />
+
+            <input id="other_product_id" type="hidden" name="other_product_id" />
+
+            <label for="sku"><?php echo $block->__('Or SKU'); ?></label>
+            <input id="sku" type="text" name="sku" class="input-text" style="margin: 0 20px 0 10px" />
+
+            <?php echo $block->getChildHtml('mapping_submit_button'); ?>
+        </div>
+
+        <div id="help_grid" style="margin: 0 auto; padding-top: 10px;">
+            <?php echo $block->getChildHtml('help_block'); ?>
+            <?php echo $block->getChildHtml('mapping_grid') ?>
+        </div>
+
+    </div>
+</div>

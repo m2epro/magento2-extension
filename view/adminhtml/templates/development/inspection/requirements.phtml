@@ -1,0 +1,53 @@
+<style type="text/css">
+    .column_condition {
+        color: gray;
+    }
+    .column_value_fail {
+        color: red;
+    }
+    .column_value_success {
+        color: green;
+    }
+</style>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label" style="width:200px;">
+            <strong><?php echo $this->__('Properties'); ?></strong>
+        </td>
+        <td class="value" style="width:200px;">
+            <strong><?php echo $this->__('Recommended Value'); ?></strong>
+        </td>
+        <td class="value" style="width:200px;">
+            <strong><?php echo $this->__('Current Value'); ?></strong>
+        </td>
+    </tr>
+
+    <?php foreach($this->requirements as $key => $requirement) { ?>
+
+        <tr>
+            <td class="label">
+                <label><?php echo $requirement['title']; ?></label>
+            </td>
+            <td class="value column_condition">
+                <?php echo $requirement['condition']['sign'] ?>
+                <?php echo $requirement['condition']['value'] ?>
+            </td>
+            <td class="value">
+                <span class="<?php echo $requirement['current']['status'] ? 'column_value_success' : 'column_value_fail'; ?>"><?php echo $requirement['current']['value']; ?></span>
+                <?php if ($key == 'max_execution_time' && $this->getHelper('Client')->isPhpApiFastCgi()) { ?>
+                    &nbsp;&nbsp;
+                    <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/tool-tip-icon.png'); ?>" class="tool-tip-image">
+                    <span class="tool-tip-message" style="display: none;">
+                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/help.png'); ?>">
+                        <span><?php echo $this->__('PHP is running using <b>fast CGI</b> Module on your web Server.<br/>
+                                                                     It has its own Settings that override max_execution_time in php.ini or .htaccess.'); ?></span>
+                    </span>
+                <?php } ?>
+            </td>
+        </tr>
+
+    <?php } ?>
+
+</table>

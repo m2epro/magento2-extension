@@ -1,0 +1,99 @@
+<style type="text/css">
+    li.categories {
+        text-align: left;
+        padding: 10px;
+        font-size: 14px;
+    }
+    li.selected {
+        background-color: #514943;
+        color: white;
+        font-weight: bold;
+    }
+    .area_wrapper {
+        opacity: 1 !important;
+        background-color: rgb(226, 226, 226) !important;
+        color: #a9a9a9 !important;
+        font-weight: bold !important;
+        font-size: 30pt !important;
+        text-align: center !important;
+        border: 1px solid  #D6D6D6
+    }
+</style>
+
+<?php echo $block->getChildHtml('view_header'); ?>
+
+<div class="clear"></div>
+
+<div class="page-layout-admin-2columns-left" style="margin-top: 20px;">
+    <div class="page-columns">
+        <div class="main-col">
+            <div id="specifics_main_container_wrapper">
+                <div id="specifics_main_container">
+                    <?php echo $block->getChildHtml('specific'); ?>
+                </div>
+            </div>
+
+            <div class="entry-edit" id="buttons_container" style="padding-top: 15px; text-align: right">
+                <?php echo $block->getChildHtml('continue'); ?>
+                <?php echo $block->getChildHtml('next_category_button'); ?>
+            </div>
+
+        </div>
+        <div class="side-col">
+
+            <div class="m2epro-box-style">
+
+                <div style="padding-top: 10px; text-align: center">
+                    <h3 style="text-decoration: underline"><?php echo $block->__('eBay Categories') ?></h3>
+                </div>
+
+                <div style="<?php if (count($block->getData('categories')) == 1) echo 'display: none;'; ?> padding-bottom: 10px; text-align: center ; border-bottom: 1px solid #D6D6D6 !important;">
+                    <input type="checkbox" name="skip_optional_specifics" id="skip_optional_specifics" class="admin__control-checkbox">
+                    &nbsp;
+                    <label for="skip_optional_specifics" class="admin__field-label"><span><?php echo $block->__('Skip Optional Specifics') ?></span></label>
+                    <div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="margin-right: 35px; margin-left: -15px; margin-top: -1px;">
+                        <a class="admin__field-tooltip-action" href="javascript://"></a>
+                        <div class="admin__field-tooltip-content a-left">
+                            <?php echo $block->__('M2E Pro will check all available Item Specifics for selected eBay Categories and stops at the Category where user Action is required (required Item Specifics should be set).'); ?>
+                        </div>
+                    </div>
+                </div>
+
+                <ul style="max-height: 500px; overflow-y: auto; margin-bottom: 0" id="categories_list">
+                    <?php foreach ($block->getData('categories') as $categoryData) { ?>
+                        <?php if ($categoryData['category_main_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_EBAY) {
+                            $category = $categoryData['category_main_id'];
+                            $title = $categoryData['category_main_path'] . ' ('.$category.')';
+                        } else {
+                            $category = $categoryData['category_main_attribute'];
+                            $title = $block->__('Magento Attribute > %attribute_label%', $this->getHelper('Magento\Attribute')->getAttributeLabel(
+                                $category,
+                                $block->getData('store_id')
+                            ));
+                        }?>
+                        <li id="<?php echo $category; ?>" class="categories">
+                            <?php echo $block->getHelper('Data')->escapeHtml($title); ?>
+                        </li>
+                    <?php } ?>
+                </ul>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="clear"></div>
+
+<div id="popup_content" style="display: none;">
+
+    <div>
+
+        <?php echo $block->__(
+            '<br/>All selected eBay Categories were checked for required Item Specifics.
+            <br/><br/>
+            Now you can proceed further (use Continue Button) or close this window and review Item Specifics if neccessary (use Cancel Button).'); ?>
+
+    </div>
+
+</div>

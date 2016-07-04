@@ -1,0 +1,39 @@
+.page-main-actions .m2epro-field-tooltip.admin__field-tooltip {
+    position: absolute;
+    left: 23.5%;
+    padding-top: 5px;
+}
+
+.page-main-actions .admin__field-tooltip-content {
+    left: 70px;
+    bottom: -10em;
+}
+
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:after,
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:before {
+    left: -31px;
+    right: 0;
+    top: 48%;
+    border-right-color: #afadac;
+    border-top-color: transparent;
+}
+
+.page-main-actions .admin__field-tooltip .admin__field-tooltip-content:after {
+    border-right-color: #fffbbb;
+    border-top-color: transparent;
+}
+
+.remove_template:after {
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: rgba(255, 0, 0, 0.84);
+    content: '\e632';
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}

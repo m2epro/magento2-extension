@@ -1,0 +1,175 @@
+.main-col:not(:only-child) .ui-tabs-panel .field-row > .block_notices {
+    margin-top: -20px;
+}
+#container > .block_notices{
+    margin-bottom: 30px;
+}
+.block_notices {
+    font-size: 1.7rem;
+    padding: 1.8rem 2.5rem;
+    margin-bottom: 30px;
+}
+.block_notices p {
+    margin: 0 !important;
+}
+.icon {
+    font-family: 'Admin Icons';
+}
+.icon-shrink:before {
+    content:'\e62b';
+}
+.icon-close:before {
+    content:'\e62f';
+    font-size: 0.7em;
+    position: relative;
+    bottom: 2px;
+}
+.icon-expand:before {
+    content:'\e628';
+}
+.block_notices .bar {
+    min-height: 24px;
+    text-align: right;
+}
+.block_notices .bar .shrink {
+    margin-right: 5px;
+}
+.block_notices .bar a {
+    color: #EB5202;
+}
+.block_notices .title {
+    margin-top: -24px;
+}
+.block_notices .title a {
+    color: #514943 !important;
+    text-decoration: none !important;
+}
+.block_notices .bar a {
+    text-decoration: none !important;
+}
+.block_notices .title span.icon {
+    position: relative;
+    top: 2px;
+    left: 2px;
+}
+.block_notices .content {
+    font-size: 14px;
+    margin-top: -26px;
+    padding-right: 60px;
+    min-height: 26px;
+}
+.block_notices .shrink,
+.block_notices:not(.tooltiped) .content {
+    display: none;
+}
+.block_notices .content a {
+    text-decoration: underline;
+}
+.block_notices .content ul {
+    margin: 10px 0 10px 30px;
+}
+.block_notices .subtitle-content, .block_notices .arrow {
+    color: #747474;
+    font-size: 1.6rem;
+}
+.block_notices .titled-content {
+    min-height: 0;
+    margin-top: 15px;
+}
+.block_notices.no_collapse .title a {
+    cursor: default !important;
+}
+.m2epro-field-tooltip {
+    font-weight: normal;
+}
+
+/* Tooltip top right */
+.m2epro-field-tooltip-right .admin__field-tooltip-content {
+    right: -490px;
+}
+.m2epro-field-tooltip-right .admin__field-tooltip-content:before,
+.m2epro-field-tooltip-right .admin__field-tooltip-content:after {
+    right: 440px;
+}
+/* ------------------- */
+
+/* Tooltip to the right */
+.m2epro-field-tooltip-to-right.admin__field-tooltip {
+    position: absolute;
+}
+
+.m2epro-field-tooltip-to-right .admin__field-tooltip-content {
+    margin-top: 5px;
+    left: 70px;
+    position: relative;
+}
+
+.m2epro-field-tooltip-to-right.admin__field-tooltip .admin__field-tooltip-content:after,
+.m2epro-field-tooltip-to-right.admin__field-tooltip .admin__field-tooltip-content:before {
+    left: -32px;
+    right: 0;
+    top: 10px;
+    border-right-color: #afadac;
+    border-top-color: transparent;
+}
+
+.m2epro-field-tooltip-to-right.admin__field-tooltip .admin__field-tooltip-content:after {
+    border-right-color: #fffbbb;
+    border-top-color: transparent;
+    top: 11px;
+    width: 33px;
+}
+/* ------------------- */
+
+.m2epro-field-tooltip-info a.admin__field-tooltip-action:before {
+    content: '\e61a';
+}
+/* ------------------- */
+
+.m2epro-fieldset .nested {
+    display: inline-table;
+}
+.admin__scope-old .m2epro-field-tooltip:only-child, .m2epro-fieldset-tooltip {
+    margin-top: 0;
+}
+.m2epro-field-tooltip li {
+    list-style-type: none;
+}
+.m2epro-field-tooltip .admin__field-tooltip-content{
+    color: #000 !important;
+    font-size: 14px;
+    letter-spacing: normal;
+    width: 500px;
+}
+.data-grid .m2epro-field-tooltip {
+    position: relative;
+    right: 8px;
+}
+.data-grid-th .m2epro-field-tooltip {
+    position: relative;
+    margin-bottom: -10px;
+    bottom: 8px;
+}
+.data-grid-th .admin__field-tooltip-action:before{
+    color: #ffffff;
+}
+.m2epro-page-help-link {
+    vertical-align: super;
+    margin-left: -5px;
+}
+.m2epro-fieldset .addafter {
+    opacity: 1 !important;
+}
+.m2epro-fieldset .block_notices {
+    margin-bottom: 25px;
+    background: #FBFBFB;
+}
+.m2epro-page-title h1 {
+    display: inline;
+}
+.m2epro-field-tooltip-help-link {
+    margin-top: 7px;
+}
+#globalMessages .messages .message:last-child {
+    margin: 0 !important;
+}
