@@ -25,27 +25,45 @@ define([
 
         // ---------------------------------------
 
-        openPopUp: function (gridHtml, popup_title) {
+        openPopUp: function (gridHtml, popup_title, buttons)
+        {
+            var self = this;
+
+            if (typeof buttons === 'undefined') {
+                buttons = [{
+                    class: 'action-default action-dismiss',
+                    text: M2ePro.translator.translate('Cancel'),
+                    click: function (event) {
+                        this.closeModal(event);
+                    }
+                }, {
+                    text: M2ePro.translator.translate('Add New Listing'),
+                    class: 'action-primary action-accept',
+                    click: function () {
+                        self.startListingCreation(M2ePro.url.get('add_new_listing_url'));
+                    }
+                }];
+            }
 
             var modalDialogMessage = $('move_modal_dialog_message');
 
-            if (!modalDialogMessage) {
-                modalDialogMessage = new Element('div', {
-                    id: 'move_modal_dialog_message'
-                });
+            if (modalDialogMessage) {
+                modalDialogMessage.remove();
             }
 
-            modalDialogMessage.innerHTML = '';
+            modalDialogMessage = new Element('div', {
+                id: 'move_modal_dialog_message'
+            });
+
+            modalDialogMessage.update(gridHtml);
 
             this.popUp = jQuery(modalDialogMessage).modal({
                 title: popup_title,
                 type: 'slide',
-                buttons: []
+                buttons: buttons
             });
 
             this.popUp.modal('openModal');
-
-            modalDialogMessage.insert(gridHtml).style.paddingTop = '20px';
         },
 
         // ---------------------------------------
@@ -110,6 +128,8 @@ define([
         // ---------------------------------------
 
         tryToSubmit: function (listingId) {
+            var self = this;
+
             new Ajax.Request(this.options.url.get('tryToMoveToListing'), {
                 method: 'post',
                 parameters: {
@@ -125,7 +145,7 @@ define([
                         return this.submit(listingId);
                     }
 
-                    new Ajax.Request(this.options.url.get('getFailedProductsGridHtml'), {
+                    new Ajax.Request(this.options.url.get('getFailedProductsHtml'), {
                         method: 'get',
                         parameters: {
                             componentMode: this.options.customData.componentMode,
@@ -136,17 +156,22 @@ define([
                             this.popUp.modal('closeModal');
                             this.openPopUp(
                                 transport.responseText,
-                                this.options.translator.translate('failed_products_popup_title')
+                                this.options.translator.translate('failed_products_popup_title'),
+                                [{
+                                    class: 'back',
+                                    text: M2ePro.translator.translate('Back'),
+                                    click: function (event) {
+                                        this.closeModal(event);
+                                        self.getGridHtml(self.selectedProducts);
+                                    }
+                                }, {
+                                    text: M2ePro.translator.translate('Continue'),
+                                    class: 'action-primary',
+                                    click: function () {
+                                        self.submit(listingId);
+                                    }
+                                }]
                             );
-
-                            $('failedProducts_back_button').observe('click', (function () {
-                                this.popUp.modal('closeModal');
-                                this.getGridHtml(this.selectedProducts);
-                            }).bind(this));
-
-                            $('failedProducts_continue_button').observe('click', (function () {
-                                this.submit(listingId);
-                            }).bind(this));
 
                         }).bind(this)
                     });

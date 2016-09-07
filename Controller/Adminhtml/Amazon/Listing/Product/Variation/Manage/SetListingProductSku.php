@@ -36,7 +36,7 @@ class SetListingProductSku extends Main
                     'Working with found Amazon Product is impossible because of the
                     limited access due to Amazon API restriction'
                 );
-            } else if ($skuInfo['asin'] != $listingProduct->getGeneralId()) {
+            } else if ($skuInfo['asin'] != $listingProduct->getChildObject()->getGeneralId()) {
                 $msg = $this->__(
                     'The ASIN/ISBN of the Product with this SKU in your Amazon Inventory is different
                      from the ASIN/ISBN for which you want to set you are creator.'

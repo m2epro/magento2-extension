@@ -27,7 +27,8 @@ class RemoveAddedProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listin
             'id' => $this->getRequest()->getParam('id'),
             '_query' => [
                 'source' => $this->getHelper('Data\Session')->getValue('products_source')
-            ]
+            ],
+            'wizard' => $this->getRequest()->getParam('wizard')
         ));
     }
 }

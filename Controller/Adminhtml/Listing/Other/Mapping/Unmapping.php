@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: myown
- * Date: 30.03.16
- * Time: 17:23
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Mapping;
@@ -13,17 +13,6 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Unmapping extends Listing
 {
-    protected $parentFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        Context $context
-    )
-    {
-        $this->parentFactory = $parentFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');

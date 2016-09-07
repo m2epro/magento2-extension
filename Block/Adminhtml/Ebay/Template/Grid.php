@@ -32,6 +32,8 @@ class Grid extends AbstractGrid
     {
         parent::_construct();
 
+        $this->css->addFile('policy/grid.css');
+
         // Initialization block
         // ---------------------------------------
         $this->setId('ebayTemplateGrid');
@@ -233,6 +235,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage\Core\Model\Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
@@ -243,6 +246,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage\Core\Model\Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'
@@ -259,15 +263,8 @@ class Grid extends AbstractGrid
             'getter'    => 'getTemplateId',
             'actions'   => array(
                 array(
-                    'caption'   => $this->__('Edit'),
-                    'url'       => array(
-                        'base' => '*/ebay_template/edit',
-                        'params' => array('nick' => '$nick')
-                    ),
-                    'field'     => 'id'
-                ),
-                array(
                     'caption'   => $this->__('Delete'),
+                    'class'     => 'action-default scalable add primary policy-delete-btn',
                     'url'       => array(
                         'base' => '*/ebay_template/delete',
                         'params' => array('nick' => '$nick')

@@ -8,13 +8,10 @@ class GetFailedProductsGrid extends \Ess\M2ePro\Controller\Adminhtml\Listing\Mov
 
     public function execute()
     {
-        $block = $this->createBlock(
-            'Listing\Moving\FailedProducts','',
-            ['data' => [
-                'grid_url' => $this->getUrl('*/listing_moving/failedProductsGrid', array('_current'=>true))
-            ]]
-        );
-        $this->getResponse()->setBody($block->toHtml());
+        $block = $this->createBlock('Listing\Moving\FailedProducts\Grid');
+
+        $this->setAjaxContent($block);
+        return $this->getResult();
     }
 
     //########################################

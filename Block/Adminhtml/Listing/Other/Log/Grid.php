@@ -126,6 +126,7 @@ abstract class Grid extends AbstractGrid
             'header'    => $columnTitles['create_date'],
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'width'     => '150px',
             'index'     => 'create_date',
@@ -228,12 +229,6 @@ abstract class Grid extends AbstractGrid
                 $url = $this->getHelper('Component\Amazon')->getItemUrl($value, $marketplaceId);
                 $identifier = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
                 break;
-
-//            todo NOT SUPPORTED FEATURES
-//            case \Ess\M2ePro\Helper\Component\Buy::NICK:
-//                $url = Mage::helper('M2ePro/Component_Buy')->getItemUrl($value);
-//                $identifier = '<a href="' . $url . '" target="_blank">' . $value . '</a>';
-//                break;
         }
 
         return $identifier;

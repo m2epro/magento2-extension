@@ -100,7 +100,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getListingProducts(array $attributes, $withStoreFilter = false, $fetchFunction)
+    private function getListingProducts(array $attributes, $withStoreFilter, $fetchFunction)
     {
         $args = func_get_args();
         $cacheKey = md5(json_encode($args));

@@ -206,9 +206,9 @@ define([
 
             select.observe('change', this.onChangeValue.bind(this));
 
-            //var handlerObj = new AttributeCreator(select.id);
-            //handlerObj.setSelectObj(select);
-            //handlerObj.injectAddOption();
+            var handlerObj = new AttributeCreator(select.id);
+            handlerObj.setSelectObj(select);
+            handlerObj.injectAddOption();
 
             return select;
         },

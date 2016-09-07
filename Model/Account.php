@@ -43,10 +43,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
     //########################################
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
-        return parent::save();
+        return parent::save($reloadOnCreate);
     }
 
     //########################################

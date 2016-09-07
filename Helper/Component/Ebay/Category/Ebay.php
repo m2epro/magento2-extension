@@ -141,7 +141,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $cacheKey = '_ebay_category_features_'.$marketplaceId.'_'.$categoryId;
 
-        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== false) {
+        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== NULL) {
             return $cacheValue;
         }
 
@@ -180,7 +180,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $cacheKey = '_ebay_category_item_specifics_'.$categoryId.'_'.$marketplaceId;
 
-        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== false) {
+        if (($cacheValue = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey)) !== NULL) {
             return $cacheValue;
         }
 

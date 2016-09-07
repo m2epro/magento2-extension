@@ -6,7 +6,7 @@ define([
             return _.extend({}, this, extendBy);
         },
         init: function() {
-            //todo implement
+
         }
     };
 });

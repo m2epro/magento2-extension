@@ -21,10 +21,6 @@ class NotCreatedFilter extends AbstractContainer
             $params = $this->getRequest()->getParams();
         }
 
-        //todo
-//        $tabId = Ess_M2ePro_Block_Adminhtml_Common_Component_Abstract::getTabIdByComponent(
-//            $this->getData('component_mode')
-//        );
         $tabId = null;
 
         if (!is_null($tabId)) {

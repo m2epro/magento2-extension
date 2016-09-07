@@ -117,7 +117,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 
@@ -145,7 +145,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 
@@ -178,7 +178,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 
@@ -251,7 +251,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
 
                     $this->getLogger()->logListingProductMessage(
                         $listingProduct, $message,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                     );
 
                     $this->removeAndUnlockListingProduct($listingProduct->getId());
@@ -276,7 +276,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                     $this->getLogger()->logListingProductMessage(
                         $listingProduct,
                         $message,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                     );
                 }
 
@@ -323,7 +323,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 

@@ -41,7 +41,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -555,6 +555,20 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         if (!$isVariationMpnFilled) {
             $data['additional_data']['without_mpn_variation_issue'] = true;
         }
+
+        return $data;
+    }
+
+    protected function appendVariationsThatCanNotBeDeleted(array $data, array $response)
+    {
+        if (!$this->getRequestData()->isVariationItem()) {
+            return $data;
+        }
+
+        $variations = isset($response['variations_that_can_not_be_deleted'])
+            ? $response['variations_that_can_not_be_deleted'] : array();
+
+        $data['additional_data']['variations_that_can_not_be_deleted'] = $variations;
 
         return $data;
     }

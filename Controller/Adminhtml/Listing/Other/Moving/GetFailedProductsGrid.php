@@ -8,12 +8,7 @@ class GetFailedProductsGrid extends Listing
 {
     public function execute()
     {
-        $block = $this->createBlock(
-            'Listing\Moving\FailedProducts','',
-            ['data' => [
-                'grid_url' => $this->getUrl('*/listing_other_moving/failedProductsGrid',array('_current'=>true))
-            ]]
-        );
+        $block = $this->createBlock('Listing\Moving\FailedProducts\Grid');
 
         $this->setAjaxContent($block);
         return $this->getResult();

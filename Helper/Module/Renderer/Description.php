@@ -19,16 +19,25 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     const LAYOUT_MODE_ROW    = 'row';
     const LAYOUT_MODE_COLUMN = 'column';
 
+    protected $storeManager;
+    protected $design;
+    protected $filter;
     protected $layout;
 
     //########################################
 
     public function __construct(
+        \Magento\Store\Model\StoreManager $storeManager,
+        \Magento\Theme\Model\View\Design $design,
+        \Magento\Email\Model\Template\Filter $filter,
         \Magento\Framework\View\LayoutInterface $layout,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->storeManager = $storeManager;
+        $this->design = $design;
+        $this->filter = $filter;
         $this->layout = $layout;
         parent::__construct($helperFactory, $context);
     }
@@ -37,31 +46,24 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function parseTemplate($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
-        //TODO NOT SUPPORTED FEATURES
-//        $design = Mage::getDesign();
-//
-//        $oldArea = $design->getArea();
-//        $oldStore = Mage::app()->getStore();
-//        $oldPackageName = $design->getPackageName();
-//
-//        $design->setArea('adminhtml');
-//        Mage::app()->setCurrentStore(Mage::app()->getStore($magentoProduct->getStoreId()));
-//        $design->setPackageName(Mage::getStoreConfig('design/package/name', Mage::app()->getStore()->getId()));
+        $oldArea = $this->design->getArea();
+        $oldTheme = $this->design->getDesignTheme();
+        $oldStore = $this->storeManager->getStore()->getId();
+
+        $this->design->setArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
+        $this->design->setDefaultDesignTheme();
+        $this->storeManager->setCurrentStore($magentoProduct->getStoreId());
 
         $text = $this->insertAttributes($text, $magentoProduct);
-        //TODO NOT SUPPORTED FEATURES
-//        $text = $this->insertImages($text, $magentoProduct);
-//        $text = $this->insertMediaGalleries($text, $magentoProduct);
+        $text = $this->insertImages($text, $magentoProduct);
+        $text = $this->insertMediaGalleries($text, $magentoProduct);
 
         //  the CMS static block replacement i.e. {{media url=’image.jpg’}}
-//        $filter = new \Magento\Framework\Model\Email\Template\Filter();
-//        $filter->setVariables(array('product'=>$magentoProduct->getProduct()));
-//
-//        $text = $filter->filter($text);
+        $this->filter->setVariables(array('product'=>$magentoProduct->getProduct()));
+        $text = $this->filter->filter($text);
 
-//        $design->setArea($oldArea);
-//        Mage::app()->setCurrentStore($oldStore);
-//        $design->setPackageName($oldPackageName);
+        $this->design->setDesignTheme($oldTheme, $oldArea);
+        $this->storeManager->setCurrentStore($oldStore);
 
         return $text;
     }
@@ -111,7 +113,8 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             return $text;
         }
 
-        $imageLink = $magentoProduct->getImageLink('image');
+        $mainImage     = $magentoProduct->getImage('image');
+        $mainImageLink = $mainImage ? $mainImage->getUrl() : '';
 
         $blockObj = $this->layout->createBlock(
             'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
@@ -131,9 +134,12 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 }
             }
 
-            $tempImageLink = $realImageAttributes[5] == 0
-                ? $imageLink
-                : $magentoProduct->getGalleryImageLink($realImageAttributes[5]);
+            $tempImageLink = $mainImageLink;
+            if ($realImageAttributes[5] != 0 &&
+                $tempImage = $magentoProduct->getGalleryImageByPosition($realImageAttributes[5])) {
+
+                $tempImageLink = $tempImage->getUrl();
+            }
 
             $data = array(
                 'width'       => $realImageAttributes[0],
@@ -185,8 +191,18 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $imagesQty = $realMediaGalleryAttributes[3] == self::IMAGES_MODE_GALLERY ? 100 : 25;
             }
 
-            $galleryImagesLinks = $magentoProduct->getGalleryImagesLinks($imagesQty);
+            $galleryImagesLinks = array();
+            foreach ($magentoProduct->getGalleryImages($imagesQty) as $image) {
+
+                if (!$image->getUrl()) {
+                    continue;
+                }
+
+                $galleryImagesLinks[] = $image->getUrl();
+            }
+
             if (!count($galleryImagesLinks)) {
+
                 $search = $matches[0];
                 $replace = '';
                 break;

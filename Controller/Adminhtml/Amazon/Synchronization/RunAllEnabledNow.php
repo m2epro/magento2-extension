@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Settings;
 
-class runAllEnabledNow extends Settings
+class RunAllEnabledNow extends Settings
 {
     //########################################
 

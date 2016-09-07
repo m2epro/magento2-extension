@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Auto\Category;
 
-class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     //########################################
 

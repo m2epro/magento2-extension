@@ -73,8 +73,8 @@ class Specifics extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 </ul>
                 <br/>
                 More detailed information about ability to work with this Page you can find
-                <a href="%url%" target="_blank">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/J4MVAQ')
+                <a href="%url%" target="_blank" class="external-link">here</a>.',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/J4MVAQ')
             )
         ]);
 

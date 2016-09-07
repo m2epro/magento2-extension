@@ -12,7 +12,10 @@ class Congratulation extends AbstractBlock
 
         return <<<HTML
 <h2>
-    {$this->__('This wizard was already finished. Please <a href="%1%">Contact Us</a>, if it is need.', $supportUrl)}
+    {$this->__(
+        'This wizard was already finished. Please 
+        <a href="%1%" class="external-link">Contact Us</a>, if it is need.', $supportUrl
+    )}
 </h2>
 
 HTML;

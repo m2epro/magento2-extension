@@ -23,6 +23,7 @@ class Module extends AbstractHelper
 
     const DEVELOPMENT_MODE_COOKIE_KEY = 'm2epro_development_mode';
 
+    protected $activeRecordFactory;
     protected $moduleConfig;
     protected $cacheConfig;
     protected $primaryConfig;
@@ -33,6 +34,7 @@ class Module extends AbstractHelper
     //########################################
     
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
@@ -43,6 +45,7 @@ class Module extends AbstractHelper
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->moduleConfig = $moduleConfig;
         $this->cacheConfig = $cacheConfig;
         $this->primaryConfig = $primaryConfig;
@@ -66,37 +69,24 @@ class Module extends AbstractHelper
 
     public function getName()
     {
-        return 'm2epro';
+        return 'm2epro-m2';
     }
 
     public function getVersion()
     {
-        // TODO
-        $version = (string)$this->moduleList->getOne('Ess_M2ePro')['setup_version'];
-        $version = strtolower($version);
-
-        if ($this->getHelper('Data\Cache\Permanent')->getValue('MODULE_VERSION_UPDATER') === false) {
-            $this->primaryConfig->setGroupValue(
-                '/modules/', $this->getName(), $version.'.r'.$this->getRevision()
-            );
-            $this->getHelper('Data\Cache\Permanent')->setValue('MODULE_VERSION_UPDATER',array(),array(),60*60*24);
-        }
-
-        return $version;
+        return (string)$this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
     }
 
     public function getRevision()
     {
-        return '#REVISION#';
+        return '1171';
     }
 
     // ---------------------------------------
 
     public function getInstallationKey()
     {
-        return $this->primaryConfig->getGroupValue(
-            '/'.$this->getName().'/server/', 'installation_key'
-        );
+        return $this->primaryConfig->getGroupValue('/server/', 'installation_key');
     }
 
     public function getVersionWithRevision()
@@ -104,12 +94,33 @@ class Module extends AbstractHelper
         return $this->getVersion().'r'.$this->getRevision();
     }
 
+    public function getInstallationDate()
+    {
+        $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+        $setupCollection->addFieldToFilter('version_from', ['null' => true])
+                        ->addFieldToFilter('version_to', ['notnull' => true])
+                        ->addFieldToFilter('is_completed', 1)
+                        ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
+        return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
+    }
+    
+    public function getLastUpgradeDate()
+    {
+        $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+        $setupCollection->addFieldToFilter('version_from', ['notnull' => true])
+                        ->addFieldToFilter('version_to', ['notnull' => true])
+                        ->addFieldToFilter('is_completed', 1)
+                        ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC);
+        return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
+    }
+
     //########################################
 
     public function isReadyToWork()
     {
-        return $this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
-               $this->getHelper('View\Amazon')->isInstallationWizardFinished();
+        return $this->getHelper('Component')->getEnabledComponents() &&
+                ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
+                 $this->getHelper('View\Amazon')->isInstallationWizardFinished());
     }
 
     // ---------------------------------------
@@ -144,8 +155,7 @@ class Module extends AbstractHelper
 
     // ---------------------------------------
 
-    // todo rename -> setDevelopmentMode
-    public function setDevelopmentModeMode($value)
+    public function setDevelopmentMode($value)
     {
         $cookieMetadata = $this->cookieMetadataFactory->createPublicCookieMetadata()
                                                       ->setHttpOnly(true)
@@ -157,6 +167,34 @@ class Module extends AbstractHelper
         }
     }
 
+    // ---------------------------------------
+    
+    public function isStaticContentDeployed()
+    {
+        $staticContentValidationResult = $this->getHelper('Data\Cache\Runtime')->getValue(__METHOD__);
+
+        if (!is_null($staticContentValidationResult)) {
+            return $staticContentValidationResult;
+        }
+        
+        $result = true;
+
+        /** @var \Ess\M2ePro\Helper\Magento $magentoHelper */
+        $magentoHelper = $this->getHelper('Magento');
+        $moduleDir = \Ess\M2ePro\Helper\Module::IDENTIFIER . DIRECTORY_SEPARATOR;
+
+        if (!$magentoHelper->isStaticContentExists($moduleDir.'css') ||
+            !$magentoHelper->isStaticContentExists($moduleDir.'fonts') ||
+            !$magentoHelper->isStaticContentExists($moduleDir.'images') ||
+            !$magentoHelper->isStaticContentExists($moduleDir.'js')) {
+
+            $result = false;
+        }
+
+        $this->getHelper('Data\Cache\Runtime')->setValue(__METHOD__, $result);
+        return $result;
+    }
+
     //########################################
 
     public function getRequirementsInfo()
@@ -164,18 +202,6 @@ class Module extends AbstractHelper
         $clientPhpData = $this->getHelper('Client')->getPhpSettings();
 
         $requirements = array (
-
-            'php_version' => array(
-                'title' => $this->getHelper('Module\Translation')->__('PHP Version'),
-                'condition' => array(
-                    'sign' => '>=',
-                    'value' => '5.3.0'
-                ),
-                'current' => array(
-                    'value' => $this->getHelper('Client')->getPhpVersion(),
-                    'status' => true
-                )
-            ),
 
             'memory_limit' => array(
                 'title' => $this->getHelper('Module\Translation')->__('Memory Limit'),
@@ -185,19 +211,6 @@ class Module extends AbstractHelper
                 ),
                 'current' => array(
                     'value' => (int)$clientPhpData['memory_limit'] . ' MB',
-                    'status' => true
-                )
-            ),
-
-            'magento_version' => array(
-                'title' => $this->getHelper('Module\Translation')->__('Magento Version'),
-                'condition' => array(
-                    'sign' => '>=',
-                    'value' => $this->getHelper('Magento')->isEnterpriseEdition()   ? '1.7.0.0' :
-                        ($this->getHelper('Magento')->isProfessionalEdition() ? '1.7.0.0' : '1.4.1.0')
-                ),
-                'current' => array(
-                    'value' => $this->getHelper('Magento')->getVersion(false),
                     'status' => true
                 )
             ),
@@ -234,80 +247,18 @@ class Module extends AbstractHelper
         return $requirements;
     }
 
-    // ---------------------------------------
-
-    // TODO magento 2
-    public function getFoldersAndFiles()
-    {
-        $paths = array(
-            'app/code/community/Ess/',
-            'app/code/community/Ess/M2ePro/*',
-
-            'app/locale/*/Ess_M2ePro.csv',
-            'app/etc/modules/Ess_M2ePro.xml',
-            'app/design/adminhtml/default/default/layout/M2ePro.xml',
-
-            'js/M2ePro/*',
-            'skin/adminhtml/default/default/M2ePro/*',
-            'skin/adminhtml/default/enterprise/M2ePro/*',
-            'app/design/adminhtml/default/default/template/M2ePro/*'
-        );
-
-        return $paths;
-    }
-
-    // TODO magento 2
-    public function getUnWritableDirectories()
-    {
-        $directoriesForCheck = array();
-        foreach ($this->getFoldersAndFiles() as $item) {
-
-            $fullDirPath = Mage::getBaseDir().DS.$item;
-
-            if (preg_match('/\*.*$/',$item)) {
-                $fullDirPath = preg_replace('/\*.*$/', '', $fullDirPath);
-                $directoriesForCheck = array_merge($directoriesForCheck, $this->getDirectories($fullDirPath));
-            }
-
-            $directoriesForCheck[] = dirname($fullDirPath);
-            is_dir($fullDirPath) && $directoriesForCheck[] = rtrim($fullDirPath, '/\\');
-        }
-        $directoriesForCheck = array_unique($directoriesForCheck);
-
-        $unWritableDirs = array();
-        foreach ($directoriesForCheck as $directory) {
-            !is_dir_writeable($directory) && $unWritableDirs[] = $directory;
-        }
-
-        return $unWritableDirs;
-    }
-
-    // ---------------------------------------
-
-    private function getDirectories($dirPath)
-    {
-        $directoryIterator = new \RecursiveDirectoryIterator($dirPath, \FilesystemIterator::SKIP_DOTS);
-        $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::SELF_FIRST);
-
-        $directories = array();
-        foreach ($iterator as $path) {
-            $path->isDir() && $directories[] = rtrim($path->getPathname(),'/\\');
-        }
-
-        return $directories;
-    }
-
     //########################################
 
     public function getServerMessages()
     {
-        $messages = $this->primaryConfig->getGroupValue(
-            '/'.$this->getName().'/server/', 'messages'
-        );
+        /** @var \Ess\M2ePro\Model\Registry $registryModel */
+        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
 
-        $messages = (!is_null($messages) && $messages != '') ?
-            (array)json_decode((string)$messages,true) :
-            array();
+        if (is_null($registryModel)) {
+            return array();
+        }
+
+        $messages = $registryModel->getValueFromJson();
 
         $messages = array_filter($messages,array($this,'getServerMessagesFilterModuleMessages'));
         !is_array($messages) && $messages = array();
@@ -326,7 +277,6 @@ class Module extends AbstractHelper
 
     //########################################
 
-    // todo remove
     public function clearConfigCache()
     {
         $this->cacheConfig->clear();

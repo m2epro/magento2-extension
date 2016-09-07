@@ -30,22 +30,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected $messages = array();
 
-    protected $elementFactory;
-
-    //########################################
-
-    public function __construct(
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        array $data = []
-    )
-    {
-        $this->elementFactory = $elementFactory;
-        parent::__construct($context, $registry, $formFactory, $data);
-    }
-
     //########################################
 
     protected function _prepareForm()
@@ -198,7 +182,7 @@ HTML;
 
                     if (!empty($channelThemeNote)) {
                         $html .= <<<HTML
-<div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="width: 60px;">
+<div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="margin-top: -1px;">
     <a class="admin__field-tooltip-action" href="javascript://"></a>
     <div class="admin__field-tooltip-content">
         {$channelThemeNote}
@@ -368,7 +352,7 @@ JS
             );
 
             $html = <<<HTML
-<div id="product_search_help_icon_tpl" style="display: none">
+<div id="variation_settings_form_help_icon_tpl" style="display: none">
     <div class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip" style="margin-top: 0px;">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content">
@@ -858,22 +842,7 @@ CSS
 CSS
         );
 
-
-//        TODO
-//        $vocabularyAttributesBlock = $this->getLayout()->createBlock(
-//            'M2ePro/adminhtml_common_amazon_listing_variation_product_vocabularyAttributesPopup'
-//        );
-//
-//        $vocabularyOptionsBlock = $this->getLayout()->createBlock(
-//            'M2ePro/adminhtml_common_amazon_listing_variation_product_vocabularyOptionsPopup'
-//        );
-
-
-        return
-//            $vocabularyAttributesBlock->toHtml() .
-//            $vocabularyOptionsBlock->toHtml() .
-            $this->getWarnings() .
-            parent::_toHtml();
+        return $this->getWarnings() . parent::_toHtml();
     }
 
     //########################################

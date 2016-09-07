@@ -56,7 +56,7 @@ class Grid extends AbstractGrid
 
         $collection->getSelect()
             ->joinLeft(
-                array('so' => $this->resourceConnection->getTableName('sales_order')), //todo
+                array('so' => $this->resourceConnection->getTableName('sales_order')),
                 '(so.entity_id = `main_table`.magento_order_id)',
                 array('magento_order_num' => 'increment_id'));
 
@@ -101,6 +101,7 @@ class Grid extends AbstractGrid
             'align'  => 'left',
             'type'   => 'datetime',
             'format' => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'  => 'purchase_create_date',
             'width'  => '170px',
             'frame_callback' => array($this, 'callbackPurchaseCreateDate')
@@ -276,7 +277,13 @@ HTML;
             }
         }
 
-        return $returnString.$this->getViewLogIconHtml($row->getId());
+        $logIconHtml = $this->getViewLogIconHtml($row->getId());
+
+        if ($logIconHtml !== '') {
+            return '<div style="min-width: 100px">' . $returnString . $logIconHtml . '</div>';
+        }
+
+        return $returnString;
     }
 
     private function getViewLogIconHtml($orderId)
@@ -306,27 +313,27 @@ HTML;
                 'type' => $log->getData('type'),
                 'text' => $this->getHelper('View')->getModifiedLogMessage($log->getData('description')),
                 'initiator' => $this->getInitiatorForAction($log->getData('initiator')),
-                'date' => $this->_localeDate->formatDate($log->getData('create_date'), $format)
+                'date' => $this->_localeDate->formatDate($log->getData('create_date'), $format, true)
             );
         }
         // ---------------------------------------
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__(
                 'Last order Action was completed successfully.'
             ),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__(
                 'Last order Action was completed with error(s).'
             ),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__(
                 'Last order Action was completed with warning(s).'
             )
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary')->setData(array(
@@ -581,7 +588,7 @@ HTML;
 
         $tempGridIds = json_encode($tempGridIds);
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractLog'));
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
 
         $this->jsUrl->addUrls([
             'ebay_order/view' => $this->getUrl(

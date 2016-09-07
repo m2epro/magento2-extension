@@ -138,7 +138,7 @@ HTML
             'mapAutoToProduct' => $this->getUrl('*/listing_other_mapping/autoMap'),
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
             'moveToListingGridHtml' => $this->getUrl('*/ebay_listing_other_moving/moveToListingGrid'),
-            'getFailedProductsGridHtml' => $this->getUrl('*/listing_other_moving/getFailedProductsGrid'),
+            'getFailedProductsHtml' => $this->getUrl('*/listing_other_moving/getFailedProducts'),
             'tryToMoveToListing' => $this->getUrl('*/listing_other_moving/tryToMoveToListing'),
             'moveToListing' => $this->getUrl('*/listing_other_moving/moveToListing'),
             'removingProducts' => $this->getUrl('*/ebay_listing_other/removing'),
@@ -153,6 +153,7 @@ HTML
             'Please enter correct Product ID.' => $this->__('Please enter correct Product ID.'),
             'Product(s) was successfully Mapped.' => $this->__('Product(s) was successfully Mapped.'),
             'Please enter correct Product ID or SKU' => $this->__('Please enter correct Product ID or SKU'),
+            'Add New Listing' => $this->__('Add New Listing'),
             'failed_mapped' => $someProductsWereNotMappedMessage,
             'successfully_mapped' => $this->__('Product was successfully Mapped.'),
             'mapping_product_title' => $this->__('Mapping Product'),
@@ -214,8 +215,7 @@ HTML
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
-            'elog' => 'M2ePro/Ebay/Listing/Other/Grid',
-            'eloa' => 'M2ePro/Ebay/Listing/Other/Action'
+            'elog' => 'M2ePro/Ebay/Listing/Other/Grid'
         ], <<<JS
 
         M2ePro.customData.componentMode = '{$component}';
@@ -228,7 +228,6 @@ HTML
         window.EbayListingOtherMappingObj = new ListingOtherMapping(EbayListingOtherGridObj,'ebay');
 
         EbayListingOtherGridObj.movingHandler.setOptions(M2ePro);
-        EbayListingOtherGridObj.actionHandler.setOptions(M2ePro);
         EbayListingOtherGridObj.autoMappingHandler.setOptions(M2ePro);
         EbayListingOtherGridObj.removingHandler.setOptions(M2ePro);
         EbayListingOtherGridObj.unmappingHandler.setOptions(M2ePro);

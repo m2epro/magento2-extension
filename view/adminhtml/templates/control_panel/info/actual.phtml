@@ -1,0 +1,94 @@
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Magento'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->magentoInfo ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Module'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->moduleVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('PHP'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->phpVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo$this->phpApi ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Memory Limit'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->memoryLimit . ' Mb'?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Max Execution Time'); ?>: </label>
+        </td>
+        <td class="value">
+             <?php echo $this->maxExecutionTime == 0 ? $this->__('Unlimited') : $this->maxExecutionTime . ' sec'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('MySQL'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Database'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlDatabaseName ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Cron'); ?> (<?php echo $this->cronCurrentRunner; ?>): </label>
+        </td>
+        <?php
+            $style = '';
+            if ($this->cronIsNotWorking) {
+                $style = ' style="color: red"';
+            }
+        ?>
+        <td class="value">
+            <span<?php echo $style; ?>><?php echo $this->cronLastRunTime; ?></span>
+            <?php
+            if ($this->cronIsNotWorking) {
+                echo ' (' . $this->__('not working') . ')';
+            }
+            ?>
+        </td>
+    </tr>
+</table>

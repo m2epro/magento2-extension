@@ -121,6 +121,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         try {
 
+            $requestData['statistics']['server'] = $this->getServerRequestPart();
             $requestData['statistics']['magento'] = $this->getMagentoRequestPart();
             $requestData['statistics']['extension'] = $this->getExtensionRequestPart();
 
@@ -132,6 +133,52 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     }
 
     public function processResponseData(array $data) {}
+
+    //########################################
+
+    private function getServerRequestPart()
+    {
+        $data = array();
+
+        $data['name'] = $this->getHelper('Client')->getSystem();
+
+        $data = $this->appendPhpInfo($data);
+        $data = $this->appendMysqlInfo($data);
+
+        return $data;
+    }
+
+    // ---------------------------------------
+
+    private function appendPhpInfo($data)
+    {
+        $data['php'] = array();
+
+        $phpSettings = $this->getHelper('Client')->getPhpSettings();
+
+        $data['php']['version'] = $this->getHelper('Client')->getPhpVersion();
+        $data['php']['server_api'] = $this->getHelper('Client')->getPhpApiName();
+        $data['php']['memory_limit'] = $phpSettings['memory_limit'];
+        $data['php']['max_execution_time'] = $phpSettings['max_execution_time'];
+
+        return $data;
+    }
+
+    private function appendMysqlInfo($data)
+    {
+        $data['mysql'] = array();
+
+        $mySqlSettings = $this->getHelper('Client')->getMysqlSettings();
+
+        $data['mysql']['version'] = $this->getHelper('Client')->getMysqlVersion();
+        $data['mysql']['api'] = $this->getHelper('Client')->getMysqlApiName();
+        $data['mysql']['database_name'] = $this->getHelper('Magento')->getDatabaseName();
+        $data['mysql']['table_prefix'] = $this->getHelper('Magento')->getDatabaseTablesPrefix();
+        $data['mysql']['connect_timeout'] = $mySqlSettings['connect_timeout'];
+        $data['mysql']['wait_timeout'] = $mySqlSettings['wait_timeout'];
+
+        return $data;
+    }
 
     //########################################
 
@@ -568,8 +615,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['listings_products'][$row['component']]['marketplaces'][$markTitle] += (int)$row['products_count'];
             $data['listings_products'][$row['component']]['accounts'][$accountTitle] += (int)$row['products_count'];
         }
-
-        // TODO NEXT (append information by product types [count of simple, configurable, etc])
 
         return $data;
     }

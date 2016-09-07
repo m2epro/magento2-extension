@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product;
 
 use Ess\M2ePro\Model\Account;
 
-class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 
@@ -19,24 +19,24 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
-        $connectionName,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+        $connectionName = null
     )
     {
-        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
-
         $this->amazonFactory = $amazonFactory;
+
+        parent::__construct($helperFactory, $activeRecordFactory, $parentFactory, $context, $connectionName);
     }
 
     //########################################
 
     public function _construct()
     {
-        $this->_init('m2epro_amazon_listing_product_repricing', 'account_id');
+        $this->_init('m2epro_amazon_listing_product_repricing', 'listing_product_id');
         $this->_isPkAutoIncrement = false;
     }
 

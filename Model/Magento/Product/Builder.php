@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Magento\Product;
 
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
+    protected $driverPool;
     protected $filesystem;
     protected $storeFactory;
     protected $stockItemFactory;
@@ -23,6 +24,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Store\Model\StoreFactory $storeFactory,
         \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory,
@@ -33,6 +35,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->driverPool = $driverPool;
         $this->filesystem = $filesystem;
         $this->storeFactory = $storeFactory;
         $this->stockItemFactory = $stockItemFactory;
@@ -106,13 +109,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             $this->product->setData('small_image', $firstImage);
 
             $this->product->setData('media_gallery', array(
-                'images' => json_encode($gallery),
-                'values' => json_encode(array(
+                'images' => $gallery,
+                'values' => array(
                     'main'        => $firstImage,
                     'image'       => $firstImage,
                     'small_image' => $firstImage,
                     'thumbnail'   => $firstImage
-                ))
+                )
             ));
         }
 
@@ -152,14 +155,17 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
             return array();
         }
 
+        $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         $tempMediaPath = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
-        )->getAbsolutePath();
+        )->getAbsolutePath() 
+        . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
+        
         $gallery = array();
         $imagePosition = 1;
 
         foreach ($this->getData('images') as $tempImageName) {
-            if (!is_file($tempMediaPath . $tempImageName)) {
+            if (!$fileDriver->isFile($tempMediaPath . $tempImageName)) {
                 continue;
             }
 
@@ -167,8 +173,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
                 'file'     => $tempImageName,
                 'label'    => '',
                 'position' => $imagePosition++,
-                'disabled' => 0,
-                'removed'  => 0
+                'disabled' => 0
             );
         }
 

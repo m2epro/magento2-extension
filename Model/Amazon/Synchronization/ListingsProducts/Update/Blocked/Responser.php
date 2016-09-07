@@ -46,13 +46,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR
-                : \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
                 $logType,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }
@@ -78,8 +78,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
         $this->getSynchronizationLog()->addMessage(
             $this->getHelper('Module\Translation')->__($messageText),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
     }
 
@@ -97,8 +97,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
             $this->getSynchronizationLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }
@@ -127,7 +127,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
             $notReceivedItem = $existingItem;
 
-            $additionalData = @json_decode($notReceivedItem['additional_data'], true);
+            $additionalData = json_decode($notReceivedItem['additional_data'], true);
             if (is_array($additionalData) && !empty($additionalData['list_date']) &&
                 $this->isProductInfoOutdated($additionalData['list_date'])
             ) {
@@ -156,8 +156,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
                     $this->getLogsActionId(),
                     \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                     $tempLogMessage,
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                 );
 
                 if (!empty($notReceivedItem['is_variation_product']) &&

@@ -20,7 +20,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
     protected $cacheConfig;
 
     //########################################
-    
+
     public function __construct(
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -39,11 +39,6 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getPageUrl(array $params = array())
-    {
-        return $this->urlBuilder->getUrl($this->getPageRoute(), $params);
-    }
-
     public function getPageRoute()
     {
         return 'm2epro/'.$this->getPageControllerName().'/index';
@@ -56,92 +51,122 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getDocumentationUrl($component = NULL, $articleUrl = NULL, $tinyLink = NULL)
+    public function getWebsiteUrl()
     {
-        $urlParts[] = $this->moduleConfig->getGroupValue('/support/', 'documentation_url');
-
-        if ($component || $articleUrl) {
-            $urlParts[] = 'display';
-        }
-
-        if ($component) {
-            if ($component == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                $urlParts[] = 'eBayMagento2';
-            } elseif ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
-                $urlParts[] = 'AmazonMagento2';
-            } else {
-                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
-            }
-        }
-
-        if ($articleUrl) {
-            $urlParts[] = trim($articleUrl, '/');
-        }
-
-        if ($tinyLink) {
-            $urlParts[] = $tinyLink;
-        }
-
-        return implode('/', $urlParts);
+        return $this->moduleConfig->getGroupValue('/support/', 'website_url');
     }
 
-    public function getKnowledgeBaseUrl($articleUrl = NULL)
-    {
-        $urlParts[] = $this->moduleConfig->getGroupValue('/support/', 'knowledge_base_url');
-
-        if ($articleUrl) {
-            $urlParts[] = trim($articleUrl, '/');
-        }
-
-        return implode('/', $urlParts);
-    }
-
-    public function getVideoTutorialsUrl($component)
-    {
-        return $this->getDocumentationUrl($component,'Video+Tutorials');
-    }
-
-    //########################################
-
-    public function getMainWebsiteUrl()
-    {
-        return $this->moduleConfig->getGroupValue('/support/', 'main_website_url');
-    }
-
-    public function getClientsPortalBaseUrl()
+    public function getClientsPortalUrl()
     {
         return $this->moduleConfig->getGroupValue('/support/', 'clients_portal_url');
     }
 
-    public function getCommunityBaseUrl()
+    public function getSupportUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'community');
+        return $this->moduleConfig->getGroupValue('/support/', 'support_url');
     }
 
-    public function getIdeasBaseUrl()
+    //########################################
+
+    public function getDocumentationUrl()
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'ideas');
+        return $this->moduleConfig->getGroupValue('/support/', 'documentation_url');
     }
 
-    // ---------------------------------------
-
-    public function getMainSupportUrl($urlPart = null)
+    public function getDocumentationComponentUrl($component)
     {
-        $urlParts[] = trim(
-            $this->moduleConfig->getGroupValue('/support/', 'main_support_url'),
-            '/'
-        );
-
-        if ($urlPart) {
-            $urlParts[] = trim($urlPart, '/');
+        switch ($component) {
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
+                return $this->getDocumentationUrl() . '/display/eBayMagento2/';
+            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
+                return $this->getDocumentationUrl() . 'display/AmazonMagento2/';
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }
-
-        return implode('/', $urlParts);
     }
 
-    public function getMagentoConnectUrl()
+    public function getDocumentationArticleUrl($tinyLink)
     {
-        return $this->moduleConfig->getGroupValue('/support/', 'magento_connect_url');
+        return $this->getDocumentationUrl() . $tinyLink;
+    }
+
+    //----------------------------------------
+
+    public function getKnowledgebaseUrl()
+    {
+        return $this->getSupportUrl() . 'knowledgebase/';
+    }
+
+    public function getKnowledgebaseComponentUrl($component)
+    {
+        switch ($component) {
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
+                return $this->getKnowledgebaseUrl() . 'ebay/';
+            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
+                return $this->getKnowledgebaseUrl() . 'amazon/';
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
+        }
+    }
+
+    public function getKnowledgebaseArticleUrl($articleLink)
+    {
+        return $this->getKnowledgebaseUrl() . trim($articleLink, '/') . '/';
+    }
+
+    //----------------------------------------
+
+    public function getIdeasUrl()
+    {
+        return $this->getSupportUrl() . 'ideas/';
+    }
+
+    public function getIdeasComponentUrl($component)
+    {
+        switch ($component) {
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
+                return $this->getIdeasUrl() . 'ebay/';
+            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
+                return $this->getIdeasUrl() . 'amazon/';
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
+        }
+    }
+
+    public function getIdeasArticleUrl($articleLink)
+    {
+        return  $this->getIdeasUrl() . trim($articleLink, '/') . '/';
+    }
+
+    //----------------------------------------
+
+    public function getForumUrl()
+    {
+        return $this->moduleConfig->getGroupValue('/support/', 'forum_url');
+    }
+
+    public function getForumComponentUrl($component)
+    {
+        switch ($component) {
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
+                return $this->getForumUrl() . 'ebay/';
+            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
+                return $this->getForumUrl() . 'amazon/';
+            default:
+                throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
+        }
+    }
+
+    public function getForumArticleUrl($articleLink)
+    {
+        return $this->getForumUrl() . trim($articleLink, '/') . '/';
+    }
+
+    //########################################
+
+    public function getMagentoMarketplaceUrl()
+    {
+        return $this->moduleConfig->getGroupValue('/support/', 'magento_marketplace_url');
     }
 
     //########################################

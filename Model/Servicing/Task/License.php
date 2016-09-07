@@ -58,39 +58,36 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
 
     private function updateInfoData(array $infoData)
     {
-        $moduleName = $this->getHelper('Module')->getName();
         $primaryConfig = $this->getHelper('Primary')->getConfig();
 
         if (array_key_exists('email', $infoData)) {
-            $primaryConfig->setGroupValue('/'.$moduleName.'/license/info/','email', $infoData['email']);
+            $primaryConfig->setGroupValue('/license/info/', 'email', $infoData['email']);
         }
     }
 
     private function updateValidationMainData(array $validationData)
     {
-        $moduleName = $this->getHelper('Module')->getName();
         $primaryConfig = $this->getHelper('Primary')->getConfig();
 
         if (array_key_exists('domain', $validationData)) {
-            $primaryConfig->setGroupValue('/'.$moduleName.'/license/','domain', $validationData['domain']);
+            $primaryConfig->setGroupValue('/license/', 'domain', $validationData['domain']);
         }
 
         if (array_key_exists('ip', $validationData)) {
-            $primaryConfig->setGroupValue('/'.$moduleName.'/license/','ip', $validationData['ip']);
+            $primaryConfig->setGroupValue('/license/', 'ip', $validationData['ip']);
         }
     }
 
     private function updateValidationValidData(array $isValidData)
     {
-        $moduleName = $this->getHelper('Module')->getName();
         $primaryConfig = $this->getHelper('Primary')->getConfig();
 
         if (array_key_exists('domain', $isValidData)) {
-            $primaryConfig->setGroupValue('/'.$moduleName.'/license/valid/','domain',(int)$isValidData['domain']);
+            $primaryConfig->setGroupValue('/license/valid/', 'domain',(int)$isValidData['domain']);
         }
 
         if (array_key_exists('ip', $isValidData)) {
-            $primaryConfig->setGroupValue('/'.$moduleName.'/license/valid/','ip',(int)$isValidData['ip']);
+            $primaryConfig->setGroupValue('/license/valid/', 'ip', (int)$isValidData['ip']);
         }
     }
 
@@ -113,10 +110,7 @@ class License extends \Ess\M2ePro\Model\Servicing\Task
 
     private function updateStatus($status)
     {
-        $moduleName = $this->getHelper('Module')->getName();
-        $primaryConfig = $this->getHelper('Primary')->getConfig();
-
-        $primaryConfig->setGroupValue('/'.$moduleName.'/license/','status',(int)$status);
+        $this->getHelper('Primary')->getConfig()->setGroupValue('/license/', 'status', (int)$status);
     }
 
     //########################################

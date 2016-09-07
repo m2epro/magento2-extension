@@ -265,6 +265,11 @@ class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     //########################################
 
+    public function isCacheEnabled()
+    {
+        return true;
+    }
+
     public function getCacheGroupTags()
     {
         return array_merge(parent::getCacheGroupTags(), ['template']);

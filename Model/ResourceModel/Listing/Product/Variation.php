@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product;
 
-class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractDb
+class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     private $variationsProductsIds = array();
 

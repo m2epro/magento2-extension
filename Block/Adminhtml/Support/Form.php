@@ -18,15 +18,19 @@ class Form extends AbstractForm
                 described. You can use the following resources:</p>
                 
                 <ul>
-                <li><p><a href="%url_1%" target="_blank">Documentation</a> - structured documents containing detailed 
+                <li><p><a href="%url_1%" target="_blank" class="external-link">Documentation</a> 
+                - structured documents containing detailed 
                 instructions on how to use M2E Pro Extension;</p></li>
-                <li><p><a href="%url_2%" target="_blank">Knowledge Base</a> - a collection of articles
+                <li><p><a href="%url_2%" target="_blank" class="external-link">Knowledge Base</a> 
+                - a collection of articles
                 describing the causes of the common errors as well as the solutions to the frequently 
                 asked questions;</p></li>
-                <li><p><a href="%url_3%" target="_blank">Ideas Workshop</a> - a base of notices where you 
+                <li><p><a href="%url_3%" target="_blank" class="external-link">Ideas Workshop</a> 
+                - a base of notices where you 
                 can find other Users’ suggestions as well as offer your idea about a new feature which
                 could be useful in M2E Pro;</p></li>
-                <li><p><a href="%url_4%" target="_blank">Community Forum</a> - an open M2E Pro discussion forum 
+                <li><p><a href="%url_4%" target="_blank" class="external-link">Community Forum</a> 
+                - an open M2E Pro discussion forum 
                 where our Users discuss and search for solutions together.</p></li>
                 </ul>
                 
@@ -36,10 +40,10 @@ class Form extends AbstractForm
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/u4AVAQ'),
-                $this->getHelper('Module\Support')->getKnowledgeBaseUrl(),
-                $this->getHelper('Module\Support')->getIdeasBaseUrl(),
-                $this->getHelper('Module\Support')->getCommunityBaseUrl()
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/u4AVAQ'),
+                $this->getHelper('Module\Support')->getKnowledgebaseUrl(),
+                $this->getHelper('Module\Support')->getIdeasUrl(),
+                $this->getHelper('Module\Support')->getForumUrl()
             )
         ]);
 
@@ -169,7 +173,6 @@ TEXT
                 'label' => $this->__('Attachment'),
                 'name' => 'files[]',
                 'onchange' => 'SupportObj.toggleMoreButton()',
-                'style' => 'margin-top: 5px'
             ]
         );
 
@@ -209,5 +212,21 @@ JS
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    protected function _beforeToHtml()
+    {
+        $controlPanelUrl = $this->getUrl('*/controlPanel');
+
+        $this->js->addRequireJs([
+            'l' => 'M2ePro/ControlPanel'
+        ], <<<JS
+
+            window.ControlPanelObj = new ControlPanel();
+            window.ControlPanelObj.setControlPanelUrl('{$controlPanelUrl}')
+JS
+        );
+
+        return parent::_beforeToHtml();
     }
 }

@@ -17,7 +17,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -269,8 +269,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $this->logsActionId,
             $action,
             $exception->getMessage(),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
     }
 

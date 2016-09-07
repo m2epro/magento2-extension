@@ -1,8 +1,9 @@
 define([
+    'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
     'extjs/ext-tree-checkbox',
     'mage/adminhtml/form'
-], function(){
+], function(modal){
 
     window.EbayAccount = Class.create(Common, {
 
@@ -128,11 +129,7 @@ define([
         EbayAccountObj.renderOrderNumberExample();
 
         $('magento_orders_customer_mode').observe('change', this.magentoOrdersCustomerModeChange).simulate('change');
-
-        // TODO NOT SUPPORTED FEATURES
-        // if (isStorePickupEnabled) {
-        //  $('magento_orders_in_store_pickup_statuses_mode').observe('change', this.magentoOrdersInStorePickupStatusesModeChange);
-        // }
+        
         $('magento_orders_status_mapping_mode').observe('change', this.magentoOrdersStatusMappingModeChange).simulate('change');
 
         $('magento_orders_creation_mode').observe('change', this.magentoOrdersCreationModeChange).simulate('change');
@@ -202,9 +199,9 @@ define([
         var self = EbayAccountObj ;
 
         if ($('feedbacks_receive').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::FEEDBACKS_RECEIVE_YES')) {
-            $('magento_block_ebay_accounts_feedbacks_response').show();
+            $('feedbacks_auto_response_container').show();
         } else {
-            $('magento_block_ebay_accounts_feedbacks_response').hide();
+            $('feedbacks_auto_response_container').hide();
 
         }
         $('feedbacks_auto_response').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::FEEDBACKS_AUTO_RESPONSE_NONE');
@@ -214,116 +211,80 @@ define([
     feedbacksAutoResponseChange: function()
     {
         if ($('feedbacks_auto_response').value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::FEEDBACKS_AUTO_RESPONSE_NONE')) {
-            $('block_accounts_feedbacks_templates').hide();
             $('feedbacks_auto_response_only_positive_container').hide();
+            $('feedback_templates_grid_container').hide();
         } else {
-            $('block_accounts_feedbacks_templates').show();
             $('feedbacks_auto_response_only_positive_container').show();
+            $('feedback_templates_grid_container').show();
         }
     },
 
     // ---------------------------------------
 
-    feedbacksOpenAddForm: function()
+    openFeedbackTemplatePopup: function(templateId)
     {
-        $('block_accounts_feedbacks_form_template_title_add').show();
-        $('block_accounts_feedbacks_form_template_title_edit').hide();
+        var self = this;
 
-        $('feedbacks_templates_id').value = '';
-        $('feedbacks_templates_body').value = '';
+        new Ajax.Request(M2ePro.url.get('ebay_account_feedback_template/getForm'), {
+            method: 'GET',
+            parameters: {
+                id: templateId
+            },
+            onSuccess: function(transport) {
 
-        $('block_accounts_feedbacks_form_template_button_cancel').show();
-        $('block_accounts_feedbacks_form_template_button_add').show();
-        $('block_accounts_feedbacks_form_template_button_edit').hide();
+                var response = transport.responseText.evalJSON();
 
-        $('magento_block_ebay_accounts_feedbacks_form_template').show();
-        $('feedbacks_templates_body_validate').hide();
-    },
+                var container = $('edit_feedback_template_form_container');
 
-    feedbacksOpenEditForm: function(id,body)
-    {
-        $('block_accounts_feedbacks_form_template_title_add').hide();
-        $('block_accounts_feedbacks_form_template_title_edit').show();
+                if (container) {
+                    container.remove();
+                }
 
-        $('feedbacks_templates_id').value = id;
-        $('feedbacks_templates_body').value = body;
+                $('html-body').insert({
+                    bottom: '<div id="edit_feedback_template_form_container">' + response.html + '</div>'
+                });
+                
+                self.initFormValidation('#edit_feedback_template_form');
 
-        $('block_accounts_feedbacks_form_template_button_cancel').show();
-        $('block_accounts_feedbacks_form_template_button_add').hide();
-        $('block_accounts_feedbacks_form_template_button_edit').show();
+                self.feedbackTemplatePopup = jQuery('#edit_feedback_template_form_container');
 
-        $('magento_block_ebay_accounts_feedbacks_form_template').show();
-        $('feedbacks_templates_body_validate').hide();
-    },
+                modal({
+                    title: response.title,
+                    type: 'popup',
+                    modalClass: 'width-50',
+                    buttons: [{
+                        text: M2ePro.translator.translate('Cancel'),
+                        class: 'action-secondary action-dismiss',
+                        click: function () {
+                            self.feedbackTemplatePopup.modal('closeModal');
+                        }
+                    },{
+                        text: M2ePro.translator.translate('Save'),
+                        class: 'action-primary',
+                        click: function () {
+                            if (!jQuery('#edit_feedback_template_form').valid()) {
+                                return false;
+                            }
 
-    feedbacksCancelForm: function()
-    {
-        $('block_accounts_feedbacks_form_template_title_add').hide();
-        $('block_accounts_feedbacks_form_template_title_edit').hide();
+                            new Ajax.Request(M2ePro.url.get('ebay_account_feedback_template/save'), {
+                                parameters: $('edit_feedback_template_form').serialize(true),
+                                onSuccess: function() {
+                                    self.feedbackTemplatePopup.modal('closeModal');
+                                    $('add_feedback_template_button_container').hide();
+                                    $('feedback_templates_grid').show();
+                                    window['ebayAccountEditTabsFeedbackGridJsObject'].reload();
+                                }
+                            });
+                        }
+                    }]
+                }, self.feedbackTemplatePopup);
 
-        $('feedbacks_templates_id').value = '';
-        $('feedbacks_templates_body').value = '';
-
-        $('block_accounts_feedbacks_form_template_button_cancel').hide();
-        $('block_accounts_feedbacks_form_template_button_add').hide();
-        $('block_accounts_feedbacks_form_template_button_edit').hide();
-
-        $('magento_block_ebay_accounts_feedbacks_form_template').hide();
-        $('feedbacks_templates_body_validate').hide();
+                self.feedbackTemplatePopup.modal('openModal');
+            }
+        });
     },
 
     // ---------------------------------------
-
-    feedbacksAddAction: function()
-    {
-        var self = EbayAccountObj ;
-
-        if ($('feedbacks_templates_body').value.length < 2 || $('feedbacks_templates_body').value.length > 80) {
-            $('feedbacks_templates_body_validate').show();
-            return;
-        } else {
-            $('feedbacks_templates_body_validate').hide();
-        }
-
-        new Ajax.Request(M2ePro.url.get('ebay_account/feedbackTemplateEdit'), {
-            method: 'post',
-            asynchronous: false,
-            parameters: {
-                account_id: M2ePro.formData.id,
-                body: $('feedbacks_templates_body').value
-            },
-            onSuccess: function(transport) {
-                self.feedbacksCancelForm();
-                eval('ebayAccountEditTabsFeedbackGrid'+M2ePro.formData.id+'JsObject.reload();');
-            }
-        });
-    },
-
-    feedbacksEditAction: function()
-    {
-        var self = EbayAccountObj ;
-
-        if ($('feedbacks_templates_body').value.length < 2 || $('feedbacks_templates_body').value.length > 80) {
-            $('feedbacks_templates_body_validate').show();
-            return;
-        } else {
-            $('feedbacks_templates_body_validate').hide();
-        }
-
-        new Ajax.Request(M2ePro.url.get('ebay_account/feedbackTemplateEdit'), {
-            method: 'post',
-            asynchronous: false,
-            parameters: {
-                id: $('feedbacks_templates_id').value,
-                account_id: M2ePro.formData.id,
-                body: $('feedbacks_templates_body').value
-            },
-            onSuccess: function(transport) {
-                self.feedbacksCancelForm();
-                eval('ebayAccountEditTabsFeedbackGrid'+M2ePro.formData.id+'JsObject.reload();');
-            }
-        });
-    },
 
     feedbacksDeleteAction: function(id)
     {
@@ -331,14 +292,13 @@ define([
             return false;
         }
 
-        new Ajax.Request(M2ePro.url.get('ebay_account/feedbackTemplateDelete'), {
+        new Ajax.Request(M2ePro.url.get('ebay_account_feedback_template/delete'), {
             method: 'post',
-            asynchronous: false,
             parameters: {
                 id: id
             },
-            onSuccess: function(transport) {
-                eval('ebayAccountEditTabsFeedbackGrid'+M2ePro.formData.id+'JsObject.reload();');
+            onSuccess: function() {
+                window['ebayAccountEditTabsFeedbackGridJsObject'].reload();
             }
         });
     },

@@ -72,15 +72,6 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         // ---------------------------------------
 
-//        $this->js->add(
-//            <<<JS
-//    require([
-//    ], function(){
-//
-//    });
-//JS
-//        );
-
         return parent::_toHtml();
     }
 

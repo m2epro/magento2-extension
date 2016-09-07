@@ -19,7 +19,7 @@ class BeforeGetToken extends Account
 
         try {
 
-            $backUrl = $this->getUrl('*/*/afterGetToken');
+            $backUrl = $this->getUrl('*/*/afterGetToken', ['_current' => true]);
 
             $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account','get','authUrl',

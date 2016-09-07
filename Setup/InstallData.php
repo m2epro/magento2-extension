@@ -2,25 +2,20 @@
 
 namespace Ess\M2ePro\Setup;
 
-use Ess\M2ePro\Helper\Factory;
 use Ess\M2ePro\Helper\Module;
-use Ess\M2ePro\Setup\Modifier\Config;
+use Ess\M2ePro\Model\Setup\Database\Modifier\Config;
 use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\Setup\InstallDataInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
-use Ess\M2ePro\Setup\Modifier\ConfigFactory;
 
 class InstallData implements InstallDataInterface
 {
-    /** @var Tables $tablesObject */
-    private $tablesObject;
-
-    /** @var ConfigFactory $configModifierFactory */
-    private $configModifierFactory;
-
-    /** @var Factory $helperFactory */
+    /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
     private $helperFactory;
+
+    /** @var \Ess\M2ePro\Model\Factory $modelFactory */
+    private $modelFactory;
 
     /** @var ModuleListInterface $moduleList */
     private $moduleList;
@@ -31,15 +26,13 @@ class InstallData implements InstallDataInterface
     //########################################
 
     public function __construct(
-        Tables $tablesObject,
-        ConfigFactory $configModifierFactory,
-        Factory $helperFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         ModuleListInterface $moduleList
     ) {
-        $this->tablesObject = $tablesObject;
-        $this->configModifierFactory = $configModifierFactory;
         $this->helperFactory = $helperFactory;
-        $this->moduleList = $moduleList;
+        $this->modelFactory  = $modelFactory;
+        $this->moduleList    = $moduleList;
     }
 
     //########################################
@@ -67,7 +60,7 @@ class InstallData implements InstallDataInterface
             'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
         ]);
 
-        $this->helperFactory->getObject('Module\Maintenance\Setup')->disable();
+        $this->helperFactory->getObject('Module\Maintenance\General')->disable();
     }
 
     //########################################
@@ -76,26 +69,28 @@ class InstallData implements InstallDataInterface
     {
         $installationKey       = sha1(microtime(1));
         $servicingInterval     = rand(43200, 86400);
-        $magentoMarketplaceUrl = 'TODO LINK';
+        $magentoMarketplaceUrl = 'https://marketplace.magento.com/'
+            . 'm2epro-ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization.html';
 
         $primaryConfigModifier = $this->getConfigModifier('primary');
 
-        $primaryConfigModifier->insert('/M2ePro/license/', 'key', NULL, 'License Key');
-        $primaryConfigModifier->insert('/M2ePro/license/', 'status', 1, NULL);
-        $primaryConfigModifier->insert('/M2ePro/license/', 'domain', NULL, 'Valid domain');
-        $primaryConfigModifier->insert('/M2ePro/license/', 'ip', NULL, 'Valid ip');
-        $primaryConfigModifier->insert('/M2ePro/license/info/', 'email', NULL, 'Associated Email');
-        $primaryConfigModifier->insert('/M2ePro/license/valid/', 'domain', NULL, '0 - Not valid\r\n1 - Valid');
-        $primaryConfigModifier->insert('/M2ePro/license/valid/', 'ip', NULL, '0 - Not valid\r\n1 - Valid');
-        $primaryConfigModifier->insert('/M2ePro/server/', 'messages', '[]', 'Server messages');
+        $primaryConfigModifier->insert('/license/', 'key', NULL, 'License Key');
+        $primaryConfigModifier->insert('/license/', 'status', 1, NULL);
+        $primaryConfigModifier->insert('/license/', 'domain', NULL, 'Valid domain');
+        $primaryConfigModifier->insert('/license/', 'ip', NULL, 'Valid ip');
+        $primaryConfigModifier->insert('/license/info/', 'email', NULL, 'Associated Email');
+        $primaryConfigModifier->insert('/license/valid/', 'domain', NULL, '0 - Not valid\r\n1 - Valid');
+        $primaryConfigModifier->insert('/license/valid/', 'ip', NULL, '0 - Not valid\r\n1 - Valid');
         $primaryConfigModifier->insert(
-            '/M2ePro/server/', 'application_key', 'b79a495170da3b081c9ebae6c255c7fbe1b139b5', NULL
+            '/server/', 'application_key', '02edcc129b6128f5fa52d4ad1202b427996122b6', NULL
         );
         $primaryConfigModifier->insert(
-            '/M2ePro/server/', 'installation_key', $installationKey, 'Unique identifier of M2E instance'
+            '/server/', 'installation_key', $installationKey, 'Unique identifier of M2E instance'
         );
-        $primaryConfigModifier->insert('/modules/', 'M2ePro', '0.0.0.r0', NULL);
-        $primaryConfigModifier->insert('/server/', 'baseurl_1', 'https://s1.m2epro.com/', 'Support server base url');
+        $primaryConfigModifier->insert(
+            '/server/location/1/', 'baseurl', 'https://s1.m2epro.com/', 'Support server base url'
+        );
+        $primaryConfigModifier->insert('/server/location/','default_index', 1, NULL);
 
         $moduleConfigModifier = $this->getConfigModifier('module');
 
@@ -196,17 +191,13 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/logs/listings/', 'last_action_id', '0', NULL);
         $moduleConfigModifier->insert('/logs/other_listings/', 'last_action_id', '0', NULL);
         $moduleConfigModifier->insert('/logs/ebay_pickup_store/', 'last_action_id', '0', NULL);
-        $moduleConfigModifier->insert(
-            '/support/', 'knowledge_base_url', 'https://support.m2epro.com/knowledgebase', NULL
-        );
-        $moduleConfigModifier->insert('/support/', 'documentation_url', 'https://docs.m2epro.com', NULL);
+        $moduleConfigModifier->insert('/support/', 'documentation_url', 'https://docs.m2epro.com/', NULL);
         $moduleConfigModifier->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/', NULL);
-        $moduleConfigModifier->insert('/support/', 'main_website_url', 'https://m2epro.com/', NULL);
-        $moduleConfigModifier->insert('/support/', 'main_support_url', 'https://support.m2epro.com/', NULL);
-        $moduleConfigModifier->insert('/support/', 'magento_connect_url', $magentoMarketplaceUrl, NULL);
+        $moduleConfigModifier->insert('/support/', 'website_url', 'https://m2epro.com/', NULL);
+        $moduleConfigModifier->insert('/support/', 'support_url', 'https://support.m2epro.com/', NULL);
+        $moduleConfigModifier->insert('/support/', 'forum_url', 'https://community.m2epro.com/');
+        $moduleConfigModifier->insert('/support/', 'magento_marketplace_url', $magentoMarketplaceUrl, NULL);
         $moduleConfigModifier->insert('/support/', 'contact_email', 'support@m2epro.com', NULL);
-        $moduleConfigModifier->insert('/support/', 'community', 'https://community.m2epro.com/');
-        $moduleConfigModifier->insert('/support/', 'ideas', 'https://support.m2epro.com/ideas/');
         $moduleConfigModifier->insert('/view/', 'show_block_notices', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/view/', 'show_products_thumbnails', '1', 'Visibility thumbnails into grid');
         $moduleConfigModifier->insert(
@@ -216,7 +207,6 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/view/synchronization/revise_total/', 'show', '0', '0 - disable, \r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/view/amazon/autocomplete/', 'max_records_quantity', '100', NULL);
         $moduleConfigModifier->insert('/view/ebay/', 'mode', 'simple', 'simple, advanced');
         $moduleConfigModifier->insert('/view/ebay/notice/', 'disable_collapse', '0', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
@@ -248,7 +238,6 @@ class InstallData implements InstallDataInterface
             'create_with_first_product_options_when_variation_unavailable', '1',
             '0 - disable, \r\n1 - enabled'
         );
-        $moduleConfigModifier->insert('/setup/upgrade/', 'is_need_rollback_backup', 0, NULL);
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
 
@@ -1488,19 +1477,6 @@ class InstallData implements InstallDataInterface
                 'create_date'    => '2013-05-08 00:00:00'
             ],
             [
-                'id'             => 27,
-                'native_id'      => 6,
-                'title'          => 'Japan',
-                'code'           => 'JP',
-                'url'            => 'amazon.co.jp',
-                'status'         => 0,
-                'sorder'         => 6,
-                'group_title'    => 'Asia / Pacific',
-                'component_mode' => 'amazon',
-                'update_date'    => '2013-05-08 00:00:00',
-                'create_date'    => '2013-05-08 00:00:00'
-            ],
-            [
                 'id'             => 28,
                 'native_id'      => 2,
                 'title'          => 'United Kingdom',
@@ -1551,19 +1527,6 @@ class InstallData implements InstallDataInterface
                 'component_mode' => 'amazon',
                 'update_date'    => '2013-05-08 00:00:00',
                 'create_date'    => '2013-05-08 00:00:00'
-            ],
-            [
-                'id'             => 32,
-                'native_id'      => 9,
-                'title'          => 'China',
-                'code'           => 'CN',
-                'url'            => 'amazon.cn',
-                'status'         => 0,
-                'sorder'         => 9,
-                'group_title'    => 'Asia / Pacific',
-                'component_mode' => 'amazon',
-                'update_date'    => '2013-05-08 00:00:00',
-                'create_date'    => '2013-05-08 00:00:00'
             ]
         ]);
 
@@ -1586,13 +1549,6 @@ class InstallData implements InstallDataInterface
                 'marketplace_id'                    => 26,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
-                'is_asin_available'                 => 1,
-                'is_merchant_fulfillment_available' => 0
-            ],
-            [
-                'marketplace_id'                    => 27,
-                'developer_key'                     => NULL,
-                'default_currency'                  => '',
                 'is_asin_available'                 => 1,
                 'is_merchant_fulfillment_available' => 0
             ],
@@ -1623,13 +1579,6 @@ class InstallData implements InstallDataInterface
                 'default_currency'                  => 'EUR',
                 'is_asin_available'                 => 1,
                 'is_merchant_fulfillment_available' => 0
-            ],
-            [
-                'marketplace_id'                    => 32,
-                'developer_key'                     => NULL,
-                'default_currency'                  => '',
-                'is_asin_available'                 => 1,
-                'is_merchant_fulfillment_available' => 0
             ]
         ]);
     }
@@ -1646,7 +1595,7 @@ class InstallData implements InstallDataInterface
 
     private function getFullTableName($tableName)
     {
-        return $this->tablesObject->getFullName($tableName);
+        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
     }
 
     /**
@@ -1657,7 +1606,7 @@ class InstallData implements InstallDataInterface
     {
         $tableName = $configName.'_config';
 
-        return $this->configModifierFactory->create(
+        return $this->modelFactory->getObject('Setup\Database\Modifier\Config',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,

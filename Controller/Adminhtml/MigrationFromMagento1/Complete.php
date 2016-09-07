@@ -3,8 +3,6 @@
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
 use Ess\M2ePro\Setup\MigrationFromMagento1;
-use Magento\Config\Model\Config;
-use Magento\Setup\Module\SetupFactory;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
@@ -43,7 +41,7 @@ class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
             return $this->getRawResult();
         }
 
-        $this->getHelper('Module\Maintenance\Setup')->disable();
+        $this->getHelper('Module\Maintenance\General')->disable();
 
         $this->getRawResult()->setContents(
             $this->__('Migration successfully completed.')
@@ -67,7 +65,7 @@ class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
             $sourceParams[$paramRow['group']][$paramRow['key']] = $paramRow['value'];
         }
 
-        if (!$this->getHelper('Module\Maintenance\Setup')->isEnabled() ||
+        if (!$this->getHelper('Module\Maintenance\General')->isEnabled() ||
             empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
             empty($sourceParams['/migrationtomagento2/source/m2epro/']['version'])
         ) {

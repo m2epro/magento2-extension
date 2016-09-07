@@ -37,10 +37,10 @@ define([], function () {
                 return;
             }
 
-            if (typeof wysiwygtext != 'undefined' && wysiwygtext.isEnabled()) {
+            if (typeof tinymce != 'undefined' && typeof tinymce.get('description_template') != 'undefined') {
 
-                var data = tinyMCE.get('description_template').getContent();
-                tinyMCE.get('description_template').setContent(data + value);
+                var data = tinymce.get('description_template').getContent();
+                tinymce.get('description_template').setContent(data + value);
 
                 return;
             }

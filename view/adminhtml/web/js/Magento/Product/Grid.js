@@ -1,6 +1,8 @@
 define([
-    'M2ePro/Common'
-], function () {
+    'jquery',
+    'M2ePro/Common',
+    'M2ePro/General/PhpFunctions'
+], function (jQuery) {
 
     window.MagentoProductGrid = Class.create(Common, {
 
@@ -34,13 +36,20 @@ define([
                 Event.stop(event);
             }
 
-            var filters = $$('#' + this.containerId + ' .filter input', '#' + this.containerId + ' .filter select');
+            var filters = $$('#' + this.containerId + ' .data-grid-filters input',
+                             '#' + this.containerId + ' .data-grid-filters select');
             var elements = [];
-            for (var i in filters) {
-                if (filters[i].value && filters[i].value.length) elements.push(filters[i]);
-            }
+            filters.forEach(function(el) {
+                if (el.value && el.value.length)
+                    elements.push(el);
+            });
             if (!this.doFilterCallback || (this.doFilterCallback && this.doFilterCallback())) {
-                var ruleParams = $('rule_form').serialize(true);
+                var ruleForm = $('rule_form'),
+                    ruleParams = {};
+
+                if (ruleForm) {
+                    ruleParams = ruleForm.serialize(true);
+                }
 
                 var numParams = 0;
                 for (var param in ruleParams) {
@@ -64,7 +73,7 @@ define([
                     this.reloadParams.rule = "";
                 }
 
-                this.reload(this.addVarToUrl(this.filterVar, encode_base64(Form.serializeElements(elements))));
+                this.reload(this.addVarToUrl(this.filterVar, base64_encode(Form.serializeElements(elements))));
             }
         },
 
@@ -82,20 +91,52 @@ define([
         },
 
         advancedFilterToggle: function () {
-            if ($('listing_product_rules').visible()) {
-                $('listing_product_rules').hide();
+            var $gridObj = jQuery('#' + ProductGridObj.getGridId().replace(/JsObject$/, '')),
+                $massactionEl = $gridObj.find('.admin__data-grid-header-row:last-child'),
+                $massSelectWrap = $massactionEl.find('.mass-select-wrap');
+
+            if (jQuery('#listing_product_rules:visible').length) {
+
+                jQuery('#listing_product_rules').hide();
+                $('advanced_filter_button').removeClassName('advanced-filter-button-active');
+
+                if (!ProductGridObj.isMassActionExists) {
+                    $massactionEl.css({'width': ''});
+                    $massSelectWrap.css({'margin-left': '-63.6%'});
+                }
+
                 if ($$('#advanced_filter_button span span span').length > 0) {
-                    $$('#advanced_filter_button span span span')[0].innerHTML = M2ePro.text.show_advanced_filter;
+                    $$('#advanced_filter_button span span span')[0].innerHTML = M2ePro.translator.translate('Show Advanced Filter');
                 } else {
-                    $$('#advanced_filter_button span')[0].innerHTML = M2ePro.text.show_advanced_filter;
+                    $$('#advanced_filter_button span')[0].innerHTML = M2ePro.translator.translate('Show Advanced Filter');
                 }
             } else {
-                $('listing_product_rules').show();
-                if ($$('#advanced_filter_button span span span').length > 0) {
-                    $$('#advanced_filter_button span span span')[0].innerHTML = M2ePro.text.hide_advanced_filter;
-                } else {
-                    $$('#advanced_filter_button span')[0].innerHTML = M2ePro.text.hide_advanced_filter;
+
+                jQuery('#listing_product_rules').show();
+                $('advanced_filter_button').addClassName('advanced-filter-button-active');
+
+                if (!ProductGridObj.isMassActionExists) {
+                    $massactionEl.css({'width': '100%'});
+                    $massSelectWrap.css({'margin-left': '-1.3em'});
                 }
+
+                if ($$('#advanced_filter_button span span span').length > 0) {
+                    $$('#advanced_filter_button span span span')[0].innerHTML = M2ePro.translator.translate('Hide Advanced Filter');
+                } else {
+                    $$('#advanced_filter_button span')[0].innerHTML = M2ePro.translator.translate('Hide Advanced Filter');
+                }
+            }
+        },
+
+        massactionMassSelectStyleFix: function () {
+            var $gridObj = jQuery('#' + ProductGridObj.getGridId().replace(/JsObject$/, '')),
+                $massactionEl = $gridObj.find('.admin__data-grid-header-row:last-child'),
+                $massSelectWrap = $massactionEl.find('.mass-select-wrap');
+
+            if (jQuery('#listing_product_rules:visible').length) {
+                $massSelectWrap.css({'margin-left': '-1.3em'});
+            } else {
+                $massSelectWrap.css({'margin-left': '-63.6%'});
             }
         },
 

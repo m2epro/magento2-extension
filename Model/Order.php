@@ -26,8 +26,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     // Payment method "M2E Pro Payment" is disabled in Magento Configuration.
     // Shipping method "M2E Pro Shipping" is disabled in Magento Configuration.
 
-    private $eventManager;
-
     private $storeManager;
 
     private $orderFactory;
@@ -56,7 +54,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     // ########################################
 
     public function __construct(
-        \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -69,7 +66,6 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = [])
     {
-        $this->eventManager = $eventManager;
         $this->storeManager = $storeManager;
         $this->orderFactory = $orderFactory;
 
@@ -350,7 +346,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $log = $this->getLog();
 
         if (!empty($params)) {
-            $description = $log->encodeDescription($description, $params, $links);
+            $description = $this->getHelper('Module\Log')->encodeDescription($description, $params, $links);
         }
 
         $log->addMessage($this->getId(), $description, $type);
@@ -358,22 +354,22 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     public function addSuccessLog($description, array $params = array(), array $links = array())
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS, $params, $links);
+        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS, $params, $links);
     }
 
     public function addNoticeLog($description, array $params = array(), array $links = array())
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE, $params, $links);
+        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE, $params, $links);
     }
 
     public function addWarningLog($description, array $params = array(), array $links = array())
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING, $params, $links);
+        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING, $params, $links);
     }
 
     public function addErrorLog($description, array $params = array(), array $links = array())
     {
-        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR, $params, $links);
+        $this->addLog($description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR, $params, $links);
     }
 
     //########################################
@@ -598,7 +594,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         } catch (\Exception $e) {
 
-            $this->eventManager->dispatch('m2epro_order_place_failure', array('order' => $this));
+            $this->_eventManager->dispatch('m2epro_order_place_failure', array('order' => $this));
 
             $this->addErrorLog('Magento Order was not created. Reason: %msg%', array('msg' => $e->getMessage()));
 
@@ -624,7 +620,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $magentoOrderUpdater->finishUpdate();
         // ---------------------------------------
 
-        $this->eventManager->dispatch('m2epro_order_place_success', array('order' => $this));
+        $this->_eventManager->dispatch('m2epro_order_place_success', array('order' => $this));
 
         $this->addSuccessLog('Magento Order #%order_id% was created.', array(
             '!order_id' => $this->getMagentoOrder()->getRealOrderId()

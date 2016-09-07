@@ -8,7 +8,7 @@ define([
         SUCCESS = 1,
         WARNING = 2,
         ERROR   = 3,
-        _templateContainer = '<div id="messages"><div class="messages"></div></div>',
+        _templateContainer = '<div id="messages"><div class="messages m2epro-messages"></div></div>',
         _templates = {
             global: '<div class="message"><div><%= data %></div></div>',
             success: '<div class="message message-success success"><div data-ui-id="messages-message-success"><%= data %></div></div>',

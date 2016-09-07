@@ -213,13 +213,13 @@ final class Receive extends AbstractModel
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR
-                : \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
                 $logType,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }

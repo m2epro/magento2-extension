@@ -115,7 +115,7 @@ HTML
             'prepareData' => $this->getUrl('*/listing_other_moving/prepareMoveToListing'),
             'createDefaultListing' => $this->getUrl('*/listing_other_moving/createDefaultListing'),
             'moveToListingGridHtml' => $this->getUrl('*/listing_other_moving/moveToListingGrid'),
-            'getFailedProductsGridHtml' => $this->getUrl('*/listing_other_moving/getFailedProductsGrid'),
+            'getFailedProductsHtml' => $this->getUrl('*/listing_other_moving/getFailedProducts'),
             'tryToMoveToListing' => $this->getUrl('*/listing_other_moving/tryToMoveToListing'),
             'moveToListing' => $this->getUrl('*/listing_other_moving/moveToListing'),
 
@@ -126,6 +126,8 @@ HTML
 
             'amazon_listing/getAFNQtyBySku' => $this->getUrl('*/amazon_listing/getAFNQtyBySku')
         ]);
+
+        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_repricing/getUpdatedPriceBySkus'));
 
         $someProductsWereNotMappedMessage = 'No matches were found. Please change the Mapping Attributes in <strong>';
         $someProductsWereNotMappedMessage .= 'Configuration > Account > 3rd Party Listings</strong> ';
@@ -153,6 +155,7 @@ HTML
             'Item was not Mapped as the chosen %product_id% Simple Product has Custom Options.' => $this->__(
                 'Item was not Mapped as the chosen %product_id% Simple Product has Custom Options.'
             ),
+            'Add New Listing' => $this->__('Add New Listing'),
 
             'create_listing' => $createListing,
             'popup_title' => $this->__('Moving Amazon Items'),
@@ -205,8 +208,9 @@ HTML
             'lor' => 'M2ePro/Listing/Other/Removing',
             'lou' => 'M2ePro/Listing/Other/Unmapping',
 
-            'elog' => 'M2ePro/Amazon/Listing/Other/Grid',
-            'eloa' => 'M2ePro/Amazon/Listing/AfnQty'
+            'alog' => 'M2ePro/Amazon/Listing/Other/Grid',
+            'aloa' => 'M2ePro/Amazon/Listing/AfnQty',
+            'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price'
         ], <<<JS
 
         M2ePro.customData.componentMode = '{$componentMode}';
@@ -224,6 +228,7 @@ HTML
         AmazonListingOtherGridObj.unmappingHandler.setOptions(M2ePro);
 
         window.AmazonListingAfnQtyObj = new AmazonListingAfnQty();
+        window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
 
         jQuery(function() {
             AmazonListingOtherGridObj.afterInitPage();

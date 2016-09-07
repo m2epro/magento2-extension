@@ -31,7 +31,7 @@ class Order extends AbstractForm
     
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $magentoOrdersSettings = !is_null($account) ? $account->getData('magento_orders_settings') : [];
         $magentoOrdersSettings = !empty($magentoOrdersSettings) ? json_decode($magentoOrdersSettings, true) : array();
         
@@ -142,10 +142,11 @@ class Order extends AbstractForm
 M2E Pro or other tools.</p><br>
 <p><strong>Note:</strong> If an Amazon Order is received, Magento Product QTY decreases only if a Magento 
 Order is created.</p><br>
-<p>More detailed information about how to work with this Page you can find <a href="%url%" target="_blank">here</a>.</p>
+<p>More detailed information about how to work with this Page you can find 
+<a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/NgItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NgItAQ')
                 )
             ]
         );
@@ -235,7 +236,6 @@ HTML
                 'container_id' => 'magento_orders_listings_other_store_id_container',
                 'name' => 'magento_orders_settings[listing_other][store_id]',
                 'label' => $this->__('Magento Store View'),
-                'required' => true,
                 'value' => !empty($magentoOrdersSettings['listing_other']['store_id'])
                     ? $magentoOrdersSettings['listing_other']['store_id'] : '',
                 'hasDefaultOption' => false,
@@ -493,11 +493,11 @@ HTML
                      Default Guest Account will be defined as a Customer. <br/>
                      <b>Note:</b> The Guest Checkout Option must be enabled in Magento.
                      (<i>Yes</i> must be chosen in the Allow Guest Checkout Option in
-                     Magento > System > Configuration > Sales > Checkout Tab). <br/>
+                     Magento > Stores > Configuration > Sales > Checkout). <br/>
                      <b>Predefined Customer</b> - the System uses one predefined
                      Customer for all Amazon Orders related to this Account. You will be required
                      to provide an ID of the existing Customer, which you can find in
-                     Magento > Customers > Manage Customers Table. <br/>
+                     Magento > Customers > All Customers. <br/>
                      <b>Create New</b> - a new Customer will be created in Magento,
                      using Amazon Customer data of Amazon Order. <br/>
                      <b>Note:</b> A unique Customer Identifier is his e-mail address.
@@ -533,7 +533,7 @@ HTML
                 'label' => $this->__('Associate to Website'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['website_id'],
-                'required' => true
+                'required' => false
             ]
         );
 
@@ -550,7 +550,7 @@ HTML
                 'label' => $this->__('Customer Group'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['group_id'],
-                'required' => true
+                'required' => false
             ]
         );
 

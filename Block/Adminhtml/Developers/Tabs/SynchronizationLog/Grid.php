@@ -89,6 +89,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'create_date'
         ));

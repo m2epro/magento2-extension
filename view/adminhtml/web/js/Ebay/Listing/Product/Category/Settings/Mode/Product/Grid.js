@@ -206,13 +206,13 @@ define([
                         type: 'popup',
                         buttons: [{
                             text: M2ePro.translator.translate('Cancel'),
-                            class: 'action-secondary',
+                            class: 'action-secondary action-dismiss',
                             click: function () {
                                 this.closeModal();
                             }
                         },{
                             text: M2ePro.translator.translate('Continue'),
-                            class: 'primary forward',
+                            class: 'action-primary action-accept forward',
                             id: 'save_popup_button',
                             click: function () {
                                 this.closeModal();

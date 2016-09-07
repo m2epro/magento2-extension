@@ -48,9 +48,9 @@ class Index extends Developers
         $referrer = $this->getRequest()->getParam('referrer', false);
 
         if ($referrer == 'ebay') {
-            $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=19726975');
+            $this->setPageHelpLink('x/fwItAQ');
         } else {
-            $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=19727452');
+            $this->setPageHelpLink('x/XAQtAQ');
         }
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));

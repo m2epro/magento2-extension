@@ -11,16 +11,19 @@ namespace Ess\M2ePro\Helper\Module\Database;
 class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $resourceConnection;
+    protected $cacheConfig;
     
     //########################################
     
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
         $this->resourceConnection = $resourceConnection;
+        $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
     }
     
@@ -72,7 +75,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                 }
 
                 $parentTablePrefix = $this->resourceConnection->getTableName($parentTable);
-                $childTablePrefix = $this->resourceConnection->getTableName($childTable);
+                $childTablePrefix  = $this->resourceConnection->getTableName($childTable);
 
                 $parentIdColumn = $this->getHelper('Module\Database\Structure')->getIdColumn($parentTable);
                 $childIdColumn  = $this->getHelper('Module\Database\Structure')->getIdColumn($childTable);
@@ -86,7 +89,9 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                         ->joinLeft(array('child' => $childTablePrefix),
                                    '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
                                    array())
-                        ->where('`parent`.`component_mode` = ?', $component)
+                        ->where('`parent`.`component_mode` = \''.$component.'\' OR 
+                                (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
+                                $this->getHelper('Component')->getComponents())
                         ->where('`child`.`'.$childIdColumn.'` IS NULL')
                         ->query();
 
@@ -97,7 +102,8 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
                                                 : array('id' => $childIdColumn))
                         ->joinLeft(array('parent' => $parentTablePrefix),
-                                   '`child`.`'.$childIdColumn.'` = `parent`.`'.$parentIdColumn.'`',
+                                   "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND 
+                                   `parent`.`component_mode` = '{$component}'",
                                    array())
                         ->where('`parent`.`'.$parentIdColumn.'` IS NULL')
                         ->query();
@@ -108,10 +114,15 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                     $result += (int)$row['count_total'];
                 } else {
                     while ($row = $stmtQuery->fetch()) {
-                        $result[] = (int)$row['id'];
+                        $id = (int)$row['id'];
+                        $result[$id] = $id;
                     }
                 }
             }
+        }
+
+        if (!$returnOnlyCount) {
+            $result = array_values($result);
         }
 
         return $result;
@@ -120,6 +131,8 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
     public function repairBrokenTables(array $tables)
     {
         $connection = $this->resourceConnection->getConnection();
+
+        $logData = [];
 
         foreach ($tables as $table) {
 
@@ -144,10 +157,10 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                 );
             }
 
-            $logTemp = "Table: {$table} ## Amount: ".count($brokenIds);
-            // TODO magento 2
-            Mage::log($logTemp, null, 'm2epro_repair_tables.log',true);
+            $logData[] = "Table: {$table} ## Amount: ".count($brokenIds);
         }
+
+        $this->cacheConfig->setGroupValue('/database/repair/', 'log_data', implode('', $logData));
     }
 
     // ---------------------------------------

@@ -17,11 +17,11 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         $accountData = array(
             'merchant_id'      => $this->getAmazonAccount()->getMerchantId(),
             'marketplace_code' => $this->getAmazonAccount()->getMarketplace()->getCode(),
-            'additional_data'  => $this->getHelper('Module\License')->getUserInfo(),
+            'additional_data'  => $this->getHelper('Magento\Admin')->getCurrentInfo(),
         );
 
         return $this->sendData(
-            \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_ACCOUNT_UNLINK,
+            \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_ACCOUNT_LINK,
             array('account' => $accountData),
             $backUrl
         );

@@ -84,7 +84,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             'button_class' => '',
             'onclick' => 'AmazonTemplateDescriptionObj.saveAndEditClick('
                 . '\'\','
-                . 'undefined,'
+                . '\'amazonTemplateDescriptionEditTabs\','
                 . '\'' . $this->getSaveConfirmationText() . '\','
                 . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
                 . ')',

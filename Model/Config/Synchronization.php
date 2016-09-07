@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Config;
 
-class Synchronization extends AbstractConfig
+class Synchronization extends AbstractModel
 {
     //########################################
 

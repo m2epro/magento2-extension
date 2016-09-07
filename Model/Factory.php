@@ -48,33 +48,5 @@ class Factory
         return $model;
     }
 
-    public function getCachedObject($modelName)
-    {
-        if ($this->helperFactory->getObject('Module')->isDevelopmentEnvironment()) {
-            return $this->getObject($modelName);
-        }
-
-        $cacheKey = strtoupper($modelName);
-        $cacheData = $this->helperFactory->getObject('Data\Cache\Permanent')->getValue($cacheKey);
-
-        if ($cacheData !== false) {
-            return $cacheData;
-        }
-
-        $cacheData = $this->getObject($modelName);
-
-        if (!empty($cacheData)) {
-
-            $this->helperFactory->getObject('Data\Cache\Permanent')->setValue(
-                $cacheKey,
-                $cacheData,
-                $cacheData->getCacheGroupTags(),
-                $cacheData->getCacheLifetime()
-            );
-        }
-
-        return $cacheData;
-    }
-
     //########################################
 }

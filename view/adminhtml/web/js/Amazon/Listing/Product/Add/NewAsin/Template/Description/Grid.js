@@ -163,7 +163,7 @@ define([
         mapToTemplateDescription: function (el, templateId, mapToGeneralId) {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/mapToTemplateDescription'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
                 method: 'post',
                 parameters: {
                     products_ids: ListingGridHandlerObj.templateDescriptionHandler.templateDescriptionPopup.productsIds,

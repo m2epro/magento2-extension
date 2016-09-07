@@ -2,90 +2,83 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
-use Ess\M2ePro\Controller\Adminhtml\Context;
-use Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
+use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 
-class Preview extends Template
+class Preview extends Description
 {
-    protected $productModel;
+    private $description = [];
 
-    public function __construct(
-        \Magento\Catalog\Model\Product $productModel,
-        \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        Context $context
-    )
+    protected function getLayoutType()
     {
-        $this->productModel = $productModel;
-
-        parent::__construct($templateManager, $ebayFactory, $context);
+        return self::LAYOUT_BLANK;
     }
 
     public function execute()
     {
-        // TODO NOT SUPPORTED FEATURES
+        $this->description = $this->getRequest()->getPost('description_preview', []);
 
-        if (!(int)$this->getRequest()->getPost('show', 0)) {
-
-            $templateData = $this->getRequest()->getPost('description');
-            $this->_getSession()->setTemplateData($templateData);
-
-            return $this->printOutput();
+        if (empty($this->description)) {
+            $this->messageManager->addError($this->__('Description Policy data is not specified.'));
+            return $this->getResult();
         }
 
         $productsEntities = $this->getProductsEntities();
 
-        if (!$productsEntities['magento_product']) {
-
-            $errorMessage = $this->__('This Product ID does not exist.');
-            return $this->printOutput(NULL, NULL, $errorMessage);
+        if (is_null($productsEntities['magento_product'])) {
+            $this->messageManager->addError($this->__('Magento Product does not exist.'));
+            return $this->getResult();
         }
 
-        $title = $productsEntities['magento_product']->getProduct()->getData('name');
-        $description = $this->getDescription($productsEntities['magento_product'],
-            $productsEntities['listing_product']);
+        $description = $this->getDescription(
+            $productsEntities['magento_product'],
+            $productsEntities['listing_product']
+        );
 
-        return $this->printOutput($title, $description);
+        if (!$description) {
+            $this->messageManager->addWarning(
+                $this->__(
+                    'The Product Description attribute is selected as a source of the eBay Item Description, 
+                    but this Product has empty description.'
+                )
+            );
+        } elseif (is_null($productsEntities['listing_product'])) {
+            $this->messageManager->addWarning(
+                $this->__(
+                    'The Product you selected is not presented in any M2E Pro Listing. 
+                    Thus, the values of the M2E Pro Attribute(s), which are used in the Item Description, 
+                    will be ignored and displayed like #attribute label#. 
+                    Please, change the Product ID to preview the data.'
+                )
+            );
+        }
+
+        $previewBlock = $this->createBlock('Ebay\Template\Description\Preview')->setData([
+            'title' => $productsEntities['magento_product']->getProduct()->getData('name'),
+            'magento_product_id' => $productsEntities['magento_product']->getProductId(),
+            'description' => $description
+        ]);
+
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Preview Description'));
+        $this->addContent($previewBlock);
+
+        return $this->getResult();
     }
 
     //########################################
 
-    private function printOutput($title = NULL, $description = NULL, $errorMessage = NULL)
-    {
-        $previewFormBlock = $this->createBlock(
-            'Ebay\Template\Description\Preview\Form', '',
-            array('error_message' => $errorMessage,
-                'product_id'    => $this->getRequest()->getPost('id'),
-                'store_id'      => $this->getRequest()->getPost('store_id'))
-        );
-
-        $previewBodyBlock = $this->createBlock(
-            'Ebay\Template\Description\Preview\Body', '',
-            array('title'       => $title,
-                'description' => $description)
-        );
-
-        $this->addContent($previewFormBlock);
-        $this->addContent($previewBodyBlock);
-
-        return $this->resultPage;
-    }
-
     private function getDescription(\Ess\M2ePro\Model\Magento\Product $magentoProduct,
                                     \Ess\M2ePro\Model\Listing\Product $listingProduct = NULL)
     {
-        $descriptionTemplateData = $this->_getSession()->getTemplateData();
-
         $descriptionModeProduct = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_PRODUCT;
         $descriptionModeShort   = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_SHORT;
         $descriptionModeCustom  = \Ess\M2ePro\Model\Ebay\Template\Description::DESCRIPTION_MODE_CUSTOM;
 
-        if ($descriptionTemplateData['description_mode'] == $descriptionModeProduct) {
+        if ($this->description['description_mode'] == $descriptionModeProduct) {
             $description = $magentoProduct->getProduct()->getDescription();
-        } elseif ($descriptionTemplateData['description_mode'] == $descriptionModeShort) {
+        } elseif ($this->description['description_mode'] == $descriptionModeShort) {
             $description = $magentoProduct->getProduct()->getShortDescription();
-        } elseif ($descriptionTemplateData['description_mode'] == $descriptionModeCustom) {
-            $description = $descriptionTemplateData['description_template'];
+        } elseif ($this->description['description_mode'] == $descriptionModeCustom) {
+            $description = $this->description['description_template'];
         } else {
             $description = '';
         }
@@ -111,8 +104,7 @@ class Preview extends Template
 
     private function addWatermarkInfoToDescriptionIfNeed(&$description)
     {
-        $descriptionTemplateData = $this->_getSession()->getTemplateData();
-        if (!$descriptionTemplateData['watermark_mode'] || strpos($description, 'm2e_watermark') === false) {
+        if (!$this->description['watermark_mode'] || strpos($description, 'm2e_watermark') === false) {
             return;
         }
 
@@ -141,67 +133,30 @@ class Preview extends Template
 
     private function getProductsEntities()
     {
-        $productId = $this->getRequest()->getPost('id');
-        $storeId   = $this->getRequest()->getPost('store_id', 0);
+        $productId = isset($this->description['magento_product_id'])
+            ? $this->description['magento_product_id'] : -1;
+        $storeId = isset($this->description['store_id'])
+            ? $this->description['store_id'] : \Magento\Store\Model\Store::DEFAULT_STORE_ID;
 
-        if ($productId) {
+        $magentoProduct = $this->getMagentoProductById($productId, $storeId);
+        $listingProduct = $this->getListingProductByMagentoProductId($productId, $storeId);
 
-            return array(
-                'magento_product' => $this->getMagentoProductById($productId, $storeId),
-                'listing_product' => $this->getListingProductByMagentoProductId($productId, $storeId)
-            );
-        }
-
-        $listingProduct = $this->getListingProductByRandom($storeId);
-
-        if (!is_null($listingProduct)) {
-
-            return array(
-                'magento_product' => $listingProduct->getMagentoProduct(),
-                'listing_product' => $listingProduct
-            );
-        }
-
-        return array(
-            'magento_product' => $this->getMagentoProductByRandom($storeId),
-            'listing_product' => null
-        );
+        return [
+            'magento_product' => $magentoProduct,
+            'listing_product' => $listingProduct
+        ];
     }
 
     private function getMagentoProductById($productId, $storeId)
     {
-        $product = $this->productModel->load($productId);
-
-        if (is_null($product->getId())) {
+        if (!$this->isMagentoProductExists($productId)) {
             return NULL;
         }
 
+        /** @var \Ess\M2ePro\Model\Magento\Product $magentoProduct */
         $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($product->getId());
-        $magentoProduct->setStoreId($storeId);
 
-        return $magentoProduct;
-    }
-
-    private function getMagentoProductByRandom($storeId)
-    {
-        $products = $this->productModel
-            ->getCollection()
-            ->setPageSize(100)
-            ->getItems();
-
-        if (count($products) <= 0) {
-            return NULL;
-        }
-
-        shuffle($products);
-        $product = array_shift($products);
-
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($product->getId());
-        $magentoProduct->setStoreId($storeId);
-
-        return $magentoProduct;
+        return $magentoProduct->loadProduct($productId, $storeId);
     }
 
     // ---------------------------------------
@@ -226,29 +181,5 @@ class Preview extends Template
         }
 
         return $listingProduct;
-    }
-
-    private function getListingProductByRandom($storeId)
-    {
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')
-            ->getCollection();
-
-        $listingProductCollection->getSelect()->joinLeft(
-            array('ml' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
-            '`ml`.`id` = `main_table`.`listing_id`',
-            array('store_id')
-        );
-
-        $listingProducts = $listingProductCollection
-            ->addFieldToFilter('store_id', $storeId)
-            ->setPageSize(100)
-            ->getItems();
-
-        if (count($listingProducts) <= 0) {
-            return NULL;
-        }
-
-        shuffle($listingProducts);
-        return array_shift($listingProducts);
     }
 }

@@ -13,10 +13,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected $magentoProductCollectionFactory;
     protected $ebayFactory;
-    protected $priceCurrency;
-    protected $scopeConfig;
+    protected $localeCurrency;
     protected $resourceConnection;
-    protected $timeZone;
     protected $productResource;
 
     //########################################
@@ -24,10 +22,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     public function __construct(
         \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Magento\Directory\Model\PriceCurrency $priceCurrency,
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timeZone,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -36,10 +32,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->ebayFactory = $ebayFactory;
-        $this->priceCurrency = $priceCurrency;
-        $this->scopeConfig = $scopeConfig;
+        $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        $this->timeZone = $timeZone;
         $this->productResource = $productResource;
 
         parent::__construct($context, $backendHelper, $data);
@@ -254,6 +248,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'width'     => '150px',
             'type'      => 'datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'     => 'end_date',
             'frame_callback' => array($this, 'callbackColumnEndTime')
         ));
@@ -276,21 +271,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ),
             'frame_callback' => array($this, 'callbackColumnStatus')
         ));
-
-        // TODO
-//        if ($this->getHelper('Module')->isDevelopmentMode()) {
-//            $this->addColumn('developer_action', array(
-//                'header'    => $this->__('Actions'),
-//                'align'     => 'left',
-//                'width'     => '150px',
-//                'type'      => 'text',
-//                'renderer'  => 'M2ePro/listing_view_grid_column_renderer_developerAction',
-//                'index'     => 'value',
-//                'filter'    => false,
-//                'sortable'  => false,
-//                'js_handler' => 'EbayListingViewEbayGridObj'
-//            ));
-//        }
 
         return parent::_prepareColumns();
     }
@@ -343,17 +323,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'confirm'  => $this->__('Are you sure?')
         ), 'actions');
 
+        $this->getMassactionBlock()->addItem('previewItems', array(
+            'label'    => $this->__('Preview Items'),
+            'url'      => '',
+            'confirm'  => $this->__('Are you sure?')
+        ), 'other');
+
         $this->getMassactionBlock()->addItem('remove', array(
             'label'    => $this->__('Remove From Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
-        ), 'actions');
-
-//        $this->getMassactionBlock()->addItem('previewItems', array(
-//            'label'    => $this->__('Preview Items'),
-//            'url'      => '',
-//            'confirm'  => ''
-//        ), 'other');
+        ), 'other');
 
         // ---------------------------------------
 
@@ -374,7 +354,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
 
         if (!empty($onlineTitle) && $this->isTerapeakWidgetEnabled) {
-            //$valueHtml .= $this->getTerapeakButtonHtml($row);
+            $valueHtml = '<span class="terapeak-product-title">' .
+                $valueHtml .
+                $this->getTerapeakButtonHtml($row) .
+            '</span>';
         }
 
         if (is_null($sku = $row->getData('sku'))) {
@@ -395,11 +378,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                           '<strong>' . $this->__('Category') . ':</strong>&nbsp;'.
                           $this->getHelper('Data')->escapeHtml($category);
         }
-
-        // TODO Item Fee
-//        $valueHtml .= '<br/>' .
-//                      '<strong>' . $this->__('eBay Fee') . ':</strong>&nbsp;' .
-//                      $this->getItemFeeHtml($row);
 
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product',$row->getData('listing_product_id'));
@@ -447,25 +425,34 @@ HTML;
             $additionalData = (array)json_decode($row->getData('additional_data'), true);
 
             if (empty($additionalData['ebay_item_fees']['listing_fee']['fee'])) {
-                return $this->modelFactory->getObject('Currency')->formatPrice(
+
+                $price = $this->modelFactory->getObject('Currency')->formatPrice(
                     $this->listing->getMarketplace()->getChildObject()->getCurrency(),
                     0
                 );
+
+                return <<<HTML
+<div style="font-size: 11px">{$this->__('eBay Fee')}: {$price}</div>
+HTML;
             }
 
-            $fee = $this->getLayout()->createBlock('M2ePro/ebay_listing_view_fee_product');
+            $fee = $this->createBlock('Ebay\Listing\View\Ebay\Fee\Product');
             $fee->setData('fees', $additionalData['ebay_item_fees']);
             $fee->setData('product_name', $row->getData('name'));
 
-            return $fee->toHtml();
+            return <<<HTML
+<div style="font-size: 11px">{$this->__('eBay Fee')}: {$fee->toHtml()}</div>
+HTML;
         }
 
         $listingProductId = (int)$row->getData('listing_product_id');
-        $label = $this->__('estimate');
+        $label = $this->__('estimate fee');
 
         return <<<HTML
-[<a href="javascript:void(0);"
-    onclick="EbayListingViewEbayGridObj.getEstimatedFees({$listingProductId});">{$label}</a>]
+<div style="font-size: 11px">
+    <a href="javascript:void(0);" class="ebay-fee"
+        onclick="EbayListingViewEbayGridObj.getEstimatedFees({$listingProductId});">{$label}</a>
+</div>
 HTML;
 
     }
@@ -504,25 +491,26 @@ HTML;
     public function callbackColumnEbayItemId($value, $row, $column, $isExport)
     {
         if ($row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
-            return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+            $html = '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
+        } else if (is_null($value) || $value === '') {
+            $html = $this->__('N/A');
+        } else {
+            $listingData = $this->listing->getData();
+
+            $url = $this->getUrl(
+                '*/ebay_listing/gotoEbay/',
+                array(
+                    'item_id' => $value,
+                    'account_id' => $listingData['account_id'],
+                    'marketplace_id' => $listingData['marketplace_id']
+                )
+            );
+            $html = '<a href="' . $url . '" target="_blank">'.$value.'</a>';
         }
 
-        if (is_null($value) || $value === '') {
-            return $this->__('N/A');
-        }
+        $html .= $this->getItemFeeHtml($row);
 
-        $listingData = $this->listing->getData();
-
-        $url = $this->getUrl(
-            '*/ebay_listing/gotoEbay/',
-            array(
-                'item_id' => $value,
-                'account_id' => $listingData['account_id'],
-                'marketplace_id' => $listingData['marketplace_id']
-            )
-        );
-
-        return '<a href="' . $url . '" target="_blank">'.$value.'</a>';
+        return $html;
     }
 
     public function callbackColumnOnlineAvailableQty($value, $row, $column, $isExport)
@@ -593,8 +581,6 @@ HTML;
 
             $startPriceText = $this->__('Start Price');
 
-            $iconHelpPath = $this->getViewFileUrl('Ess_M2ePro::images/i_logo.png');
-            $toolTipIconPath = $this->getViewFileUrl('Ess_M2ePro::images/i_icon.png');
             $onlineCurrentPriceHtml = '';
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
@@ -617,17 +603,18 @@ HTML;
                 $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
             }
 
-            $intervalHtml = <<<HTML
-<img class="tool-tip-image"
-     style="vertical-align: middle;"
-     src="{$toolTipIconPath}"><span class="tool-tip-message" style="display:none; text-align: left; min-width: 140px;">
-    <img src="{$iconHelpPath}"><span style="color:gray;">
-        {$onlineCurrentPriceHtml}
-        <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
-        {$onlineReservePriceHtml}
-        {$onlineBuyItNowPriceHtml}
-    </span>
+            $intervalHtml = $this->getTooltipHtml(<<<HTML
+<span style="color:gray;">
+    {$onlineCurrentPriceHtml}
+    <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
+    {$onlineReservePriceHtml}
+    {$onlineBuyItNowPriceHtml}
 </span>
+HTML
+            );
+
+            $intervalHtml = <<<HTML
+<div class="fix-magento-tooltip ebay-auction-grid-tooltip">{$intervalHtml}</div>
 HTML;
 
             if ($onlineCurrentPrice > $onlineStartPrice) {
@@ -897,9 +884,9 @@ HTML;
             usort($actionsRow['items'], function($a, $b)
             {
                 $sortOrder = array(
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 1,
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 2,
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 3,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 1,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 2,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 3,
                 );
 
                 return $sortOrder[$a["type"]] > $sortOrder[$b["type"]];
@@ -907,15 +894,15 @@ HTML;
         }
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'Last Action was completed with warning(s).'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary', '', ['data' => [
@@ -982,15 +969,15 @@ HTML;
 
     public function getMainTypeForActionId($actionRows)
     {
-        $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
 
         foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
                 break;
             }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
             }
         }
 
@@ -1018,6 +1005,8 @@ HTML;
 
     protected function _toHtml()
     {
+        $this->getInitTerapeakWidgetHtml();
+
         $allIdsStr = implode(',', $this->getCollection()->getAllIds());
 
         if ($this->getRequest()->isXmlHttpRequest()) {
@@ -1029,8 +1018,7 @@ HTML;
 JS
             );
 
-            return parent::_toHtml() .
-                   $this->getInitTerapeakWidgetHtml();
+            return parent::_toHtml();
         }
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
@@ -1047,7 +1035,8 @@ JS
             'runReviseProducts' => $this->getUrl('*/ebay_listing/runReviseProducts'),
             'runStopProducts' => $this->getUrl('*/ebay_listing/runStopProducts'),
             'runStopAndRemoveProducts' => $this->getUrl('*/ebay_listing/runStopAndRemoveProducts'),
-            'runRemoveProducts' => $this->getUrl('*/ebay_listing/runRemoveProducts')    
+            'runRemoveProducts' => $this->getUrl('*/ebay_listing/runRemoveProducts'),
+            'previewItems' => $this->getUrl('*/ebay_listing/previewItems'),
         ]);
 
         $this->jsUrl->add(
@@ -1104,7 +1093,7 @@ JS
         // "%task_title%" task has completed with errors. <a target="_blank" href="%url%">View Log</a> for details.
         $taskCompletedErrorMessage = '"%task_title%" task has completed with errors. ';
         $taskCompletedErrorMessage .= '<a target="_blank" href="%url%">View Log</a> for details.';
-        
+
         $this->jsTranslator->addTranslations([
             'task_completed_message' => $this->__('Task completed. Please wait ...'),
 
@@ -1121,7 +1110,7 @@ JS
                 $this->__('The Listing was locked by another process. Please try again later.'),
 
             'Listing is empty.' => $this->__('Listing is empty.'),
-            
+
             'listing_all_items_message' => $this->__('Listing All Items On eBay'),
             'listing_selected_items_message' => $this->__('Listing Selected Items On eBay'),
             'revising_selected_items_message' => $this->__('Revising Selected Items On eBay'),
@@ -1130,7 +1119,7 @@ JS
             'stopping_and_removing_selected_items_message' => $this->__(
                 'Stopping On eBay And Removing From Listing Selected Items'
             ),
-            'removing_selected_items_message' => $this->__('Removing From Listing Selected Items'),            
+            'removing_selected_items_message' => $this->__('Removing From Listing Selected Items'),
 
             'Please select the Products you want to perform the Action on.' =>
                 $this->__('Please select the Products you want to perform the Action on.'),
@@ -1150,13 +1139,10 @@ JS
             'Product(s) failed to Move' => $this->__('Product(s) failed to Move'),
             'eBay Categories' => $this->__('eBay Categories'),
             'of Product' => $this->__('of Product'),
-            'Specifics' => $this->__('Specifics'),
-            'Estimated Fee Details' => $this->__('Estimated Fee Details')
+            'Specifics' => $this->__('Specifics')
         ]);
 
         $showAutoAction   = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
-
-        $showMotorNotification = json_encode((bool)$this->isShowMotorNotification());
 
         // M2ePro_TRANSLATIONS
         // Please check eBay Motors compatibility attribute.You can find it in %menu_label% > Configuration > <a target="_blank" href="%url%">General</a>.
@@ -1194,8 +1180,6 @@ JS
 
         EbayListingViewEbayGridObj.actionHandler.setOptions(M2ePro);
         EbayListingViewEbayGridObj.variationProductManageHandler.setOptions(M2ePro);
-        //TODO Bids popup
-        // EbayListingViewEbayGridObj.listingProductBidsHandler.setOptions(M2ePro);
       
         EbayListingViewEbayGridObj.actionHandler.setProgressBar('listing_view_progress_bar');
         EbayListingViewEbayGridObj.actionHandler.setGridWrapper('listing_view_content_container');
@@ -1213,16 +1197,11 @@ JS
             );
         }
 
-        if ({$showMotorNotification}) {
-            ListingEbayGridHandlerObj.showMotorsNotificationPopUp('{$motorNotification}');
-        }
-
     });
 JS
         );
 
-        return parent::_toHtml() .
-            $this->getInitTerapeakWidgetHtml();
+        return parent::_toHtml();
     }
 
     private function getLockedTag($row)
@@ -1268,23 +1247,44 @@ JS
 
     private function getInitTerapeakWidgetHtml()
     {
-        return '';
 
         if (!$this->isTerapeakWidgetEnabled) {
+            return;
         }
 
-        $protocolMode = $this->scopeConfig->isSetFlag('web/secure/use_in_adminhtml') == '1' ? 'https' : 'http';
+        if ($this->getRequest()->isXmlHttpRequest()) {
 
-        return <<<HTML
-<style>
-    div.tp-research { display: inline-block; }
-    a.tp-button { cursor: pointer; text-decoration: none; }
-</style>
+            $this->js->add(
+                <<<JS
+    terapeakResearchConfig.init();
+JS
+            );
 
-<script type="text/javascript">
+            return;
+        }
+
+        $this->css->add(<<<CSS
+div.tp-research { display: inline-block; }
+a.tp-button { cursor: pointer; text-decoration: none; }
+
+.terapeak-product-title div.tp-research{
+    opacity:0;
+    transition:opacity 0.2s linear;
+}   
+
+.terapeak-product-title:hover div.tp-research{
+    opacity:1;
+}   
+CSS
+        );
+
+        $this->js->addOnReadyJs(<<<JS
 require([
-    'prototype'
-],function() {
+    'jquery',
+    'prototype',
+    '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js',
+    'M2ePro/Ebay/Terapeak'
+],function(jQuery) {
     /* Set up Terapeack Widget */
     _tpwidget = {
         product_container_selector:        'tr',
@@ -1299,46 +1299,21 @@ require([
         pid:          '7800677'
     };
 
-    var script = new Element('script', {type: 'text/javascript',
-                                        src: '$protocolMode://widget.terapeak.com/tools/terapeak-loader.js'});
-
-    $$('head').first().appendChild(script);
+    terapeakResearchConfig.init();
+    
+    jQuery.fn.terapeakModal = jQuery.fn.modal;
+    jQuery.fn.modal.noConflict();
 });
-</script>
-HTML;
-    }
 
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "ebay motors"
-    protected function isShowMotorNotification()
-    {
-        return false;
-
-        if ($this->listing->getMarketplaceId() != \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS) {
-            return false;
-        }
-
-        $configValue = $this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/ebay/motors_epids_attribute/', 'listing_notification_shown'
+JS
         );
-
-        if ($configValue) {
-            return false;
-        }
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/ebay/motors_epids_attribute/', 'listing_notification_shown', 1
-        );
-
-        return true;
     }
 
     //########################################
 
     private function convertAndFormatPriceCurrency($price, $currency)
     {
-        return $this->priceCurrency->convertAndFormat($price, null, null, null, $currency);
+        return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
 
     //########################################

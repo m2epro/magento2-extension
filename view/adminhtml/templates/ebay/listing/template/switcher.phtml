@@ -89,9 +89,6 @@
                     <div id="template_<?php echo $block->getTemplateNick() ?>_nick_label" style="display: none;">
                         <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/note_cell_bg.gif'); ?>" />
                         <span class="template" style="display: none;"><?php echo $block->__('Policy') ?></span>
-                        <?php if ($block->isTemplateModeParentForced()): ?>
-                            <span class="parent" style="display: none;"><?php echo $block->__('Please, specify a value suitable for all chosen Products.') ?></span>
-                        <?php endif; ?>
                     </div>
 
                     <div id="template_<?php echo $block->getTemplateNick() ?>_edit" style="display: none;">

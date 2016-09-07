@@ -50,7 +50,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
                 break;
         }
 
-        $this->setComponentPageHelpLink('New+Listing+Creation');
+        $this->setPageHelpLink('x/AgItAQ');
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('New Listing Creation'));
 
         return $this->getResult();
@@ -176,8 +176,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             // M2ePro_TRANSLATIONS
             // Listing was successfully Added
             'Listing was successfully Added',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
         // ---------------------------------------
 

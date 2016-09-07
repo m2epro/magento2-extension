@@ -226,9 +226,22 @@ HTML
         return $helpBlockHtml;
     }
 
+    protected function getNewListingUrl()
+    {
+        $newListingUrl = $this->getUrl('*/amazon_listing_create/index', array(
+            'step' => 1,
+            'clear' => 1,
+            'account_id' => $this->getHelper('Data\GlobalData')->getValue('accountId'),
+            'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
+            'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
+        ));
+
+        return $newListingUrl;
+    }
+
     protected function _toHtml()
     {
-        $buttonBlockHtml = ($this->canDisplayContainer()) ? $this->getNewListingBtnHtml(): '';
+        $this->jsUrl->add($this->getNewListingUrl(), 'add_new_listing_url');
 
         $this->js->add(<<<JS
         var warning_msg_block = $('empty_grid_warning');
@@ -244,7 +257,7 @@ HTML
 JS
 );
 
-        return $this->getHelpBlockHtml() . parent::_toHtml() . $buttonBlockHtml;
+        return $this->getHelpBlockHtml() . parent::_toHtml();
     }
 
     //########################################
@@ -268,35 +281,6 @@ JS
 
         $collection->addFieldToFilter('main_table.marketplace_id', $marketplaceId);
         $collection->addFieldToFilter('main_table.account_id', $accountId);
-    }
-
-    //########################################
-
-    protected function getNewListingBtnHtml()
-    {
-        $componentMode = $this->getHelper('Data\GlobalData')->getValue('componentMode');
-
-        // ---------------------------------------
-        $newListingUrl = $this->getUrl('*/amazon_listing_create/index', array(
-            'step' => 1,
-            'clear' => 1,
-            'account_id' => $this->getHelper('Data\GlobalData')->getValue('accountId'),
-            'marketplace_id' => $this->getHelper('Data\GlobalData')->getValue('marketplaceId'),
-            'creation_mode' => \Ess\M2ePro\Helper\View::LISTING_CREATION_MODE_LISTING_ONLY,
-            'component' => $componentMode
-        ));
-
-        $data = array(
-            'id'    => 'listingProductMoving_addNew_listing_button',
-            'label' => $this->__('Add New Listing'),
-            'style' => 'float: right;',
-            'class' => 'primary',
-            'onclick' => $this->getData('moving_handler_js') . '.startListingCreation(\''.$newListingUrl.'\')'
-        );
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        // ---------------------------------------
-
-        return $buttonBlock->toHtml();
     }
 
     //########################################

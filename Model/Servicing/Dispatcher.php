@@ -20,7 +20,7 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory

@@ -62,10 +62,11 @@ class PerformanceNotes extends AbstractBlock
             to one M2E Pro Listing, this will make your interface work more slowly.</p></li>
             </ul><br>
             
-            <p>Full detailed information you can find <a href="%url1%" target="_blank">here</a></p>
+            <p>Full detailed information you can find 
+            <a href="%url1%" target="_blank" class="external-link">here</a></p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/z4QVAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/z4QVAQ')
             )
         ]]);
         return $helpBlock->toHtml() . parent::_toHtml();

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Listing;
 
-class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 

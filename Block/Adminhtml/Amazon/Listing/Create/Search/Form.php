@@ -14,13 +14,11 @@ class Form extends AbstractForm
     protected $listing;
 
     protected $amazonFactory;
-    protected $elementFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -28,7 +26,6 @@ class Form extends AbstractForm
     )
     {
         $this->amazonFactory = $amazonFactory;
-        $this->elementFactory = $elementFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
     
@@ -74,7 +71,6 @@ class Form extends AbstractForm
 
         $preparedAttributes = [];
 
-        $showWarning = false;
         if ($formData['general_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['general_id_custom_attribute'], $attributesByTypes['text']
@@ -113,38 +109,25 @@ class Form extends AbstractForm
             [
                 'name' => 'general_id_mode',
                 'label' => $this->__('ASIN / ISBN'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::GENERAL_ID_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['general_id_mode'] != Listing::GENERAL_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['general_id_mode'] : '',
-                'tooltip' => $this->__(
-                    'This Setting is the source of value for ASIN/ISBN will be used at the time of
-                    Automatic Search of Amazon Products.'),
-                'after_element_html' => !$showWarning ?
-                    '' : <<<HTML
-<div class="warning-tooltip">
-    <div class="m2epro-field-tooltip m2epro-field-tooltip-warning admin__field-tooltip">
-        <a class="admin__field-tooltip-action" href="javascript://"></a>
-        <div class="admin__field-tooltip-content">
-            Magento Attribute you have chosen earlier is using not for all
-            Attribute Sets or has type different from acceptable to use for this Option. <br/><br/>
-            Please, select another valid Magento Attribute from the list or add selected
-            Attribute to all Attributes Sets of Magento.
-        </div>
-    </div>
-</div>
-HTML
+                'create_magento_attribute' => true,
+                'after_element_html' => $this->getTooltipHtml($this->__(
+                    'This setting is a source for ASIN/ISBN value which will be used 
+                    at the time of Automatic Search of Amazon Products.'
+                ), true)
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField(
             'worldwide_id_custom_attribute',
@@ -157,7 +140,6 @@ HTML
 
         $preparedAttributes = [];
 
-        $showWarning = false;
         if ($formData['worldwide_id_mode'] == \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE &&
             !$magentoAttributeHelper->isExistInAttributesArray(
                 $formData['worldwide_id_custom_attribute'], $attributesByTypes['text']
@@ -196,38 +178,25 @@ HTML
             [
                 'name' => 'worldwide_id_mode',
                 'label' => $this->__('UPC / EAN'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::WORLDWIDE_ID_MODE_NOT_SET => $this->__('Not Set'),
                     [
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['worldwide_id_mode'] != Listing::WORLDWIDE_ID_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['worldwide_id_mode'] : '',
-                'tooltip' => $this->__(
-                    'This Setting is the source of value for UPC/EAN will be used at the time of
-                    Automatic Search of Amazon Products.'),
-                'after_element_html' => !$showWarning ?
-                    '' : <<<HTML
-<div class="warning-tooltip">
-    <div class="m2epro-field-tooltip m2epro-field-tooltip-warning admin__field-tooltip">
-        <a class="admin__field-tooltip-action" href="javascript://"></a>
-        <div class="admin__field-tooltip-content">
-            Magento Attribute you have chosen earlier is used not for all Attribute Sets or has type
-            different from acceptable to use for this Option. <br/><br/>
-            Please, select another valid Magento Attribute from the list or add selected Attribute to
-            all Attributes Sets of Magento.
-        </div>
-    </div>
-</div>
-HTML
+                'create_magento_attribute' => true,
+                'after_element_html' => $this->getTooltipHtml($this->__(
+                    'This setting is a source for UPC/EAN value which will be used 
+                    at the time of Automatic Search of Amazon Products.'
+                ), true)
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         // Additional Settings
         $fieldset = $form->addFieldset(
@@ -244,7 +213,6 @@ HTML
             [
                 'name' => 'search_by_magento_title_mode',
                 'label' => $this->__('Search by Product Name'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_NONE => $this->__('Disable'),
                     \Ess\M2ePro\Model\Amazon\Listing::SEARCH_BY_MAGENTO_TITLE_MODE_YES => $this->__('Enable')

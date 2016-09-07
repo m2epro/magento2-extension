@@ -54,8 +54,8 @@ class Service extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getShippingOverrideTemplate()
     {
         if (is_null($this->shippingOverrideTemplateModel)) {
-            $this->shippingOverrideTemplateModel = $this->getHelper('Data')->getCachedObject(
-                'Amazon\Template\ShippingOverride', $this->getTemplateShippingOverrideId(), NULL, array('template')
+            $this->shippingOverrideTemplateModel = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Amazon\Template\ShippingOverride', $this->getTemplateShippingOverrideId(), NULL
             );
         }
 

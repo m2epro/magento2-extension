@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class Synchronization extends AbstractTask
+final class Synchronization extends AbstractModel
 {
     const NICK = 'synchronization';
 
@@ -39,7 +39,6 @@ final class Synchronization extends AbstractTask
             \Ess\M2ePro\Helper\Component\Amazon::NICK
         ));
 
-        //todo check moving of \Ess\M2ePro\Model\Synchronization\Task\Global\AbstractModel
         $dispatcher->setAllowedTasksTypes(array(
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING,
             \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS,

@@ -21,7 +21,7 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
@@ -63,8 +63,8 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
             $this->addListingsProductsLogsMessage(
                 $listingProduct,
                 $messageText,
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
 
             $alreadyLoggedListings[$listingProduct->getListingId()] = true;
@@ -74,8 +74,8 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
     // ########################################
 
     protected function addListingsProductsLogsMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                      $text, $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                                                      $priority = \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM)
+                                                      $text, $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                                                      $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
     {
         $action =\Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT;
 
@@ -171,8 +171,8 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
             // M2ePro\TRANSLATIONS
             // 'Product has been successfully Translated.',
             $this->addListingsProductsLogsMessage($listingProduct, 'Product has been successfully Translated.',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
         }
     }
 
@@ -265,31 +265,31 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
     protected function getType(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isWarning()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE;
         }
 
-        return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+        return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
     }
 
     protected function getPriority(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isWarning() || $message->isSuccess()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM;
+            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM;
         }
 
         if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW;
+            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW;
         }
 
-        return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH;
+        return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH;
     }
 
     // ########################################

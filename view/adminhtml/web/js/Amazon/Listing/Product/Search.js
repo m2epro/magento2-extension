@@ -140,16 +140,16 @@ define([
                     title: title,
                     type: 'slide',
                     buttons: [{
-                        text: M2ePro.translator.translate('Clear Search Results'),
-                        class: 'action primary ',
-                        click: function () {
-                            ListingGridHandlerObj.productSearchHandler.clearSearchResultsAndOpenSearchMenu();
-                        }
-                    },{
-                        text: M2ePro.translator.translate('Close'),
-                        class: 'action primary ',
+                        text: M2ePro.translator.translate('Cancel'),
+                        class: 'action default',
                         click: function () {
                             self.popup.modal('closeModal');
+                        }
+                    }, {
+                        text: M2ePro.translator.translate('Clear Search Results'),
+                        class: 'action primary',
+                        click: function () {
+                            ListingGridHandlerObj.productSearchHandler.clearSearchResultsAndOpenSearchMenu();
                         }
                     }]
                 }, this.popup);
@@ -731,14 +731,18 @@ define([
                 }
             }
 
+            var asinLink = $('asin_link_' + id);
+
             if (selectedAsin === '') {
                 $('map_link_error_icon_' + id).show();
-                $('asin_link_' + id).innerHTML = $('parent_asin_' + id).innerHTML;
+                asinLink.innerHTML = $('parent_asin_' + id).innerHTML;
+                asinLink.href = asinLink.href.slice(0, asinLink.href.lastIndexOf("/")) + '/' + $('parent_asin_' + id).innerHTML;
                 $('parent_asin_text_' + id).show();
                 return $('map_link_' + id).innerHTML = '<span style="color: #808080">' + M2ePro.translator.translate('assign') + '</span>';
             }
 
-            $('asin_link_' + id).innerHTML = selectedAsin;
+            asinLink.innerHTML = selectedAsin;
+            asinLink.href = asinLink.href.slice(0, asinLink.href.lastIndexOf("/")) + '/' + selectedAsin;
 
             var mapLinkTemplate = $('template_map_link_' + id).innerHTML;
             mapLinkTemplate = mapLinkTemplate.replace('%general_id%', selectedAsin);

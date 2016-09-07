@@ -16,7 +16,7 @@ class GetCategoryChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listi
     {
         // ---------------------------------------
         $listingId = $this->getRequest()->getParam('id');
-        $listingProductIds = $this->getRequestIds();
+        $listingProductIds = $this->getRequestIds('product_id');
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 

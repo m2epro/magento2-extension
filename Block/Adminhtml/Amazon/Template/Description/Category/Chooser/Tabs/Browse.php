@@ -28,6 +28,12 @@ class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _beforeToHtml()
     {
+        $this->js->add("AmazonTemplateDescriptionCategoryChooserObj.renderTopLevelCategories('chooser_browser');");
+
+        if ($this->getHelper('Module\Wizard')->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK)) {
+            return parent::_beforeToHtml();
+        }
+
         $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
             'content' => $this->__(
                 'If you cannot find necessary Category, try to
@@ -39,7 +45,6 @@ class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         ]]);
 
         $this->setChild('help_block', $helpBlock);
-        $this->js->add("AmazonTemplateDescriptionCategoryChooserObj.renderTopLevelCategories('chooser_browser');");
 
         return parent::_beforeToHtml();
     }

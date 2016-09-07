@@ -46,79 +46,43 @@ class Cache extends AbstractHelper
 
     //########################################
 
-//    public function getBackend()
-//    {
-//        return strtolower((string)Mage::getConfig()->getNode('global/cache/backend'));
-//    }
-//
-//    public function getFastBackend()
-//    {
-//        return strtolower((string)Mage::getConfig()->getNode('global/cache/fast_backend'));
-//    }
-//
-//    public function getSlowBackend()
-//    {
-//        return strtolower((string)Mage::getConfig()->getNode('global/cache/slow_backend'));
-//    }
+    // todo implement
+    public function getBackend()
+    {
+        return false;
+    }
+
+    // todo implement
+    public function getFastBackend()
+    {
+        return false;
+    }
+
+    // todo implement
+    public function getSlowBackend()
+    {
+        return false;
+    }
 
     //########################################
 
-//    public function isApcEnabled()
-//    {
-//        return $this->getBackend() == self::BACKEND_TYPE_APC ||
-//               $this->getFastBackend() == self::BACKEND_TYPE_APC;
-//    }
-//
-//    public function isMemchachedEnabled()
-//    {
-//        return $this->getBackend() == self::BACKEND_TYPE_MEMCACHED ||
-//               $this->getFastBackend() == self::BACKEND_TYPE_MEMCACHED;
-//    }
-//
-//    public function isRedisEnabled()
-//    {
-//        return $this->getBackend() == self::BACKEND_TYPE_REDIS ||
-//               $this->getFastBackend() == self::BACKEND_TYPE_REDIS;
-//    }
-//
-//    public function isTwoLevelsCacheEnabled()
-//    {
-//        return Mage::app()->getCache()->getBackend() instanceof Zend_Cache_Backend_TwoLevels;
-//    }
-//
-//    public function isAutoRefreshCacheEnabled()
-//    {
-//       return (bool)Mage::getConfig()->getNode('global/cache/auto_refresh_fast_cache');
-//    }
-//
-//    // ---------------------------------------
-//
-//    public function isWrongCacheConfiguration()
-//    {
-//        if (!$this->isTwoLevelsCacheEnabled()) {
-//            return false;
-//        }
-//
-//        if ($this->isAutoRefreshCacheEnabled()) {
-//            return true;
-//        }
-//
-//        if ($this->getSlowBackend() != '' &&
-//            $this->getSlowBackend() != self::BACKEND_TYPE_FILE &&
-//            $this->getSlowBackend() != self::BACKEND_TYPE_SQLITE &&
-//            $this->getSlowBackend() != self::BACKEND_TYPE_DB) {
-//
-//            return true;
-//        }
-//
-//        if (($this->getSlowBackend() == '' || $this->getSlowBackend() == self::BACKEND_TYPE_FILE) &&
-//            Mage::getConfig()->getNode('global/cache/slow_backend_options')) {
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
+    // todo implement
+    public function isApcEnabled()
+    {
+        return false;
+    }
+
+    // todo implement
+    public function isMemchachedEnabled()
+    {
+        return false;
+    }
+
+    // todo implement
+    public function isRedisEnabled()
+    {
+        return false;
+    }
 
     //########################################
 }

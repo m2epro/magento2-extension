@@ -642,8 +642,8 @@ JS
         $text = 'Set eBay Category for Product(s)';
         $translations[$text] = $this->__($text);
         // M2ePro_TRANSLATIONS
-        // Set eBay Primary Category for Product(s)
-        $text = 'Set eBay Primary Category for Product(s)';
+        // Set eBay Catalog Primary Category for Product(s)
+        $text = 'Set eBay Catalog Primary Category for Product(s)';
         $translations[$text] = $this->__($text);
 
         $this->jsTranslator->addTranslations($translations);

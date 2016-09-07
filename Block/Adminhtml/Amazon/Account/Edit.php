@@ -79,8 +79,8 @@ class Edit extends AbstractContainer
             // ---------------------------------------
 
             // ---------------------------------------
-            if ($this->getHelper('Data\GlobalData')->getValue('temp_data') &&
-                $this->getHelper('Data\GlobalData')->getValue('temp_data')->getId()
+            if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
+                $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()
             ) {
                 // ---------------------------------------
                 $this->addButton('delete', array(

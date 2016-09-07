@@ -45,6 +45,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $this->hideMassactionDropDown = true;
+        $this->showAdvancedFilterProductsOption = false;
     }
 
     //########################################
@@ -98,8 +99,10 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         // Hide products others listings
         // ---------------------------------------
-        $prefix = $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix');
-        is_null($hideParam = $this->getHelper('Data\Session')->getValue($prefix)) && $hideParam = true;
+        $hideParam = true;
+        if ($this->getRequest()->has('show_products_others_listings')) {
+            $hideParam = false;
+        }
 
         if ($hideParam || isset($this->listing['id'])) {
 
@@ -273,9 +276,27 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     //########################################
 
+    abstract protected function getSelectedProductsCallback();
+
+    //########################################
+
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->js->add(<<<JS
+            require([
+                'M2ePro/General/PhpFunctions',
+            ], function(){
+                
+                wait(function() {
+                    return typeof ProductGridObj != 'undefined';
+                }, function() {
+                  return ProductGridObj.massactionMassSelectStyleFix();
+                }, 20);
+            });
+JS
+            );
+            
             return parent::_toHtml();
         }
 
@@ -341,16 +362,18 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         });
 
         window.ListingAutoActionObj = new EbayListingAutoAction();
+        
+        wait(function() {
+            return typeof ProductGridObj != 'undefined';
+        }, function() {
+          return ProductGridObj.massactionMassSelectStyleFix();
+        }, 20);
     });
 JS
         );
 
         return parent::_toHtml();
     }
-
-    //########################################
-
-    abstract protected function getSelectedProductsCallback();
 
     //########################################
 }

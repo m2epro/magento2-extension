@@ -509,7 +509,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = @json_decode($generalIdSearchInfo, true);
+            $generalIdSearchInfo = json_decode($generalIdSearchInfo, true);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -639,6 +639,9 @@ JS
         );
 
         ListingGridHandlerObj.actionHandler.setOptions(M2ePro);
+        ListingGridHandlerObj.actionHandler.setProgressBar('search_asin_progress_bar');
+        ListingGridHandlerObj.actionHandler.setGridWrapper('search_asin_content_container');
+        
         ListingGridHandlerObj.productSearchHandler.setOptions(M2ePro);
         ListingGridHandlerObj.afterInitPage();
 
@@ -676,14 +679,21 @@ JS
 
                 $this->js->add(
 <<<JS
+require([
+    'M2ePro/Amazon/Listing/Product/Add/SearchAsin/Grid'
+],function() {
     ListingGridHandlerObj.getGridMassActionObj().selectAll();
     ListingGridHandlerObj.productSearchHandler.searchGeneralIdAuto(ListingGridHandlerObj.getSelectedProductsString());
+});
 JS
                 );
             }
         }
 
-        return parent::_toHtml();
+        return '<div id="search_asin_progress_bar"></div>' .
+                '<div id="search_asin_content_container">' .
+                parent::_toHtml() .
+                '</div>';
     }
 
     //########################################

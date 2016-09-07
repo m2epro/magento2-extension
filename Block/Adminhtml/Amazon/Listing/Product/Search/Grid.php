@@ -119,7 +119,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
 
-        $collection->setCustomSize(count($data));
+        $collection->setCustomSize(count($data['data']));
         $this->setCollection($collection);
 
         parent::_prepareCollection();
@@ -449,7 +449,7 @@ HTML;
                                 display: inline-block;">';
         $attributeValues = '<span style="margin-left: 5px; display: inline-block;">';
         foreach ($variations['set'] as $specificName => $specific) {
-            $attributesNames .= '<span style="margin-bottom: 5px; display: inline-block;">'.
+            $attributesNames .= '<span style="margin-bottom: 15px; display: inline-block;">'.
                                     ucfirst(strtolower($specificName)).
                               '</span><br/>';
             $attributeValues .= '<input type="hidden" value="' . $this->getHelper('Data')->escapeHtml($specificName) .

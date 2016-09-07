@@ -16,7 +16,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Connector\Command\Pending\Res
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,

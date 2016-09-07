@@ -254,7 +254,7 @@ define([
                     'specific_id'   : this.specific.specific_id,
                     'specific_type' : this.specific.params.type,
                     'mode'          : this.MODE_CUSTOM_VALUE,
-                    'class'         : 'M2ePro-required-when-visible M2ePro-specifics-validation',
+                    'class'         : 'textarea admin__control-textarea M2ePro-required-when-visible M2ePro-specifics-validation',
                     'style'         : 'width: 85%; display: none;'
                 });
 
@@ -345,9 +345,9 @@ define([
 
             select.observe('change', this.onChangeValue.bind(this));
 
-            //var handlerObj = new AttributeCreator(select.id);
-            //handlerObj.setSelectObj(select);
-            //handlerObj.injectAddOption();
+            var handlerObj = new AttributeCreator(select.id);
+            handlerObj.setSelectObj(select);
+            handlerObj.injectAddOption();
 
             return select;
         },

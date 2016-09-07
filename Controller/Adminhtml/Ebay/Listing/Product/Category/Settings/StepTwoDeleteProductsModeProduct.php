@@ -29,8 +29,6 @@ class StepTwoDeleteProductsModeProduct extends Settings
 
         $listing = $this->getListing();
 
-        // TODO check redirects if empty added products
-
         $listingProductAddIds = $listing->getChildObject()->getAddedListingProductsIds();
         if (empty($listingProductAddIds)) {
             return $this->getResult();

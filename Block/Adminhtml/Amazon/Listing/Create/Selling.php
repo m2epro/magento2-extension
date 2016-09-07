@@ -74,7 +74,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 'On this Page you can specify main <strong>Selling Settings</strong> for Amazon Items you are going
                 to sell using this M2E Pro Listing.<br/><br/>
 
-                You can provide a settings for SKU formating, appropriate Condition,
+                You can provide settings for SKU formating, appropriate Condition,
                 Condition Note, Gift Wrap, Gift Message and also specify
                 Additional Settings - Handling Time and Restock Date.<br/><br/>
 
@@ -83,8 +83,8 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 of Price, Quantity etc. and Synchronization Policy that describes Rules of
                 Automatic Synchronization of Magento Product and Amazon Item.<br/><br/>
                 More detailed information you can find
-                <a href="%url%" target="_blank">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/XwItAQ')
+                <a href="%url%" target="_blank" class="external-link">here</a>.',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/XwItAQ')
             )
         ]);
 

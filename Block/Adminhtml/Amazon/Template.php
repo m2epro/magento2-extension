@@ -87,6 +87,10 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
                 'label' => $this->__('Synchronization'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
             ],
+            Grid::TEMPLATE_SHIPPING_OVERRIDE => [
+                'label' => $this->__('Shipping Override'),
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING_OVERRIDE) . "')",
+            ]
         ];
 
         return $data;

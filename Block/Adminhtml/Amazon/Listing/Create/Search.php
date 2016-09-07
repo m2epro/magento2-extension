@@ -93,8 +93,8 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 </ul>
                 <br/>
                 More detailed information you can find 
-                <a href="%url%" target="_blank">here</a>.',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/YQItAQ')
+                <a href="%url%" target="_blank" class="external-link">here</a>.',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/YQItAQ')
             )
         ]);
 

@@ -15,7 +15,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,

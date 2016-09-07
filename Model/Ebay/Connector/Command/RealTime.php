@@ -22,7 +22,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\Marketplace $marketplace,
         \Ess\M2ePro\Model\Account $account,
         \Ess\M2ePro\Helper\Factory $helperFactory,

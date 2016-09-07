@@ -42,17 +42,19 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection,
-        array $data,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
     )
     {
+        $this->amazonFactory = $amazonFactory;
+
         parent::__construct(
             $modelFactory,
             $activeRecordFactory,
@@ -63,8 +65,6 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $resourceCollection,
             $data
         );
-
-        $this->amazonFactory = $amazonFactory;
     }
 
     //########################################
@@ -77,10 +77,21 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //########################################
 
+    public function save()
+    {
+        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+        return parent::save();
+    }
+
+    //########################################
+
     public function delete()
     {
+        $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
+
         $temp = parent::delete();
         $temp && $this->accountModel = NULL;
+
         return $temp;
     }
 
@@ -562,7 +573,8 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinInner(
-            array('alpr' => $this->_resource->getTable('m2epro_amazon_listing_product_repricing')),
+            array('alpr' => $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+                ->getResource()->getMainTable()),
             'alpr.listing_product_id=main_table.id',
             array()
         );
@@ -588,6 +600,20 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $this->getResource()->setProcessRequired($newData, $oldData, $listingsProducts);
+    }
+
+    //########################################
+
+    public function isCacheEnabled()
+    {
+        return true;
+    }
+
+    public function getCacheGroupTags()
+    {
+        $tags = parent::getCacheGroupTags();
+        $tags[] = 'account';
+        return $tags;
     }
 
     //########################################

@@ -11,6 +11,8 @@ namespace Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize;
 class ProductsResponser
     extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
+    protected $activeRecordFactory;
+    
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $pickupStoreStateItems */
     private $pickupStoreStateItems = array();
 
@@ -19,7 +21,7 @@ class ProductsResponser
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
@@ -145,14 +147,14 @@ class ProductsResponser
 
         switch ($this->getLogsAction($stateItemData)) {
             case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT:
-                $encodedDescription = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
                     'The Product with %qty% quantity was successfully added to the Store.',
                     array('!qty' => $stateItemData['target_qty'])
                 );
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT:
-                $encodedDescription = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
                     'The Product was successfully deleted from the Store.'
                 );
                 break;
@@ -168,7 +170,7 @@ class ProductsResponser
                     $stockTo   = 'IN STOCK ';
                 }
 
-                $encodedDescription = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $encodedDescription = $this->getHelper('Module\Log')->encodeDescription(
                     'The Product quantity was successfully changed from %stock_from%[%qty_from%]
                     to %stock_to%[%qty_to%] for the Store.',
                     array(
@@ -225,35 +227,35 @@ class ProductsResponser
     private function getLogsMessageType(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isError()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
         }
 
         if ($message->isWarning()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE;
         }
 
-        return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+        return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
     }
 
     private function getLogsPriority(\Ess\M2ePro\Model\Connector\Connection\Response\Message $message)
     {
         if ($message->isError()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH;
+            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH;
         }
 
         if ($message->isNotice()) {
-            return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW;
+            return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW;
         }
 
-        return \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM;
+        return \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM;
     }
 
     //########################################

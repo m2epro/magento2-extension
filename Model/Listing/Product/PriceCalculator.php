@@ -182,7 +182,7 @@ abstract class PriceCalculator extends AbstractModel
     }
 
     /**
-     * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+     * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
      */
     protected function getComponentListing()
     {
@@ -192,7 +192,7 @@ abstract class PriceCalculator extends AbstractModel
     // ---------------------------------------
 
     /**
-     * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+     * @return \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
      */
     protected function getComponentProduct()
     {
@@ -719,7 +719,7 @@ abstract class PriceCalculator extends AbstractModel
             return $value;
         }
 
-        if (strpos($coefficient, '%')) {
+        if (strpos($coefficient, '%') !== false) {
 
             $coefficient = str_replace('%', '', $coefficient);
 

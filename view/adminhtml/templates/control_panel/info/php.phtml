@@ -1,0 +1,48 @@
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->phpVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->phpApi; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Memory Limit'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->phpSettings['memory_limit'] == -1 ? $this->__('Unlimited') : $this->phpSettings['memory_limit'] . ' Mb'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Max Execution Time'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->phpSettings['max_execution_time'] == 0 ? $this->__('Unlimited') : $this->phpSettings['max_execution_time'] . ' sec'; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('PHP Info'); ?>: </label>
+        </td>
+        <td class="value">
+            <a href="<?php echo $this->getUrl('*/controlPanel_inspection/phpInfo'); ?>" target="_blank">Show</a>
+        </td>
+    </tr>
+
+</table>

@@ -10,6 +10,7 @@ class Tabs extends AbstractTabs
     {
         parent::_construct();
 
+        $this->setId('amazonAccountEditTabs');
         $this->setDestElementId('edit_form');
     }
 
@@ -33,19 +34,31 @@ class Tabs extends AbstractTabs
             'content' => $this->createBlock('Amazon\Account\Edit\Tabs\Order')->toHtml(),
         ));
 
-        // TODO NOT SUPPORTED FEATURES
-//        if ($this->getHelper('Component\Amazon')->isRepricingEnabled() &&
-//            $this->getHelper('Data\GlobalData')->getValue('temp_data')->getId()) {
-//
-//            $this->addTab('repricing', array(
-//                'label'   => $this->__('Repricing Tool'),
-//                'title'   => $this->__('Repricing Tool'),
-//                'content' => $this->getLayout()
-//                    ->createBlock('M2ePro/adminhtml_common_amazon_account_edit_tabs_repricing')->toHtml(),
-//            ));
-//        }
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            $this->getHelper('Data\GlobalData')->getValue('edit_account')) {
+
+            $this->addTab('repricing', array(
+                'label'   => $this->__('Repricing Tool'),
+                'title'   => $this->__('Repricing Tool'),
+                'content' => $this->createBlock('Amazon\Account\Edit\Tabs\Repricing')->toHtml(),
+            ));
+        }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
+        
+        $this->js->addOnReadyJs(<<<JS
+
+    var urlHash = location.hash.substr(1);
+    if (urlHash != '') {
+        setTimeout(function() {
+            jQuery('#{$this->getId()}').tabs(
+                'option', 'active', jQuery('li[aria-labelledby="{$this->getId()}_' + urlHash + '"]').index()
+                );
+            location.hash = '';
+        }, 100);
+    }
+JS
+        );
 
         return parent::_beforeToHtml();
     }

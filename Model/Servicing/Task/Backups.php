@@ -39,7 +39,7 @@ class Backups extends \Ess\M2ePro\Model\Servicing\Task
             $parentFactory
         );
 
-        $this->backup = $this->modelFactory->getCachedObject('Servicing\Task\Backups\Manager');
+        $this->backup = $this->modelFactory->getObject('Servicing\Task\Backups\Manager');
     }
 
     //########################################

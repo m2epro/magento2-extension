@@ -24,7 +24,7 @@ class General extends AbstractForm
     protected function _prepareForm()
     {
         /** @var $account \Ess\M2ePro\Model\Account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
@@ -43,12 +43,6 @@ class General extends AbstractForm
         $formData = array_merge($defaults, $formData);
 
         $isEdit = !!$this->getRequest()->getParam('id');
-
-        $licenseMessage = '';
-
-        if ($isEdit) {
-            $licenseMessage = (string)$this->getHelper('Data\GlobalData')->getValue('license_message');
-        }
 
         $marketplacesCollection = $this->getHelper('Component\Amazon')->getMarketplacesAvailableForApiCreation();
         $marketplaces = [];
@@ -84,9 +78,9 @@ have to upgrade to a Pro Merchant Seller Account from the Amazon Services Sellin
 <li><p>The Merchant ID and MWS Auth Token will be automatically filled in.</p></li>
 </ul><br>
 <p>More detailed information about how to work with this 
-Page you can find <a href="%url%" target="_blank">here</a>.</p>
+Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/MgItAQ'))
+                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MgItAQ'))
             ]
         );
 
@@ -200,7 +194,7 @@ HTML
                     'onclick' => 'return AmazonAccountObj.getToken('.$marketplace['id'].')',
                     'target' => '_blank',
                     'value' => $this->__('Get Access Data'),
-                    'style' => 'text-decoration: underline;' //todo
+                    'style' => 'text-decoration: underline;'
                 ]
             )->setFieldExtraAttributes('style="display: none"');
         }
@@ -247,7 +241,7 @@ HTML
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account'));
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));
 
-        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Account', ['_current' => true]));
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl(
                 '*/amazon_account/save', array('_current' => true, 'id' => $this->getRequest()->getParam('id'))
@@ -257,12 +251,14 @@ HTML
             )
         ]);
 
+        $this->jsTranslator->add('Please enter correct value.', $this->__('Please enter correct value.'));
+
         $this->jsTranslator->add(
-            'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server.
-            This will cause inappropriate work of all Accounts\' copies.',
+            'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+            . 'This will cause inappropriate work of all Accounts\' copies.',
             $this->__(
-                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server.
-                This will cause inappropriate work of all Accounts\' copies.'));
+                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+                . 'This will cause inappropriate work of all Accounts\' copies.'));
 
         $id = $this->getRequest()->getParam('id');
         $this->js->add("M2ePro.formData.id = '$id';");
@@ -282,7 +278,6 @@ HTML
         window.AmazonAccountObj = new AmazonAccount();
         AmazonAccountObj.initObservers();
         jQuery(function(){
-            {$licenseMessage}
             {$marketplaceJs}
         });
     });

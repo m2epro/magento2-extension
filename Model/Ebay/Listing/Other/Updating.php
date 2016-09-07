@@ -30,7 +30,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -76,7 +76,8 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
 
             $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection()
                 ->addFieldToFilter('item_id', $receivedItem['id'])
-                ->addFieldToFilter('account_id', $this->getAccount()->getId());
+                ->addFieldToFilter('account_id', $this->getAccount()->getId())
+                ->setPageSize(1);
 
             /** @var \Ess\M2ePro\Model\Listing\Other $existObject */
             $existObject = $collection->getFirstItem();
@@ -226,36 +227,41 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                         $this->getLogsActionId(),
                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                     );
                 }
             } else {
                 $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
             }
+            
+            if ($existsId) {
+                $existObject->addData($newData);
+                $existObject->getChildObject()->addData($newData);
+            } else {
+                $existObject->setData($newData);
+            }
 
-            $listingOtherModel = $this->ebayFactory->getObject('Listing\Other');
-            $listingOtherModel->setData($newData);
-            $listingOtherModel->save();
+            $existObject->save();
 
             if (!$existsId) {
 
-                $logModel->addProductMessage($listingOtherModel->getId(),
+                $logModel->addProductMessage($existObject->getId(),
                      \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                      NULL,
                      \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_LISTING,
                     // M2ePro\TRANSLATIONS
                     // Item was successfully Added
                      'Item was successfully Added',
-                     \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                     \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW);
+                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
 
                 if (!$this->getAccount()->getChildObject()->isOtherListingsMappingEnabled()) {
                     continue;
                 }
 
                 $mappingModel->initialize($this->getAccount());
-                $mappingModel->autoMapOtherListingProduct($listingOtherModel);
+                $mappingModel->autoMapOtherListingProduct($existObject);
             }
         }
         // ---------------------------------------

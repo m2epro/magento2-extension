@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
-class Log extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Log extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

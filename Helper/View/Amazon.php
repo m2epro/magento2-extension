@@ -54,83 +54,6 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getPageNavigationPath($pathNick, $tabName = NULL, $channel = NULL, $additionalEnd = NULL,
-                                          $params = array())
-    {
-        //todo
-        return '';
-
-        $pathParts = array();
-
-        $rootMenuNode = Mage::getConfig()->getNode('adminhtml/menu/m2epro_common');
-        $menuLabel = $this->getHelper('View')->getMenuPath($rootMenuNode, $pathNick, $this->getMenuRootNodeLabel());
-
-        if (!$menuLabel) {
-            return '';
-        }
-
-        $pathParts['menu'] = $menuLabel;
-
-        if ($tabName) {
-            $pathParts['tab'] = $this->getHelper('Module\Translation')->__($tabName)
-                . ' ' . $this->getHelper('Module\Translation')->__('Tab');
-        } else {
-            $pathParts['tab'] = NULL;
-        }
-
-        $channelLabel = '';
-        if ($channel) {
-
-            $components = $this->getActiveComponentsLabels();
-
-            if ($channel == 'any') {
-                if (count($components) > 1) {
-                    if (!empty($params['any_channel_as_label'])) {
-                        $channelLabel = $this->getHelper('Module\Translation')->__('Any Channel');
-                    } else {
-                        $channelLabel = '[' . join($components, '/') . ']';
-                    }
-                }
-
-            } elseif ($channel == 'all') {
-                if (count($components) > 1) {
-                    $channelLabel = $this->getHelper('Module\Translation')->__('All Channels');
-                }
-            } else {
-
-                if (!$this->getHelper('M2ePro/Component\\' . ucfirst($channel))->isEnabled()) {
-                    throw new \Ess\M2ePro\Model\Exception('Channel is not Active!');
-                }
-
-                if (count($components) > 1) {
-                    $channelLabel = $this->getHelper('Component\\' . ucfirst($channel))->getTitle();
-                }
-            }
-        }
-
-        $pathParts['channel'] = $channelLabel;
-
-        $pathParts['additional'] = $this->getHelper('Module\Translation')->__($additionalEnd);
-
-        $resultPath = array();
-
-        $resultPath['menu'] = $pathParts['menu'];
-        if (isset($params['reverse_tab_and_channel']) && $params['reverse_tab_and_channel'] === true) {
-            $resultPath['channel'] = $pathParts['channel'];
-            $resultPath['tab'] = $pathParts['tab'];
-        } else {
-            $resultPath['tab'] = $pathParts['tab'];
-            $resultPath['channel'] = $pathParts['channel'];
-        }
-        $resultPath['additional'] = $pathParts['additional'];
-
-        $resultPath = array_diff($resultPath, array(''));
-
-        return join($resultPath, ' > ');
-    }
-
-    //########################################
-
     public function getWizardInstallationNick()
     {
         return self::WIZARD_INSTALLATION_NICK;
@@ -145,22 +68,12 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getAutocompleteMaxItems()
-    {
-        $temp = (int)$this->getHelper('Module')->getConfig()
-                        ->getGroupValue('/view/amazon/autocomplete/','max_records_quantity');
-        return $temp <= 0 ? 100 : $temp;
-    }
-
-    //########################################
-
     public function is3rdPartyShouldBeShown()
     {
-        $sessionKey = 'amazon_is_3rd_party_should_be_shown';
-        $sessionCache = $this->getHelper('Data\Cache\Session');
+        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
 
-        if (!is_null($sessionCache->getValue($sessionKey))) {
-            return $sessionCache->getValue($sessionKey);
+        if (!is_null($runtimeCache->getValue(__METHOD__))) {
+            return $runtimeCache->getValue(__METHOD__);
         }
 
         $accountCollection = $this->activeRecordFactory->getObject('Amazon\Account')->getCollection();
@@ -181,7 +94,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
             $result = $collection->getSize() || $logCollection->getSize();
         }
 
-        $sessionCache->setValue($sessionKey, $result);
+        $runtimeCache->setValue(__METHOD__, $result);
 
         return $result;
     }

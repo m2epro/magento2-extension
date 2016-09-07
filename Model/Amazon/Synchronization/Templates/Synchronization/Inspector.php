@@ -91,7 +91,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
         $additionalData = $listingProduct->getAdditionalData();
 
-        $log = $this->activeRecordFactory->getObject('Log\AbstractLog');
+        $log = $this->getHelper('Module\Log');
 
         if ($amazonSynchronizationTemplate->isListStatusEnabled()) {
 

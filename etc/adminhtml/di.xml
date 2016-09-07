@@ -1,22 +1,61 @@
 <?xml version="1.0"?>
 
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- stockitem -->
+
     <type name="Magento\CatalogInventory\Model\Stock\Item">
-        <plugin name="m2epro_catalogintventory_stock_item_plugin" type="Ess\M2ePro\Plugin\Model\Stock\Item" />
+        <plugin name="m2epro_plugin_stockitem_magento_cataloginventory_model_stock_item"
+                type="Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock\Item" />
     </type>
+
+    <!-- order -->
+
     <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
-        <plugin name="m2epro_quote_item_toOrderItem_plugin" type="Ess\M2ePro\Plugin\Model\Quote\Item\ToOrderItem" />
+        <plugin name="m2epro_plugin_order_magento_quote_model_quote_item_toorderitem"
+                type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem" />
     </type>
+
+    <!-- menu -->
+
     <type name="Magento\Backend\Model\Menu\Config">
-        <plugin name="m2epro_menu" type="Ess\M2ePro\Plugin\Model\Menu" />
+        <plugin name="m2epro_plugin_menu_magento_backend_model_menu_config"
+                type="Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Config" />
     </type>
     <type name="Magento\Backend\Model\Menu\Item">
-        <plugin name="m2epro_menu_item" type="Ess\M2ePro\Plugin\Model\Menu\Item" />
+        <plugin name="m2epro_plugin_menu_magento_backend_model_menu_item"
+                type="Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu\Item" />
     </type>
-    <type name="Magento\Config\Controller\Adminhtml\System\Config\Save">
-        <plugin name="m2epro_configuration" type="Ess\M2ePro\Plugin\Controller\Adminhtml\System\Config\Save" />
-    </type>
+
+    <!-- config -->
+
     <type name="Magento\Config\Controller\Adminhtml\System\Config\Edit">
-        <plugin name="m2epro_configuration" type="Ess\M2ePro\Plugin\Controller\Adminhtml\System\Config\Edit" />
+        <plugin name="m2epro_plugin_config_magento_config_controller_adminhtml_system_config_edit"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Controller\Adminhtml\System\Config\Edit" />
     </type>
+    <type name="Magento\Config\Model\Config">
+        <plugin name="m2epro_plugin_config_magento_config_model_config"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config" />
+    </type>
+    <type name="Magento\Config\Model\Config\Structure\Data">
+        <plugin name="m2epro_plugin_config_magento_config_model_config_structure_data"
+                type="Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure\Data" />
+    </type>
+
+    <!-- session messages -->
+
+    <type name="Magento\Framework\View\Element\Message\MessageConfigurationsPool">
+        <arguments>
+            <argument name="configurationsMap" xsi:type="array">
+                <item name="m2epro_messages" xsi:type="array">
+                    <item name="renderer" xsi:type="const">\Magento\Framework\View\Element\Message\Renderer\BlockRenderer::CODE</item>
+                    <item name="data" xsi:type="array">
+                        <item name="template" xsi:type="string">Ess_M2ePro::messages.phtml</item>
+                    </item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+
 </config>

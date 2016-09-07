@@ -10,20 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SearchAsin;
 
 class NewAsinPopup extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {
-    protected $elementFactory;
-
-    //########################################
-
-    public function __construct(
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        array $data = []
-    )
-    {
-        $this->elementFactory = $elementFactory;
-        parent::__construct($context, $data);
-    }
-
     //########################################
 
     public function _construct()
@@ -72,8 +58,8 @@ HTML
     public function getTitleHelpTipsHtml()
     {
         $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationUrl(
-                NULL, 'pages/viewpage.action?pageId=19728203'
+            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                '/x/NQctAQ'
             )
         ]);
 

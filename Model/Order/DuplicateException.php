@@ -6,9 +6,9 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Model\Order\Duplicate;
+namespace Ess\M2ePro\Model\Order;
 
-class Exception extends \Exception
+class DuplicateException extends \Exception
 {
     //########################################
 

@@ -20,7 +20,7 @@ class Mapping extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,

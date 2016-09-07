@@ -180,6 +180,7 @@ define([
                 var onclick = block.find('.title a').attr('onclick');
                 onclick = onclick.replace(/shrinkTitledContent/, 'expandTitledContent');
                 block.find('.title a').attr('onclick', onclick);
+                block.find('.title a').attr('title', M2ePro.translator.translate('Expand'));
 
                 self.updateFloatingHeader();
             });
@@ -209,6 +210,7 @@ define([
                 var onclick = block.find('.title a').attr('onclick');
                 onclick = onclick.replace(/expandTitledContent/, 'shrinkTitledContent');
                 block.find('.title a').attr('onclick', onclick);
+                block.find('.title a').attr('title', M2ePro.translator.translate('Collapse'));
 
                 self.updateFloatingHeader();
             });

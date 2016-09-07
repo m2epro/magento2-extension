@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing;
 
-class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractDb
+class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     protected $synchronizationConfig;
 
@@ -51,7 +51,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
     public function getItemsByProductId($productId, array $filters = array())
     {
         $cacheKey   = __METHOD__.$productId.sha1(json_encode($filters));
-        $cacheValue = $this->getHelper('Data\Cache\Session')->getValue($cacheKey);
+        $cacheValue = $this->getHelper('Data\Cache\Runtime')->getValue($cacheKey);
 
         if (!is_null($cacheValue)) {
             return $cacheValue;
@@ -133,7 +133,7 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             $result[$listingProductId]->setData('found_options_ids', $optionsIds);
         }
 
-        $this->getHelper('Data\Cache\Session')->setValue($cacheKey, $result);
+        $this->getHelper('Data\Cache\Runtime')->setValue($cacheKey, $result);
 
         return array_values($result);
     }

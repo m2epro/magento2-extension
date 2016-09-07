@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
-class Order extends ActiveRecord\Component\Parent\AbstractDb
+class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
 

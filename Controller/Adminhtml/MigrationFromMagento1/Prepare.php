@@ -4,23 +4,11 @@ namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
 class Prepare extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    protected $magentoConfig = NULL;
-
-    //########################################
-
-    public function __construct(
-        \Magento\Config\Model\Config $magentoConfig,
-        \Ess\M2ePro\Controller\Adminhtml\Context $context
-    ) {
-        $this->magentoConfig = $magentoConfig;
-        parent::__construct($context);
-    }
-
     //########################################
 
     public function execute()
     {
-        $this->getHelper('Module\Maintenance\Setup')->enable();
+        $this->getHelper('Module\Maintenance\General')->enable();
 
         try {
             $this->prepareDatabase();

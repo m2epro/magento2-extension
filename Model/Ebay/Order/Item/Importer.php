@@ -10,8 +10,10 @@ namespace Ess\M2ePro\Model\Ebay\Order\Item;
 
 class Importer extends \Ess\M2ePro\Model\AbstractModel
 {
+    private $fileDriver;
+
     private $filesystem;
-    
+
     private $productMediaConfig;
 
     private $currencyFactory;
@@ -22,6 +24,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Catalog\Model\Product\Media\Config $productMediaConfig,
         \Magento\Directory\Model\CurrencyFactory $currencyFactory,
@@ -30,6 +33,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->fileDriver = $driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         $this->filesystem = $filesystem;
         $this->productMediaConfig = $productMediaConfig;
         $this->currencyFactory = $currencyFactory;
@@ -160,6 +164,10 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         $images = array();
         $imageCounter = 1;
 
+        $mediaPath = $this->filesystem->getDirectoryRead(
+            \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
+        )->getAbsolutePath();
+
         foreach ($itemData['pictureUrl'] as $url) {
             preg_match('/\.(jpg|jpeg|png|gif)/', $url, $matches);
 
@@ -175,7 +183,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $images[] = str_replace($this->productMediaConfig->getBaseTmpMediaPath(), '', $imagePath);
+            $images[] = str_replace($mediaPath.$this->productMediaConfig->getBaseTmpMediaPath(), '', $imagePath);
             $imageCounter++;
         }
 
@@ -188,10 +196,13 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
         $destinationFolder = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
-        )->getAbsolutePath();
+        )->getAbsolutePath() 
+        . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
+        
         $destinationFolder .= $baseTmpImageName{0} . DIRECTORY_SEPARATOR . $baseTmpImageName{1};
 
-        if (!(@is_dir($destinationFolder) || @mkdir($destinationFolder, 0777, true))) {
+        if (!($this->fileDriver->isDirectory($destinationFolder) 
+            || $this->fileDriver->createDirectory($destinationFolder, 0777))) {
             // M2ePro\TRANSLATIONS
             // Unable to create directory '%directory%'.
             throw new \Ess\M2ePro\Model\Exception("Unable to create directory '{$destinationFolder}'.");
@@ -222,7 +233,7 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
         fclose($fileHandler);
         // ---------------------------------------
 
-        $imageInfo = is_file($imagePath) ? getimagesize($imagePath) : NULL;
+        $imageInfo = $this->fileDriver->isFile($imagePath) ? getimagesize($imagePath) : NULL;
 
         if (empty($imageInfo)) {
             // M2ePro\TRANSLATIONS

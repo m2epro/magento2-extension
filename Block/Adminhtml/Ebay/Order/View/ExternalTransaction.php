@@ -83,6 +83,7 @@ class ExternalTransaction extends AbstractGrid
             'index'    => 'transaction_date',
             'type'     => 'datetime',
             'format'   => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'sortable' => false
         ));
 

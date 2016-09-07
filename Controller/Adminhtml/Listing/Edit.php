@@ -7,17 +7,6 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 
 class Edit extends Listing
 {
-    protected $activeRecordFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        Context $context
-    )
-    {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $params = $this->getRequest()->getParams();

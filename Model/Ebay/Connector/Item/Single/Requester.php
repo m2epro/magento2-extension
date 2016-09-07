@@ -30,7 +30,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Marketplace $marketplace,
         \Ess\M2ePro\Model\Account $account,
@@ -144,7 +144,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
             );
 
             $this->getLogger()->logListingProductMessage(
-                $this->listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                $this->listingProduct, $message, \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
         }
 
@@ -191,7 +191,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
             $this->getLogger()->logListingProductMessage(
                 $this->listingProduct,
                 $message,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
         }
 
@@ -224,7 +224,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Requester
             $this->getLogger()->logListingProductMessage(
                 $this->listingProduct,
                 $message,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             return true;

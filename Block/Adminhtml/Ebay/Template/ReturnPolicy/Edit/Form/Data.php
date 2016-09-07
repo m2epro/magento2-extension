@@ -12,7 +12,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Ebay\Template\Returnpolicy $returnPolicyTemplate,
+        \Ess\M2ePro\Model\Ebay\Template\ReturnPolicy $returnPolicyTemplate,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -76,14 +76,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if (!empty($this->marketplaceData['info']['returns_accepted'])) {
             $fieldset->addField('return_accepted',
-                'select',
+                self::SELECT,
                 [
                     'name' => 'return_policy[accepted]',
                     'label' => __('Return Policy'),
                     'title' => __('Return Policy'),
                     'values' => $this->getMarketplaceDataToOptions('returns_accepted'),
                     'value' => $this->formData['accepted'],
-                    'required' => true,
                     'tooltip' => $this->__(
                         'Buyers are more comfortable shopping from Sellers who offer
                          <a href="http://sellercentre.ebay.co.uk/offer-returns-policy"
@@ -96,9 +95,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['refund'])) {
-            $fieldset->addField(
-                'return_option',
-                'select',
+            $fieldset->addField('return_option',
+                self::SELECT,
                 [
                     'name' => 'return_policy[option]',
                     'label' => __('Refund Will Be Given As'),
@@ -110,9 +108,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['returns_within'])) {
-            $fieldset->addField(
-                'return_within',
-                'select',
+            $fieldset->addField('return_within',
+                self::SELECT,
                 [
                     'name' => 'return_policy[within]',
                     'label' => __('Item Must Be Returned Within'),
@@ -124,9 +121,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if ($this->canShowHolidayReturnOption()) {
-            $fieldset->addField(
-                'return_holiday_mode',
-                'select',
+            $fieldset->addField('return_holiday_mode',
+                self::SELECT,
                 [
                     'name' => 'return_policy[holiday_mode]',
                     'label' => __('Extended Holiday Returns'),
@@ -158,9 +154,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['shipping_cost_paid_by'])) {
-            $fieldset->addField(
-                'return_shipping_cost',
-                'select',
+            $fieldset->addField('return_shipping_cost',
+                self::SELECT,
                 [
                     'name' => 'return_policy[shipping_cost]',
                     'label' => __('Return Shipping Will Be Paid By'),
@@ -172,9 +167,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if (!empty($this->marketplaceData['info']['restocking_fee_value'])) {
-            $fieldset->addField(
-                'return_restocking_fee',
-                'select',
+            $fieldset->addField('return_restocking_fee',
+                self::SELECT,
                 [
                     'name' => 'return_policy[restocking_fee]',
                     'label' => __('Restocking Fee Value'),
@@ -186,8 +180,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
         }
 
-        $fieldset->addField(
-            'return_description',
+        $fieldset->addField('return_description',
             'textarea',
             [
                 'name' => 'return_policy[description]',
@@ -261,12 +254,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $policyLocalization = $this->getData('policy_localization');
 
         if (!empty($policyLocalization)) {
-            /** @var \Ess\M2ePro\Model\Magento\Translate $translator */
-            //TODO
-//            $translator = Mage::getModel('M2ePro/Magento_Translate');
-            $translator = $this->getHelper('Module\Translation');
-            $translator->setLocale($policyLocalization);
-            $translator->init();
+            /** @var \Ess\M2ePro\Helper\Module\Translation $translator */
 
             foreach ($data['info']['returns_within'] as $key => $item) {
                 $data['info']['returns_within'][$key]['title'] = $translator->__($item['title']);

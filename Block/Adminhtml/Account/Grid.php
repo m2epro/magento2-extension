@@ -46,6 +46,7 @@ class Grid extends AbstractGrid
             'width'     => '150px',
             'type'      => 'datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
         ));
@@ -56,6 +57,7 @@ class Grid extends AbstractGrid
             'width'     => '150px',
             'type'      => 'datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'
         ));

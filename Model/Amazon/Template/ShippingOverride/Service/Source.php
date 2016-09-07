@@ -8,15 +8,15 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service;
 
-class Source
+class Source extends \Ess\M2ePro\Model\AbstractModel
 {
     /**
-     * @var $magentoProduct Ess\M2ePro\Model\Magento\Product
+     * @var $magentoProduct \Ess\M2ePro\Model\Magento\Product
      */
     private $magentoProduct = null;
 
     /**
-     * @var $shippingOverrideServiceTemplateModel Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service
+     * @var $shippingOverrideServiceTemplateModel \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service
      */
     private $shippingOverrideServiceTemplateModel = null;
 
@@ -47,7 +47,7 @@ class Source
      * @return $this
      */
     public function setShippingOverrideServiceTemplate(
-        Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service $instance)
+        \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service $instance)
     {
         $this->shippingOverrideServiceTemplateModel = $instance;
         return $this;

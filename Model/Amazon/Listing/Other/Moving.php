@@ -24,7 +24,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -147,6 +147,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             $listingProductRepricing->setData(array(
                 'listing_product_id' => $listingProduct->getId(),
                 'is_online_disabled' => $amazonOtherListing->isRepricingDisabled(),
+                'update_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
+                'create_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
             ));
             $listingProductRepricing->save();
         }
@@ -184,8 +186,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             // M2ePro\TRANSLATIONS
             // Item was successfully Moved
             'Item was successfully Moved',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
         );
 
         $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
@@ -200,8 +202,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             // M2ePro\TRANSLATIONS
             // Item was successfully Moved
             'Item was successfully Moved',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
         );
 
         if (!$this->getAmazonAccount()->isOtherListingsMoveToListingsSynchModeNone()) {

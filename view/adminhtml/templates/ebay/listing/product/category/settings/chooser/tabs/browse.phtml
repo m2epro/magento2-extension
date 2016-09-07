@@ -36,21 +36,24 @@ JS
 
 <?php
 
-    $helpBlock = $this->createBlock('HelpBlock');
+    if (!$block->isWizardActive()) {
+        $helpBlock = $this->createBlock('HelpBlock');
 
-    if (in_array($categoryType, $ebayCategoryTypes)) {
-        $helpBlock->setData([
-            'no_collapse' => true,
-            'content' => $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a>.')
-        ]);
-    } else {
-        $helpBlock->setData([
-            'no_collapse' => true,
-            'content' => $block->__('If you cannot find necessary Store Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a>.')
-        ]);
+        if (in_array($categoryType, $ebayCategoryTypes)) {
+            $helpBlock->setData([
+                'no_collapse' => true,
+                'content' => $block->__('If you cannot find necessary Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshEbayCategories()">update Marketplaces Data</a>.')
+            ]);
+        } else {
+            $helpBlock->setData([
+                'no_collapse' => true,
+                'content' => $block->__('If you cannot find necessary Store Category, try to <a href="javascript:void(0)" onclick="EbayListingProductCategorySettingsChooserObj.refreshStoreCategories()">refresh eBay Store Data</a>.')
+            ]);
+        }
+
+        echo $helpBlock->toHtml();
     }
 
-    echo $helpBlock->toHtml();
 ?>
 
 <div id="chooser_browser"></div>

@@ -145,8 +145,8 @@ JS
         $accountFilterHtml = $accountFilterBlock->toHtml();
         if (trim($marketplaceFilterHtml) || trim($accountFilterHtml)) {
             $pageActionsHtml = '<div class="page-main-actions"><div class="filter_block">'
-                . $marketplaceFilterBlock->toHtml()
-                . $accountFilterBlock->toHtml()
+                . $marketplaceFilterHtml
+                . $accountFilterHtml
                 . '</div></div>';
         }
 

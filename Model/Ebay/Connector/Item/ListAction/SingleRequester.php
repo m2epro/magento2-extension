@@ -23,10 +23,6 @@ class SingleRequester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Reque
 
         unset($additionalData['synch_template_list_rules_note']);
 
-        if (isset($additionalData['add_to_schedule'])) {
-            unset($additionalData['add_to_schedule']);
-        }
-
         $this->listingProduct->setSettings('additional_data', $additionalData);
 
         $this->listingProduct->save();

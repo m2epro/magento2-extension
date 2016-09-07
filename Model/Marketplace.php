@@ -33,10 +33,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     //########################################
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
-        return parent::save();
+        return parent::save($reloadOnCreate);
     }
 
     //########################################

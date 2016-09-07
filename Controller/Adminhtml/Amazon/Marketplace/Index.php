@@ -18,7 +18,7 @@ class Index extends Marketplace
     {
         $this->addContent($this->createBlock('Amazon\Marketplace'));
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Marketplaces'));
-        $this->setComponentPageHelpLink('Marketplaces');
+        $this->setPageHelpLink('x/9AEtAQ');
 
         return $this->getResult();
     }

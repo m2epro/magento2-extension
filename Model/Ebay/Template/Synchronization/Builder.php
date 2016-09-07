@@ -45,9 +45,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getDefaultSettings();
 
-        $defaultData['schedule_interval_settings'] = json_decode($defaultData['schedule_interval_settings'], true);
-        $defaultData['schedule_week_settings'] = json_decode($defaultData['schedule_week_settings'], true);
-
         $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
 
         $prepared = array_merge(
@@ -55,8 +52,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $this->prepareListData($data),
             $this->prepareReviseData($data),
             $this->prepareRelistData($data),
-            $this->prepareStopData($data),
-            $this->prepareScheduleData($data)
+            $this->prepareStopData($data)
         );
 
         return $prepared;
@@ -269,68 +265,6 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         if (isset($data['stop_qty_calculated_value_max'])) {
             $prepared['stop_qty_calculated_value_max'] = (int)$data['stop_qty_calculated_value_max'];
         }
-
-        return $prepared;
-    }
-
-    private function prepareScheduleData(array $data)
-    {
-        $prepared = array();
-
-        if (isset($data['schedule_mode'])) {
-            $prepared['schedule_mode'] = (int)$data['schedule_mode'];
-        }
-
-        // ---------------------------------------
-
-        $intervalSettings = array(
-            'mode'      => 0,
-            'date_from' => null,
-            'date_to'   => null
-        );
-
-        if ($prepared['schedule_mode'] && isset($data['schedule_interval_settings']['mode'])) {
-            $intervalSettings['mode'] = (int)$data['schedule_interval_settings']['mode'];
-        }
-
-        if ($intervalSettings['mode'] &&
-            isset($data['schedule_interval_settings']['date_from']) &&
-            isset($data['schedule_interval_settings']['date_to'])) {
-
-            $intervalSettings['date_from'] = $this->getHelper('Data')->timezoneDateToGmt(
-                $data['schedule_interval_settings']['date_from'].' 00:00:00'
-            );
-
-            $intervalSettings['date_to'] = $this->getHelper('Data')->timezoneDateToGmt(
-                $data['schedule_interval_settings']['date_to'].' 23:59:59'
-            );
-        }
-
-        $prepared['schedule_interval_settings'] = json_encode($intervalSettings);
-
-        // ---------------------------------------
-
-        $weekSettings = array();
-        if (isset($data['schedule_week_days']) && $prepared['schedule_mode']) {
-
-            foreach ($data['schedule_week_days'] as $weekDay) {
-
-                if (!empty($data['schedule_week_settings'][$weekDay]['time_from']) &&
-                    !empty($data['schedule_week_settings'][$weekDay]['time_to'])) {
-
-                    $timeInfo = $data['schedule_week_settings'][$weekDay];
-
-                    $weekSettings[$weekDay] = array(
-                        'time_from' => date('H:i:s', strtotime($timeInfo['time_from'])),
-                        'time_to'   => date('H:i:s', strtotime($timeInfo['time_to']))
-                    );
-                }
-            }
-        }
-
-        $prepared['schedule_week_settings'] = json_encode($weekSettings);
-
-        // ---------------------------------------
 
         return $prepared;
     }

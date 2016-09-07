@@ -253,7 +253,7 @@ Class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return;
         }
 
-        $this->_productIds = array();
+        $this->_productIds = [];
         $this->getConditions()->collectValidatedAttributes($collection);
 
         $idFieldName = $collection->getIdFieldName();
@@ -263,16 +263,16 @@ Class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $this->resourceIterator->walk(
             $collection->getSelect(),
-            array(array($this, 'callbackValidateProduct')),
-            array(
+            [[$this, 'callbackValidateProduct']],
+            [
                 'attributes' => $this->getCollectedAttributes(),
                 'product' => $this->productFactory->create(),
                 'store_id' => $collection->getStoreId(),
                 'id_field_name' => $idFieldName
-            )
+            ]
         );
 
-        $collection->addFieldToFilter($idFieldName, array('in' => $this->_productIds));
+        $collection->addFieldToFilter($idFieldName, ['in' => $this->_productIds]);
     }
 
     //########################################
@@ -303,7 +303,7 @@ Class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             ->setPrefix($prefix)
             ->setValue(true)
             ->setId(1)
-            ->setData($prefix, array());
+            ->setData($prefix, []);
 
         if (!is_null($this->getCustomOptionsFlag())) {
             $conditionInstance->setCustomOptionsFlag($this->getCustomOptionsFlag());
@@ -314,13 +314,13 @@ Class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     protected function _convertFlatToRecursive(array $data, $prefix)
     {
-        $arr = array();
+        $arr = [];
         foreach ($data as $id=>$value) {
             $path = explode('--', $id);
             $node =& $arr;
             for ($i=0, $l=sizeof($path); $i<$l; $i++) {
                 if (!isset($node[$prefix][$path[$i]])) {
-                    $node[$prefix][$path[$i]] = array();
+                    $node[$prefix][$path[$i]] = [];
                 }
                 $node =& $node[$prefix][$path[$i]];
             }

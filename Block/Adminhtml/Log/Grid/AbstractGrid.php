@@ -103,19 +103,19 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     protected function _getLogTypeList()
     {
         return array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE => $this->__('Notice'),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => $this->__('Success'),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => $this->__('Warning'),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => $this->__('Error')
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE => $this->__('Notice'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error')
         );
     }
 
     protected function _getLogPriorityList()
     {
         return array(
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH => $this->__('High'),
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM => $this->__('Medium'),
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW => $this->__('Low')
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH => $this->__('High'),
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM => $this->__('Medium'),
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW => $this->__('Low')
         );
     }
 
@@ -133,18 +133,18 @@ abstract class AbstractGrid extends WidgetAbstractGrid
     {
          switch ($row->getData('type')) {
 
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
                 break;
 
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
                 $value = '<span style="color: green;">'.$value.'</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
                 $value = '<span style="color: orange; font-weight: bold;">'.$value.'</span>';
                 break;
 
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
                  $value = '<span style="color: red; font-weight: bold;">'.$value.'</span>';
                 break;
 

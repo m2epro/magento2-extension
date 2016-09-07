@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction;
 
-class getDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
+class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 {
     //########################################
 

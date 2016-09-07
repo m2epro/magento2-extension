@@ -57,10 +57,10 @@ class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFo
                      <p><strong>To provide proper work of Magento Cron Job,
                      primary correct settings are required.</strong></p>
                      </li>
+                     </ul>
                      <p>In the list below you can find which Cron Job type is used in your system, 
                      the date of the last synchronization run and notices about the Magento Cron settings 
                      which might be helpful if you need to configure Magento Cron.</p>
-                     </ul>
 HTML
                 )
             ]
@@ -102,8 +102,8 @@ HTML
             'note',
             [
                 'label' => $this->__('Last Run'),
-                'text' => "<span>{$cronLastRunTime}</span>"
-                          . ($this->cronIsNotWorking ? '' : ' (' . $this->__('not working') . ')'),
+                'text' => "<span>{$cronLastRunTime}</span>" .
+                           $this->cronIsNotWorking  ?: ' (' .$this->__('not working'). ')',
                 'style' => !$this->cronIsNotWorking ?: 'color: red'
             ]
         );
@@ -182,20 +182,6 @@ HTML
                         IP address: <b>%server_ip%</b>.',
                         gethostbyname($moduleConfig->getGroupValue('/cron/service/', 'hostname'))
                     )
-                ]
-            );
-        }
-
-        if (!$this->getData('is_support_mode')) {
-            $fieldSet->addField('setup_instruction_schedule',
-                'note',
-                [
-                    'label' => $this->__('Cron Schedule Table'),
-                    'text' => "<a href=\"
-                                {$this->getUrl('*/adminhtml_development_inspection/cronScheduleTable')}
-                                \" target=\"_blank\">
-                                {$this->__('Show')}
-                                </a>"
                 ]
             );
         }

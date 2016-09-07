@@ -299,12 +299,14 @@ class Data extends AbstractHelper
 
             $cachedActions = $this->getHelper('Data\Cache\Permanent')->getValue('controller_actions_' . $classRoute);
 
-            if ($cachedActions !== false) {
-                return $this->getActionsWithParameters($cachedActions, $params);
+            if ($cachedActions !== NULL) {
+                return $this->getActionsUrlsWithParameters($cachedActions, $params);
             }
         }
 
-        $controllersDir = $this->dir->getDir('Ess_M2ePro', \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR);
+        $controllersDir = $this->dir->getDir(
+            \Ess\M2ePro\Helper\Module::IDENTIFIER, \Magento\Framework\Module\Dir::MODULE_CONTROLLER_DIR
+        );
         $controllerDir = $controllersDir . '/Adminhtml/' . str_replace('\\', '/', $controllerClass);
 
         $actions = [];
@@ -319,31 +321,26 @@ class Data extends AbstractHelper
                 $action = $temp[0];
                 $action{0} = strtolower($action{0});
 
-                $route = $classRoute . '/' . $action;
-
-                $url = $this->urlBuilder->getUrl('m2epro/' . $route);
-                $actions[$route] = $url;
+                $actions[] = $classRoute . '/' . $action;
             }
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue('controller_actions_' . $classRoute, $actions);
+        if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+            $this->getHelper('Data\Cache\Permanent')->setValue('controller_actions_' . $classRoute, $actions);
+        }
 
-        return $this->getActionsWithParameters($actions, $params);
+        return $this->getActionsUrlsWithParameters($actions, $params);
     }
 
-    private function getActionsWithParameters(array $actions, array $parameters = [])
+    private function getActionsUrlsWithParameters(array $actions, array $parameters = [])
     {
-        if (empty($parameters)) {
-            return $actions;
-        }
-
-        $actionsWithParameters = [];
-        foreach ($actions as $route => $action) {
+        $actionsUrls = [];
+        foreach ($actions as $route) {
             $url = $this->urlBuilder->getUrl('m2epro/' . $route, $parameters);
-            $actionsWithParameters[$route] = $url;
+            $actionsUrls[$route] = $url;
         }
 
-        return $actionsWithParameters;
+        return $actionsUrls;
     }
 
     //########################################

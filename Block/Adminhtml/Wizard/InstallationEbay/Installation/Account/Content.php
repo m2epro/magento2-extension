@@ -56,7 +56,7 @@ HTML
                         'type' => \Magento\Framework\Message\MessageInterface::TYPE_NOTICE,
                         'content' => $this->__(
                             'If you do not have an existing account, you can click
-                            <a href="%url%" target="_blank">here</a> to register one.', $url
+                            <a href="%url%" target="_blank" class="external-link">here</a> to register one.', $url
                         )
                     ]
                 ]

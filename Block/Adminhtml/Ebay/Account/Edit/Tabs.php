@@ -9,6 +9,8 @@ class Tabs extends AbstractTabs
     protected function _construct()
     {
         parent::_construct();
+
+        $this->setId('ebayAccountEditTabs');
         $this->setDestElementId('edit_form');
     }
 
@@ -25,8 +27,8 @@ class Tabs extends AbstractTabs
             ]
         );
 
-        if ($this->getHelper('Data\GlobalData')->getValue('temp_data') &&
-            $this->getHelper('Data\GlobalData')->getValue('temp_data')->getId()) {
+        if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
+            $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()) {
 
             $this->addTab('listingOther', array(
                 'label' => $this->__('3rd Party Listings'),
@@ -51,20 +53,22 @@ class Tabs extends AbstractTabs
                     'Ebay\Account\Edit\Tabs\Order'
                 )->toHtml()
             ));
-
-            // TODO NOT SUPPORTED FEATURES
-/*            $this->addTab('feedback', array(
+            
+            $this->addTab('feedback', array(
                 'label' => $this->__('Feedback'),
                 'title' => $this->__('Feedback'),
                 'content' => $this->createBlock(
                     'Ebay\Account\Edit\Tabs\Feedback'
                 )->toHtml()
-            ));*/
+            ));
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback\Template', [
+            'account_id' => $this->getRequest()->getParam('id')
+        ]));
         $this->jsUrl->add(
             $this->getUrl('*/ebay_account/beforeGetToken',array('_current' => true)), 'ebay_account/beforeGetToken'
         );
@@ -82,10 +86,10 @@ class Tabs extends AbstractTabs
             'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
                 'The specified Title is already used for other Account. Account Title must be unique.'
             ),
-            'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server.
-            This will cause inappropriate work of all Accounts\' copies.' => $this->__(
-                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server.
-                This will cause inappropriate work of all Accounts\' copies.'
+            'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+            . 'This will cause inappropriate work of all Accounts\' copies.' => $this->__(
+                'Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. '
+                . 'This will cause inappropriate work of all Accounts\' copies.'
             ),
             'No Customer entry is found for specified ID.' => $this->__('No Customer entry is found for specified ID.'),
             'If Yes is chosen, you must select at least one Attribute for Product Mapping.' => $this->__(

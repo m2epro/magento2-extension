@@ -90,6 +90,10 @@
     font-size: 11px;
 }
 
+.dimension-custom-input {
+    width: 125px !important;
+}
+
 /* Shipping Policy Styles */
 
 /* Payment Policy Styles */
@@ -142,7 +146,7 @@ table#price_table:after {
 }
 .coef {
     text-align: right;
-    width: 80px !important;
+    width: 70px !important;
     margin: 0 5px;
 }
 .price_unvalidated {
@@ -160,3 +164,61 @@ table#price_table:after {
 tr#price_discount_stp_tr, tr#price_discount_map_tr {
     border-top: #d6d6d6 solid 1px;
 }
+
+/* Description Policy Styles */
+
+#description_template {
+    width: 60%;
+    height: 500px;
+}
+label.mage-error[for="description_template"] {
+    top: 500px;
+}
+#description_template_tbl {
+    float: left;
+}
+#description_template_tbl iframe {
+    height: 370px !important;
+}
+#description_template_buttons {
+    width: 155px;
+    float: left;
+}
+.custom_inserts_images_input {
+    width: 80px !important;
+}
+#custom_inserts_open_popup {
+    margin-left: 20px;
+    margin-top: 10px;
+}
+#description_template_show_hide_wysiwyg {
+    margin-left: 20px;
+}
+#buttonsdescription_template {
+    display: none;
+}
+#description_template_tr .admin__field-control {
+    width: 64% !important;
+}
+
+/* Description Policy Styles */
+
+/* Description Preview Styles */
+
+.product_title {
+    position: relative;
+    top: 10px;
+    left: 10px;
+}
+.description_container ul {
+    list-style-position: inside;
+}
+.description_container a {
+    color: #000 !important;
+    text-decoration: none !important;
+}
+.description-preview-watermark-info {
+    font-size: 12px;
+    font-weight: bold;
+}
+/* Description Preview Styles */

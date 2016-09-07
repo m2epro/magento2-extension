@@ -8,20 +8,19 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\System\Config\Buy;
 
-class Field extends \Magento\Config\Block\System\Config\Form\Field
+class Field extends \Ess\M2ePro\Block\Adminhtml\System\Config\Integration
 {
+    /**
+     * @inheritdoc
+     */
     protected function _getElementHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $element->setValue(0);
         $element->setDisabled('disabled');
-        $element->setValues([
-            ['label' => __('Disabled - Coming Soon...'), 'value' => '0']
-        ]);
-        return $element->getElementHtml();
 
+        return parent::_getElementHtml($element);
     }
 
-    public function toOptionArray()
+    public function getOptionsArray()
     {
         return [
             ['label' => __('Disabled - Coming Soon...'), 'value' => '0']

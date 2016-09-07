@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template;
 
-class ShippingOverride extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class ShippingOverride extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

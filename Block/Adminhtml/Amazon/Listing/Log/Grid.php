@@ -44,7 +44,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid
         if ($row->getData('listing_id')) {
 
             $url = $this->getUrl(
-                '*/adminhtml_amazon_listing/view',
+                '*/amazon_listing/view',
                 array('id' => $row->getData('listing_id'))
             );
 

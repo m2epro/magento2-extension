@@ -14,6 +14,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     protected $hideMassactionDropDown = false;
 
     protected $showAdvancedFilterProductsOption = true;
+    protected $useAdvancedFilter = true;
 
     //########################################
 
@@ -52,10 +53,12 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
             $collection->setStoreId(0);
         }
 
-        // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//        /** @var $ruleModel Ess_M2ePro_Model_Magento_Product_Rule */
-//        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
-//        $ruleModel->setAttributesFilterToCollection($collection);
+        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+
+        if (!is_null($ruleModel) && $this->useAdvancedFilter) {
+            $ruleModel->setAttributesFilterToCollection($collection);
+        }
 
         parent::setCollection($collection);
     }
@@ -79,12 +82,20 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
                 // Header of grid with massactions is rendering in other way, than with no massaction
                 // so it causes broken layout when the actions are absent
             $this->css->add(<<<CSS
-#{$this->getId()} .admin__data-grid-header-row:first-child {
-    float: left;
-}
-#{$this->getId()} .admin__data-grid-header-row:last-child {
-    margin-left: 170px;
-}
+            #{$this->getId()} .admin__data-grid-header {
+                display: -webkit-flex;
+                display: flex;
+                -webkit-flex-wrap: wrap;
+                flex-wrap: wrap;
+            }
+            
+            #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:first-child {
+                width: 38%;
+                margin-top: 1.1em;
+            }
+            #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:last-child {
+                width: 62%;
+            }
 CSS
 );
         }
@@ -100,17 +111,20 @@ CSS
         }
         parent::_prepareMassactionColumn();
     }
+    
+    public function getMassactionBlockHtml()
+    {
+        if (!$this->useAdvancedFilter) {
+            return $this->hideMassactionColumn ? '' :  parent::getMassactionBlockHtml();
+        }
+        
+        $advancedFilterBlock = $this->createBlock('Listing\Product\Rule');
+        $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
+        $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
 
-    // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//    public function getMassactionBlockHtml()
-//    {
-//        $advancedFilterBlock = $this->getLayout()->createBlock('M2ePro/adminhtml_listing_product_rule');
-//        $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
-//        $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
-//
-//        return $advancedFilterBlock->toHtml() . (($this->hideMassactionColumn)
-//            ? '' :  parent::getMassactionBlockHtml());
-//    }
+        return $advancedFilterBlock->toHtml() . (($this->hideMassactionColumn)
+            ? '' :  parent::getMassactionBlockHtml());
+    }
 
     //########################################
 
@@ -212,38 +226,47 @@ HTML;
 
     public function getAdvancedFilterButtonHtml()
     {
-        // TODO NOT SUPPORTED FEATURES "Advanced filters"
+        if (!$this->getChild('advanced_filter_button')) {
 
-//        if (!$this->getChild('advanced_filter_button')) {
-//            $data = array(
-//                'label'   => Mage::helper('adminhtml')->__('Show Advanced Filter'),
-//                'onclick' => 'ProductGridObj.advancedFilterToggle()',
-//                'class'   => 'task',
-//                'id'      => 'advanced_filter_button'
-//            );
-//            $buttonBlock = $this->getLayout()->createBlock('adminhtml/widget_button');
-//            $buttonBlock->setData($data);
-//            $this->setChild('advanced_filter_button', $buttonBlock);
-//        }
-//
-//        return $this->getChildHtml('advanced_filter_button');
+            $buttonSettings = [
+                'class'   => 'task action-default scalable action-secondary',
+                'id'      => 'advanced_filter_button'
+            ];
+
+            if (!$this->isShowRuleBlock()) {
+                $buttonSettings['label'] = $this->__('Show Advanced Filter');
+                $buttonSettings['onclick'] = 'ProductGridObj.advancedFilterToggle()';
+            } else {
+                $buttonSettings['label'] = $this->__('Advanced Filter');
+                $buttonSettings['onclick'] = '';
+                $buttonSettings['class'] = $buttonSettings['class']
+                                           . ' advanced-filter-button-active';
+            }
+
+            $buttonBlock = $this->createBlock('Magento\Button');
+            $buttonBlock->setData($buttonSettings);
+            $this->setChild('advanced_filter_button', $buttonBlock);
+        }
+
+        return $this->getChildHtml('advanced_filter_button');
     }
 
-    // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//    public function getMainButtonsHtml()
-//    {
-//        $html = '';
-//
-//        if ($this->getFilterVisibility()) {
-//            $html .= $this->getResetFilterButtonHtml();
-//            if (!$this->isShowRuleBlock()) {
-//                $html .= $this->getAdvancedFilterButtonHtml();
-//            }
-//            $html .= $this->getSearchButtonHtml();
-//        }
-//
-//        return $html;
-//    }
+    public function getMainButtonsHtml()
+    {
+        $html = '';
+
+        if ($this->getFilterVisibility()) {
+            $html .= $this->getSearchButtonHtml();
+            
+            if ($this->useAdvancedFilter) {
+                $html .= $this->getAdvancedFilterButtonHtml();
+            }
+            
+            $html .= $this->getResetFilterButtonHtml();
+        }
+
+        return $html;
+    }
 
     //########################################
 
@@ -257,38 +280,35 @@ HTML;
         display: none;
     }
     #{$this->getHtmlId()}_massaction .mass-select-wrap {
-        margin-left: -17.4rem;
+        margin-left: -1.3em;
     }
 CSS
             );
         }
         // ---------------------------------------
 
-        // TODO NOT SUPPORTED FEATURES "Advanced filters"
         // ---------------------------------------
-//        $isShowRuleBlock = json_encode($this->isShowRuleBlock());
+        $isShowRuleBlock = json_encode($this->isShowRuleBlock());
 
-//        $commonJs = <<<HTML
-//<script type="text/javascript">
-//    var init = function() {
-//        if ({$isShowRuleBlock}) {
-//            $('listing_product_rules').show();
-//            if ($('advanced_filter_button')) {
-//                $('advanced_filter_button').simulate('click');
-//            }
-//        }
-//    };
-//
-//    {$this->isAjax} ? init()
-//                    : Event.observe(window, 'load', init);
-//</script>
-//HTML;
+        $this->js->add(<<<JS
+        jQuery(function() 
+        {
+            if ({$isShowRuleBlock}) {
+                jQuery('#listing_product_rules').show();
+                jQuery('#{$this->getId()} .admin__data-grid-header-row:last-child')
+                .css('width', '100%');
+                                          
+                if ($('advanced_filter_button')) {
+                    $('advanced_filter_button').simulate('click');
+                }
+            }
+        });
+JS
+);
         // ---------------------------------------
 
         if ($this->getRequest()->isXmlHttpRequest()) {
-            return
-//                $commonJs .
-                parent::_toHtml();
+            return parent::_toHtml();
         }
 
         // ---------------------------------------
@@ -298,55 +318,56 @@ CSS
             'Please select the Products you want to perform the Action on.' => $helper->escapeJs(
                 $this->__('Please select the Products you want to perform the Action on.')
             ),
-            // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//            'Show Advanced Filter' => $helper->escapeJs($this->__('Show Advanced Filter')),
-//            'Hide Advanced Filter' => $helper->escapeJs($this->__('Hide Advanced Filter'))
+            'Show Advanced Filter' => $this->__('Show Advanced Filter'),
+            'Hide Advanced Filter' => $this->__('Hide Advanced Filter')
         ]);
 
         // ---------------------------------------
 
+        $isMassActionExists = (int)($this->getMassactionBlock()->getCount() > 1);
+
         $this->js->add(
             <<<JS
-                require([
+    require([
+        'jquery',
         'M2ePro/Magento/Product/Grid'
-    ], function(){
+    ], function(jQuery){
 
         window.ProductGridObj = new MagentoProductGrid();
         ProductGridObj.setGridId('{$this->getJsObjectName()}');
+        ProductGridObj.isMassActionExists = {$isMassActionExists};
 
-        // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//        var init = function () {
-//            {$this->getJsObjectName()}.doFilter = ProductGridObj.setFilter;
-//            {$this->getJsObjectName()}.resetFilter = ProductGridObj.resetFilter;
-//        };
-//
-//        {$this->isAjax} ? init() : Event.observe(window, 'load', init);
-
+        jQuery(function () 
+        {
+            {$this->getJsObjectName()}.doFilter = ProductGridObj.setFilter;
+            {$this->getJsObjectName()}.resetFilter = ProductGridObj.resetFilter;
+        });
     });
 JS
         );
 
-        return
-            parent::_toHtml();
-//            $commonJs;
+        return parent::_toHtml();
     }
 
     //########################################
 
-    // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//    protected function isShowRuleBlock()
-//    {
-//        $ruleData = Mage::helper('M2ePro/Data_Session')->getValue(
-//            $this->getHelper('Data\GlobalData')->getValue('rule_prefix')
-//        );
-//
-//        $showHideProductsOption = Mage::helper('M2ePro/Data_Session')->getValue(
-//            $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix')
-//        );
-//
-//        is_null($showHideProductsOption) && $showHideProductsOption = 1;
-//        return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
-//    }
+    protected function isShowRuleBlock()
+    {
+        if (!$this->useAdvancedFilter) {
+            return false;
+        }
+        
+        $ruleData = $this->getHelper('Data\Session')->getValue(
+            $this->getHelper('Data\GlobalData')->getValue('rule_prefix')
+        );
+
+        $showHideProductsOption = $this->getHelper('Data\Session')->getValue(
+            $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix')
+        );
+
+        is_null($showHideProductsOption) && $showHideProductsOption = 1;
+        return !empty($ruleData) || ($this->showAdvancedFilterProductsOption && $showHideProductsOption);
+    }
 
     //########################################
 }

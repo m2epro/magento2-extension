@@ -42,28 +42,6 @@ abstract class Switcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
         return $this->getData('component_mode') . ucfirst($this->paramName);
     }
 
-    public function getSwitchUrl()
-    {
-        //todo
-//        $params = array(
-//            '_current' => true,
-//            $this->getParamName() => $this->getParamPlaceHolder()
-//        );
-//
-//        $tabId = Ess_M2ePro_Block_Adminhtml_Common_Component_Abstract::getTabIdByComponent(
-//            $this->getData('component_mode')
-//        );
-//
-//        if (!is_null($tabId)) {
-//            $params['tab'] = $tabId;
-//        }
-//
-//        $controllerName = $this->getData('controller_name') ? $this->getData('controller_name') : '*';
-//
-//        return $this->getUrl("*/{$controllerName}/*", $params);
-        return parent::getSwitchUrl();
-    }
-
     public function getSwitchCallback()
     {
         return 'switch' . ucfirst($this->getParamName());

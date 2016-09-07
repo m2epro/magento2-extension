@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Config\Manager;
 
-class Synchronization extends AbstractManager
+class Synchronization extends AbstractModel
 {
     //########################################
 

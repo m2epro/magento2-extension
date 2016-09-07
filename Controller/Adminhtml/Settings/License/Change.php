@@ -21,9 +21,7 @@ class Change extends \Ess\M2ePro\Controller\Adminhtml\Base
             // Save settings
             // ---------------------------------------
             $key = strip_tags($post['new_license_key']);
-            $primaryConfig->setGroupValue(
-                '/'.$this->getHelper('Module')->getName().'/license/','key',(string)$key
-            );
+            $primaryConfig->setGroupValue('/license/', 'key', (string)$key);
             // ---------------------------------------
 
             try {

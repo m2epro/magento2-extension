@@ -96,10 +96,7 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         ListingProductVariationManageVariationsGridObj.actionHandler
             .setErrorsSummaryContainer('listing_product_variation_errors_summary_container');
         ListingProductVariationManageVariationsGridObj.actionHandler
-            .setActionMessagesContainer('listing_product_variation_action_messages_container');
-    
-        // TODO
-        // AmazonListingAfnQtyObj = new AmazonListingAfnQty();       
+            .setActionMessagesContainer('listing_product_variation_action_messages_container'); 
     });
 JS
         );

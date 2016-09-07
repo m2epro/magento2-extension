@@ -14,9 +14,6 @@ class InstallSchema implements InstallSchemaInterface
 {
     const LONG_COLUMN_SIZE = 16777217;
 
-    /** @var Tables $tablesObject */
-    private $tablesObject;
-
     /** @var Factory $helperFactory */
     private $helperFactory;
 
@@ -29,11 +26,9 @@ class InstallSchema implements InstallSchemaInterface
     //########################################
 
     public function __construct(
-        Tables $tablesObject,
         Factory $helperFactory,
         ModuleListInterface $moduleList
     ) {
-        $this->tablesObject = $tablesObject;
         $this->helperFactory = $helperFactory;
         $this->moduleList = $moduleList;
     }
@@ -42,11 +37,11 @@ class InstallSchema implements InstallSchemaInterface
 
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        if ($this->helperFactory->getObject('Module\Maintenance\Setup')->isEnabled()) {
+        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
             return;
         }
 
-        $this->helperFactory->getObject('Module\Maintenance\Setup')->enable();
+        $this->helperFactory->getObject('Module\Maintenance\General')->enable();
 
         $this->installer = $setup;
         $this->installer->startSetup();
@@ -710,10 +705,6 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'parent_id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'default' => NULL]
-            )
-            ->addColumn(
-                'kill_now', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'data', Table::TYPE_TEXT, NULL,
@@ -1418,7 +1409,8 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($stopQueueTable);
 
-        $synchronizationConfigTable = $this->getConnection()->newTable($this->getFullTableName('synchronization_config'))
+        $synchronizationConfigTableName = $this->getFullTableName('synchronization_config');
+        $synchronizationConfigTable = $this->getConnection()->newTable($synchronizationConfigTableName)
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
@@ -1589,7 +1581,8 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($operationHistoryTable);
 
-        $templateSellingFormatTable = $this->getConnection()->newTable($this->getFullTableName('template_selling_format'))
+        $templateSellingFormatTableName = $this->getFullTableName('template_selling_format');
+        $templateSellingFormatTable = $this->getConnection()->newTable($templateSellingFormatTableName)
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
@@ -4691,18 +4684,6 @@ class InstallSchema implements InstallSchemaInterface
                 'stop_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
-            ->addColumn(
-                'schedule_mode', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'schedule_interval_settings', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'schedule_week_settings', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
-            )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -6615,12 +6596,7 @@ class InstallSchema implements InstallSchemaInterface
 
     private function getFullTableName($tableName)
     {
-        return $this->tablesObject->getFullName($tableName);
-    }
-
-    private function getConfigVersion()
-    {
-        return $this->moduleList->getOne(Module::IDENTIFIER)['setup_version'];
+        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
     }
 
     //########################################

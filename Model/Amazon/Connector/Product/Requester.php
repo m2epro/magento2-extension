@@ -39,6 +39,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      */
     protected $requestsDataObjects = array();
 
+    protected $activeRecordFactory;
     protected $amazonFactory;
 
     // ########################################
@@ -53,7 +54,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
      * @param array $params
      * @throws \Ess\M2ePro\Model\Exception
      */
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -224,7 +225,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 
@@ -342,7 +343,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
 
                 unset($this->listingsProducts[$listingProduct->getId()]);
@@ -410,7 +411,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
                 $this->getLogger()->logListingProductMessage($listingProduct,
                                                              $message,
-                                                             \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+                                                             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
             }
 
             $this->buildRequestDataObject($listingProduct,$requestDataRaw);

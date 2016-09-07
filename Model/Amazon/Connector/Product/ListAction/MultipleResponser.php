@@ -93,7 +93,7 @@ class MultipleResponser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Respo
             $this->getLogger()->logListingProductMessage(
                 $listingProduct,
                 $message,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             return;

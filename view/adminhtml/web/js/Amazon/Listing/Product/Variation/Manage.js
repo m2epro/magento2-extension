@@ -328,12 +328,13 @@ define([
                         modalClass: 'width-50',
                         buttons: [{
                             text: M2ePro.translator.translate('Cancel'),
+                            class: 'action-secondary action-dismiss',
                             click: function () {
                                 self.skuPopup.modal('closeModal');
                             }
                         },{
                             text: M2ePro.translator.translate('Confirm'),
-                            class: 'action primary ',
+                            class: 'action-primary action-accept',
                             click: function () {
                                 self.setProductSku();
                             }
@@ -349,7 +350,9 @@ define([
             var self = this,
                 data;
 
-            if (!jQuery('#variation_manager_sku_form').form().valid()) {
+            this.initFormValidation('#variation_manager_sku_form');
+
+            if (!jQuery('#variation_manager_sku_form').valid()) {
                 return;
             }
 
@@ -388,62 +391,72 @@ define([
 
         openDescriptionTemplatePopUp: function (contentData) {
             var self = this;
-            templateDescriptionPopup = Dialog.info(null, {
-                draggable: true,
-                resizable: true,
-                closable: true,
-                className: "magento",
-                windowClassName: "popup-window",
+            self.gridHandler.unselectAll();
+
+            MessageObj.clear();
+
+            if (!$('template_description_pop_up_content')) {
+                $('html-body').insert({bottom: contentData});
+            }
+
+            self.templateDescriptionPopup = jQuery('#template_description_pop_up_content');
+
+            modal({
                 title: M2ePro.translator.translate('templateDescriptionPopupTitle'),
-                top: 70,
-                width: 800,
-                height: 550,
-                zIndex: 100,
-                hideEffect: Element.hide,
-                showEffect: Element.show
-            });
-            templateDescriptionPopup.options.destroyOnClose = true;
+                type: 'slide',
+                buttons: [{
+                    text: M2ePro.translator.translate('Add New Description Policy'),
+                    class: 'action primary ',
+                    click: function () {
+                        ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'));
+                    }
+                }]
+            }, self.templateDescriptionPopup);
 
-            templateDescriptionPopup.productsIds = self.variationProductManagePopup.productId;
+            self.templateDescriptionPopup.modal('openModal');
 
-            $('modal_dialog_message').insert(contentData);
+            self.templateDescriptionPopup.productsIds = self.variationProductManagePopup.productId;
+            self.templateDescriptionPopup.checkIsNewAsinAccepted = 1;
 
-            new Ajax.Request(self.options.url.manageVariationViewTemplateDescriptionsGrid, {
-                method: 'get',
+            self.loadTemplateDescriptionGrid();
+        },
+
+        loadTemplateDescriptionGrid: function () {
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/viewGrid'), {
+                method: 'post',
                 parameters: {
-                    product_id: self.variationProductManagePopup.productId
+                    products_ids: self.variationProductManagePopup.productId,
+                    check_is_new_asin_accepted: 1,
+                    map_to_template_js_fn: 'ListingGridHandlerObj.variationProductManageHandler.mapToTemplateDescription'
                 },
                 onSuccess: function (transport) {
                     $('template_description_grid').update(transport.responseText);
                     $('template_description_grid').show();
                 }
             });
-
-            setTimeout(function () {
-                Windows.getFocusedWindow().content.style.height = '';
-                Windows.getFocusedWindow().content.style.maxHeight = '600px';
-            }, 50);
         },
 
         mapToTemplateDescription: function (el, templateId, mapToGeneralId) {
             var self = this;
 
-            new Ajax.Request(self.options.url.manageVariationMapToTemplateDescription, {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
                 method: 'post',
                 parameters: {
-                    product_id: self.variationProductManagePopup.productId,
+                    products_ids: self.variationProductManagePopup.productId,
                     template_id: templateId
                 },
                 onSuccess: function (transport) {
                     var response = self.parseResponse(transport);
-                    if (response.success) {
-                        templateDescriptionPopup.close();
+                    if (response.type == 'success') {
+                        self.templateDescriptionPopup.modal('closeModal');
                         self.setGeneralIdOwner(1, true);
                     }
                 }
             });
 
-            templateDescriptionPopup.close();
+            self.templateDescriptionPopup.modal('closeModal');
         },
 
         // ---------------------------------------
@@ -475,11 +488,6 @@ define([
                         var response = self.parseResponse(transport);
                         if (response.success) {
                             self.reloadSettings();
-
-                            // TODO
-                            // if (response['vocabulary_attributes']) {
-                            //     self.openVocabularyAttributesPopUp(response['vocabulary_attributes']);
-                            // }
                         }
                     }
                 });
@@ -741,7 +749,7 @@ define([
                         class: 'right-help-icon'
                     });
 
-                var helpIconTpl = $('product_search_help_icon_tpl');
+                var helpIconTpl = $('variation_settings_form_help_icon_tpl');
 
                 spanLeftHelpIcon.update(helpIconTpl.innerHTML);
                 spanLeftHelpIcon.down('.tool-tip-message-text').update(M2ePro.translator.translate('help_icon_magento_greater_left'));
@@ -1224,7 +1232,7 @@ define([
                         class: 'right-help-icon'
                     });
 
-                var helpIconTpl = $('product_search_help_icon_tpl');
+                var helpIconTpl = $('variation_settings_form_help_icon_tpl');
 
                 spanLeftHelpIcon.update(helpIconTpl.innerHTML);
                 spanLeftHelpIcon.down('.tool-tip-message-text').update(M2ePro.translator.translate('help_icon_amazon_greater_left'));

@@ -29,13 +29,12 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
     {
         $requestData = array();
 
-        $tempValue = $this->cacheConfig->getGroupValue('/default_baseurl_index/',
-                                                                                    'given_by_server_at');
+        $tempValue = $this->cacheConfig->getGroupValue('/server/location/','default_index_given_by_server_at');
         if ($tempValue) {
 
             $primaryConfig = $this->getHelper('Primary')->getConfig();
             $requestData['current_default_server_baseurl_index'] = $primaryConfig->getGroupValue(
-                '/server/', 'default_baseurl_index'
+                '/server/location/', 'default_index'
             );
         }
 
@@ -65,8 +64,8 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
 
         foreach ($data['servers_baseurls'] as $newHostName => $newBaseUrl) {
 
-            $oldHostName = $config->getGroupValue('/server/','hostname_'.$index);
-            $oldBaseUrl  = $config->getGroupValue('/server/','baseurl_'.$index);
+            $oldHostName = $config->getGroupValue('/server/location/'.$index.'/','hostname');
+            $oldBaseUrl  = $config->getGroupValue('/server/location/'.$index.'/','baseurl');
 
             if ($oldHostName != $newHostName || $oldBaseUrl != $newBaseUrl) {
                 $configUpdates[$index] = array(
@@ -80,15 +79,15 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
 
         for ($deletedIndex = $index; $deletedIndex < 100; $deletedIndex++) {
 
-            $deletedHostName = $config->getGroupValue('/server/','hostname_'.$deletedIndex);
-            $deletedBaseUrl  = $config->getGroupValue('/server/','baseurl_'.$deletedIndex);
+            $deletedHostName = $config->getGroupValue('/server/location/'.$deletedIndex.'/','hostname');
+            $deletedBaseUrl  = $config->getGroupValue('/server/location/'.$deletedIndex.'/','baseurl');
 
             if (is_null($deletedHostName) && is_null($deletedBaseUrl)) {
                 break;
             }
 
-            $config->deleteGroupValue('/server/','hostname_'.$deletedIndex);
-            $config->deleteGroupValue('/server/','baseurl_'.$deletedIndex);
+            $config->deleteGroupValue('/server/location/'.$deletedIndex.'/','hostname');
+            $config->deleteGroupValue('/server/location/'.$deletedIndex.'/','baseurl');
         }
 
         if (empty($configUpdates)) {
@@ -119,8 +118,8 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         foreach ($configUpdates as $index => $change) {
-            $config->setGroupValue('/server/', 'hostname_'.$index, $change['hostname']);
-            $config->setGroupValue('/server/', 'baseurl_'.$index, $change['baseurl']);
+            $config->setGroupValue('/server/location/'.$index.'/', 'hostname', $change['hostname']);
+            $config->setGroupValue('/server/location/'.$index.'/', 'baseurl', $change['baseurl']);
         }
     }
 
@@ -131,11 +130,11 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $this->getHelper('Primary')->getConfig()->setGroupValue(
-            '/server/','default_baseurl_index',(int)$data['default_server_baseurl_index']
+            '/server/location/','default_index',(int)$data['default_server_baseurl_index']
         );
 
         $this->cacheConfig->setGroupValue(
-            '/default_baseurl_index/', 'given_by_server_at', $this->getHelper('Data')->getCurrentGmtDate()
+            '/server/location/', 'default_index_given_by_server_at', $this->getHelper('Data')->getCurrentGmtDate()
         );
     }
 
@@ -146,7 +145,10 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $this->cacheConfig->setGroupValue(
-            '/installation/', 'last_version', $data['last_version']
+            '/installation/', 'public_last_version', $data['last_version']['magento_2']['public']
+        );
+        $this->cacheConfig->setGroupValue(
+            '/installation/', 'build_last_version', $data['last_version']['magento_2']['build']
         );
     }
 

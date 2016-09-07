@@ -66,8 +66,8 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
                 <p>More detailed information about creation of New Amazon Products and Description Policies
                  you can find in the following article article
-                 <a href="%url%" target="_blank">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/LQgtAQ')
+                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LQgtAQ')
             ),
         ]);
 

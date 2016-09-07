@@ -136,9 +136,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         );
 
-//        if (Mage::helper('M2ePro/Component_Amazon')->isRepricingEnabled()) {
-//            $priceColumn['filter'] = 'M2ePro/adminhtml_common_amazon_grid_column_filter_price';
-//        }
+        $account = $this->amazonFactory->getObjectLoaded('Account', $this->getRequest()->getParam('account'));
+
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            $account->getChildObject()->isRepricing()) {
+            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+        }
 
         $this->addColumn('online_price', $priceColumn);
 
@@ -157,15 +160,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             ),
             'frame_callback' => array($this, 'callbackColumnStatus')
         ));
-
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam(
-            '*/amazon_listing_other/view',
-            array(
-                'account' => $this->getRequest()->getParam('account'),
-                'marketplace' => $this->getRequest()->getParam('marketplace'),
-                'back' => $this->getRequest()->getParam('back', null)
-            )
-        );
 
         return parent::_prepareColumns();
     }
@@ -305,9 +299,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         <div class="in-stock">{$inStock}: <span></span></div>
     </div>
     <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$productId}, {$accountId})">
-        {$afn}
-    </a>
+        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}',{$productId}, {$accountId})">{$afn}</a>
 </div>
 HTML;
         }
@@ -328,39 +320,31 @@ HTML;
         $html ='';
         $value = $row->getChildObject()->getData('online_price');
 
-        /*
-        if ($this->getHelper('Component_Amazon')->isRepricingEnabled() &&
-            (int)$row->getData('is_repricing') === Ess_M2ePro_Model_Amazon_Listing_Other::IS_REPRICING_YES) {
 
-            $image = 'money';
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            (int)$row->getChildObject()->getData('is_repricing') == 1) {
+            
+            $icon = 'repricing-enabled';
             $text = $this->__(
                 'This product is used by Amazon Repricing Tool.
                  The Price cannot be updated through the M2E Pro.'
             );
 
-            $isRepricingDisabled = Ess_M2ePro_Model_Amazon_Listing_Other::IS_REPRICING_DISABLED_YES;
-
-            if ((int)$row->getData('is_repricing_disabled') === $isRepricingDisabled) {
-                $image = 'money_disabled';
+            if ((int)$row->getChildObject()->getData('is_repricing_disabled') == 1) {
+                $icon = 'repricing-disabled';
                 $text = $this->__(
-                    'This product is disabled for Amazon Repricing Tool.
-                     The Price cannot be updated through the M2E Pro. TODO TEXT'
+                    'This product is disabled on Amazon Repricing Tool.
+                     The Price is updated through the M2E Pro.'
                 );
             }
 
             $html = <<<HTML
-<span style="float:right; text-align: left;">&nbsp;
-    <img class="tool-tip-image"
-         style="vertical-align: middle; width: 16px;"
-         src="{$this->getSkinUrl('M2ePro/images/'.$image.'.png')}">
-    <span class="tool-tip-message tool-tip-message tip-left" style="display:none;">
-        <img src="{$this->getSkinUrl('M2ePro/images/i_icon.png')}">
-        <span>{$text}</span>
-    </span>
-</span>
+&nbsp;<div class="fix-magento-tooltip {$icon}" style="float:right;">
+    {$this->getTooltipHtml($text)}
+</div>
 HTML;
         }
-        */
+
 
         if (is_null($value) || $value === '') {
             return $this->__('N/A') . $html;
@@ -374,6 +358,26 @@ HTML;
                         ->getCachedObjectLoaded('Marketplace',$row->getData('marketplace_id'))
                         ->getChildObject()
                         ->getDefaultCurrency();
+
+        $priceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($value) . $html;
+
+        if ($row->getData('is_repricing') &&
+            !$row->getData('is_repricing_disabled')
+        ) {
+            $accountId = $row->getData('account_id');
+            $sku = $row->getData('sku');
+
+            $priceValue =<<<HTML
+<a id="m2epro_repricing_price_value_{$sku}"
+   class="m2epro-repricing-price-value"
+   sku="{$sku}"
+   account_id="{$accountId}"
+   href="javascript:void(0)"
+   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$priceValue}</a>
+HTML;
+
+            return $priceValue.$html;
+        }
 
         return $this->localeCurrency->getCurrency($currency)->toCurrency($value) . $html;
     }
@@ -461,12 +465,12 @@ HTML;
             $where .= 'online_price <= ' . $value['to'];
         }
 
-//        if ($this->getHelper('M2ePro/Component_Amazon')->isRepricingEnabled() && !empty($value['is_repricing'])) {
-//            if (!empty($where)) {
-//                $where = '(' . $where . ') OR ';
-//            }
-//            $where .= 'is_repricing = ' . Ess_M2ePro_Model_Amazon_Listing_Other::IS_REPRICING_YES;
-//        }
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
+            if (!empty($where)) {
+                $where = '(' . $where . ') OR ';
+            }
+            $where .= 'is_repricing = ' . 1;
+        }
 
         $collection->getSelect()->where($where);
     }
@@ -533,15 +537,15 @@ HTML;
         }
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'Last Action was completed with warning(s).'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary', '', [
@@ -592,15 +596,15 @@ HTML;
 
     public function getMainTypeForActionId($actionRows)
     {
-        $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
 
         foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
                 break;
             }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
             }
         }
 

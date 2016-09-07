@@ -16,7 +16,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -289,19 +289,20 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                     'delete' => 0
                 );
 
-                $this->ebayFactory->getObjectLoaded(
-                    'Listing\Product\Variation',
-                    $aVariation['variation']['id']
-                )->addData($dataForUpdate)->save();
+                $listingProductVariation = $this->ebayFactory->getObjectLoaded(
+                    'Listing\Product\Variation', $aVariation['variation']['id']
+                );
+                $listingProductVariation->getChildObject()->addData($dataForUpdate);
+                $listingProductVariation->save();
 
                 continue;
             }
 
             $dataForAdd = array(
                 'listing_product_id' => $listingProduct->getId(),
-                'add' => 1,
-                'delete' => 0,
-                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
+                'add'                => 1,
+                'delete'             => 0,
+                'status'             => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED
             );
 
             $newVariationId = $this->ebayFactory->getObject('Listing\Product\Variation')
@@ -311,10 +312,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                 $dataForAdd = array(
                     'listing_product_variation_id' => $newVariationId,
-                    'product_id' => $aOption['product_id'],
-                    'product_type' => $aOption['product_type'],
-                    'attribute' => $aOption['attribute'],
-                    'option' => $aOption['option']
+                    'product_id'                   => $aOption['product_id'],
+                    'product_type'                 => $aOption['product_type'],
+                    'attribute'                    => $aOption['attribute'],
+                    'option'                       => $aOption['option']
                 );
 
                 $this->ebayFactory->getObject('Listing\Product\Variation\Option')->addData($dataForAdd)->save();
@@ -336,14 +337,15 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             } else {
 
                 $dataForUpdate = array(
-                    'add' => 0,
+                    'add'    => 0,
                     'delete' => 1
                 );
 
-                $this->ebayFactory->getObjectLoaded(
-                    'Listing\Product\Variation',
-                    $dVariation['variation']['id']
-                )->addData($dataForUpdate)->save();
+                $listingProductVariation = $this->ebayFactory->getObjectLoaded(
+                    'Listing\Product\Variation', $dVariation['variation']['id']
+                );
+                $listingProductVariation->getChildObject()->addData($dataForUpdate);
+                $listingProductVariation->save();
             }
         }
     }

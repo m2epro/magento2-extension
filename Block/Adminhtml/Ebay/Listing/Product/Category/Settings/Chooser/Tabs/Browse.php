@@ -27,5 +27,10 @@ class Browse extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         // ---------------------------------------
     }
 
+    public function isWizardActive()
+    {
+        return $this->getHelper('Module\Wizard')->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK);
+    }
+
     //########################################
 }

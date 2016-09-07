@@ -63,7 +63,6 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
                     break;
                 default:
                     throw new \Ess\M2ePro\Model\Exception('The requested Quantity is not available.');
-                    break;
             }
         }
 
@@ -79,7 +78,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     public function addQty($qty, $save = true)
     {
         $stockItem = $this->getStockItem();
-        $stockItem->setQty($qty);
+        $stockItem->setQty($stockItem->getQty() + $qty);
 
         if ($this->stockConfiguration->getCanBackInStock() && $stockItem->getQty() > $stockItem->getMinQty()) {
             $stockItem->setIsInStock(true);

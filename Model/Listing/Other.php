@@ -348,8 +348,8 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
             // M2ePro\TRANSLATIONS
             // Item was successfully Mapped
             'Item was successfully Mapped',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
     }
 
     /**
@@ -370,8 +370,8 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
             // M2ePro\TRANSLATIONS
             // Item was successfully Unmapped
             'Item was successfully Unmapped',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
     }
 
     //########################################

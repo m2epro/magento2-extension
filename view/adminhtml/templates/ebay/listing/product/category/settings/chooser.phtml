@@ -84,9 +84,6 @@ JS
     table.m2e-category-chooser td {
         padding-bottom: 3px;
     }
-    table.m2e-category-chooser .validation-advice {
-        color: red;
-    }
 </style>
 
 <?php if (!$block->_isAjax): ?>
@@ -140,10 +137,10 @@ JS
                                      $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
 
                                     <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['message'])): ?>
-                                        <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['message']; ?></div>
+                                        <label class="mage-error default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN]['message']; ?></label>
                                     <?php endif; ?>
                                 <?php endif; ?>
-                                <div class="validation-advice main-empty-advice" style="display: none;"><?php echo $block->__('eBay Primary Category must be selected.') ?></div>
+                                <label class="mage-error main-empty-advice" style="display: none;"><?php echo $block->__('eBay Catalog Primary Category must be selected.') ?></label>
                             <td></td>
                         </tr>
 
@@ -178,7 +175,7 @@ JS
                                     || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
 
                                     <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['message'])): ?>
-                                        <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['message']; ?></div>
+                                        <label class="mage-error default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_SECONDARY]['message']; ?></label>
                                     <?php endif; ?>
                                 <?php endif; ?>
                             <td></td>
@@ -239,10 +236,10 @@ JS
                                         || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
 
                                         <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['message'])): ?>
-                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['message']; ?></div>
+                                            <label class="mage-error default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_MAIN]['message']; ?></label>
                                         <?php endif; ?>
                                     <?php endif; ?>
-                                    <div class="validation-advice main-store-empty-advice" style="display: none;"><?php echo $block->__('eBay Primary Store Category must be selected.') ?></div>
+                                    <label class="mage-error main-store-empty-advice" style="display: none;"><?php echo $block->__('eBay Primary Store Category must be selected.') ?></label>
                                 <td></td>
                             </tr>
 
@@ -263,9 +260,6 @@ JS
                                         <?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['path']; ?>
                                     <?php else: ?>
                                         <span style="font-style: italic; color: grey" id="magento_block_ebay_listing_category_chooser_store_secondary_not_selected"><?php echo $block->__('Not Selected'); ?></span>
-                                        <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message'])): ?>
-                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message']; ?></div>
-                                        <?php endif; ?>
                                     <?php endif; ?>
                                 </td>
                                 <?php if ($isShowEditLinks): ?>
@@ -281,9 +275,10 @@ JS
                                         || $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['mode'] != \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE): ?>
 
                                         <?php if (isset($internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message'])): ?>
-                                            <div class="validation-advice default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message']; ?></div>
+                                            <label class="mage-error default-value-message"><?php echo $internalData[\Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_STORE_SECONDARY]['message']; ?></label>
                                         <?php endif; ?>
                                     <?php endif; ?>
+                                </td>
                                 <td></td>
                             </tr>
 

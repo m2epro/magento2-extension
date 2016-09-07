@@ -1,10 +1,25 @@
 define([
+    'jquery',
     'M2ePro/Ebay/Listing/View/Grid',
     'M2ePro/Listing/Moving',
-    'Magento_Ui/js/modal/confirm'
-], function () {
+    'Magento_Ui/js/modal/modal'
+], function (jQuery) {
 
     window.EbayListingViewSettingsGrid = Class.create(EbayListingViewGrid, {
+
+        // ---------------------------------------
+
+        initialize: function($super,gridId,listingId)
+        {
+            jQuery.validator.addMethod('M2ePro-validate-ebay-template-switcher', function(value, $element) {
+
+               var mode = base64_decode(value).evalJSON().mode;
+
+               return mode !== null;
+            }, M2ePro.translator.translate('This is a required field.'));
+
+            $super(gridId);
+        },
 
         // ---------------------------------------
 
@@ -22,17 +37,36 @@ define([
                 editStorePrimaryCategorySettingsAction: function(id) {
                     this.editCategorySettings(id);
                 }.bind(this),
-                editAllSettingsAction: function(id) {
-                    this.editSettings(id);
+
+                editPriceQuantityFormatSettingsAction: function(id) {
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SELLING_FORMAT')
+                    );
                 }.bind(this),
-                editGeneralSettingsAction: function(id) {
-                    this.editSettings(id, 'general');
-                }.bind(this),
-                editSellingSettingsAction: function(id) {
-                    this.editSettings(id, 'selling');
+                editDescriptionSettingsAction: function(id) {
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_DESCRIPTION')
+                    );
                 }.bind(this),
                 editSynchSettingsAction: function(id) {
-                    this.editSettings(id, 'synchronization');
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SYNCHRONIZATION')
+                    );
+                }.bind(this),
+                editPaymentSettingsAction: function(id) {
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_PAYMENT')
+                    );
+                }.bind(this),
+                editShippingSettingsAction: function(id) {
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SHIPPING')
+                    );
+                }.bind(this),
+                editReturnSettingsAction: function(id) {
+                    this.editSettings(id,
+                        M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_RETURN_POLICY')
+                    );
                 }.bind(this),
 
                 editMotorsAction: function(id) {
@@ -50,26 +84,73 @@ define([
 
         // ---------------------------------------
 
-        editSettings: function(id, tab)
+        editSettings: function(id, templateNick)
         {
             this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_ebay_template/editListingProduct'), {
+            new Ajax.Request(M2ePro.url.get('ebay_template/editListingProductsPolicy'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: {
                     ids: this.selectedProductsIds.join(','),
-                    tab: tab || ''
+                    templateNick: templateNick
                 },
                 onSuccess: function(transport) {
+                    
+                    var result = transport.responseText;
+                    
+                    if (+result === 0) {
+                        return;
+                    }
 
                     this.unselectAll();
 
-                    var title = this.getPopUpTitle(tab, this.getSelectedProductsTitles());
+                    var title = this.getPopUpTitle(templateNick, this.getSelectedProductsTitles());
 
-                    this.openPopUp(title, transport.responseText);
+                    if (typeof this.popUp != 'undefined') {
+                        var $title = this.popUp.data('modal').modal.find('.modal-title');
+                        $title.text(title);
+                    }
 
-                    ebayListingTemplateEditTabsJsTabs.moveTabContentInDest();
+                    this.openPopUp(
+                        title,
+                        transport.responseText,
+                        {
+                            buttons: [{
+                                text: M2ePro.translator.translate('Cancel'),
+                                class: 'action-dismiss',
+                                click: function () {
+                                    this.closeModal();
+                                }
+                            }, {
+                                text: M2ePro.translator.translate('Save'),
+                                class: 'action-primary action-accept',
+                                click: function () {
+                                    var switcher = jQuery('.template-switcher');
+
+                                    if (!switcher.length ||
+                                        !jQuery.validator.validateElement(switcher)) {
+                                        return;
+                                    }
+
+                                    EbayListingTemplateSwitcherObj.saveSwitchers(function (params) {
+                                        EbayListingViewSettingsGridObj.saveSettings(params);
+                                    });
+                                }
+                            }],
+                            closed: function() {
+                                self.selectedProductsIds = [];
+                                self.selectedCategoriesData = {};
+
+                                return true;
+                            }
+
+                        },
+                        'modal_setting_policy_action_dialog'
+                    );
+
+                    this.insertHelpLink('modal_setting_policy_action_dialog');
+
                 }.bind(this)
             });
         },
@@ -99,12 +180,12 @@ define([
             requestParams['ids'] = this.selectedProductsIds.join(',');
             // ---------------------------------------
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_ebay_template/saveListingProduct'), {
+            new Ajax.Request(M2ePro.url.get('ebay_template/saveListingProductsPolicy'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: requestParams,
                 onSuccess: function(transport) {
-                    Windows.getFocusedWindow().close();
+                    this.popUp.modal('closeModal');
                     this.getGridObj().doFilter();
                 }.bind(this)
             });
@@ -138,29 +219,42 @@ define([
 
         // ---------------------------------------
 
-        getPopUpTitle: function(tab, productTitles)
+        getPopUpTitle: function(templateNick, productTitles)
         {
-            var title;
+            var title = '',
+                templatesNames = {};
+            
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_RETURN_POLICY')
+            ] = M2ePro.translator.translate('Edit Return Policy Setting');
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_PAYMENT')
+            ] = M2ePro.translator.translate('Edit Payment Policy Setting');
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SHIPPING')
+            ] = M2ePro.translator.translate('Edit Shipping Policy Setting');
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_DESCRIPTION')
+            ] = M2ePro.translator.translate('Edit Description Policy Setting');
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SELLING_FORMAT')
+            ] = M2ePro.translator.translate('Edit Price, Quantity and Format Policy Setting');
+            templatesNames[
+                M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SYNCHRONIZATION')
+            ] = M2ePro.translator.translate('Edit Synchronization Policy Setting');
+            
+            if (templatesNames[templateNick]) {
+                title = templatesNames[templateNick];
+            }
 
-            switch (tab) {
-                case 'general':
-                    title = M2ePro.translator.translate('Edit Payment and Shipping Settings');
-                    break;
-                case 'selling':
-                    title = M2ePro.translator.translate('Edit Selling Settings');
-                    break;
-                case 'synchronization':
-                    title = M2ePro.translator.translate('Edit Synchronization Settings');
-                    break;
-                default:
-                    title = M2ePro.translator.translate('Edit Settings');
+            var productTitlesArray = productTitles.split(',');
+            if (productTitlesArray.length > 1) {
+                productTitles = productTitlesArray.map(function(el) { return el.trim(); }).join('", "');
             }
 
             if (productTitles) {
-                title += ' ' + M2ePro.translator.translate('for') + '"' + productTitles + '"';
+                title += ' ' + M2ePro.translator.translate('for') + ' "' + productTitles + '"';
             }
-
-            title += '.';
 
             return title;
         },
@@ -187,40 +281,19 @@ define([
             return true;
         },
 
-        // ---------------------------------------
-
-        removeTemplate: function (currentElement, url)
+        insertHelpLink: function (popUpElementId)
         {
-            var element = jQuery('<div class="remove_template_confirm_popup">');
+            var modalHeader = jQuery('#'+popUpElementId)
+                    .closest('.modal-inner-wrap')
+                    .find('h1.modal-title');
 
-            element.confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
-                actions: {
-                    confirm: function () {
-                        new Ajax.Request(url, {
-                            method: 'get',
-                            asynchronous: true,
-                            onSuccess: function(transport) {
+            if (modalHeader.has('#popup_template_help_link')) {
+                modalHeader.find('#popup_template_help_link').remove();
+            }
 
-                                var result = JSON.parse(transport.responseText);
-                                if (!result.success) {
-                                    return;
-                                }
-
-                                currentElement.up().remove();
-
-                                $$('.product_templates').forEach(function(el) {
-                                    if (el.childElementCount) {
-                                        return;
-                                    }
-                                    
-                                    el.hide();
-                                });
-                            }
-                        });
-                    }
-                }
-            });
+            var tips = jQuery('#popup_template_help_link');
+            modalHeader.append(tips);
+            tips.show();
         }
 
         // ---------------------------------------

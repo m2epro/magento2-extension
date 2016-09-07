@@ -15,7 +15,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,

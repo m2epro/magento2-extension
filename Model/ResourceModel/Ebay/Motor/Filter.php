@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Motor;
 
-class Filter extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Filter extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

@@ -52,9 +52,9 @@ class License extends AbstractTab
                     <br/><br/>
                     <b>Note:</b> If you have not received the License Key, please contact us %email%.</br></br>
                     More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.',
-                    $email, $this->getHelper('Module\Support')->getDocumentationUrl(
-                        $componentForUrl, 'Global+Settings#GlobalSettings-License'
+                    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $email, $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                        'x/xAEtAQ'
                     ))
             ]
         );
@@ -84,9 +84,10 @@ class License extends AbstractTab
                     'label' => $this->__('Associated Email'),
                     'text' => $this->licenseData['info']['email'],
                     'tooltip' => $this->__(
-                        'This e-mail address associated to your License. <br/>
-                        Also you can use this e-mail to enter a <a href="%url%">clients portal</a>',
-                        $this->getHelper('Module\Support')->getClientsPortalBaseUrl())
+                        'That is an e-mail address associated to your License. 
+                        Also, you can use this e-mail to access a 
+                        <a href="%url%" target="_blank" class="external-link">clients portal</a>',
+                        $this->getHelper('Module\Support')->getClientsPortalUrl())
                 ]
             );
         }
@@ -96,7 +97,7 @@ class License extends AbstractTab
                 'note',
                 [
                     'label' => '',
-                    'text' => '<a href="'.$this->getHelper('Module\Support')->getClientsPortalBaseUrl()
+                    'text' => '<a href="'.$this->getHelper('Module\Support')->getClientsPortalUrl()
                               .'" target="_blank">'.$this->__('Manage License').'</a>'
                 ]
             );

@@ -57,7 +57,7 @@ class ErrorsSummary extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $dbSelect = $connection->select()
                              ->from($tableName,$fields)
                              ->where('`action_id` IN ('.$actionIdsString.')')
-                             ->where('`type` = ?',\Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR)
+                             ->where('`type` = ?',\Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR)
                              ->group('description')
                              ->order(array('count_products DESC'))
                              ->limit(100);

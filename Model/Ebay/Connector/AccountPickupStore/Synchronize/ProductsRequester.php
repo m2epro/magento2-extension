@@ -27,7 +27,7 @@ class ProductsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Marketplace $marketplace,
         \Ess\M2ePro\Model\Account $account,

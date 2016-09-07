@@ -51,6 +51,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $this->setDefaultDir('DESC');
         $this->setUseAjax(true);
         // ---------------------------------------
+
+        $this->useAdvancedFilter = false;
     }
 
     //########################################

@@ -84,7 +84,7 @@
     margin-bottom: 25px;
 }
 
- table td:first-child {
+#selected_category_container table td:first-child {
     padding: 1em .5em 1em 1.8rem;
 }
 
@@ -299,7 +299,7 @@ a.tool-tip-image-warning:active {
 }
 
 a.specific-remove-button:before {
-    color: #e22626;
+    color: #000;
     content: '\e632';
 }
 
@@ -309,7 +309,7 @@ a.specific-remove-button:before {
 }
 
 a.specific-add-button:before {
-    color: #5b8116;
+    color: #000;
     content: '\e61d';
 }
 
@@ -365,3 +365,28 @@ td.specifics-grid {
     position: relative;
     top: 4px;
 }
+
+/* Shipping Override */
+/* ================================================ */
+
+#shipping_override_rule_table {
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+#shipping_override_rule_table td {
+    text-align: center;
+}
+
+#shipping_override_rule_table td input,
+#shipping_override_rule_table td select {
+    width: 100%;
+}
+
+#shipping_override_rule_table .mage-error {
+    position: relative !important;
+    left: auto !important;
+    text-align: left;
+}
+
+/* ================================================ */

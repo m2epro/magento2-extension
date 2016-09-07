@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: HardRock
- * Date: 14.03.2016
- * Time: 16:40
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;
@@ -27,7 +27,6 @@ class GetAccounts extends General
                 'title' => $this->getHelper('Data')->escapeHtml($account->getTitle())
             );
 
-            // TODO join marketplace table
             if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
                 $marketplace = $account->getChildObject()->getMarketplace();
                 $data['marketplace_id'] = $marketplace->getId();

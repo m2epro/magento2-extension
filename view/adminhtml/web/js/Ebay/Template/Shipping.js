@@ -148,13 +148,6 @@ define([
 
         // ---------------------------------------
 
-        simple_mode_disallowed_hide: function()
-        {
-            $$('#template_shipping_data_container .simple_mode_disallowed').invoke('hide');
-        },
-
-        // ---------------------------------------
-
         countryModeChange : function()
         {
             var self = EbayTemplateShippingObj,
@@ -961,10 +954,8 @@ define([
 
         // ---------------------------------------
 
-        addRow: function(type, renderSaved) // local|international
+        addRow: function(type) // local|international
         {
-            renderSaved = renderSaved || false;
-
             $('shipping_'+type+'_table').show();
             $('add_'+type+'_shipping_method_button').hide();
 
@@ -983,22 +974,14 @@ define([
             // ---------------------------------------
 
             // ---------------------------------------
-            if (renderSaved) {
-
-                AttributeObj.renderAttributesWithEmptyOption('shipping[shipping_cost_attribute][' + i + ']', row.down('.shipping-cost-ca'));
-                //var handlerObj = new AttributeCreator('shipping[shipping_cost_attribute][' + i + ']');
-                //handlerObj.setSelectObj($('shipping[shipping_cost_attribute][' + i + ']'));
-                //handlerObj.injectAddOption();
-
-                AttributeObj.renderAttributesWithEmptyOption('shipping[shipping_cost_additional_attribute][' + i + ']', row.down('.shipping-cost-additional-ca'));
-                //var handlerObj = new AttributeCreator('shipping[shipping_cost_additional_attribute][' + i + ']');
-                //handlerObj.setSelectObj($('shipping[shipping_cost_additional_attribute][' + i + ']'));
-                //handlerObj.injectAddOption();
-
-            } else {
-                // remove custom attribute option
-                row.down('.cost-mode').remove(2);
-            }
+            AttributeObj.renderAttributesWithEmptyOption('shipping[shipping_cost_attribute][' + i + ']', row.down('.shipping-cost-ca'));
+            var handlerObj = new AttributeCreator('shipping[shipping_cost_attribute][' + i + ']');
+            handlerObj.setSelectObj($('shipping[shipping_cost_attribute][' + i + ']'));
+            handlerObj.injectAddOption();
+            AttributeObj.renderAttributesWithEmptyOption('shipping[shipping_cost_additional_attribute][' + i + ']', row.down('.shipping-cost-additional-ca'));
+            var handlerObj = new AttributeCreator('shipping[shipping_cost_additional_attribute][' + i + ']');
+            handlerObj.setSelectObj($('shipping[shipping_cost_additional_attribute][' + i + ']'));
+            handlerObj.injectAddOption();
             // ---------------------------------------
 
             // ---------------------------------------
@@ -1023,19 +1006,15 @@ define([
                 tpl = tpl.replace(/%i%/g, i);
                 $(id).insert(tpl);
 
-                if (renderSaved) {
-                    AttributeObj.renderAttributesWithEmptyOption(
-                        'shipping[shipping_cost_surcharge_attribute][' + i + ']',
-                        $('shipping_variant_cost_surcharge_' + i + '_tr').down('.shipping-cost-surcharge-ca'));
-
-                    $('shipping[shipping_cost_surcharge_attribute][' + i + ']').insert({
-                        top: new Element('option', {selected: true}).update(M2ePro.translator.translate('None'))
-                    });
-
-                    //var handlerObj = new AttributeCreator('shipping[shipping_cost_surcharge_attribute][' + i + ']');
-                    //handlerObj.setSelectObj($('shipping[shipping_cost_surcharge_attribute][' + i + ']'));
-                    //handlerObj.injectAddOption();
-                }
+                AttributeObj.renderAttributesWithEmptyOption(
+                    'shipping[shipping_cost_surcharge_attribute][' + i + ']',
+                    $('shipping_variant_cost_surcharge_' + i + '_tr').down('.shipping-cost-surcharge-ca'));
+                $('shipping[shipping_cost_surcharge_attribute][' + i + ']').insert({
+                    top: new Element('option', {selected: true}).update(M2ePro.translator.translate('None'))
+                });
+                var handlerObj = new AttributeCreator('shipping[shipping_cost_surcharge_attribute][' + i + ']');
+                handlerObj.setSelectObj($('shipping[shipping_cost_surcharge_attribute][' + i + ']'));
+                handlerObj.injectAddOption();
             }
             // ---------------------------------------
 
@@ -1296,7 +1275,7 @@ define([
             shippingMethods.each(function(service, i) {
 
                 var type = service.shipping_type == 1 ? 'international' : 'local';
-                var row = EbayTemplateShippingObj.addRow(type, true);
+                var row = EbayTemplateShippingObj.addRow(type);
                 var surchargeRow = $('shipping_variant_cost_surcharge_' + i + '_tr');
 
                 row.down('.shipping-service').value = service.shipping_value;

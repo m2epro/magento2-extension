@@ -104,8 +104,6 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
                 $this->orderItem->save();
             }
         }
-
-        return;
     }
 
     protected function prepareResponseData()

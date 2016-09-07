@@ -96,7 +96,6 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 );
                 $snapshots[$listingProduct->getId()] = $dataSnapshot;
 
-                //TODO
                 $listingProduct->setData('template_category_id', $categoryTemplateId);
                 $listingProduct->setData('template_other_category_id', $otherCategoryTemplateId);
                 $listingProduct->getChildObject()->setData('template_category_id', $categoryTemplateId);

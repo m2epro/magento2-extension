@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Order\Item;
 
-class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractCollection
+class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Child\AbstractModel
 {
     //########################################
 

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
-class Product extends AbstractCondition
+class Product extends AbstractModel
 {
     protected $url;
     protected $config;
@@ -43,7 +43,7 @@ class Product extends AbstractCondition
         $this->attrSetCollection = $attrSetCollection;
         $this->productFactory = $productFactory;
         $this->localeFormat = $localeFormat;
-        parent::__construct($modelFactory, $helperFactory, $context, $data);
+        parent::__construct($helperFactory, $modelFactory, $context, $data);
     }
 
     //########################################
@@ -129,7 +129,9 @@ class Product extends AbstractCondition
             return $this->_layout->getBlockSingleton($this->getValueElementType());
         }
 
-        return $this->_layout->getBlockSingleton('Ess\M2ePro\Adminhtml\Magento\Product\Rule\Renderer\Editable');
+        return $this->_layout->getBlockSingleton(
+            'Ess\M2ePro\Block\Adminhtml\Magento\Product\Rule\Renderer\Editable'
+        );
     }
 
     //########################################
@@ -152,7 +154,7 @@ class Product extends AbstractCondition
             'form' => $this->getJsFormObject()
         );
 
-        return $this->url->getUrl('*/adminhtml_general/getRuleConditionChooserHtml', $urlParameters);
+        return $this->url->getUrl('*/general/getRuleConditionChooserHtml', $urlParameters);
     }
 
     //########################################
@@ -210,7 +212,7 @@ class Product extends AbstractCondition
         foreach ($this->getCustomFilters() as $filterId => $instanceName) {
             $customFilterInstance = $this->getCustomFilterInstance($filterId);
 
-            if ($customFilterInstance instanceof \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom) {
+            if ($customFilterInstance instanceof \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel) {
                 $attributes[$filterId] = $customFilterInstance->getLabel();
             }
         }
@@ -332,7 +334,7 @@ class Product extends AbstractCondition
 
         switch ($this->getAttribute()) {
             case 'sku': case 'category_ids':
-            $image = $this->_assetRepo->getUrl('M2ePro/images/rule_chooser_trigger.gif');
+            $image = $this->_assetRepo->getUrl('Ess_M2ePro::images/rule_chooser_trigger.gif');
             break;
         }
 
@@ -450,13 +452,13 @@ class Product extends AbstractCondition
         if ($this->isFilterCustom($this->getAttribute())
             && $this->getCustomFilterInstance($this->getAttribute())->getInputType() == 'date'
         ) {
-            $element->setImage($this->_assetRepo->getUrl('M2ePro/images/grid-cal.gif'));
+            $element->setImage($this->_assetRepo->getUrl('Ess_M2ePro::images/grid-cal.gif'));
         }
 
         if (is_object($this->getAttributeObject())) {
             switch ($this->getAttributeObject()->getFrontendInput()) {
                 case 'date':
-                    $element->setImage($this->_assetRepo->getUrl('M2ePro/images/grid-cal.gif'));
+                    $element->setImage($this->_assetRepo->getUrl('Ess_M2ePro::images/grid-cal.gif'));
                     break;
             }
         }
@@ -565,7 +567,7 @@ class Product extends AbstractCondition
 
     /**
      * @param $filterId
-     * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom
+     * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId)
     {

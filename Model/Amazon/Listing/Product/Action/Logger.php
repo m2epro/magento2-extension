@@ -26,7 +26,8 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     protected $activeRecordFactory;
 
     //########################################
-    function __construct(
+
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -100,7 +101,7 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
      */
     public function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
                                              \Ess\M2ePro\Model\Connector\Connection\Response\Message $message,
-                                             $priority = \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM)
+                                             $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
     {
         $this->getListingLog()->addProductMessage($listingProduct->getListingId() ,
                                                   $listingProduct->getProductId() ,
@@ -137,27 +138,27 @@ class Logger extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($message->isError()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
         }
 
         if ($message->isWarning()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_WARNING);
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
         }
 
         if ($message->isSuccess()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
         }
 
         if ($message->isNotice()) {
             $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
-            return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE;
+            return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE;
         }
 
         $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
 
-        return \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+        return \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
     }
 
     //########################################

@@ -175,15 +175,15 @@ final class Categories extends AbstractModel
         // M2ePro\TRANSLATIONS
         // The "Categories" Action for %amazon% Marketplace: "%mrk%" has been successfully completed.
 
-        $tempString = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+        $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Categories" Action for %amazon% Marketplace: "%mrk%" has been successfully completed.',
             array('!amazon' => $this->getHelper('Component\Amazon')->getTitle(),
                   'mrk'     => $marketplace->getTitle())
         );
 
         $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW);
+                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
     }
 
     //########################################

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
-class StopQueue extends ActiveRecord\AbstractDb
+class StopQueue extends ActiveRecord\AbstractModel
 {
     //########################################
 

@@ -51,7 +51,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Connector\Connection\Response $response,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -86,7 +86,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             $this->getLogger()->logListingProductMessage(
                 $listingProduct,
                 $message,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }

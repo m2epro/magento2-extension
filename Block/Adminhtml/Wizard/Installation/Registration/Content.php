@@ -33,8 +33,8 @@ License Key will be generated automatically.<br/><br/>
 Having access to your Account on clients.m2epro.com will let you manage your Subscription,
 monitor Trial and Paid Period terms, control License Key(s) data, etc.
 HTML
-            , $this->getHelper('Module\Support')->getMainWebsiteUrl() . 'privacy'
-            , $this->getHelper('Module\Support')->getClientsPortalBaseUrl()
+            , $this->getHelper('Module\Support')->getWebsiteUrl() . 'privacy'
+            , $this->getHelper('Module\Support')->getClientsPortalUrl()
         )
         );
 
@@ -50,15 +50,7 @@ HTML
         // ---------------------------------------
 
         // ---------------------------------------
-        $userInfo = $this->authSession->getUser()->getData();
-
-        $defaultStore = $this->getHelper('Magento\Store')->getDefaultStore();
-
-        $userInfo['city'] = $defaultStore->getConfig(\Magento\Shipping\Model\Config::XML_PATH_ORIGIN_CITY);
-        $userInfo['postal_code'] = $defaultStore->getConfig(\Magento\Shipping\Model\Config::XML_PATH_ORIGIN_POSTCODE);
-        $userInfo['country'] = $defaultStore->getConfig(
-            \Magento\Config\Model\Config\Backend\Admin\Custom::XML_PATH_GENERAL_COUNTRY_DEFAULT
-        );
+        $userInfo = $this->getHelper('Magento\Admin')->getCurrentInfo();
         // ---------------------------------------
 
         // ---------------------------------------
@@ -129,6 +121,18 @@ HTML
                 'name' => 'lastname',
                 'label' => $this->__('Last Name'),
                 'value' => $this->getUserInfoValue('lastname'),
+                'required' => true,
+                'disabled' => $this->getData('isLicenseStepFinished')
+            ]
+        );
+
+        $fieldset->addField(
+            'phone',
+            'text',
+            [
+                'name' => 'phone',
+                'label' => $this->__('Phone'),
+                'value' => $this->getUserInfoValue('phone'),
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]

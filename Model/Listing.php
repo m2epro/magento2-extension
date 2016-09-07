@@ -102,10 +102,10 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     
     //########################################
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
-        return parent::save();
+        return parent::save($reloadOnCreate);
     }
     
     //########################################
@@ -136,8 +136,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             // M2ePro\TRANSLATIONS
             // Listing was successfully deleted
             'Listing was successfully deleted',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
 
         $this->accountModel = NULL;
@@ -491,8 +491,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             // M2ePro\TRANSLATIONS
             // Item was successfully Added
             'Item was successfully Added',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW,
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
             $logAdditionalInfo
         );
         // ---------------------------------------
@@ -596,8 +596,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                                     NULL,
                                     \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_MAGENTO,
                                     NULL,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH);
+                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
+                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH);
         }
 
         $processedListings = array();
@@ -642,8 +642,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                                     // M2ePro\TRANSLATIONS
                                     // Variation Option was deleted. Item was reset.
                                     'Variation Option was deleted. Item was reset.',
-                                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH);
+                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING,
+                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH);
         }
 
         foreach ($listingsProductsForRemove as $listingProduct) {

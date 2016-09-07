@@ -130,25 +130,26 @@ HTML;
         if ($this->isGeneralIdOwner() && $this->hasChannelTheme()) {
 
             $html .= <<<HTML
-        <td style="padding-left: 5px; width: 160px; text-align: center; vertical-align: middle;" rowspan="6">
+        <td style="border-left: none; border-right: none; padding-left: 5px; 
+                   width: 185px; text-align: center; vertical-align: middle;" rowspan="6">
 HTML;
 
             if ($this->hasUnusedChannelVariations()) {
 
                 $html .= <<<HTML
-            <div id="manage_variations_create_new_asin">
-                {$this->__('or')}&nbsp;&nbsp;
-                <a href="javascript:void(0);" onclick="ListingGridHandlerObj.createNewAsinBtn()">
-                    {$this->__('Create New ASIN/ISBN')}
-                </a>
-            </div>
-            <div id="manage_variations_select_options" style="display: none;">
-                <input type="hidden" name="create_new_asin" disabled="disabled" value="1">
-                {$this->__('or')}&nbsp;&nbsp;
-                <a href="javascript:void(0);" onclick="ListingGridHandlerObj.selectOptionsBtn()">
-                    {$this->__('Select Existing Variation')}
-                </a>
-            </div>
+        <div id="manage_variations_create_new_asin">
+            {$this->__('or')}&nbsp;&nbsp;
+            <a href="javascript:void(0);" onclick="ListingProductVariationManageVariationsGridObj.createNewAsinBtn()">
+                {$this->__('Create New ASIN/ISBN')}
+            </a>
+        </div>
+        <div id="manage_variations_select_options" style="display: none;">
+            <input type="hidden" name="create_new_asin" disabled="disabled" value="1">
+            {$this->__('or')}&nbsp;&nbsp;
+            <a href="javascript:void(0);" onclick="ListingProductVariationManageVariationsGridObj.selectOptionsBtn()">
+                {$this->__('Select Existing Variation')}
+            </a>
+        </div>
 HTML;
             } else {
             
@@ -180,7 +181,7 @@ HTML;
             <input type="hidden"
                    value="{$this->getHelper('Data')->escapeHtml($amazonAttr)}"
                    name="new_child_product[channel][attributes][]" class="new-child-channel-attribute">
-            <select id="new_child_product_channel_option_<?php echo $i ?>"
+            <select id="new_child_product_channel_option_{$i}"
                     name="new_child_product[channel][options][]"
                     class="new-child-channel-option select admin__control-select"
                     disabled="disabled"

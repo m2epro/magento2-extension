@@ -52,8 +52,7 @@ class Grid extends AccountGrid
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));
         
-        if ($this->getHelper('View\Ebay')->isAdvancedMode() &&
-            $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
+        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
 
             $this->addColumn('feedbacks', array(
                 'header'         => $this->__('Feedback'),
@@ -86,7 +85,7 @@ HTML;
         }
 
         $environmentLabel = $this->__('Environment');
-        $environment = (int)$row->getData('mode') == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX ?
+        $environment = (int)$row->getChildObject()->getData('mode') == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX ?
             'Sandbox (Test)' : 'Production (Live)';
         $environment = $this->__($environment);
 
@@ -102,6 +101,23 @@ HTML;
 
         return $value;
     }
+
+    public function callbackColumnFeedbacks($value, $row, $column, $isExport)
+    {
+        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown($row->getData('id'))) {
+            $link = <<<HTML
+<a href="javascript:void(0)" 
+    onclick="EbayAccountGridObj.openAccountFeedbackPopup({$row->getData('id')})" 
+    target="_blank">{$this->__('Feedback')}</a>
+HTML;
+        } else {
+            $link = '<strong style="color: gray;">' . $this->__("Disabled") . '</strong>';
+        }
+
+        return $link;
+    }
+
+    //########################################
 
     protected function callbackFilterTitle($collection, $column)
     {
@@ -129,18 +145,5 @@ HTML;
         );
     }
 
-// TODO NOT SUPPORTED FEATURES
-//    public function callbackColumnFeedbacks($value, $row, $column, $isExport)
-//    {
-//        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown($row->getData('id'))) {
-//            $url = $this->getUrl('*/adminhtml_ebay_feedback/index', array('account' => $row->getId()));
-//            $link = '<a href="' . $url . '" target="_blank">'. $this->__("Feedback") . '</a>';
-//        } else {
-//            $link = '<strong style="color: gray;">'
-//                . $this->__("Disabled") .
-//                '</strong>';
-//        }
-//
-//        return $link;
-//    }
+    //########################################
 }

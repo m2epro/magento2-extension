@@ -36,7 +36,7 @@ class Edit extends Template
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Synchronization Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
-        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=19726866');
+        $this->setPageHelpLink('x/OwItAQ');
         $this->addContent($this->createBlock('Amazon\Template\Synchronization\Edit'));
 
         return $this->getResultPage();

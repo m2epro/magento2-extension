@@ -291,13 +291,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     //########################################
 
-    protected function _prepareMassactionBlock()
-    {
-        return $this;
-    }
-
-    //########################################
-
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
         $rowVal = $row->getData();
@@ -321,7 +314,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     public function getRowUrl($row)
     {
-        return false;
+        return $this->getUrl('*/amazon_listing/view', ['_current'=>true]);
     }
 
     //########################################
@@ -363,17 +356,17 @@ JS
 
     //########################################
 
-//    TODO
-//    protected function isShowRuleBlock()
-//    {
-//        /** @var $ruleModel Ess_M2ePro_Model_Magento_Product_Rule */
-//        $ruleModel = Mage::helper('M2ePro/Data_Global')->getValue('rule_model');
-//        if ($ruleModel->isEmpty()) {
-//            return false;
-//        }
-//
-//        return parent::isShowRuleBlock();
-//    }
+    protected function isShowRuleBlock()
+    {
+        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+        
+        if ($ruleModel->isEmpty()) {
+            return false;
+        }
+
+        return parent::isShowRuleBlock();
+    }
 
     //########################################
 }

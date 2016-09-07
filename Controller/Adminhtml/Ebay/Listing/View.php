@@ -13,14 +13,13 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 
-            // TODO NOT SUPPORTED FEATURES "Advanced search"
-//        // Set rule model
-//        // ---------------------------------------
-//        $this->setRuleData('ebay_rule_view_listing');
-//        // ---------------------------------------
+            // Set rule model
+            // ---------------------------------------
+            $this->setRuleData('ebay_rule_view_listing');
+            // ---------------------------------------
 
             $this->setAjaxContent(
-                $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View')->getGridHtml()
+                $this->createBlock('Ebay\Listing\View')->getGridHtml()
             );
             return $this->getResult();
         }
@@ -62,11 +61,10 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 
-        // TODO NOT SUPPORTED FEATURES "Advanced search"
-//        // Set rule model
-//        // ---------------------------------------
-//        $this->setRuleData('ebay_rule_view_listing');
-//        // ---------------------------------------
+        // Set rule model
+        // ---------------------------------------
+        $this->setRuleData('ebay_rule_view_listing');
+        // ---------------------------------------
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('M2E Pro Listing "%listing_title%"', $listing->getTitle())
@@ -75,5 +73,39 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $this->addContent($this->createBlock('Ebay\Listing\View'));
 
         return $this->getResult();
+    }
+
+    //########################################
+
+    protected function setRuleData($prefix)
+    {
+        $listingData = $this->getHelper('Data\GlobalData')->getValue('view_listing');
+
+        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
+        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->activeRecordFactory->getObject('Ebay\Magento\Product\Rule')->setData(
+            [
+                'prefix' => $prefix,
+                'store_id' => $storeId,
+            ]
+        );
+
+        $ruleParam = $this->getRequest()->getPost('rule');
+        if (!empty($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue(
+                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+            );
+        } elseif (!is_null($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue($prefix, []);
+        }
+
+        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        if (!empty($sessionRuleData)) {
+            $ruleModel->loadFromSerialized($sessionRuleData);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
     }
 }

@@ -36,11 +36,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
-    //########################################
-
     public function _construct()
     {
         parent::_construct();
+
+        $this->css->addFile('policy/grid.css');
 
         // Initialization block
         // ---------------------------------------
@@ -234,6 +234,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
@@ -244,6 +245,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'
@@ -260,17 +262,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'getter'    => 'getTemplateId',
             'actions'   => array(
                 array(
-                    'caption'   => $this->__('Edit'),
-                    'url'       => array(
-                        'base' => '*/amazon_template/edit',
-                        'params' => array(
-                            'type' => '$type'
-                        )
-                    ),
-                    'field'     => 'id'
-                ),
-                array(
                     'caption'   => $this->__('Delete'),
+                    'class'     => 'action-default scalable add primary policy-delete-btn',
                     'url'       => array(
                         'base' => '*/amazon_template/delete',
                         'params' => array(
@@ -287,9 +280,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $options = array(
             self::TEMPLATE_SELLING_FORMAT => $this->__('Selling Format'),
-//            self::TEMPLATE_SHIPPING_OVERRIDE => $this->__('Shipping Override'),
             self::TEMPLATE_DESCRIPTION => $this->__('Description'),
-            self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization')
+            self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
+            self::TEMPLATE_SHIPPING_OVERRIDE => $this->__('Shipping Override')
         );
 
         $this->getColumn('type')->setData('options', $options);

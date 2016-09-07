@@ -192,6 +192,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
            'align' => 'right',
            'width' => '150px',
            'type' => 'datetime',
+           'filter_time' => true,
            'index' => 'end_date',
            'filter_index' => 'second_table.end_date',
            'frame_callback' => array($this, 'callbackColumnEndTime')
@@ -494,15 +495,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         }
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'Last Action was completed with warning(s).'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary', '', [
@@ -553,15 +554,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function getMainTypeForActionId($actionRows)
     {
-        $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
 
         foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
                 break;
             }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
             }
         }
 

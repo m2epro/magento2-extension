@@ -183,13 +183,13 @@ final class MotorsEpids extends AbstractModel
     {
         // M2ePro\TRANSLATIONS
         // The "Parts Compatibility" Action for eBay Motors Site has been successfully completed.
-        $tempString = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+        $tempString = $this->getHelper('Module\Log')->encodeDescription(
             'The "Parts Compatibility" Action for eBay Motors Site has been successfully completed.'
         );
 
         $this->getLog()->addMessage($tempString,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW);
+                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
     }
 
     //########################################

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Account\PickupStore;
 
-class Log extends \Ess\M2ePro\Model\Log\AbstractLog
+class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const ACTION_UNKNOWN = 1;
     const _ACTION_UNKNOWN = 'System';

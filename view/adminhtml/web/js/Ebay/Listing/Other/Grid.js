@@ -47,21 +47,6 @@ define([
         getMaxProductsInPart: function()
         {
             return 10;
-        },
-
-        // ---------------------------------------
-
-        prepareActions: function($super)
-        {
-            $super();
-
-            this.actionHandler = new EbayListingOtherAction(this);
-
-            this.actions = Object.extend(this.actions, {
-                relistAction: this.actionHandler.relistAction.bind(this.actionHandler),
-                reviseAction: this.actionHandler.reviseAction.bind(this.actionHandler),
-                stopAction: this.actionHandler.stopAction.bind(this.actionHandler)
-            });
         }
 
         // ---------------------------------------

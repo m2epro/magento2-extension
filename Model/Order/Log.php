@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Order;
 
-class Log extends \Ess\M2ePro\Model\Log\AbstractLog
+class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     protected $initiator = NULL;
 

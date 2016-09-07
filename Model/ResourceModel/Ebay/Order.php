@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay;
 
-class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 
@@ -43,7 +43,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
         // Find orders which contains at least one order item from current order
         // ---------------------------------------
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
             ->getCollection();
         $collection
@@ -71,7 +71,7 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function getCancellationCandidatesChannelIds($accountId, \DateTime $startDate, \DateTime $endDate)
     {
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
         $collection = $this->parentFactory->getObject(\Ess\M2ePro\Helper\Component\Ebay::NICK, 'Order')
             ->getCollection();
         $collection->addFieldToFilter('account_id', $accountId);

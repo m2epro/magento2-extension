@@ -61,8 +61,9 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Marketplace that you are going to sell Magento Products on.</p><br>
                 <p>It is also important to specify a Store View in accordance with which Magento Attribute values
                 will be used in the Listing settings.</p><br>
-                <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/6wItAQ')
+                <p>More detailed information you can find 
+                <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/6wItAQ')
             ),
             'style' => 'margin-top: 30px'
         ]);

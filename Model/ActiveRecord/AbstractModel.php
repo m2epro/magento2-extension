@@ -10,9 +10,6 @@ namespace Ess\M2ePro\Model\ActiveRecord;
 
 abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 {
-    const SETTING_FIELD_TYPE_JSON          = 'json';
-    const SETTING_FIELD_TYPE_SERIALIZATION = 'serialization';
-
     //########################################
 
     protected $cacheLoading = false;
@@ -108,7 +105,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $this->getHelper('Data\Cache\Permanent')->removeTagValues($this->getCacheInstancesTag());
         }
 
-        //TODO delete processing locks with sql
         $this->deleteProcessingLocks();
         return parent::delete();
     }
@@ -139,7 +135,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $processingIds[] = $processingLock->getProcessingId();
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
         $collection = $this->activeRecordFactory->getObject('Processing')->getCollection();
         $collection->addFieldToFilter('id', array('in'=>array_unique($processingIds)));
 
@@ -213,7 +209,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception\Logic('Method require loaded instance first');
         }
 
-        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection */
+        /** @var $collection \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel */
         $lockedCollection = $this->activeRecordFactory->getObject('Processing\Lock')->getCollection();
 
         $lockedCollection->addFieldToFilter('model_name',$this->getObjectModelName());
@@ -314,13 +310,12 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
     /**
      * @param string $fieldName
-     * @param string $encodeType
      *
      * @return array
      *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getSettings($fieldName, $encodeType = self::SETTING_FIELD_TYPE_JSON)
+    public function getSettings($fieldName)
     {
         $settings = $this->getData((string)$fieldName);
 
@@ -328,17 +323,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             return array();
         }
 
-        if ($encodeType == self::SETTING_FIELD_TYPE_JSON) {
-            $settings = @json_decode($settings, true);
-        } else if ($encodeType == self::SETTING_FIELD_TYPE_SERIALIZATION) {
-            $settings = @unserialize($settings);
-        } else {
-            throw new \Ess\M2ePro\Model\Exception\Logic($this->getHelper('Module\Translation')->__(
-                'Encoding type "%encode_type%" is not supported.',
-                $encodeType
-            ));
-        }
-
+        $settings = json_decode($settings, true);
         return !empty($settings) ? $settings : array();
     }
 
@@ -346,20 +331,18 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param string       $fieldName
      * @param string|array $settingNamePath
      * @param mixed        $defaultValue
-     * @param string       $encodeType
      *
      * @return mixed|null
      */
     public function getSetting($fieldName,
                                $settingNamePath,
-                               $defaultValue = NULL,
-                               $encodeType = self::SETTING_FIELD_TYPE_JSON)
+                               $defaultValue = NULL)
     {
         if (empty($settingNamePath)) {
             return $defaultValue;
         }
 
-        $settings = $this->getSettings($fieldName, $encodeType);
+        $settings = $this->getSettings($fieldName);
 
         !is_array($settingNamePath) && $settingNamePath = array($settingNamePath);
 
@@ -383,26 +366,14 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     /**
      * @param string $fieldName
      * @param array  $settings
-     * @param string $encodeType
      *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      *
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function setSettings($fieldName, array $settings = array(), $encodeType = self::SETTING_FIELD_TYPE_JSON)
+    public function setSettings($fieldName, array $settings = array())
     {
-        if ($encodeType == self::SETTING_FIELD_TYPE_JSON) {
-            $settings = json_encode($settings);
-        } else if ($encodeType == self::SETTING_FIELD_TYPE_SERIALIZATION) {
-            $settings = serialize($settings);
-        } else {
-            throw new \Ess\M2ePro\Model\Exception\Logic($this->getHelper('Module\Translation')->__(
-                'Encoding type "%encode_type%" is not supported.',
-                $encodeType
-            ));
-        }
-
-        $this->setData((string)$fieldName, $settings);
+        $this->setData((string)$fieldName, json_encode($settings));
 
         return $this;
     }
@@ -411,20 +382,18 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      * @param string       $fieldName
      * @param string|array $settingNamePath
      * @param mixed        $settingValue
-     * @param string       $encodeType
      *
      * @return \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function setSetting($fieldName,
                                $settingNamePath,
-                               $settingValue,
-                               $encodeType = self::SETTING_FIELD_TYPE_JSON)
+                               $settingValue)
     {
         if (empty($settingNamePath)) {
             return $this;
         }
 
-        $settings = $this->getSettings($fieldName, $encodeType);
+        $settings = $this->getSettings($fieldName);
         $target = &$settings;
 
         !is_array($settingNamePath) && $settingNamePath = array($settingNamePath);
@@ -447,7 +416,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $target[$pathPart] = $settingValue;
         }
 
-        $this->setSettings($fieldName, $settings, $encodeType);
+        $this->setSettings($fieldName, $settings);
 
         return $this;
     }

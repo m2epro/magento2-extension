@@ -8,43 +8,44 @@
 
 namespace Ess\M2ePro\Model;
 
-use Magento\Framework\Filesystem;
-use Magento\Framework\App\Filesystem\DirectoryList;
-
-class VariablesDir
+class VariablesDir extends AbstractModel
 {
     const BASE_NAME = 'M2ePro';
 
+    private $_fileDriver = NULL;
     private $_childFolder = NULL;
     private $_pathVariablesDirBase = NULL;
     private $_pathVariablesDirChildFolder = NULL;
 
     //########################################
 
-    public function __construct(\Magento\Framework\Filesystem $filesystem)
-    {
-        $args = func_get_args();
-        empty($args[0]) && $args[0] = array();
-        $params = $args[0];
+    public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
+        \Magento\Framework\Filesystem $filesystem,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->_fileDriver = $driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
-        !isset($params['child_folder']) && $params['child_folder'] = NULL;
-        $params['child_folder'] === '' && $params['child_folder'] = NULL;
+        !isset($data['child_folder']) && $data['child_folder'] = NULL;
+        $data['child_folder'] === '' && $data['child_folder'] = NULL;
 
         $varDir = $filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR);
-        $this->_pathVariablesDirBase = $varDir->getAbsolutePath();
+        $this->_pathVariablesDirBase = $varDir->getAbsolutePath() . self::BASE_NAME;
 
-        if (!is_null($params['child_folder'])) {
+        if (!is_null($data['child_folder'])) {
 
-            if ($params['child_folder']{0} != DIRECTORY_SEPARATOR) {
-                $params['child_folder'] = DIRECTORY_SEPARATOR.$params['child_folder'];
+            if ($data['child_folder']{0} != DIRECTORY_SEPARATOR) {
+                $data['child_folder'] = DIRECTORY_SEPARATOR.$data['child_folder'];
             }
-            if ($params['child_folder']{strlen($params['child_folder'])-1} != DIRECTORY_SEPARATOR) {
-                $params['child_folder'] .= DIRECTORY_SEPARATOR;
+            if ($data['child_folder']{strlen($data['child_folder'])-1} != DIRECTORY_SEPARATOR) {
+                $data['child_folder'] .= DIRECTORY_SEPARATOR;
             }
 
-            $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase.$params['child_folder'];
+            $this->_pathVariablesDirChildFolder = $this->_pathVariablesDirBase.$data['child_folder'];
             $this->_pathVariablesDirBase .= DIRECTORY_SEPARATOR;
-            $this->_childFolder = $params['child_folder'];
+            $this->_childFolder = $data['child_folder'];
 
         } else {
 
@@ -58,6 +59,8 @@ class VariablesDir
         $this->_pathVariablesDirChildFolder = str_replace(array('/','\\'),
             DIRECTORY_SEPARATOR,$this->_pathVariablesDirChildFolder);
         $this->_childFolder = str_replace(array('/','\\'),DIRECTORY_SEPARATOR,$this->_childFolder);
+
+        parent::__construct($helperFactory, $modelFactory, $data);
     }
 
     //########################################
@@ -79,7 +82,7 @@ class VariablesDir
      */
     public function isBaseExist()
     {
-        return @is_dir($this->getBasePath());
+        return $this->_fileDriver->isDirectory($this->getBasePath());
     }
 
     /**
@@ -87,7 +90,7 @@ class VariablesDir
      */
     public function isExist()
     {
-        return @is_dir($this->getPath());
+        return $this->_fileDriver->isDirectory($this->getPath());
     }
 
     // ---------------------------------------
@@ -98,9 +101,7 @@ class VariablesDir
             return;
         }
 
-        if (!@mkdir($this->getBasePath(), 0777, true)) {
-            throw new \Ess\M2ePro\Model\Exception('M2ePro base var dir creation is failed.');
-        }
+        $this->_fileDriver->createDirectory($this->getBasePath(), 0777);
     }
 
     public function create()
@@ -118,17 +119,13 @@ class VariablesDir
                 substr($this->_childFolder,1,strlen($this->_childFolder)-2));
 
             foreach ($tempChildFolders as $key=>$value) {
-                if (!is_dir($tempPath.$value.DIRECTORY_SEPARATOR)) {
-                    if (!@mkdir($tempPath.$value.DIRECTORY_SEPARATOR, 0777, true)) {
-                        throw new \Ess\M2ePro\Model\Exception('Custom var dir creation is failed.');
-                    }
+                if (!$this->_fileDriver->isDirectory($tempPath.$value.DIRECTORY_SEPARATOR)) {
+                    $this->_fileDriver->createDirectory($tempPath.$value.DIRECTORY_SEPARATOR, 0777);
                 }
                 $tempPath = $tempPath.$value.DIRECTORY_SEPARATOR;
             }
         } else {
-            if (!@mkdir($this->getPath(), 0777, true)) {
-                throw new \Ess\M2ePro\Model\Exception('Custom var dir creation is failed.');
-            }
+            $this->_fileDriver->createDirectory($this->getPath(), 0777);
         }
     }
 
@@ -140,9 +137,7 @@ class VariablesDir
             return;
         }
 
-        if (!@rmdir($this->getBasePath())) {
-            throw new \Ess\M2ePro\Model\Exception('M2ePro base var dir removing is failed.');
-        }
+        $this->_fileDriver->deleteDirectory($this->getBasePath());
     }
 
     public function removeBaseForce()
@@ -155,12 +150,12 @@ class VariablesDir
         $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($iterator as $path) {
-            $path->isFile() ? unlink($path->getPathname()) : rmdir($path->getPathname());
+            $path->isFile() 
+                ? $this->_fileDriver->deleteFile($path->getPathname()) 
+                : $this->_fileDriver->deleteDirectory($path->getPathname());
         }
 
-        if (!@rmdir($this->getBasePath())) {
-            throw new \Ess\M2ePro\Model\Exception('M2ePro base var dir removing is failed.');
-        }
+        $this->_fileDriver->deleteDirectory($this->getBasePath());
     }
 
     public function remove()
@@ -169,9 +164,7 @@ class VariablesDir
             return;
         }
 
-        if (!@rmdir($this->getPath())) {
-            throw new \Ess\M2ePro\Model\Exception('Custom var dir removing is failed.');
-        }
+        $this->_fileDriver->deleteDirectory($this->getPath());
     }
 
     //########################################

@@ -26,6 +26,10 @@ class Switcher extends AbstractBlock
 
     public function getHeaderText()
     {
+        if ($this->getData('custom_header_text')) {
+            return $this->getData('custom_header_text');
+        }
+        
         $title = '';
 
         switch ($this->getTemplateNick()) {

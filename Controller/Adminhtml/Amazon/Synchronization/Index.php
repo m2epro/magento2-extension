@@ -16,7 +16,7 @@ class Index extends Settings
 
     public function execute()
     {
-        // todo Remove when Mageto fix Horizontal Tabs bug
+        // Remove when Mageto fix Horizontal Tabs bug
         if ($this->getRequest()->isXmlHttpRequest()) {
             $block = $this->createBlock('Amazon\Synchronization')->toHtml();
             $this->setAjaxContent($block);

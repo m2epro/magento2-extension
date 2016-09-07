@@ -39,7 +39,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New Listing Creation'));
-        $this->setComponentPageHelpLink('New+Listing+Creation');
+        $this->setPageHelpLink('x/OQItAQ');
 
         return $this->getResult();
     }
@@ -302,7 +302,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $data['marketplace_id'] = $this->getSessionValue('marketplace_id');
         $data['store_id'] = $this->getSessionValue('store_id');
 
-        // TODO move getAllTemplates in to helper
         $templateManager = $this->modelFactory->getObject('Ebay\Template\Manager');
 
         foreach ($templateManager->getAllTemplates() as $nick) {

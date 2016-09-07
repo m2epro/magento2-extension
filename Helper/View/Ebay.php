@@ -21,6 +21,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     const MODE_SIMPLE = 'simple';
     const MODE_ADVANCED = 'advanced';
 
+    protected $activeRecordFactory;
     protected $urlBuilder;
     protected $cacheConfig;
     protected $modelFactory;
@@ -29,6 +30,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
@@ -37,6 +39,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->urlBuilder = $urlBuilder;
         $this->cacheConfig = $cacheConfig;
         $this->modelFactory = $modelFactory;
@@ -56,37 +59,6 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function getMenuRootNodeLabel()
     {
         return $this->getTitle();
-    }
-
-    //########################################
-
-    public function getPageNavigationPath($pathNick, $tabName = NULL, $additionalEnd = NULL)
-    {
-        //todo
-        return '';
-
-        return '';
-        $resultPath = array();
-
-        $rootMenuNode = Mage::getConfig()->getNode('adminhtml/menu/m2epro_ebay');
-        $menuLabel = $this->getHelper('View')->getMenuPath($rootMenuNode, $pathNick, $this->getMenuRootNodeLabel());
-
-        if (!$menuLabel) {
-            return '';
-        }
-
-        $resultPath['menu'] = $menuLabel;
-
-        if ($tabName) {
-            $resultPath['tab'] = $this->getHelper('Module\Translation')->__($tabName)
-                . ' ' . $this->getHelper('Module\Translation')->__('Tab');
-        }
-
-        if ($additionalEnd) {
-            $resultPath['additional'] = $this->getHelper('Module\Translation')->__($additionalEnd);
-        }
-
-        return join($resultPath, ' > ');
     }
 
     //########################################
@@ -140,7 +112,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             'feedbacks_receive', \Ess\M2ePro\Model\Ebay\Account::FEEDBACKS_RECEIVE_YES
         );
 
-        $feedbackCollection = $this->modelFactory->getObject('Ebay\Feedback')->getCollection();
+        $feedbackCollection = $this->activeRecordFactory->getObject('Ebay\Feedback')->getCollection();
 
         if (!is_null($accountId)) {
             $accountCollection->addFieldToFilter(
@@ -156,10 +128,10 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function is3rdPartyShouldBeShown()
     {
-        $sessionCache = $this->getHelper('Data\Cache\Session');
+        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
 
-        if (!is_null($sessionCache->getValue('is_3rd_party_should_be_shown'))) {
-            return $sessionCache->getValue('is_3rd_party_should_be_shown');
+        if (!is_null($runtimeCache->getValue(__METHOD__))) {
+            return $runtimeCache->getValue(__METHOD__);
         }
 
         $accountCollection = $this->modelFactory->getObject('Ebay\Account')->getCollection();
@@ -180,7 +152,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             $result = $collection->getSize() || $logCollection->getSize();
         }
 
-        $sessionCache->setValue('is_3rd_party_should_be_shown', $result);
+        $runtimeCache->setValue(__METHOD__, $result);
 
         return $result;
     }

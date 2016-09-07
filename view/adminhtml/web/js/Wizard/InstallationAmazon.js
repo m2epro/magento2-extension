@@ -1,7 +1,7 @@
 define([
     'Magento_Ui/js/modal/alert',
-    'Magento_Ui/js/modal/confirm',
-], function (alert, confirm) {
+    'M2ePro/Plugin/Messages'
+], function (alert, MessagesObj) {
 
     window.WizardInstallationAmazon = Class.create(Common, {
 
@@ -40,12 +40,12 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response && response['message']) {
-                        MessageObj.addErrorMessage(response['message']);
+                        MessagesObj.addErrorMessage(response['message']);
                         return CommonObj.scrollPageToTop();
                     }
 
                     if (!response['url']) {
-                        MessageObj.addErrorMessage(M2ePro.translator.translate('An error during of license creation occurred.'));
+                        MessagesObj.addErrorMessage(M2ePro.translator.translate('An error during of license creation occurred.'));
                         return CommonObj.scrollPageToTop();
                     }
 

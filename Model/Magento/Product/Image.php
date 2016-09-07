@@ -12,6 +12,7 @@ use Ess\M2ePro\Model\AbstractModel;
 
 Class Image extends AbstractModel
 {
+    protected $driverPool;
     protected $storeManager;
     protected $mediaConfig;
     protected $filesystem;
@@ -24,7 +25,8 @@ Class Image extends AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
         \Magento\Framework\Filesystem $filesystem,
@@ -32,6 +34,7 @@ Class Image extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->driverPool = $driverPool;
         $this->storeManager = $storeManager;
         $this->mediaConfig = $mediaConfig;
         $this->filesystem = $filesystem;
@@ -131,7 +134,8 @@ Class Image extends AbstractModel
 
     public function isSelfHosted()
     {
-        return $this->getPath() && is_file($this->getPath());
+        $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
+        return $this->getPath() && $fileDriver->isFile($this->getPath());
     }
 
     //########################################

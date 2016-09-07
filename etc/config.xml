@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+
     <default>
+
         <carriers>
             <m2eproshipping>
                 <active>1</active>
@@ -13,6 +17,7 @@
                 <handling_type>F</handling_type>
             </m2eproshipping>
         </carriers>
+
         <payment>
             <m2epropayment>
                 <active>1</active>
@@ -23,5 +28,7 @@
                 <sort_order>1</sort_order>
             </m2epropayment>
         </payment>
+
     </default>
+
 </config>

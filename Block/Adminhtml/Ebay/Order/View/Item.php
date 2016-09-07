@@ -62,7 +62,6 @@ class Item extends AbstractGrid
             ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId());
 
-        //todo
         $collection->getSelect()->joinLeft(
             array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')),
             '(cisi.product_id = `main_table`.product_id AND cisi.stock_id = 1)',

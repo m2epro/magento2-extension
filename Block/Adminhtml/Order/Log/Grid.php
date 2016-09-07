@@ -119,6 +119,7 @@ class Grid extends AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter_time' => true,
 //            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
@@ -169,10 +170,10 @@ class Grid extends AbstractGrid
             'type'      => 'options',
             'sortable'      => false,
             'options'   => array(
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE => $this->__('Notice'),
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => $this->__('Success'),
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => $this->__('Warning'),
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => $this->__('Error'),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE => $this->__('Notice'),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__('Success'),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__('Warning'),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__('Error'),
             ),
             'frame_callback' => array($this, 'callbackColumnType')
         ));
@@ -192,16 +193,16 @@ class Grid extends AbstractGrid
         $type = $row->getData('type');
 
         switch ($type) {
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
                 $message = "<span style=\"color: green;\">{$value}</span>";
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
                 $message = "<span style=\"color: blue;\">{$value}</span>";
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
                 $message = "<span style=\"color: orange;\">{$value}</span>";
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
             default:
                 $message = "<span style=\"color: red;\">{$value}</span>";
                 break;
@@ -236,7 +237,6 @@ class Grid extends AbstractGrid
             return $this->__('N/A');
         }
 
-        // todo order Urls
         switch ($order->getComponentMode()) {
             case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                 $channelOrderId = $order
@@ -248,11 +248,6 @@ class Grid extends AbstractGrid
                     ->getChildObject()->getData('amazon_order_id');
                 $url = $this->getUrl('*/amazon_order/view', array('id' => $row->getData('order_id')));
                 break;
-//            todo NOT SUPPORTED FEATURES
-//            case \Ess\M2ePro\Helper\Component\Buy::NICK:
-//                $channelOrderId = $order->getData('buy_order_id');
-//                $url = $this->getUrl('*/adminhtml_common_buy_order/view', array('id' => $row->getData('order_id')));
-//                break;
             default:
                 $channelOrderId = $this->__('N/A');
                 $url = '#';
@@ -301,15 +296,6 @@ class Grid extends AbstractGrid
                 ->getColumnValues('order_id');
             $ordersIds = array_merge($ordersIds, $tempOrdersIds);
         }
-
-//        todo NOT SUPPORTED FEATURES
-//        if ($this->getHelper('Component\Buy')->isActive()) {
-//            $tempOrdersIds = $this->activeRecordFactory->getObject('Buy\Order')
-//                ->getCollection()
-//                ->addFieldToFilter('buy_order_id', array('like' => '%'.$value.'%'))
-//                ->getColumnValues('order_id');
-//            $ordersIds = array_merge($ordersIds, $tempOrdersIds);
-//        }
 
         $ordersIds = array_unique($ordersIds);
 

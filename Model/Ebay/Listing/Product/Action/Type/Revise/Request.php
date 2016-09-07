@@ -128,8 +128,6 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
             break;
         }
-
-        return;
     }
 
     private function modifyQtyByReplacedAction($replacedAction, array $data)

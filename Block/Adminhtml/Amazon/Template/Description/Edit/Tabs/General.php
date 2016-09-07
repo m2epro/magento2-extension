@@ -32,10 +32,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaces = $this->getHelper('Component\Amazon')->getMarketplacesAvailableForAsinCreation();
         $marketplaces = $marketplaces->toArray();
         $this->marketplaceData = $marketplaces['items'];
-
-        //TODO
-//        $attributeHelper = $this->getHelper('Magento\Attribute');
-//        $allAttributes = $attributeHelper->getAll();
     }
 
     //########################################
@@ -43,7 +39,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
-        $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
 
         // ---------------------------------------
 
@@ -71,8 +66,8 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     In case you are planning to use Description Policy for New ASIN/ISBN Creation,
                     you should enable New ASIN/ISBN Creation feature.<br/><br/>
                     More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/HoMVAQ')
+                    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/HoMVAQ')
                 )
             ]
         );
@@ -99,7 +94,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ];
         }
 
-        $fieldSet->addField('marketplace_id', $selectElementType,
+        $fieldSet->addField('marketplace_id', self::SELECT,
             array_merge(
                 [
                     'name' => 'general[marketplace_id]',
@@ -128,7 +123,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 New ASIN/ISBN using this Description Policy.<br/><br/>
                 Since Amazon does not have a single structural
                 Categories Tree and there are several of them, a tree that
-                is presented in M2E Pro can be rather different from those you are used earlier on
+                is presented in M2E Pro can be rather different from those you used earlier on
                 Amazon or in other Applications.<br/>
                 The list of available Specifics on Specifics tab depends on the selected Product Type.<br/><br/>
                 <strong>Note:</strong> Possibility to specify Product Specifics becomes available only when Category
@@ -150,12 +145,11 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $productDataNick = $this->getHelper('Data')->escapeHtml($this->formData['product_data_nick']);
 
-        $fieldSet->addField('product_data_nick_select', $selectElementType,
+        $fieldSet->addField('product_data_nick_select', self::SELECT,
             [
                 'label' => $this->__('Product Type'),
                 'title' => $this->__('Product Type'),
                 'class' => 'select M2ePro-required-when-visible',
-                'required' => true,
                 'field_extra_attributes' => 'id="product_data_nick_tr" style="display: none;"',
                 'after_element_html' => '<input type="hidden"
                                                 name="general[product_data_nick]"
@@ -198,7 +192,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                                                             value="'.$this->formData['is_new_asin_accepted'].'" />';
         }
 
-        $fieldSet->addField('new_asin_accepted', $selectElementType,
+        $fieldSet->addField('new_asin_accepted', self::SELECT,
             array_merge(
                 [
                     'name' => 'general[is_new_asin_accepted]',
@@ -229,7 +223,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = Description::WORLDWIDE_ID_MODE_NONE;
         }
 
-        $fieldSet->addField('registered_parameter', $selectElementType,
+        $fieldSet->addField('registered_parameter', self::SELECT,
             [
                 'name' => 'general[registered_parameter]',
                 'label' => $this->__('Product ID Override'),
@@ -253,7 +247,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('worldwide_id_mode', $selectElementType,
+        $fieldSet->addField('worldwide_id_mode', self::SELECT,
             [
                 'name' => 'general[worldwide_id_mode]',
                 'label' => $this->__('UPC / EAN'),
@@ -263,6 +257,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'M2ePro-required-when-visible',
                 'css_class' => 'hide-when-asin-is-disabled',
                 'required' => true,
+                'create_magento_attribute' => true,
                 'field_extra_attributes' => 'allowed_attribute_types="text"
                                              data-current-value="'.$this->formData['worldwide_id_custom_attribute'].'"',
                 'tooltip' => $this->__(
@@ -274,7 +269,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                      In case UPC/EAN doesn’t exist for your Product you can try to use Product ID Override Option.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
 
         // ---------------------------------------
@@ -404,7 +399,7 @@ HTML;
             'opt_group' => [
                 'value' => [],
                 'label' => 'Magento Attribute',
-                'attrs' => ['class' => 'M2ePro-custom-attribute-optgroup']
+                'attrs' => ['is_magento_attribute' => true]
             ]
         ];
 

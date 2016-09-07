@@ -24,7 +24,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\Pending\Req
      * @param \Ess\M2ePro\Model\Account $account
      * @param array $params
      */
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         $account,

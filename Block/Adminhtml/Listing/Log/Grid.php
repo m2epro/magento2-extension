@@ -136,6 +136,7 @@ abstract class Grid extends AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter_time' => true,
             'index'     => 'create_date'
         ));
 

@@ -104,7 +104,7 @@ class StopQueue extends ActiveRecord\AbstractModel
         try {
 
             $dispatcher = $this->modelFactory->getObject(
-                ucfirst($listingProduct->getComponentMode()).'_Connector\Dispatcher'
+                ucfirst($listingProduct->getComponentMode()).'\Connector\Dispatcher'
             );
 
             $connector = $dispatcher->getCustomConnector($connectorName, $connectorParams);

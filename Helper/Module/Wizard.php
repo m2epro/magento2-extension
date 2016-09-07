@@ -231,7 +231,7 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
             return $this->cache[$nick][$key];
         }
 
-        if (($this->cache = $this->getHelper('Data\Cache\Permanent')->getValue('wizard')) !== false) {
+        if (($this->cache = $this->getHelper('Data\Cache\Permanent')->getValue('wizard')) !== NULL) {
             $this->cache = json_decode($this->cache, true);
             return $this->cache[$nick][$key];
         }

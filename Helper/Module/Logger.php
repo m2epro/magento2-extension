@@ -13,6 +13,7 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
     protected $modelFactory;
     protected $moduleConfig;
     protected $logSystemFactory;
+    protected $phpEnvironmentRequest;
 
     //########################################
 
@@ -21,12 +22,14 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Model\Log\SystemFactory $logSystemFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     )
     {
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;
         $this->logSystemFactory = $logSystemFactory;
+        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
     }
 
@@ -46,7 +49,7 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
             $logData = $this->prepareLogMessage($logData, $type);
             $logData .= $this->getCurrentUserActionInfo();
-            $logData .= $this->getHelper('Module\Support\Form');
+            $logData .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
 
             $this->send($logData, $type);
 
@@ -82,9 +85,9 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getCurrentUserActionInfo()
     {
-        $server = isset($_SERVER) ? print_r($_SERVER, true) : '';
-        $get = isset($_GET) ? print_r($_GET, true) : '';
-        $post = isset($_POST) ? print_r($_POST, true) : '';
+        $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
+        $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
+        $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
 
         $actionInfo = <<<ACTION
 -------------------------------- ACTION INFO -------------------------------------

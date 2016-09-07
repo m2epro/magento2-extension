@@ -22,7 +22,7 @@ abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -124,8 +124,8 @@ abstract class Listing extends \Ess\M2ePro\Model\AbstractModel
             // M2ePro_TRANSLATIONS
             // Product was successfully Added
             'Product was successfully Added',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW);
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW);
     }
 
     //########################################

@@ -263,12 +263,6 @@ define([
 
                         var response = self.parseResponse(transport);
 
-                        // TODO
-                        // if (response['vocabulary_attribute_options']) {
-                        //     ListingGridHandlerObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
-                        //     return;
-                        // }
-
                         if (response.success) {
                             self.actionHandler.gridHandler.unselectAllAndReload();
                         }
@@ -526,12 +520,6 @@ define([
                         self.messageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](response.msg);
                     }
 
-                    // TODO
-                    // if (response['vocabulary_attribute_options']) {
-                    //     ListingGridHandlerObj.variationProductManageHandler.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
-                    //     return;
-                    // }
-
                     self.actionHandler.gridHandler.unselectAllAndReload();
                 }
             });
@@ -582,8 +570,6 @@ define([
             $super();
 
             ListingGridHandlerObj.variationProductManageHandler.reloadSettings(null);
-            // TODO
-            // ListingGridHandlerObj.variationProductManageHandler.reloadVocabulary(null);
         }
 
         // ---------------------------------------

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Template;
 
-class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractDb
+class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
 

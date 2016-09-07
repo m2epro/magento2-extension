@@ -19,12 +19,15 @@ class Qty extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
         $html = <<<HTML
 <div class="range">
     <div class="range-line" style="padding-top: 5px">
+        <label for="{$this->_getHtmlName()}" 
+               style="cursor: pointer;vertical-align: text-bottom;" 
+               class="admin__field-label">
+            {$this->__('AFN')}
+        </label>&nbsp;
         <input id="{$this->_getHtmlName()}" class="admin__control-checkbox"
             style="margin-left:6px; float:none; width:auto !important;"
             type="checkbox" value="1" name="{$this->_getHtmlName()}[afn]" {$afnChecked}>
-        <label for="{$this->_getHtmlName()}" style="vertical-align: text-bottom;" class="admin__field-label">
-            {$this->__('AFN')}
-        </label>
+        <label style="vertical-align: text-bottom;" class="admin__field-label"></label>
     </div>
 </div>
 HTML;

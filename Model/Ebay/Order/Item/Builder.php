@@ -73,6 +73,7 @@ class Builder extends AbstractModel
      */
     private function createOrderItem()
     {
+        /** @var \Ess\M2ePro\Model\Order\Item $item */
         $item = $this->ebayFactory->getObject('Order\Item')->getCollection()
             ->addFieldToFilter('order_id', $this->getData('order_id'))
             ->addFieldToFilter('item_id', $this->getData('item_id'))
@@ -81,6 +82,9 @@ class Builder extends AbstractModel
 
         $item->addData($this->getData());
         $item->save();
+
+        $item->getChildObject()->addData($this->getData());
+        $item->getChildObject()->save();
 
         return $item;
     }

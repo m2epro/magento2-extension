@@ -1,3 +1,5 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Description\Category\Chooser\Tabs\Search $this */ ?>
+
 <div id="chooser_search_input_container">
     <input id="query" type="text" class="admin__control-text" placeholder="<?php echo $this->__('Enter keyword(s) or browsenode ID...'); ?>" onkeypress="AmazonTemplateDescriptionCategoryChooserObj.keyPressQuery(event)">
     <button class="primary" onclick="AmazonTemplateDescriptionCategoryChooserObj.search()"><?php echo $this->__('Search'); ?></button>
@@ -15,9 +17,11 @@
         </tr>
 
         <tr id="search_results_update_sites_data_tr" style="display: none;">
+            <?php if (!$this->isWizardActive()): ?>
             <td colspan="2" style="text-align: center;">
                 <?php echo $this->__('Try to <a href="javascript:void(0)" onclick="AmazonTemplateDescriptionCategoryChooserObj.refreshAmazonCategories()">Update Amazon Marketplaces data</a> and repeate the Search.'); ?>
             </td>
+            <?php endif; ?>
         </tr>
 
         <!--  Placeholder  -->

@@ -64,11 +64,12 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
                     the M2E Pro Listing. In other words, after a Magento Product is added to the 
                     selected Website, it can be automatically added to M2E Pro Listing if the settings 
                     are enabled.</p><br>
-                    <p>Accordingly, if a Magento Product present in the the M2E Pro Listing is removed from 
+                    <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed from 
                     the Website, the Item will be removed from the Listing and its sale will be 
                     stopped on Channel.</p><br>
-                    <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/_wItAQ')
+                    <p>More detailed information you can find 
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/_wItAQ')
                 )
             ]
         );

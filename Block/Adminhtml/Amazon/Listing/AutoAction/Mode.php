@@ -15,7 +15,7 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode
     public function getHelpPageUrl()
     {
         return $this->getHelper('Module\Support')
-            ->getDocumentationUrl(NULL, NULL, 'x/kAYtAQ');
+            ->getDocumentationArticleUrl('x/kAYtAQ');
 
     }
 

@@ -6,7 +6,6 @@ use Ess\M2ePro\Model\Ebay\Template\Shipping;
 
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    protected $elementFactory;
     protected $regionFactory;
     protected $ebayFactory;
 
@@ -21,7 +20,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     //########################################
 
     public function __construct(
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Magento\Directory\Model\RegionFactory $regionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -30,7 +28,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         array $data = []
     )
     {
-        $this->elementFactory = $elementFactory;
         $this->regionFactory = $regionFactory;
         $this->ebayFactory = $ebayFactory;
         parent::__construct($context, $registry, $formFactory, $data);
@@ -71,7 +68,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create();
-        $selectElementType = 'Ess\M2ePro\Block\Adminhtml\Magento\Form\Element\Select';
 
         // ---------------------------------------
 
@@ -130,7 +126,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldSet->addField('country_mode', $selectElementType,
+        $fieldSet->addField('country_mode', self::SELECT,
             [
                 'name' => 'shipping[country_mode]',
                 'label' => $this->__('Country'),
@@ -143,7 +139,8 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                                    && $attribute['code'] == $this->formData['country_custom_attribute'];
                     })
                 ],
-                'class' => 'required-entry'
+                'class' => 'required-entry',
+                'create_magento_attribute' => true
             ]
         );
 
@@ -161,7 +158,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['postal_code_mode'];
         }
 
-        $fieldSet->addField('postal_code_mode', $selectElementType,
+        $fieldSet->addField('postal_code_mode', self::SELECT,
             [
                 'name' => 'shipping[postal_code_mode]',
                 'label' => $this->__('Zip/Postal Code'),
@@ -177,9 +174,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     )
                 ],
                 'value' => $defaultValue,
-                'class' => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated'
+                'class' => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
+                'create_magento_attribute' => true
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldSet->addField('postal_code_custom_value', 'text',
             [
@@ -207,7 +205,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $defaultValue = $this->formData['address_mode'];
         }
 
-        $fieldSet->addField('address_mode', $selectElementType,
+        $fieldSet->addField('address_mode', self::SELECT,
             [
                 'name' => 'shipping[address_mode]',
                 'label' => $this->__('City, State'),
@@ -224,10 +222,10 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     )
                 ],
                 'value' => $defaultValue,
-                'class' => 'M2ePro-location-or-postal-required
-                            M2ePro-required-if-calculated M2ePro-custom-attribute-can-be-created'
+                'class' => 'M2ePro-location-or-postal-required M2ePro-required-if-calculated',
+                'create_magento_attribute' => true
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldSet->addField('address_custom_value', 'text',
             [
@@ -251,7 +249,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ['legend' => __('Domestic Shipping'), 'collapsable' => true]
         );
 
-        $fieldSet->addField('local_shipping_mode', $selectElementType,
+        $fieldSet->addField('local_shipping_mode', self::SELECT,
             [
                 'name' => 'shipping[local_shipping_mode]',
                 'label' => $this->__('Type'),
@@ -264,7 +262,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayLocalShippingRateTable()) {
-            $fieldSet->addField('local_shipping_rate_table_mode', $selectElementType,
+            $fieldSet->addField('local_shipping_rate_table_mode', self::SELECT,
                 [
                     'name' => 'shipping[local_shipping_rate_table_mode]',
                     'label' => $this->__('Use eBay Shipping Rate Table'),
@@ -287,8 +285,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('local_shipping_methods_tr_wrapper',
-            self::CUSTOM_CONTAINER,
+        $fieldSet->addField('local_shipping_methods_tr_wrapper', self::CUSTOM_CONTAINER,
             [
                 'text' => $this->getShippingLocalTable(),
                 'css_class' => 'm2epro-fieldset-table',
@@ -298,7 +295,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('dispatch_time', $selectElementType,
+        $fieldSet->addField('dispatch_time', self::SELECT,
             [
                 'name' => 'shipping[dispatch_time]',
                 'label' => $this->__('Dispatch Time'),
@@ -320,7 +317,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayClickAndCollectOption()) {
-            $fieldSet->addField('click_and_collect_mode', $selectElementType,
+            $fieldSet->addField('click_and_collect_mode', self::SELECT,
                 [
                     'name' => 'shipping[click_and_collect_mode]',
                     'label' => $this->__('Click And Collect Opt-out'),
@@ -337,7 +334,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                          suits them from over 650 Argos Stores across the UK.
                          <br/>For more details please read
                          <a href="http://sellercentre.ebay.co.uk/click-and-collect"
-                            target="_blank">this documentation</a>.'
+                            target="_blank" class="external-link">this documentation</a>.'
                     )
                 ]
             );
@@ -370,7 +367,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
 
             $fieldsetCombined->addField('local_shipping_discount_profile_id_'.$this->getAccountId(),
-                $selectElementType,
+                self::SELECT,
                 [
                     'name' => 'shipping[local_shipping_discount_profile_id]['.$this->getAccountId().']',
                     'label' => $this->__('Combined Shipping Profile'),
@@ -405,7 +402,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('local_shipping_discount_mode', $selectElementType,
+        $fieldSet->addField('local_shipping_discount_mode', self::SELECT,
             [
                 'name' => 'shipping[local_shipping_discount_mode]',
                 'label' => $this->__('Promotional Shipping Rule'),
@@ -453,7 +450,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         if ($this->canDisplayNorthAmericaCrossBorderTradeOption()
             || $this->canDisplayUnitedKingdomCrossBorderTradeOption()) {
 
-            $fieldSet->addField('cross_border_trade', $selectElementType,
+            $fieldSet->addField('cross_border_trade', self::SELECT,
                 [
                     'name' => 'shipping[cross_border_trade]',
                     'label' => $this->__('Cross Border Trade'),
@@ -464,7 +461,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'tooltip' => $this->__(
                         'The international Site visibility feature allows qualifying Listings to be posted on
                         international Marketplaces.
-                        <br/>Buyers on these MarketplacesF will see the Listings exactly as you originally post them.
+                        <br/>Buyers on these Marketplaces will see the Listings exactly as you originally post them.
                         <br/><br/><b>Note:</b> There may be additional eBay charges for this option.'
                     )
                 ]
@@ -472,7 +469,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         if ($this->canDisplayGlobalShippingProgram()) {
-            $fieldSet->addField('global_shipping_program', $selectElementType,
+            $fieldSet->addField('global_shipping_program', self::SELECT,
                 [
                     'name' => 'shipping[global_shipping_program]',
                     'label' => $this->__('Offer Global Shipping Program'),
@@ -485,7 +482,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'tooltip' => $this->__(
                         'Simplifies selling an Item to an international Buyer. Click
                         <a href="http://pages.ebay.com/help/sell/shipping-globally.html"
-                           target="_blank">here</a> to find out more.
+                           target="_blank" class="external-link">here</a> to find out more.
                         <br/><br/><b>Note:</b> This option is available for eBay Motors only
                         under "Parts & Accessories" Category.'
                     )
@@ -495,7 +492,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('international_shipping_mode', $selectElementType,
+        $fieldSet->addField('international_shipping_mode', self::SELECT,
             [
                 'name' => 'shipping[international_shipping_mode]',
                 'label' => $this->__('Type'),
@@ -508,7 +505,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         if ($this->canDisplayInternationalShippingRateTable()) {
-            $fieldSet->addField('international_shipping_rate_table_mode', $selectElementType,
+            $fieldSet->addField('international_shipping_rate_table_mode', self::SELECT,
                 [
                     'name' => 'shipping[international_shipping_rate_table_mode]',
                     'label' => $this->__('Use eBay Shipping Rate Table'),
@@ -568,7 +565,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             );
 
             $fieldsetCombined->addField('international_shipping_discount_profile_id_'.$this->getAccountId(),
-                $selectElementType,
+                self::SELECT,
                 [
                     'name' => 'shipping[international_shipping_discount_profile_id]['.$this->getAccountId().']',
                     'label' => $this->__('Combined Shipping Profile'),
@@ -604,7 +601,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('international_shipping_discount_mode', $selectElementType,
+        $fieldSet->addField('international_shipping_discount_mode', self::SELECT,
             [
                 'name' => 'shipping[international_shipping_discount_mode]',
                 'label' => $this->__('Promotional Shipping Rule'),
@@ -630,7 +627,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ['legend' => __('Package details'), 'collapsable' => true]
         );
 
-        $fieldSet->addField('measurement_system', $selectElementType,
+        $fieldSet->addField('measurement_system', self::SELECT,
             [
                 'name' => 'shipping[measurement_system]',
                 'label' => $this->__('Measurement System'),
@@ -666,20 +663,20 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('package_size', $selectElementType,
+        $fieldSet->addField('package_size', self::SELECT,
             [
                 'name' => 'shipping[measurement_system]',
                 'label' => $this->__('Package Size Source'),
                 'title' => $this->__('Package Size Source'),
                 'values' => $this->getPackageSizeSourceOptions(),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
-                'field_extra_attributes' => 'id="package_size_tr"'
+                'field_extra_attributes' => 'id="package_size_tr"',
+                'create_magento_attribute' => true
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
         // ---------------------------------------
 
-        $fieldSet->addField('dimension_mode', $selectElementType,
+        $fieldSet->addField('dimension_mode', self::SELECT,
             [
                 'name' => 'shipping[dimension_mode]',
                 'label' => $this->__('Dimension Source'),
@@ -712,43 +709,48 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // Dimensions
         // ---------------------------------------
 
-        $heightAttrBlock = $this->elementFactory->create($selectElementType, ['data' => [
+        $heightAttrBlock = $this->elementFactory->create(self::SELECT, ['data' => [
+            'html_id' => 'shipping_dimension_length_attribute',
             'name' => 'shipping[dimension_length_attribute]',
             'values' => $this->getDimensionsOptions('dimension_length_attribute'),
             'value' => $this->formData['dimension_length_attribute'],
-            'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
-        ]]);
+            'class' => 'M2ePro-required-when-visible dimension-custom-input',
+            'create_magento_attribute' => true
+        ]])->addCustomAttribute('allowed_attribute_types', 'text');
         $heightAttrBlock->setForm($form);
 
-        $depthAttrBlock = $this->elementFactory->create($selectElementType, ['data' => [
+        $depthAttrBlock = $this->elementFactory->create(self::SELECT, ['data' => [
+            'html_id' => 'shipping_dimension_depth_attribute',
             'name' => 'shipping[dimension_depth_attribute]',
             'values' => $this->getDimensionsOptions('dimension_depth_attribute'),
             'value' => $this->formData['dimension_depth_attribute'],
-            'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
-        ]]);
+            'class' => 'M2ePro-required-when-visible dimension-custom-input',
+            'create_magento_attribute' => true
+        ]])->addCustomAttribute('allowed_attribute_types', 'text');
         $depthAttrBlock->setForm($form);
 
-        $fieldSet->addField('dimension', $selectElementType,
+        $fieldSet->addField('dimension', self::SELECT,
             [
                 'css_class' => 'dimensions_ca_tr',
                 'name' => 'shipping[dimension_width_attribute]',
                 'label' => $this->__('Dimensions (Width×Height×Depth)'),
                 'values' => $this->getDimensionsOptions('dimension_width_attribute'),
                 'value' => $this->formData['dimension_width_attribute'],
-                'class' => 'M2ePro-required-when-visible M2ePro-custom-attribute-can-be-created',
+                'class' => 'M2ePro-required-when-visible dimension-custom-input',
                 'required' => true,
                 'note' => $this->__('inches'),
+                'create_magento_attribute' => true,
                 'after_element_html' => ' <span style="color: #303030">&times;</span> '
                     . $heightAttrBlock->toHtml()
                     . ' <span style="color: #303030">&times;</span> '
                     . $depthAttrBlock->toHtml()
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $heightValBlock = $this->elementFactory->create('text', ['data' => [
             'name' => 'shipping[dimension_length_value]',
             'value' => $this->formData['dimension_length_value'],
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float',
+            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
             'style' => 'width: 125px;'
         ]]);
         $heightValBlock->setForm($form);
@@ -756,8 +758,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $depthValBlock = $this->elementFactory->create('text', ['data' => [
             'name' => 'shipping[dimension_depth_value]',
             'value' => $this->formData['dimension_depth_value'],
-            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float',
-            'style' => 'width: 125px;'
+            'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
         ]]);
         $depthValBlock->setForm($form);
 
@@ -767,8 +768,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'shipping[dimension_width_value]',
                 'label' => $this->__('Dimensions (Width×Height×Depth)'),
                 'value' => $this->formData['dimension_width_value'],
-                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float',
-                'style' => 'width: 125px;',
+                'class' => 'input-text M2ePro-required-when-visible M2ePro-validation-float dimension-custom-input',
                 'required' => true,
                 'note' => $this->__('inches'),
                 'after_element_html' => ' <span style="color: #303030">&times;</span> '
@@ -796,19 +796,21 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $fieldSet->addField('weight', $selectElementType,
+        $fieldSet->addField('weight', self::SELECT,
             [
                 'name' => 'shipping[test]',
                 'label' => $this->__('Weight Source'),
                 'title' => $this->__('Weight Source'),
                 'values' => $this->getWeightSourceOptions(),
-                'value' => $this->formData['weight_mode'],
-                'class' => 'select M2ePro-custom-attribute-can-be-created',
+                'value' => $this->formData['weight_mode'] != Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
+                           ? $this->formData['weight_mode'] : '',
+                'class' => 'select',
                 'field_extra_attributes' => 'id="weight_tr"',
                 'tooltip' => $this->__('The Weight Attribute must have the weight of the Item.'),
                 'note' => $this->__('lbs. oz.'),
+                'create_magento_attribute' => true
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $weightMinorBlock = $this->elementFactory->create('text', ['data' => [
             'name' => 'shipping[weight_minor]',
@@ -1084,7 +1086,11 @@ HTML;
 
     public function getAttributesOptions($attributeValue, $conditionCallback = false)
     {
-        $options = ['value' => [], 'label' => $this->__('Magento Attribute')];
+        $options = [
+            'value' => [],
+            'label' => $this->__('Magento Attribute'),
+            'attrs' => ['is_magento_attribute' => true]
+        ];
         $helper = $this->getHelper('Data');
 
         foreach ($this->attributes as $attribute) {
@@ -1291,7 +1297,11 @@ HTML;
             $ebayValues['value'][] = $tmp;
         }
 
-        $attributesOptions = ['value' => [], 'label' => $this->__('Magento Attributes')];
+        $attributesOptions = [
+            'value' => [],
+            'label' => $this->__('Magento Attributes'),
+            'attrs' => ['is_magento_attribute' => true]
+        ];
         if (isset($this->missingAttributes['package_size_attribute'])) {
             $attributesOptions['value'][] = [
                 'value' => Shipping\Calculated::PACKAGE_SIZE_CUSTOM_ATTRIBUTE,
@@ -1359,24 +1369,41 @@ HTML;
                 'value' => Shipping\Calculated::WEIGHT_CUSTOM_VALUE,
                 'label' => $this->__('Custom Value')
             ],
-            'option_group' => ['value' => [], 'label' => $this->__('Magento Attributes')]
+            'option_group' => [
+                'value' => [],
+                'label' => $this->__('Magento Attributes'),
+                'attrs' => ['is_magento_attribute' => true]
+            ]
         ];
 
         $helper = $this->getHelper('Data');
-        if (isset($missingAttributes['weight_attribute'])) {
-            $options['option_group']['value'][] = [
+        if (isset($this->missingAttributes['weight_attribute'])) {
+            $tmpOption = [
                 'value' => Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE,
-                'label' => $helper->escapeHtml($missingAttributes['weight_attribute']),
+                'label' => $helper->escapeHtml($this->missingAttributes['weight_attribute']),
                 'attrs' => ['attribute_code' => $this->formData['weight_attribute']]
             ];
+
+            if ($this->formData['weight_mode'] == Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE) {
+                $tmpOption['attrs']['selected'] = 'selected';
+            }
+
+            $options['option_group']['value'][] = $tmpOption;
         }
 
         foreach ($this->attributesByInputTypes['text_weight'] as $attribute) {
-            $options['option_group']['value'][] = [
+            $tmpOption = [
                 'value' => Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE,
                 'label' => $helper->escapeHtml($attribute['label']),
                 'attrs' => ['attribute_code' => $attribute['code']]
             ];
+
+            if ($this->formData['weight_mode'] == Shipping\Calculated::WEIGHT_CUSTOM_ATTRIBUTE
+                && $this->formData['weight_attribute'] == $attribute['code']) {
+                $tmpOption['attrs']['selected'] = 'selected';
+            }
+
+            $options['option_group']['value'][] = $tmpOption;
         }
 
         return $options;
@@ -1597,12 +1624,8 @@ HTML;
         $policyLocalization = $this->getData('policy_localization');
 
         if (!empty($policyLocalization)) {
-            /** @var \Ess\M2ePro\Model\Magento\Translate $translator */
-            //TODO
-//            $translator = Mage::getModel('M2ePro/Magento_Translate');
+
             $translator = $this->getHelper('Module\Translation');
-//            $translator->setLocale($policyLocalization);
-//            $translator->init();
 
             foreach ($data['services'] as $serviceKey => $service) {
                 $data['services'][$serviceKey]['title'] = $translator->__($service['title']);

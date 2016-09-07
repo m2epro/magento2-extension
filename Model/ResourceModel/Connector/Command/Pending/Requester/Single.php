@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Connector\Command\Pending\Requester;
 
-class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Single extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################
 

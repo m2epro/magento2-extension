@@ -12,31 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Form extends AbstractForm
 {
-    /**
-     * @var \Magento\Framework\View\Asset\Repository
-     */
-    protected $assetRepo;
-
-    /**
-     * @var \Magento\Framework\Data\Form\Element\Factory
-     */
-    protected $factoryElement;
-
     //########################################
-
-    public function __construct(
-        \Magento\Framework\View\Asset\Repository $assetRepo,
-        \Magento\Framework\Data\Form\Element\Factory $factoryElement,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        array $data = []
-    )
-    {
-        $this->assetRepo = $assetRepo;
-        $this->factoryElement = $factoryElement;
-        parent::__construct($context, $registry, $formFactory, $data);
-    }
 
     public function _construct()
     {
@@ -109,8 +85,6 @@ class Form extends AbstractForm
                 ];
 
                 if ($marketplace['params']['locked']) {
-                    // todo NOT SUPPORTED FEATURES
-//                if ($marketplace['params']['locked'] || $marketplace['params']['lockedByPickupStore']) {
                     $lockedText = '';
                     if ($marketplace['params']['locked']) {
                         $lockedText = $this->__('Used in Listing(s)');
@@ -190,14 +164,6 @@ class Form extends AbstractForm
                 $isLocked = (bool)$this->activeRecordFactory->getObject('Listing')->getCollection()
                     ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
                     ->getSize();
-
-//                $isLockedByPickupStore = false;
-//                todo NOT SUPPORTED FEATURES
-//                if (Mage::helper('M2ePro/Component_Ebay_PickupStore')->isFeatureEnabled()) {
-//                    $isLockedByPickupStore = (bool)Mage::getModel('M2ePro/Ebay_Account_PickupStore')->getCollection()
-//                        ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
-//                        ->getSize();
-//                }
 
                 $storedStatuses[] = array(
                     'marketplace_id' => $tempMarketplace->getId(),

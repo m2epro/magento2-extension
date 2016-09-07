@@ -34,15 +34,15 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isFeatureEnabled()
     {
-        $sessionCache = $this->getHelper('Data\Cache\Session');
+        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
 
-        if (!is_null($sessionCache->getValue('bopis'))) {
-            return $sessionCache->getValue('bopis');
+        if (!is_null($runtimeCache->getValue(__METHOD__))) {
+            return $runtimeCache->getValue(__METHOD__);
         }
 
         $isEnabled = (bool)$this->getEnabledAccount();
 
-        $sessionCache->setValue('bopis', $isEnabled);
+        $runtimeCache->setValue(__METHOD__, $isEnabled);
         return $isEnabled;
     }
 

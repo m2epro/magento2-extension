@@ -24,7 +24,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
         $this->addContent($this->createBlock('Amazon\Listing'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('M2E Pro Listings'));
-        $this->setComponentPageHelpLink('M2E+Pro+Listings');
+        $this->setPageHelpLink('x/AgItAQ');
 
         return $this->getResult();
     }

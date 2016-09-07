@@ -13,13 +13,11 @@ use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $ebayFactory;
-    protected $elementFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -27,7 +25,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     )
     {
         $this->ebayFactory = $ebayFactory;
-        $this->elementFactory = $elementFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -188,7 +185,6 @@ HTML
                 'label' => $this->__('Marketplace'),
                 'value' => $marketplaceId,
                 'values' => $marketplaces,
-                'required' => true,
                 'tooltip' => $this->__(
                     'Choose the Marketplace you want to list on using this M2E Pro Listing. 
                     Currency will be set automatically based on the Marketplace you choose.'

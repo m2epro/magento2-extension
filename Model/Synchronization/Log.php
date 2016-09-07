@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
-class Log extends \Ess\M2ePro\Model\Log\AbstractLog
+class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const TASK_UNKNOWN = 0;
     const _TASK_UNKNOWN = 'System';

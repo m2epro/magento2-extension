@@ -26,8 +26,8 @@ class StopRules extends AbstractTab
                     If all Options are enabled, then an Item will be Stopped if at least one of the Stop
                     Conditions is met.<br/><br/>
                     More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/QwItAQ')
+                    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/QwItAQ')
                 )
             ]
         );
@@ -58,7 +58,7 @@ class StopRules extends AbstractTab
         );
 
         $fieldset->addField('stop_status_disabled',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[stop_status_disabled]',
                 'label' => $this->__('Stop When Status Disabled'),
@@ -74,7 +74,7 @@ class StopRules extends AbstractTab
         );
 
         $fieldset->addField('stop_out_off_stock',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[stop_out_off_stock]',
                 'label' => $this->__('Stop When Out Of Stock'),
@@ -91,7 +91,7 @@ class StopRules extends AbstractTab
         );
 
         $fieldset->addField('stop_qty_magento',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[stop_qty_magento]',
                 'label' => $this->__('Stop When Magento Quantity Is'),
@@ -133,7 +133,7 @@ class StopRules extends AbstractTab
         );
 
         $fieldset->addField('stop_qty_calculated',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[stop_qty_calculated]',
                 'label' => $this->__('Stop When Calculated Quantity Is'),

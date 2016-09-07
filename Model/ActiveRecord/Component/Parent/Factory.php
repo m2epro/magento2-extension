@@ -105,7 +105,7 @@ class Factory
         /** @var \Ess\M2ePro\Model\ActiveRecord\Cache $cacheObj */
         $cacheObj = $this->helperFactory->getObject('Data\Cache\Permanent')->getValue($parentKey);
 
-        if ($cacheObj !== false) {
+        if ($cacheObj !== NULL) {
             $model->setData($cacheObj->getData());
             $model->setOrigData();
             return $model;

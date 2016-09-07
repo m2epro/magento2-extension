@@ -1,0 +1,30 @@
+<table class="data-grid">
+    <thead>
+    <tr style="border-top: 0.1rem solid #d6d6d6;">
+        <td>
+            <?php echo $this->__('From Version') ?>
+        </td>
+        <td>
+            <?php echo $this->__('To Version') ?>
+        </td>
+        <td>
+            <?php echo $this->__('Date') ?>
+        </td>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($this->setupData as $setupRow): ?>
+        <tr>
+            <td>
+                <?php echo $setupRow['version_from'] ?>
+            </td>
+            <td>
+                <?php echo $setupRow['version_to'] ?>
+            </td>
+            <td>
+                <?php echo $setupRow['create_date'] ?>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

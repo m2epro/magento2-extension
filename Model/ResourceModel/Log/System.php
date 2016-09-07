@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Log;
 
-class System extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class System extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

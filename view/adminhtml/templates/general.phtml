@@ -12,7 +12,8 @@
         . $this->jsUrl->render()
         . $this->js->render();
     ?>
-
+    
+    initializationCustomAttributeInputs();
     initCollapsable();
 
     <?php else: ?>
@@ -26,7 +27,7 @@
 
     var M2ePro = {};
 
-    require(['M2ePro/M2ePro'], function(_M2ePro) {
+    require(['M2ePro/M2ePro', 'M2ePro/Plugin/Magento/AttributeCreator'], function(_M2ePro) {
         M2ePro = _M2ePro;
 
         // backward compatibility
@@ -46,7 +47,29 @@
 
         <?php echo $this->js->render(); ?>
 
+        window.initializationCustomAttributeInputs = function() 
+        {
+            $$('select.M2ePro-custom-attribute-can-be-created').each(function(selectObj){
+
+                var handlerObj = new AttributeCreator(selectObj.id);
+                handlerObj.setSelectObj(selectObj);
+
+                if (handlerObj.alreadyHaveAddedOption()) {
+                    return true;
+                }
+
+                handlerObj.injectAddOption();
+            });
+        };
+
+        initializationCustomAttributeInputs();
         initCollapsable();
+    });
+
+    require(['M2ePro/ControlPanel'], function(controlPanel) {
+
+        window.ControlPanelObj = new ControlPanel();
+        window.ControlPanelObj.setControlPanelUrl('<?php echo $this->getUrl('*/controlPanel'); ?>')
     });
 
     <?php endif; ?>

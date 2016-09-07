@@ -15,7 +15,7 @@ abstract class Installation extends \Ess\M2ePro\Block\Adminhtml\Wizard\Installat
 
     protected function _toHtml()
     {
-        $this->js->add( <<<JS
+        $this->js->add(<<<JS
     require([
         'M2ePro/Wizard/MigrationFromMagento1',
     ], function(){

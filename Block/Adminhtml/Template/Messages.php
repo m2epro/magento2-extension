@@ -17,24 +17,7 @@ class Messages extends AbstractBlock
     protected $templateNick = NULL;
     protected $componentMode = NULL;
 
-    protected $storeManager;
-    protected $parentFactory;
-
     //########################################
-
-    public function __construct(
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        array $data = []
-    )
-    {
-
-        $this->storeManager = $storeManager;
-        $this->parentFactory = $parentFactory;
-
-        parent::__construct($context, $data);
-    }
 
     public function getResultBlock($templateNick, $componentMode)
     {
@@ -42,11 +25,7 @@ class Messages extends AbstractBlock
 
         switch ($templateNick) {
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                if ($componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                    $block = $this->createBlock('Ebay\Template\SellingFormat\Messages');
-                } else {
-                    $block = $this->createBlock('Template\SellingFormat\Messages');
-                }
+                $block = $this->createBlock('Template\SellingFormat\Messages');
                 break;
         }
 
@@ -84,8 +63,6 @@ class Messages extends AbstractBlock
         }
 
         $messagesBlock = $this->getLayout()->createBlock('Magento\Framework\View\Element\Messages');
-
-        //todo styles
 
         $first = true;
         foreach ($messages as $messageType => $messageText) {
@@ -165,7 +142,7 @@ HTML;
             return NULL;
         }
 
-        return $this->storeManager->getStore((int)$this->_data['store_id']);
+        return $this->_storeManager->getStore((int)$this->_data['store_id']);
     }
 
     //########################################

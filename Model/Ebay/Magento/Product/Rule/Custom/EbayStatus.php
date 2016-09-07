@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
-class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom
+class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
 
@@ -54,7 +54,7 @@ class EbayStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractC
      */
     public function getOptions()
     {
-        $helper = $this->helperFactory->getObject('Data');
+        $helper = $this->helperFactory->getObject('Module\Translation');
         return array(
             array(
                 'value' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,

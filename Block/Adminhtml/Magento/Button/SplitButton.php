@@ -27,7 +27,7 @@ class SplitButton extends \Magento\Backend\Block\Widget\Button\SplitButton
         $classes = [];
         $classes[] = 'action-default';
         $classes[] = 'primary';
-        // @TODO Perhaps use $this->getButtonClass() instead
+
         if ($this->getClass()) {
             $classes[] = $this->getClass();
         }
@@ -45,7 +45,6 @@ class SplitButton extends \Magento\Backend\Block\Widget\Button\SplitButton
             'onclick' => !empty($onclick) ? $onclick : '',
         ];
 
-        //TODO perhaps we need to skip data-mage-init when disabled="disabled"
         if ($this->getDataAttribute()) {
             $this->_getDataAttributes($this->getDataAttribute(), $attributes);
         }

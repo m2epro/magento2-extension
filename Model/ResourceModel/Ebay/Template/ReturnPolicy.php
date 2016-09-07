@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Template;
 
-class ReturnPolicy extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class ReturnPolicy extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

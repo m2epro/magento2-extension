@@ -11,7 +11,9 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $params = $this->getRequest()->getParams();
 
         if (empty($params)) {
-            return $this->_redirect('*/*/new');
+            return $this->_redirect('*/*/new', [
+                'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            ]);
         }
 
         $requiredFields = array(
@@ -26,7 +28,9 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
                 $error = $this->__('The Amazon token obtaining is currently unavailable.');
                 $this->messageManager->addError($error);
 
-                return $this->_redirect('*/*/new');
+                return $this->_redirect('*/*/new', [
+                    'close_on_save' => $this->getRequest()->getParam('close_on_save')
+                ]);
             }
         }
 
@@ -36,9 +40,13 @@ class AfterGetToken extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Account
         $accountId = $this->getHelper('Data\Session')->getValue('account_id');
 
         if ((int)$accountId <= 0) {
-            return $this->_redirect('*/*/new');
+            return $this->_redirect('*/*/new', [
+                'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            ]);
         } else {
-            return $this->_redirect('*/*/edit', ['id' => $accountId]);
+            return $this->_redirect('*/*/edit', [
+                'id' => $accountId, 'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            ]);
         }
     }
 }

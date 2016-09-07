@@ -7,17 +7,6 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class MoveToListing extends Listing
 {
-    protected $parentFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        Context $context
-    )
-    {
-        $this->parentFactory = $parentFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');
@@ -55,8 +44,8 @@ class MoveToListing extends Listing
                     // M2ePro_TRANSLATIONS
                     // Product already exists in M2E listing(s).
                     'Product already exists in M2E Pro listing(s).',
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
 
                 $errors++;
@@ -71,8 +60,8 @@ class MoveToListing extends Listing
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved
                 'Item was successfully Moved',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             $listingLogModel->addProductMessage(
@@ -85,8 +74,8 @@ class MoveToListing extends Listing
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved
                 'Item was successfully Moved',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             $otherListingProductInstance->delete();

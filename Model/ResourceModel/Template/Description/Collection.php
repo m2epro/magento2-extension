@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Template\Description;
 
-class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractCollection
+class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent\AbstractModel
 {
     //########################################
 

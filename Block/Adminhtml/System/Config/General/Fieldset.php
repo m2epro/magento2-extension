@@ -27,7 +27,13 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 
     protected function _getHeaderHtml($element)
     {
-        return $this->getIntegrationHelpBlockHtml($element->getHtmlId()) . parent::_getHeaderHtml($element);
+        $controlPanelUrl = $this->getUrl('m2epro/controlPanel');
+
+        return $this->getIntegrationHelpBlockHtml($element->getHtmlId()) . parent::_getHeaderHtml($element) .
+               '<script>require(["M2ePro/ControlPanel"], function() {
+                    window.ControlPanelObj = new ControlPanel();
+                    window.ControlPanelObj.setControlPanelUrl(\''.$controlPanelUrl.'\')
+                })</script>';
     }
 
     /**

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description;
 
-class Definition extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Definition extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 

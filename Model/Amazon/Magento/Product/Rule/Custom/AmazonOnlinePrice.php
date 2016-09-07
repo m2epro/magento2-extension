@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
-class AmazonOnlinePrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom
+class AmazonOnlinePrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
 

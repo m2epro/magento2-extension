@@ -7,16 +7,13 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Map extends Listing
 {
-    protected $parentFactory;
     protected $productFactory;
 
     public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         Context $context
     )
     {
-        $this->parentFactory = $parentFactory;
         $this->productFactory = $productFactory;
         parent::__construct($context);
     }

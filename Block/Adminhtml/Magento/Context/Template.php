@@ -22,6 +22,9 @@ class Template extends Context
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
 
+    /** @var \Magento\Framework\Data\Form\Element\Factory */
+    protected $elementFactory;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -32,6 +35,7 @@ class Template extends Context
         Renderer\JsRenderer $js,
         Renderer\JsTranslatorRenderer $jsTranslatorRenderer,
         Renderer\JsUrlRenderer $jsUrlRenderer,
+        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Magento\Framework\App\RequestInterface $request,
         \Magento\Framework\View\LayoutInterface $layout,
         \Magento\Framework\Event\ManagerInterface $eventManager,
@@ -74,6 +78,8 @@ class Template extends Context
         $this->js = $js;
         $this->jsTranslator = $jsTranslatorRenderer;
         $this->jsUrl = $jsUrlRenderer;
+
+        $this->elementFactory = $elementFactory;
 
         parent::__construct(
             $request,
@@ -179,5 +185,13 @@ class Template extends Context
     public function getParentFactory()
     {
         return $this->parentFactory;
+    }
+
+    /**
+     * @return \Magento\Framework\Data\Form\Element\Factory
+     */
+    public function getElementFactory()
+    {
+        return $this->elementFactory;
     }
 }

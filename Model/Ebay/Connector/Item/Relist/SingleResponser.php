@@ -87,18 +87,22 @@ class SingleResponser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Respo
             $this->isItemCanNotBeAccessed($responseMessages)) {
 
             $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
-            $message->initFromPreparedData($this->getHelper('Module\Translation')->__(
-                'It has been detected that the Category you are using is going to require the Product Identifiers
-                to be specified (UPC, EAN, ISBN, etc.). The Relist Action will be automatically performed
-                to send the value(s) of the required Identifier(s) based on the settings
-                provided in eBay Catalog Identifiers section of the Description Policy.'),
+            $message->initFromPreparedData(
+                $this->getHelper('Module\Translation')->__(
+                    'This Item cannot be accessed on eBay, so the Relist action cannot be executed for it.
+                    M2E Pro has automatically detected this issue and run the List action to solve it basing
+                    on the List Rule of the Synchronization Policy.'
+                ),
                 Message::TYPE_WARNING
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
             $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-            $this->processAdditionalAction(\Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator);
+            $this->processAdditionalAction(
+                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator,
+                array('skip_check_the_same_product_already_listed_ids' => array($this->listingProduct->getId()))
+            );
         }
 
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
@@ -107,20 +111,19 @@ class SingleResponser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Respo
 
             $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
             $message->initFromPreparedData(
-                'It has been detected that the Category you are using is going to require the Product Identifiers
-                to be specified (UPC, EAN, ISBN, etc.). The Relist Action will be automatically performed
-                to send the value(s) of the required Identifier(s) based on the settings
-                provided in eBay Catalog Identifiers section of the Description Policy.',
+                $this->getHelper('Module\Translation')->__(
+                    'It has been detected that the Category you are using is going to require the Product Identifiers
+                    to be specified (UPC, EAN, ISBN, etc.). The Relist Action will be automatically performed
+                    to send the value(s) of the required Identifier(s) based on the settings
+                    provided in eBay Catalog Identifiers section of the Description Policy.'
+                ),
                 Message::TYPE_WARNING
             );
 
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
 
             $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-            $this->processAdditionalAction(
-                $this->getActionType(), $configurator,
-                array('skip_check_the_same_product_already_listed_ids' => array($this->listingProduct->getId()))
-            );
+            $this->processAdditionalAction($this->getActionType(), $configurator);
         }
 
         $additionalData = $this->listingProduct->getAdditionalData();

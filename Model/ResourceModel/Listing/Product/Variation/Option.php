@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation;
 
-class Option extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractDb
+class Option extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
 

@@ -11,16 +11,19 @@ namespace Ess\M2ePro\Helper\Module\Support;
 class Form extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $urlBuilder;
+    protected $phpEnvironmentRequest;
 
     //########################################
 
     public function __construct(
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     )
     {
         $this->urlBuilder = $urlBuilder;
+        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
     }
 
@@ -30,24 +33,24 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $attachments = array();
 
-        if (isset($_FILES['files'])) {
-            foreach ($_FILES['files']['name'] as $key => $uploadFileName) {
-                if ('' == $uploadFileName) {
-                    continue;
-                }
+        $uploadedFiles = $this->phpEnvironmentRequest->getFiles()->toArray();
 
-                $realName = $uploadFileName;
-                $tempPath = $_FILES['files']['tmp_name'][$key];
-                $mimeType = $_FILES['files']['type'][$key];
-
-                $attachment = new \Zend_Mime_Part(file_get_contents($tempPath));
-                $attachment->type        = $mimeType;
-                $attachment->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
-                $attachment->encoding    = \Zend_Mime::ENCODING_BASE64;
-                $attachment->filename    = $realName;
-
-                $attachments[] = $attachment;
+        foreach ($uploadedFiles['name'] as $key => $uploadFileName) {
+            if ('' == $uploadFileName) {
+                continue;
             }
+
+            $realName = $uploadFileName;
+            $tempPath = $uploadedFiles['files']['tmp_name'][$key];
+            $mimeType = $uploadedFiles['files']['type'][$key];
+
+            $attachment = new \Zend_Mime_Part(file_get_contents($tempPath));
+            $attachment->type        = $mimeType;
+            $attachment->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
+            $attachment->encoding    = \Zend_Mime::ENCODING_BASE64;
+            $attachment->filename    = $realName;
+
+            $attachments[] = $attachment;
         }
 
         $toEmail = $this->getHelper('Module\Support')->getContactEmail();
@@ -88,7 +91,7 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 
         $additionalInfo = array();
         $additionalInfo['system'] = $this->getHelper('Client')->getSystem();
-        $additionalInfo['user_agent'] = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : 'N/A';
+        $additionalInfo['user_agent'] = $this->phpEnvironmentRequest->getServer('HTTP_USER_AGENT');
         $additionalInfo['admin'] = $this->urlBuilder->getUrl('adminhtml');
         $additionalInfo['license_key'] = $this->getHelper('Module\License')->getKey();
         $additionalInfo['installation_key'] = $this->getHelper('Module')->getInstallationKey();

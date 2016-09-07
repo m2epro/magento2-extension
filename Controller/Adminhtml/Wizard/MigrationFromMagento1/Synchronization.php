@@ -13,10 +13,10 @@ class Synchronization extends MigrationFromMagento1
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
 
         if (!$marketplaceCollection->count()) {
-            //todo
+            $this->setStep($this->getNextStep());
+        } else {
+            $this->getHelper('Data\GlobalData')->setValue('marketplaces', $marketplaceCollection->getItems());
         }
-
-        $this->getHelper('Data\GlobalData')->setValue('marketplaces', $marketplaceCollection->getItems());
 
         $this->init();
 

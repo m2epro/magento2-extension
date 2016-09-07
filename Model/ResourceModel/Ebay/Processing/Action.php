@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Processing;
 
-class Action extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Action extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################
 

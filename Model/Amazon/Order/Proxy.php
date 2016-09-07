@@ -295,12 +295,14 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
      */
     public function getChannelComments()
     {
+        $translator = $this->getHelper('Module\Translation');
+
         $comments = array();
 
         if ($this->order->getPromotionDiscountAmount() > 0) {
             $discount = $this->currency->formatPrice($this->getCurrency(), $this->order->getPromotionDiscountAmount());
 
-            $comment = $this->getHelper('Module\Translation')->__(
+            $comment = $translator->__(
                 '%value% promotion discount amount was subtracted from the total amount.',
                 $discount
             );
@@ -312,7 +314,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         if ($this->order->getShippingDiscountAmount() > 0) {
             $discount = $this->currency->formatPrice($this->getCurrency(), $this->order->getShippingDiscountAmount());
 
-            $comment = $this->getHelper('Module\Translation')->__(
+            $comment = $translator->__(
                 '%value% discount amount was subtracted from the shipping Price.',
                 $discount
             );
@@ -334,25 +336,27 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             }
 
             $itemsGiftPrices[] = array(
-                'name'  => $item->getMagentoProduct()->getName(),
-                'type'  => $item->getChildObject()->getGiftType(),
-                'price' => $giftPrice,
+                'name'    => $item->getMagentoProduct()->getName(),
+                'type'    => $item->getChildObject()->getGiftType(),
+                'price'   => $giftPrice,
+                'message' => $item->getChildObject()->getGiftMessage(),
             );
         }
 
         if (!empty($itemsGiftPrices)) {
 
-            $comment = '<u>'.
-                $this->getHelper('Module\Translation')->__('The following Items are purchased with gift wraps') .
-                ':</u><br/>';
+            $comment = '<u>'.$translator->__('The following Items are purchased with gift wraps').':</u><br/>';
 
             foreach ($itemsGiftPrices as $productInfo) {
                 $formattedCurrency = $this->currency->formatPrice(
                     $this->getCurrency(), $productInfo['price']
                 );
 
-                $comment .= '<b>'.$productInfo['name'].'</b> > '
-                    .$productInfo['type'].' ('.$formattedCurrency.')';
+                $comment .= '<b>'.$productInfo['name'].'</b> > '.$productInfo['type'].' ('.$formattedCurrency.')<br />';
+
+                if (!empty($productInfo['message'])) {
+                    $comment .= '<i>'.$translator->__('Message').':</i> '.$productInfo['message'].'<br />';
+                }
             }
 
             $comments[] = $comment;

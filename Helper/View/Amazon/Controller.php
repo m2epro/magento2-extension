@@ -49,13 +49,11 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function addCronErrorMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $url = 'http://support.m2epro.com/knowledgebase/articles/';
-        $url .= '162927-why-cron-job-is-required-for-amazon-and-rakuten-co';
-
+        $url = 'https://support.m2epro.com/knowledgebase/162927-why-automatic-synchronization-is-required-for-amaz/';
         // M2ePro_TRANSLATIONS
         // Attention! AUTOMATIC Synchronization is not running at the moment.<br/>Please check this <a href="%url% target="_blank">article</a> to learn why it is required.
         $message = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
-        $message .= '<br/>Please check this <a href="%url% target="_blank">article</a> ';
+        $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a> ';
         $message .= 'to learn why it is required.';
         $message = $this->getHelper('Module\Translation')->__($message, $url);
 
@@ -67,9 +65,9 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
     private function addAmazonMarketplacesNotUpdatedNotificationMessage(
                                 \Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue('amazon_outdated_marketplaces');
+        $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue(__METHOD__);
 
-        if ($outdatedMarketplaces === false) {
+        if ($outdatedMarketplaces === NULL) {
 
             $readConn = $this->resourceConnection->getConnection();
             
@@ -97,10 +95,10 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
                 $outdatedMarketplaces[] = $marketplace->getTitle();
             }
 
-            $this->getHelper('Data\Cache\Permanent')->setValue('amazon_outdated_marketplaces',
-                                                                  $outdatedMarketplaces,
-                                                                  array('amazon','marketplace'),
-                                                                  60*60*24);
+            $this->getHelper('Data\Cache\Permanent')->setValue(__METHOD__,
+                                                               $outdatedMarketplaces,
+                                                               array('amazon','marketplace'),
+                                                               60*60*24);
         }
 
         if (count($outdatedMarketplaces) <= 0) {
@@ -111,13 +109,12 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 // %marketplace_title% data was changed on Amazon. You need to synchronize it the Extension works properly. Please, go to %menu_label% > <a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.
 
         $message = '%marketplace_title% data was changed on Amazon. You need to synchronize it '.
-                   'the Extension works properly. Please, go to %menu_path% > '.
+                   'the Extension works properly. Please, go to '.
                    '<a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.';
 
         $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
             $message,
             implode(', ',$outdatedMarketplaces),
-            $this->getHelper('View\Amazon')->getPageNavigationPath('configuration'),
             $controller->getUrl(
                 '*/amazon_marketplace',
                 array('tab' => \Ess\M2ePro\Helper\Component\Amazon::NICK)

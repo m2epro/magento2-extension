@@ -14,13 +14,11 @@ class Form extends AbstractForm
     protected $listing;
 
     protected $amazonFactory;
-    protected $elementFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -28,7 +26,6 @@ class Form extends AbstractForm
     )
     {
         $this->amazonFactory = $amazonFactory;
-        $this->elementFactory = $elementFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
     
@@ -112,7 +109,6 @@ class Form extends AbstractForm
             [
                 'name' => 'sku_mode',
                 'label' => $this->__('Source'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
                     \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_DEFAULT => $this->__('Product SKU'),
@@ -120,11 +116,12 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['sku_mode'] != Listing::SKU_MODE_CUSTOM_ATTRIBUTE ? $formData['sku_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Is used to identify Amazon Items, which you list, in Amazon Seller Central Inventory.
                     <br/>
@@ -132,11 +129,11 @@ class Form extends AbstractForm
                     <b>Note:</b> If you list a Magento Product and M2E Pro find an Amazon Item with the same
                     <i>Merchant SKU</i> in Amazon Inventory, they will be Mapped.')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField(
             'sku_modification_mode',
-            'select',
+            self::SELECT,
             [
                 'label' => $this->__('Modification'),
                 'name' => 'sku_modification_mode',
@@ -176,7 +173,7 @@ class Form extends AbstractForm
 
         $fieldset->addField(
             'generate_sku_mode',
-            'select',
+            self::SELECT,
             [
                 'label' => $this->__('Generate'),
                 'name' => 'generate_sku_mode',
@@ -225,7 +222,7 @@ class Form extends AbstractForm
 
         $editPolicyTooltip = $this->getTooltipHtml($this->__(
             'You can edit the saved Policy any time you need. However, the changes you make will automatically 
-            affect all of the Products which are listed using this Policy..'
+            affect all of the Products which are listed using this Policy.'
         ));
 
         $style = count($sellingFormatTemplates) === 0 ? '' : 'display: none';
@@ -237,26 +234,35 @@ class Form extends AbstractForm
                 'style' => 'line-height: 34px; display: initial;',
                 'required' => true,
                 'text' => <<<HTML
-    <span id="template_selling_format_label" style="padding-right: 25px; {$style}">{$this->__('No Policies available.')}</span>
+    <span id="template_selling_format_label" style="padding-right: 25px; {$style}">
+        {$this->__('No Policies available.')}
+    </span>
     {$templateSellingFormat->toHtml()}
 HTML
                 ,
                 'after_element_html' => <<<HTML
 &nbsp;
-<span style="line-height: 36px;">
+<span style="line-height: 20px;">
     <span id="edit_selling_format_template_link" style="color:#41362f">
         <a href="javascript: void(0);" style="" onclick="AmazonListingSettingsObj.openWindow(
             M2ePro.url.get('editSellingFormatTemplate', {id: $('template_selling_format_id').value, close_on_save: 1})
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a> 
-        <div
-        style="width: 45px; display: inline-block; margin-left: -10px;margin-right: 5px;position: relative;bottom: 5px;">
+        <div style="width: 45px; 
+                    display: inline-block; 
+                    margin-left: -10px;
+                    margin-right: 5px;
+                    position: relative;
+                    bottom: 5px;">
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
     <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
-        M2ePro.url.get('addNewSellingFormatTemplate', {close_on_save: 1}), AmazonListingSettingsObj.newSellingFormatTemplateCallback
+        M2ePro.url.get(
+                'addNewSellingFormatTemplate', 
+                {close_on_save: 1}), 
+                AmazonListingSettingsObj.newSellingFormatTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -291,26 +297,39 @@ HTML
                 'field_extra_attributes' => 'style="margin-bottom: 5px"',
                 'required' => true,
                 'text' => <<<HTML
-    <span id="template_synchronization_label" style="padding-right: 25px; {$style}">{$this->__('No Policies available.')}</span>
+    <span id="template_synchronization_label" style="padding-right: 25px; {$style}">
+        {$this->__('No Policies available.')}
+    </span>
     {$templateSynchronization->toHtml()}
 HTML
                 ,
                 'after_element_html' => <<<HTML
 &nbsp;
-<span style="line-height: 36px;">
+<span style="line-height: 20px;">
     <span id="edit_synchronization_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.openWindow(
-            M2ePro.url.get('editSynchronizationTemplate', {id: $('template_synchronization_id').value, close_on_save: 1})
+            M2ePro.url.get(
+                    'editSynchronizationTemplate', 
+                    {id: $('template_synchronization_id').value, 
+                    close_on_save: 1}
+            )
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
-        <div
-        style="width: 45px; display: inline-block; margin-left: -10px; margin-right: 5px; position: relative; bottom: 5px;">
+        <div style="width: 45px; 
+                    display: inline-block; 
+                    margin-left: -10px; 
+                    margin-right: 5px; 
+                    position: relative; 
+                    bottom: 5px;">
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
     <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
-        M2ePro.url.get('addNewSynchronizationTemplate', {close_on_save: 1}), AmazonListingSettingsObj.newSynchronizationTemplateCallback
+        M2ePro.url.get(
+                'addNewSynchronizationTemplate', 
+                {close_on_save: 1}), 
+                AmazonListingSettingsObj.newSynchronizationTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
 HTML
@@ -366,7 +385,6 @@ HTML
             [
                 'name' => 'condition_mode',
                 'label' => $this->__('Condition'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     [
                         'label' => $this->__('Recommended Value'),
@@ -376,10 +394,11 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     <<<HTML
                     <p>The Condition settings will be used not only to create new Amazon Products, but 
@@ -399,11 +418,11 @@ HTML
 HTML
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
         $fieldset->addField(
             'condition_note_mode',
-            'select',
+            self::SELECT,
             [
                 'container_id' => 'condition_note_mode_tr',
                 'label' => $this->__('Condition Note'),
@@ -436,7 +455,11 @@ HTML
                     'destination_id' => 'condition_note_value',
                     'magento_attributes' => $preparedAttributes,
                     'class' => 'primary',
-                    'style' => 'display: block; margin: 0; float: right;'
+                    'style' => 'display: block; margin: 0; float: right;',
+                    'select_custom_attributes' => [
+                        'allowed_attribute_types' => 'text,textarea',
+                        'apply_to_all_attribute_sets' => 0
+                    ],
                 ])->toHtml(),
                 'value' => $this->getHelper('Data')->escapeHtml($this->getData('condition_note_value'))
             ]
@@ -465,7 +488,7 @@ HTML
             $attrs = ['attribute_code' => $attribute['code']];
             if (
                 $formData['image_main_mode'] == \Ess\M2ePro\Model\Amazon\Listing::IMAGE_MAIN_MODE_ATTRIBUTE
-                && $attribute['code'] == $formData['sku_custom_attribute']
+                && $attribute['code'] == $formData['image_main_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
@@ -482,7 +505,6 @@ HTML
             [
                 'name' => 'image_main_mode',
                 'label' => $this->__('Main Image'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'required' => true,
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::IMAGE_MAIN_MODE_NONE => $this->__('None'),
@@ -491,18 +513,19 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['image_main_mode'] != Listing::IMAGE_MAIN_MODE_ATTRIBUTE
                     ? $formData['image_main_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'You have an ability to add Photos for your Items to be displayed on the More Buying Choices Page. 
                     <br/>It is available only for Items with Used or Collectible Condition.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         $fieldset->addField(
             'gallery_images_limit',
@@ -566,7 +589,6 @@ HTML
             'container_id' => 'gallery_images_mode_tr',
             'name' => 'gallery_images_mode',
             'label' => $this->__('Additional Images'),
-            'class' => 'M2ePro-custom-attribute-can-be-created',
             'values' => [
                 \Ess\M2ePro\Model\Amazon\Listing::GALLERY_IMAGES_MODE_NONE => $this->__('None'),
                 [
@@ -577,10 +599,11 @@ HTML
                     'label' => $this->__('Magento Attribute'),
                     'value' => $preparedAttributes,
                     'attrs' => [
-                        'class' => 'M2ePro-custom-attribute-optgroup'
+                        'is_magento_attribute' => true
                     ]
                 ]
-            ]
+            ],
+            'create_magento_attribute' => true,
         ];
 
         if ($formData['gallery_images_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GALLERY_IMAGES_MODE_NONE) {
@@ -591,7 +614,7 @@ HTML
             'gallery_images_mode',
             self::SELECT,
             $fieldConfig
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         // Gift Wrap
         $fieldset = $form->addFieldset(
@@ -633,7 +656,6 @@ HTML
             [
                 'name' => 'gift_wrap_mode',
                 'label' => $this->__('Gift Wrap'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::GIFT_WRAP_MODE_NO => $this->__('No'),
                     \Ess\M2ePro\Model\Amazon\Listing::GIFT_WRAP_MODE_YES => $this->__('Yes'),
@@ -641,18 +663,20 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true,
+                            'new_option_value' => \Ess\M2ePro\Model\Amazon\Listing::GIFT_WRAP_MODE_ATTRIBUTE
                         ]
                     ]
                 ],
                 'value' => $formData['gift_wrap_mode'] != Listing::GIFT_WRAP_MODE_ATTRIBUTE
                     ? $formData['gift_wrap_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Enable this Option in case you want Gift Wrapped Option be applied to the
                     Products you are going to sell.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
         $fieldset->addField(
             'gift_message_attribute',
@@ -685,7 +709,6 @@ HTML
             [
                 'name' => 'gift_message_mode',
                 'label' => $this->__('Gift Message'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_NO => $this->__('No'),
                     \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_YES => $this->__('Yes'),
@@ -693,18 +716,20 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true,
+                            'new_option_value' => \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
                         ]
                     ]
                 ],
                 'value' => $formData['gift_message_mode'] != Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
                     ? $formData['gift_message_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Enable this Option in case you want Gift Message Option be applied to the
                     Products you are going to sell.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
         // Gift Wrap
         $fieldset = $form->addFieldset(
@@ -767,7 +792,6 @@ HTML
         $fieldConfig = [
             'name' => 'handling_time_mode',
             'label' => $this->__('Handling Time'),
-            'class' => 'M2ePro-custom-attribute-can-be-created',
             'values' => [
                 \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_NONE => $this->__('None'),
                 [
@@ -778,10 +802,11 @@ HTML
                     'label' => $this->__('Magento Attribute'),
                     'value' => $preparedAttributes,
                     'attrs' => [
-                        'class' => 'M2ePro-custom-attribute-optgroup'
+                        'is_magento_attribute' => true
                     ]
                 ]
             ],
+            'create_magento_attribute' => true,
             'tooltip' => $this->__('Time that is needed to prepare an Item to be shipped.')
         ];
 
@@ -793,7 +818,7 @@ HTML
             'handling_time_mode',
             self::SELECT,
             $fieldConfig
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
         $fieldset->addField(
             'restock_date_custom_attribute',
@@ -808,14 +833,14 @@ HTML
         foreach ($attributesByTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
-                $formData['restock_date_mode'] == \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
+                $formData['restock_date_mode'] == \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['restock_date_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
             }
             $preparedAttributes[] = [
                 'attrs' => $attrs,
-                'value' => \Ess\M2ePro\Model\Amazon\Listing::GIFT_MESSAGE_MODE_ATTRIBUTE,
+                'value' => \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE,
                 'label' => $attribute['label'],
             ];
         }
@@ -826,7 +851,6 @@ HTML
             [
                 'name' => 'restock_date_mode',
                 'label' => $this->__('Restock Date'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_NONE => $this->__('None'),
                     \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_CUSTOM_VALUE => $this->__('Custom Value'),
@@ -834,17 +858,18 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
-                'value' => $formData['restock_date_mode'] != Listing::GIFT_MESSAGE_MODE_ATTRIBUTE
+                'create_magento_attribute' => true,
+                'value' => $formData['restock_date_mode'] != Listing::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE
                     ? $formData['restock_date_mode'] : '',
                 'tooltip' => $this->__(
                     'The date you will be able to ship any back-ordered Items to a Customer.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
         $fieldset->addField(
             'restock_date_value',

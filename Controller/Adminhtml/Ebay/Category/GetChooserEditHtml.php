@@ -20,7 +20,6 @@ class GetChooserEditHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
         $accountId = $this->getRequest()->getParam('account_id');
         // ---------------------------------------
 
-        // TODO move to block $data param
         $this->getHelper('Data\GlobalData')->setValue('chooser_category_type', $categoryType);
 
         // ---------------------------------------

@@ -8,7 +8,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Other
     {
         $this->addContent($this->createBlock('Amazon\Listing\Other'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('3rd Party Listings'));
-        $this->setComponentPageHelpLink('3rd+Party+Listing');
+        $this->setPageHelpLink('x/AAItAQ');
 
         return $this->getResult();
     }

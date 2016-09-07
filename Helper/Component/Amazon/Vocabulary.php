@@ -341,7 +341,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
             $dispatcherObject->process($connectorObj);
 
-        } catch (Exception $exception) {
+        } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
         }
     }

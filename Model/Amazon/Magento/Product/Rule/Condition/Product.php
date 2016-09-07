@@ -33,7 +33,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 
     /**
      * @param $filterId
-     * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom
+     * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
     protected function getCustomFilterInstance($filterId)
     {

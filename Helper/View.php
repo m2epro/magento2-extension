@@ -90,7 +90,6 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    // todo
     public function getCurrentView()
     {
         $controllerName = $this->_getRequest()->getControllerName();
@@ -107,11 +106,10 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             return \Ess\M2ePro\Helper\View\Amazon::NICK;
         }
 
-        if (stripos($controllerName, \Ess\M2ePro\Helper\View\Development::NICK) !== false) {
-            return \Ess\M2ePro\Helper\View\Development::NICK;
+        if (stripos($controllerName, \Ess\M2ePro\Helper\View\ControlPanel::NICK) !== false) {
+            return \Ess\M2ePro\Helper\View\ControlPanel::NICK;
         }
 
-        //todo
         if (stripos($controllerName, 'system_config') !== false) {
             return \Ess\M2ePro\Helper\View\Configuration::NICK;
         }
@@ -131,12 +129,11 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Amazon::NICK;
     }
 
-    public function isCurrentViewDevelopment()
+    public function isCurrentViewControlPanel()
     {
-        return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Development::NICK;
+        return $this->getCurrentView() == \Ess\M2ePro\Helper\View\ControlPanel::NICK;
     }
 
-    // todo
     public function isCurrentViewConfiguration()
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Configuration::NICK;
@@ -144,17 +141,15 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    //TODO change after implementation of actions(controller)
     public function getUrl($row, $controller, $action, array $params = array())
     {
         $component = strtolower($row->getData('component_mode'));
         return $this->urlBuilder->getUrl("*/{$component}_{$controller}/{$action}", $params);
     }
 
-    // todo WTF? is it a good place for this?
     public function getModifiedLogMessage($logMessage)
     {
-        $description = $this->activeRecordFactory->getObject('Log\AbstractLog')->decodeDescription($logMessage);
+        $description = $this->getHelper('Module\Log')->decodeDescription($logMessage);
 
         preg_match_all('/[^(href=")](http|https)\:\/\/[a-z0-9\-\._\/+\?\&\%=;\(\)]+/i', $description, $matches);
         $matches = array_unique($matches[0]);
@@ -181,65 +176,6 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return $this->getHelper('Data')->escapeHtml($description, ['a'], ENT_NOQUOTES);
-    }
-
-    //########################################
-
-    // todo
-    public function getMenuPath(\SimpleXMLElement $parentNode, $pathNick, $rootMenuLabel = '')
-    {
-        $paths = $this->getMenuPaths($parentNode, $rootMenuLabel);
-
-        $preparedPath = preg_quote(trim($pathNick, '/'), '/');
-
-        $resultLabels = array();
-        foreach ($paths as $pathNick => $label) {
-            if (preg_match('/'.$preparedPath.'\/?$/', $pathNick)) {
-                $resultLabels[] = $label;
-            }
-        }
-
-        if (empty($resultLabels)) {
-            return '';
-        }
-
-        if (count($resultLabels) > 1) {
-            throw new \Ess\M2ePro\Model\Exception('More than one menu path found');
-        }
-
-        return array_shift($resultLabels);
-    }
-
-    // todo
-    public function getMenuPaths(\SimpleXMLElement $parentNode, $parentLabel = '', $parentPath = '')
-    {
-        if (empty($parentNode->children)) {
-            return '';
-        }
-
-        $paths = array();
-
-        foreach ($parentNode->children->children() as $key => $child) {
-            $path  = '/'.$key.'/';
-            if (!empty($parentPath)) {
-                $path = '/'.trim($parentPath, '/').$path;
-            }
-
-            $label = $this->getHelper('Module\Translation')->__((string)$child->title);
-            if (!empty($parentLabel)) {
-                $label = $parentLabel.' > '.$label;
-            }
-
-            $paths[$path] = $label;
-
-            if (empty($child->children)) {
-                continue;
-            }
-
-            $paths = array_merge($paths, $this->getMenuPaths($child, $label, $path));
-        }
-
-        return $paths;
     }
 
     //########################################

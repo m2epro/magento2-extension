@@ -30,7 +30,7 @@ class Order extends AbstractForm
 
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
 
         $websites = $this->getHelper('Magento\Store\Website')->getWebsites(true);
 
@@ -49,8 +49,6 @@ class Order extends AbstractForm
         array_unshift($productTaxClasses, $none);
 
         // ---------------------------------------
-        // TODO NOT SUPPORTED FEATURES
-//        $this->isStorePickupEnabled = $account->getChildObject()->isPickupStoreEnabled();
 
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
@@ -127,10 +125,10 @@ M2E Pro or other tools.</p><br>
 <p><strong>Note:</strong> If an eBay Order is received, Magento Product QTY decreases only if a 
 Magento Order is created.</p><br>
 <p>More detailed information about how to work with this 
-Page you can find <a href="%url%" target="_blank">here</a>.</p>
+Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/LgItAQ'))
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LgItAQ'))
             ]
         );
 
@@ -220,7 +218,7 @@ HTML
                 'container_id' => 'magento_orders_listings_other_store_id_container',
                 'name' => 'magento_orders_settings[listing_other][store_id]',
                 'label' => $this->__('Magento Store View'),
-                'required' => true,
+                'required' => false,
                 'value' => $formData['magento_orders_settings']['listing_other']['store_id'],
                 'has_empty_option' => false,
                 'has_default_option' => false,
@@ -396,8 +394,7 @@ HTML
                 'name' => 'magento_orders_settings[customer][website_id]',
                 'label' => $this->__('Associate to Website'),
                 'values' => $values,
-                'value' => $formData['magento_orders_settings']['customer']['website_id'],
-                'required' => true
+                'value' => $formData['magento_orders_settings']['customer']['website_id']
             ]
         );
 
@@ -414,7 +411,7 @@ HTML
                 'label' => $this->__('Customer Group'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['group_id'],
-                'required' => true
+                'required' => false
             ]
         );
 

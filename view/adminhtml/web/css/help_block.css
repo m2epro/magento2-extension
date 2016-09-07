@@ -4,6 +4,11 @@
 #container > .block_notices{
     margin-bottom: 30px;
 }
+.m2epro-box-style {
+    background-color: #f8f8f8 !important;
+    border-top: 1px solid #e3e3e3 !important;
+    border-bottom: 1px solid #e3e3e3 !important;
+}
 .block_notices {
     font-size: 1.7rem;
     padding: 1.8rem 2.5rem;
@@ -67,6 +72,9 @@
 }
 .block_notices .content ul {
     margin: 10px 0 10px 30px;
+}
+.block_notices .content ul:last-child {
+    margin-bottom: 0;
 }
 .block_notices .subtitle-content, .block_notices .arrow {
     color: #747474;

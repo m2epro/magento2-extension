@@ -30,8 +30,6 @@ define([
             };
 
             this.variationProductManageHandler = new EbayListingVariationProductManage(this);
-            // TODO bid
-            // this.listingProductBidsHandler = new EbayListingProductBidsHandler(this);
 
             this.actions = Object.extend(this.actions, {
 
@@ -62,7 +60,7 @@ define([
                 method: 'post',
                 asynchronous: true,
                 parameters: {
-                    ids: this.selectedProductsIds.join(',')
+                    product_ids: this.selectedProductsIds.join(',')
                 },
                 onSuccess: function(transport) {
 
@@ -154,16 +152,17 @@ define([
 
         // ---------------------------------------
 
-        openPopUp: function(title, content, params)
+        openPopUp: function(title, content, params, popupId)
         {
             var self = this;
             params = params || {};
+            popupId = popupId || 'modal_view_action_dialog';
 
-            var modalDialogMessage = $('modal_view_action_dialog');
+            var modalDialogMessage = $(popupId);
 
             if (!modalDialogMessage) {
                 modalDialogMessage = new Element('div', {
-                    id: 'modal_view_action_dialog'
+                    id: popupId
                 });
             }
 
@@ -175,7 +174,7 @@ define([
                 buttons: [{
                     text: M2ePro.translator.translate('Cancel'),
                     attr: {id: 'cancel_button'},
-                    class: 'action-secondary action-dismiss',
+                    class: 'action-dismiss',
                     click: function () {}
                 }, {
                     text: M2ePro.translator.translate('Confirm'),
@@ -186,8 +185,6 @@ define([
                 closed: function() {
                     self.selectedProductsIds = [];
                     self.selectedCategoriesData = {};
-
-                    //$('excludeListPopup') && Windows.getWindow('excludeListPopup').destroy();
 
                     self.getGridObj().reload();
 

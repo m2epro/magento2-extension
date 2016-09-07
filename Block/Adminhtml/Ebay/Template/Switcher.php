@@ -82,50 +82,6 @@ class Switcher extends AbstractBlock
 
     //########################################
 
-    public static function getSwitcherUrlHtml()
-    {
-        //TODO
-        $params = array();
-
-        // initiate account param
-        // ---------------------------------------
-        $account = Mage::helper('M2ePro/Data\Global')->getValue('ebay_account');
-        $params['account_id'] = $account->getId();
-        // ---------------------------------------
-
-        // initiate marketplace param
-        // ---------------------------------------
-        $marketplace = Mage::helper('M2ePro/Data\Global')->getValue('ebay_marketplace');
-        $params['marketplace_id'] = $marketplace->getId();
-        // ---------------------------------------
-
-        // initiate attribute sets param
-        // ---------------------------------------
-        $attributeSets = Mage::helper('M2ePro/Data\Global')->getValue('ebay_attribute_sets');
-        $params['attribute_sets'] = implode(',', $attributeSets);
-        // ---------------------------------------
-
-        // initiate display use default option param
-        // ---------------------------------------
-        $displayUseDefaultOption = Mage::helper('M2ePro/Data\Global')->getValue('ebay_display_use_default_option');
-        $params['display_use_default_option'] = (int)(bool)$displayUseDefaultOption;
-        // ---------------------------------------
-
-        $url = Mage::helper('adminhtml')->getUrl('M2ePro/adminhtml_ebay_template/getTemplateHtml', $params);
-
-        $urls = json_encode(array(
-            'adminhtml_ebay_template/getTemplateHtml' => $url
-        ));
-
-        return <<<HTML
-<script type="text/javascript">
-    M2ePro.url.add({$urls});
-</script>
-HTML;
-    }
-
-    //########################################
-
     public function getTemplateNick()
     {
         if (!isset($this->_data['template_nick'])) {

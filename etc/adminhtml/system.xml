@@ -1,23 +1,25 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Copyright © 2015 Magento. All rights reserved.
- * See COPYING.txt for license details.
- */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+
     <system>
+
+        <!-- main tab -->
+
         <tab id="m2epro" translate="label" sortOrder="450">
             <label>Multi Channels</label>
         </tab>
 
+        <!-- ebay integration tab -->
+
         <section id="ebay_integration" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
-            <label>Ebay Integration</label>
+            <label>eBay Integration</label>
             <tab>m2epro</tab>
             <resource>Ess_M2ePro::system_configuration</resource>
-            <group id="ebay_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
-                <label></label>
+            <group id="ebay_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
                 <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
                 <field id="ebay_mode_field" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Mode</label>
@@ -26,13 +28,15 @@
             </group>
         </section>
 
+        <!-- amazon integration tab -->
+
         <section id="amazon_integration" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>Amazon Integration</label>
             <tab>m2epro</tab>
             <resource>Ess_M2ePro::system_configuration</resource>
-            <group id="amazon_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1">
-                <label></label>
+            <group id="amazon_mode" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1">
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
                 <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
                 <field id="amazon_mode_field" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Mode</label>
@@ -41,13 +45,15 @@
             </group>
         </section>
 
+        <!-- buy integration tab -->
+
         <section id="buy_integration" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
             <label>Rakuten Integration</label>
             <tab>m2epro</tab>
             <resource>Ess_M2ePro::system_configuration</resource>
             <group id="buy_channels" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                <label></label>
+                <fieldset_css>m2epro-system-config-fieldset</fieldset_css>
                 <frontend_model>Ess\M2ePro\Block\Adminhtml\System\Config\General\Fieldset</frontend_model>
                 <field id="buy_com" sortOrder="10" translate="label" type="select" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Rakuten.com</label>
@@ -63,5 +69,7 @@
                 </field>
             </group>
         </section>
+
     </system>
+
 </config>

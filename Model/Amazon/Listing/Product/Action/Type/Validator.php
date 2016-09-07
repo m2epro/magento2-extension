@@ -33,7 +33,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -282,7 +282,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $this->addMessage(
                 'This product is used by Amazon Repricing Tool.
                  The Price cannot be updated through the M2E Pro.',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
             );
 
             return true;

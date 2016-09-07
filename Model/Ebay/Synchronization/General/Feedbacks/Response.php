@@ -144,7 +144,7 @@ final class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feed
 
         if ($account->getChildObject()->isFeedbacksAutoResponseCycled()) {
             // Load is needed to get correct feedbacks_last_used_id
-            $account = $this->getHelper('Component\Ebay')->getCachedObject(
+            $account = $this->activeRecordFactory->getCachedObjectLoaded(
                 'Account', $feedback->getData('account_id')
             );
         }

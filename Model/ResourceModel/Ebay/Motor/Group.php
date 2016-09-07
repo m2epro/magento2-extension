@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Motor;
 
-class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Group extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

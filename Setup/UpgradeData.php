@@ -4,8 +4,8 @@ namespace Ess\M2ePro\Setup;
 
 use Ess\M2ePro\Model\Config\Manager\Module;
 use Ess\M2ePro\Model\Exception;
-use Ess\M2ePro\Setup\Upgrade\Entity;
-use Magento\Framework\DB\Adapter\Pdo\Mysql;
+use Ess\M2ePro\Model\Setup;
+use Ess\M2ePro\Model\Setup\Upgrade\Manager;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\ModuleDataSetupInterface;
@@ -13,25 +13,25 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 class UpgradeData implements UpgradeDataInterface
 {
     /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
-    protected $moduleResource;
+    private $moduleResource;
 
     /** @var \Magento\Framework\Module\ModuleListInterface $moduleList */
-    protected $moduleList;
+    private $moduleList;
 
-    /** @var Upgrade\EntityFactory $entityFactory */
-    protected $entityFactory;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory */
+    private $activeRecordFactory;
 
     /** @var Module $moduleConfig */
-    protected $moduleConfig;
+    private $moduleConfig;
 
     /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
-    protected $helperFactory;
+    private $helperFactory;
 
-    /** @var  Tables $tablesObject */
-    protected $tablesObject;
+    /** @var \Ess\M2ePro\Model\Factory $modelFactory */
+    private $modelFactory;
 
     /** @var  ModuleDataSetupInterface $installer */
-    protected $installer;
+    private $installer;
 
     /**
      * @format
@@ -46,71 +46,84 @@ class UpgradeData implements UpgradeDataInterface
      *
      * @var array
      */
-    private static $availableVersionUpgrades = [];
+    private static $availableVersionUpgrades = [
+        '1.0.0' => ['1.1.0']
+    ];
 
     //########################################
 
     public function __construct(
         \Magento\Framework\Model\ResourceModel\Db\Context $context,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
-        \Ess\M2ePro\Setup\Upgrade\EntityFactory $entityFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        Tables $tablesObject
+        \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($context);
         $this->moduleList = $moduleList;
-        $this->entityFactory = $entityFactory;
+        $this->activeRecordFactory = $activeRecordFactory;
         $this->moduleConfig = $moduleConfig;
         $this->helperFactory = $helperFactory;
-        $this->tablesObject = $tablesObject;
+        $this->modelFactory = $modelFactory;
     }
 
     //########################################
 
     public function upgrade(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
+        $this->installer = $setup;
+
         if (!$this->isInstalled()) {
             return;
         }
 
-        if ($this->helperFactory->getObject('Module\Maintenance\Setup')->isEnabled()) {
+        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
+            !$this->isMaintenanceCanBeIgnored()
+        ) {
             return;
         }
 
-        $this->installer = $setup;
-
         try {
 
-            if (!$this->isNeedRollbackBackup() && !empty($this->getNotCompletedUpgrades())) {
-                throw new Exception('There are some not completed previous upgrades');
-            }
+            $this->checkPreconditions();
 
-            $versionFrom = $this->prepareVersionFrom();
-            $versionTo   = $this->prepareVersionTo();
-
-            if ($versionFrom == $versionTo) {
+            $versionsToExecute = $this->getVersionsToExecute();
+            if (empty($versionsToExecute)) {
                 return;
             }
 
-            $this->helperFactory->getObject('Module\Maintenance\Setup')->enable();
+            $this->helperFactory->getObject('Module\Maintenance\General')->enable();
 
-            while ($upgradeEntity = $this->getUpgradeEntity($versionFrom, $versionTo, !empty($versionTo))) {
+            foreach ($versionsToExecute as $versionFrom => $versionTo) {
 
-                if ($this->isNeedRollbackBackup()) {
-                    $upgradeEntity->getBackup()->rollback();
-                    $this->unsetIsNeedRollbackBackup();
+                /** @var Manager $upgradeManager */
+                $upgradeManager = $this->modelFactory->getObject('Setup\Upgrade\Manager', [
+                    'versionFrom' => $versionFrom,
+                    'versionTo'   => $versionTo,
+                    'installer'   => $this->installer,
+                ]);
+
+                $setupObject  = $this->initSetupObject($versionFrom, $versionTo);
+                $backupObject = $upgradeManager->getBackupObject();
+
+                if ($this->isAllowedRollbackFromBackup()) {
+                    $backupObject->rollback();
                 }
 
-                $upgradeEntity->process();
+                $backupObject->remove();
+                $backupObject->create();
+                $setupObject->setData('is_backuped', 1)->save();
 
-                $versionFrom = $upgradeEntity->getVersionTo();
-                $versionTo   = null;
+                $upgradeManager->process();
 
-                $this->setResourceVersion($upgradeEntity->getVersionTo());
+                $setupObject->setData('is_completed', 1)->save();
+                $backupObject->remove();
+
+                $this->setResourceVersion($versionTo);
             }
 
-            $this->helperFactory->getObject('Module\Maintenance\Setup')->disable();
+            $this->helperFactory->getObject('Module\Maintenance\General')->disable();
 
             $this->setResourceVersion($this->getConfigVersion());
         } catch (\Exception $exception) {
@@ -121,171 +134,134 @@ class UpgradeData implements UpgradeDataInterface
 
     //########################################
 
-    private function prepareVersionFrom()
+    private function isInstalled()
     {
-        $maxSetupVersion = $this->getMaxSetupToVersion();
+        return !empty($this->moduleResource->getDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER)) &&
+               !empty($this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER));
+    }
+
+    private function checkPreconditions()
+    {
+        $maxSetupVersion = $this->activeRecordFactory->getObject('Setup')
+            ->getResource()
+            ->getMaxCompletedItem()
+            ->getVersionTo();
+
         if (!is_null($maxSetupVersion) && $maxSetupVersion != $this->getResourceVersion()) {
             $this->setResourceVersion($maxSetupVersion);
         }
 
-        $versionFrom = $this->getResourceVersion();
+        $notCompletedUpgrades = $this->getNotCompletedUpgrades();
 
-        if ($this->isNeedRollbackBackup()) {
-            $versionFrom = $this->getVersionForRollbackBackup()['version_from'];
+        if (!empty($notCompletedUpgrades) && !$this->isAllowedRollbackFromBackup()) {
+            throw new Exception('There are some not completed previous upgrades');
         }
 
-        return $versionFrom;
-    }
+        if ($this->isAllowedRollbackFromBackup()) {
 
-    private function prepareVersionTo()
-    {
-        $versionTo = null;
+            // only 1 not completed upgrade allowed for rollback from backup
 
-        if ($this->isNeedRollbackBackup()) {
-            $versionTo = $this->getVersionForRollbackBackup()['version_to'];
-        }
-
-        return $versionTo;
-    }
-
-    //########################################
-
-    private function getMaxSetupToVersion()
-    {
-        $select = $this->getConnection()->select()
-            ->from($this->tablesObject->getFullName('setup'), 'version_to')
-            ->where('is_completed = ?', 1);
-
-        $toVersions = $this->getConnection()->fetchCol($select);
-
-        $maxToVersion = null;
-
-        foreach ($toVersions as $toVersion) {
-            if (is_null($maxToVersion)) {
-                $maxToVersion = $toVersion;
-                continue;
+            if (count($notCompletedUpgrades) > 1) {
+                throw new Exception('There are more than 1 not completed previous upgrades available');
             }
 
-            if (version_compare($maxToVersion, $toVersion, '>')) {
-                continue;
+            if (!empty($notCompletedUpgrades) &&
+                reset($notCompletedUpgrades)->getVersionFrom() != $this->getResourceVersion()
+            ) {
+                throw new Exception('Not completed upgrade is invalid for rollback from backup');
             }
-
-            $maxToVersion = $toVersion;
         }
-
-        return $maxToVersion;
     }
 
-    private function getNotCompletedSetupVersions()
+    private function getVersionsToExecute()
     {
-        $select = $this->getConnection()->select()
-            ->from($this->tablesObject->getFullName('setup'))
-            ->where('is_backuped = ?', 1)
-            ->where('is_completed = ?', 0);
-
-        $setupRecords = $this->getConnection()->fetchAssoc($select);
-
         $resultVersions = [];
 
-        foreach ($setupRecords as $setupRecord) {
-            $resultVersions[] = [
-                'version_from' => $setupRecord['version_from'],
-                'version_to'   => $setupRecord['version_to'],
-            ];
+        // we must execute last failed upgrade first
+        if ($this->isAllowedRollbackFromBackup()) {
+            /** @var Setup[] $notCompletedUpgrades */
+            $notCompletedUpgrades = $this->getNotCompletedUpgrades();
+            $notCompletedUpgrade  = reset($notCompletedUpgrades);
+
+            $resultVersions[$notCompletedUpgrade->getVersionFrom()] = $notCompletedUpgrade->getVersionTo();
+        }
+
+        $versionFrom = end($resultVersions);
+        if (empty($versionFrom)) {
+            $versionFrom = $this->getResourceVersion();
+        }
+
+        while ($versionFrom != $this->getConfigVersion()) {
+            $versionTo = end(self::$availableVersionUpgrades[$versionFrom]);
+            $resultVersions[$versionFrom] = $versionTo;
+
+            $versionFrom = $versionTo;
         }
 
         return $resultVersions;
     }
 
-    private function getVersionForRollbackBackup()
-    {
-        $versions = $this->getNotCompletedSetupVersions();
-
-        if (count($versions) != 1 || reset($versions)['version_from'] != $this->getResourceVersion()) {
-            throw new Exception('Invalid preconditions for rollback backup');
-        }
-
-        return reset($versions);
-    }
-
-    private function getNotCompletedUpgrades()
-    {
-        $select = $this->getConnection()->select()
-            ->from($this->tablesObject->getFullName('setup'))
-            ->where('version_from IS NOT NULL')
-            ->where('version_to IS NOT NULL')
-            ->where('is_backuped = ?', 1)
-            ->where('is_completed = ?', 0);
-
-        return $this->getConnection()->fetchAssoc($select);
-    }
-
     //########################################
 
     /**
-     * @param $versionFrom
-     * @param $versionTo
-     * @param $strictMode
-     * @return Entity
+     * @return Setup[]
      */
-    private function getUpgradeEntity($versionFrom, $versionTo = null, $strictMode = false)
+    private function getNotCompletedUpgrades()
     {
-        if ($strictMode) {
-            if (!isset(self::$availableVersionUpgrades[$versionFrom])) {
-                return false;
-            }
+        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+        $collection->addFieldToFilter('version_from', array('notnull' => true));
+        $collection->addFieldToFilter('version_to', array('notnull' => true));
+        $collection->addFieldToFilter('is_backuped', 1);
+        $collection->addFieldToFilter('is_completed', 0);
 
-            if (!in_array($versionTo, self::$availableVersionUpgrades[$versionFrom])) {
-                return false;
-            }
-
-            return $this->entityFactory->create([
-                'versionFrom' => $versionFrom,
-                'versionTo'   => $versionTo,
-                'installer'   => $this->installer,
-            ]);
-        }
-
-        $allFromVersions = array_keys(self::$availableVersionUpgrades);
-
-        $versionsSortCallback = function($firstVersion, $secondVersion) {
-            return version_compare($firstVersion, $secondVersion, '>') ? 1 : -1;
-        };
-
-        usort($allFromVersions, $versionsSortCallback);
-
-        $calculatedVersionFrom = null;
-        foreach ($allFromVersions as $tempFromVersion) {
-            if (version_compare($versionFrom, $tempFromVersion, '>')) {
-                continue;
-            }
-
-            $calculatedVersionFrom = $tempFromVersion;
-            break;
-        }
-
-        if (is_null($calculatedVersionFrom)) {
-            return false;
-        }
-
-        $toVersions = self::$availableVersionUpgrades[$calculatedVersionFrom];
-        usort($toVersions, $versionsSortCallback);
-
-        $calculatedVersionTo = end($toVersions);
-
-        return $this->entityFactory->create([
-            'versionFrom' => $calculatedVersionFrom,
-            'versionTo'   => $calculatedVersionTo,
-            'installer'   => $this->installer,
-        ]);
+        return $collection->getItems();
     }
 
-    //########################################
-
-    private function isInstalled()
+    private function initSetupObject($versionFrom, $versionTo)
     {
-        return !empty($this->moduleResource->getDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER)) &&
-               !empty($this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER));
+        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+        $collection->addFieldToFilter('version_from', $versionFrom);
+        $collection->addFieldToFilter('version_to', $versionTo);
+        $collection->getSelect()->limit(1);
+
+        /** @var Setup $setupObject */
+        $setupObject = $collection->getFirstItem();
+
+        if (!$setupObject->getId()) {
+            $setupObject->setData([
+                'version_from' => $versionFrom,
+                'version_to'   => $versionTo,
+                'is_backuped'  => 0,
+                'is_completed' => 0,
+            ]);
+            $setupObject->save();
+        }
+
+        return $setupObject;
+    }
+
+    private function isMaintenanceCanBeIgnored()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/ignore_maintenace');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
+    }
+
+    private function isAllowedRollbackFromBackup()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/allow_rollback_from_backup');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     //########################################
@@ -304,26 +280,6 @@ class UpgradeData implements UpgradeDataInterface
     private function getResourceVersion()
     {
         return $this->moduleResource->getDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER);
-    }
-
-    private function isNeedRollbackBackup()
-    {
-        return $this->moduleConfig->getGroupValue('/setup/upgrade/', 'is_need_rollback_backup');
-    }
-
-    private function unsetIsNeedRollbackBackup()
-    {
-        return $this->moduleConfig->setGroupValue('/setup/upgrade/', 'is_need_rollback_backup', 0);
-    }
-
-    //########################################
-
-    /**
-     * @return Mysql
-     */
-    private function getConnection()
-    {
-        return $this->installer->getConnection();
     }
 
     //########################################

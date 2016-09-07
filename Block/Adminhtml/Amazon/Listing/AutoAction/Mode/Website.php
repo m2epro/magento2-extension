@@ -26,11 +26,12 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
                     Magento Product is added to the Website with regard to the Store View selected for the 
                     M2E Pro Listing. In other words, after a Magento Product is added to the selected Website,
                     it can be automatically added to M2E Pro Listing if the settings are enabled.</p><br>
-                    <p>Accordingly, if a Magento Product present in the the M2E Pro Listing is removed 
+                    <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed 
                     from the Website, the Item will be removed from the Listing and its 
                     sale will be stopped on Channel.</p><br>
-                    <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/lAYtAQ')
+                    <p>More detailed information you can find 
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/lAYtAQ')
                 )
             ]
         );
@@ -106,7 +107,7 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
                 'field_extra_attributes' => 'id="auto_action_amazon_add_and_create_asin"',
                 'tooltip' => $this->__(
                     'Should M2E Pro try to create new ASIN/ISBN in case Search
-                    Settings are not set or contain the incorrect values ?'
+                    Settings are not set or contain the incorrect values?'
                 )
             ]
         );
@@ -142,7 +143,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
 
         $url = $this->getUrl('*/amazon_template_description/new', array(
             'is_new_asin_accepted'  => 1,
-            'marketplace_id'        => $this->getListing()->getMarketplaceId()
+            'marketplace_id'        => $this->getListing()->getMarketplaceId(),
+            'close_on_save' => true
         ));
 
         $fieldSet->addField('adding_description_template_id',

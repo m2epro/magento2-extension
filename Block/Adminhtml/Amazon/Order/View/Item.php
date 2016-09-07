@@ -59,7 +59,7 @@ class Item extends AbstractGrid
             ->addFieldToFilter('order_id', $this->order->getId());
 
         $collection->getSelect()->joinLeft(
-            array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')), //todo
+            array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')),
             '(cisi.product_id = `main_table`.product_id AND cisi.stock_id = 1)',
             array('is_in_stock')
         );
@@ -315,7 +315,7 @@ HTML;
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
 
-        $discountDetails = @json_decode($row->getChildObject()->getData('discount_details'), true);
+        $discountDetails = json_decode($row->getChildObject()->getData('discount_details'), true);
         if (empty($discountDetails['promotion']['value'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }

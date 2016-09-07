@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Order;
 
-class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 

@@ -564,77 +564,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('stop_qty_calculated_value_max');
     }
 
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isScheduleEnabled()
-    {
-        return (int)$this->getData('schedule_mode') == 1;
-    }
-
-    /**
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function isScheduleIntervalNow()
-    {
-        $intervalSettings = $this->getSettings('schedule_interval_settings');
-
-        if (empty($intervalSettings)) {
-            return true;
-        }
-
-        if (!isset($intervalSettings['mode'], $intervalSettings['date_from'], $intervalSettings['date_to'])) {
-            return true;
-        }
-
-        if ($intervalSettings['mode'] == 0) {
-            return true;
-        }
-
-        $from = strtotime($intervalSettings['date_from']);
-        $to   = strtotime($intervalSettings['date_to']);
-        $now  = $this->getHelper('Data')->getCurrentGmtDate(true);
-
-        return $now >= $from && $now <= $to;
-    }
-
-    /**
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     */
-    public function isScheduleWeekNow()
-    {
-        $weekSettings = $this->getSettings('schedule_week_settings');
-
-        if (empty($weekSettings)) {
-            return false;
-        }
-
-        $todayDayOfWeek = getdate($this->getHelper('Data')->getCurrentTimezoneDate(true));
-        $todayDayOfWeek = strtolower($todayDayOfWeek['weekday']);
-
-        if (!isset($weekSettings[$todayDayOfWeek])) {
-            return false;
-        }
-
-        if (!isset($weekSettings[$todayDayOfWeek]['time_from'], $weekSettings[$todayDayOfWeek]['time_to'])) {
-            return false;
-        }
-
-        $now = $this->getHelper('Data')->getCurrentTimezoneDate(true);
-
-        list($fromHour,$fromMinute,$fromSecond) = explode(':',$weekSettings[$todayDayOfWeek]['time_from']);
-        $from = mktime($fromHour,$fromMinute,$fromSecond, date('m',$now),date('d',$now),date('Y',$now));
-
-        list($toHour,$toMinute,$toSecond) = explode(':',$weekSettings[$todayDayOfWeek]['time_to']);
-        $to = mktime($toHour,$toMinute,$toSecond, date('m',$now),date('d',$now),date('Y',$now));
-
-        return $now >= $from && $now <= $to;
-    }
-
     //########################################
 
     /**
@@ -646,8 +575,7 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
             $this->getListDefaultSettings(),
             $this->getReviseDefaultSettings(),
             $this->getRelistDefaultSettings(),
-            $this->getStopDefaultSettings(),
-            $this->getScheduleDefaultSettings()
+            $this->getStopDefaultSettings()
         );
     }
 
@@ -738,24 +666,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
             'stop_qty_calculated'           => self::STOP_QTY_NONE,
             'stop_qty_calculated_value'     => '0',
             'stop_qty_calculated_value_max' => '10'
-        );
-    }
-
-    /**
-     * @return array
-     */
-    public function getScheduleDefaultSettings()
-    {
-        return array(
-            'schedule_mode'              => 0,
-
-            'schedule_interval_settings' => json_encode(array(
-                'mode'      => 0,
-                'date_from' => $this->getHelper('Data')->getCurrentTimezoneDate(false,'Y-m-d'),
-                'date_to'   => $this->getHelper('Data')->getCurrentTimezoneDate(false,'Y-m-d')
-            )),
-
-            'schedule_week_settings'     => json_encode(array())
         );
     }
 

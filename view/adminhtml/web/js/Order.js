@@ -148,22 +148,22 @@ define([
         createHelpActionHtml: function(action)
         {
             var classContainer = 'hl_container';
-            if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_SUCCESS')) {
+            if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_SUCCESS')) {
                 classContainer += ' hl_container_success';
-            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_WARNING')) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_WARNING')) {
                 classContainer += ' hl_container_warning';
-            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_NOTICE')) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_NOTICE')) {
                 classContainer += ' hl_container_notice';
-            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_ERROR')) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_ERROR')) {
                 classContainer += ' hl_container_error';
             }
     
             var type = '<span style="color: green;">'+ M2ePro.translator.translate('Success')+'</span>';
-            if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_NOTICE')) {
+            if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_NOTICE')) {
                 type = '<span style="color: blue;">'+ M2ePro.translator.translate('Notice')+'</span>';
-            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_WARNING')) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_WARNING')) {
                 type = '<span style="color: orange;">'+ M2ePro.translator.translate('Warning')+'</span>';
-            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractLog::TYPE_ERROR')) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_ERROR')) {
                 type = '<span style="color: red;">'+ M2ePro.translator.translate('Error')+'</span>';
             }
     

@@ -245,7 +245,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         }
 
         if (!in_array($this->getMagentoProduct()->getTypeId(), self::$supportedProductTypes)) {
-            $message = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+            $message = $this->getHelper('Module\Log')->encodeDescription(
                 'Order Import does not support Product type: %type%.', array(
                     'type' => $this->getMagentoProduct()->getTypeId()
                 )
@@ -273,15 +273,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
     {
         $variationChannelOptions = $this->getChildObject()->getVariationChannelOptions();
         $magentoProduct   = $this->getMagentoProduct();
-
-        // do nothing for amazon & buy order item, if it is mapped to product with required options,
-        // but there is no information available about sold variation
-        //TODO
-        if (empty($variationChannelOptions) && $this->getComponentMode() == 'buy' &&
-            ($magentoProduct->isStrictVariationProduct() || $magentoProduct->isProductWithVariations())
-        ) {
-            return;
-        }
 
         $existOptions  = $this->getAssociatedOptions();
         $existProducts = $this->getAssociatedProducts();

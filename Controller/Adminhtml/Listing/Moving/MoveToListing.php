@@ -48,8 +48,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                     // M2ePro_TRANSLATIONS
                     // Item was not Moved because it is in progress state now
                     'Item was not Moved because it is in progress state now',
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
 
                 $errors++;
@@ -68,8 +68,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                     // M2ePro_TRANSLATIONS
                     // Item was not Moved
                     'Item was not Moved',
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
 
                 $errors++;
@@ -86,8 +86,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved
                 'Item was successfully Moved',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             $logModel->addProductMessage(
@@ -100,8 +100,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 // M2ePro_TRANSLATIONS
                 // Item was successfully Moved
                 'Item was successfully Moved',
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             $isStoresDifferent = $listingProductInstance->getListing()->getStoreId() != $listingInstance->getStoreId();

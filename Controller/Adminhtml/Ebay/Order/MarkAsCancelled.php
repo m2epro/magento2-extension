@@ -8,8 +8,6 @@ class MarkAsCancelled extends Order
 {
     public function execute()
     {
-        // TODO NOT SUPPORTED FEATURES
-        
         if ($this->sendInStorePickupNotifications('cancelled')) {
             $this->messageManager->addSuccess(
                 $this->__('Orders were successfully marked as Cancelled.')

@@ -50,6 +50,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     public static $statistics = [];
 
+    protected $driverPool;
     protected $resourceModel;
     protected $productFactory;
     protected $websiteFactory;
@@ -92,6 +93,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\App\ResourceConnection $resourceModel,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
@@ -108,6 +110,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory
     )
     {
+        $this->driverPool = $driverPool;
         $this->resourceModel = $resourceModel;
         $this->productFactory = $productFactory;
         $this->websiteFactory = $websiteFactory;
@@ -433,9 +436,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $resource = $this->resourceModel;
 
         $cacheHelper = $this->helperFactory->getObject('Data\Cache\Permanent');
-        $attributeCacheKey = '_name_attribute_id_';
 
-        if (($attributeId = $cacheHelper->getValue($attributeCacheKey)) === false) {
+        if (($attributeId = $cacheHelper->getValue(__METHOD__)) === NULL) {
 
             $attributeId = $resource->getConnection('core_read')
                 ->select()
@@ -446,7 +448,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 ->query()
                 ->fetchColumn();
 
-            $cacheHelper->setValue($attributeCacheKey, $attributeId);
+            $cacheHelper->setValue(__METHOD__, $attributeId);
         }
 
         $storeIds = [(int)$storeId, \Magento\Store\Model\Store::DEFAULT_STORE_ID];
@@ -1151,6 +1153,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             }
         }
 
+        if ($value instanceof \Magento\Framework\Phrase) {
+            $value = $value->render();
+        }
+
         return is_string($value) ? $value : '';
     }
 
@@ -1175,9 +1181,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $resource = $this->resourceModel;
 
         $cacheHelper = $this->helperFactory->getObject('Data\Cache\Permanent');
-        $cacheKey = '_thumbnail_attribute_id_';
 
-        if (($attributeId = $cacheHelper->getValue($cacheKey)) === false) {
+        if (($attributeId = $cacheHelper->getValue(__METHOD__)) === NULL) {
 
             $attributeId = $resource->getConnection()
                    ->select()
@@ -1188,7 +1193,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                    ->query()
                    ->fetchColumn();
 
-            $cacheHelper->setValue($cacheKey, $attributeId);
+            $cacheHelper->setValue(__METHOD__, $attributeId);
         }
 
         $storeIds = [(int)$this->getStoreId(), \Magento\Store\Model\Store::DEFAULT_STORE_ID];
@@ -1233,13 +1238,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $width  = 100;
         $height = 100;
 
+        $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         $prefixResizedImage = "resized-{$width}px-{$height}px-";
         $imagePathResized = dirname($image->getPath())
             .DIRECTORY_SEPARATOR
             .$prefixResizedImage
             .basename($image->getPath());
 
-        if (is_file($imagePathResized)) {
+        if ($fileDriver->isFile($imagePathResized)) {
 
             $currentTime = $this->helperFactory->getObject('Data')->getCurrentGmtDate(true);
 
@@ -1252,7 +1258,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 return $image;
             }
 
-            @unlink($imagePathResized);
+            $fileDriver->deleteFile($imagePathResized);
         }
 
         try {
@@ -1270,7 +1276,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        if (!is_file($imagePathResized)) {
+        if (!$fileDriver->isFile($imagePathResized)) {
             return null;
         }
 
@@ -1449,7 +1455,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     {
         if (is_null($this->_variationInstance)) {
             $this->_variationInstance = $this->modelFactory
-                                             ->getCachedObject('Magento\Product\Variation')
+                                             ->getObject('Magento\Product\Variation')
                                              ->setMagentoProduct($this);
         }
 

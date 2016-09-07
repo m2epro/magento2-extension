@@ -84,25 +84,6 @@ class Form extends AbstractContainer
         $this->shippingAddress['country_name'] = $shippingAddress->getCountryName();
         // ---------------------------------------
 
-        // TODO NOT SUPPORTED FEATURES
-        // Merchant Fulfillment
-        // ---------------------------------------
-//        if (!$this->order->getChildObject()->isCanceled()
-//            && !$this->order->getChildObject()->isPending()
-//            && !$this->order->getChildObject()->isFulfilledByAmazon()
-//            && $this->order->getMarketplace()->getChildObject()->isMerchantFulfillmentAvailable()) {
-//            $orderId = $this->order->getId();
-//            $data = array(
-//                'class'   => '',
-//                'label'   => $this->__('Use Amazon\'s Shipping Services'),
-//                'onclick' => "OrderMerchantFulfillmentObj.getPopupAction({$orderId});",
-//                'style'   => 'margin-top: 3px; margin-left: 6px;'
-//            );
-//            $buttonBlock = $this->getLayout()->createBlock('Magento\Button')->setData($data);
-//            $this->setChild('use_amazons_shipping_services', $buttonBlock);
-//        }
-        // ---------------------------------------
-
         $this->jsUrl->addUrls([
             'order/getDebugInformation' => $this->getUrl(
                 '*/order/getDebugInformation/', array('id' => $this->getRequest()->getParam('id'))

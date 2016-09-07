@@ -99,7 +99,7 @@ abstract class Account extends Main
                 $this->messageManager->addWarning(
                     $this->__(
                         'Some eBay Store Categories were deleted from eBay. Click '.
-                        '<a target="_blank" href="%url%">here</a> to check.', $url
+                        '<a target="_blank" href="%url%" class="external-link">here</a> to check.', $url
                     )
                 );
             }

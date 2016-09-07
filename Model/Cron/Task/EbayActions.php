@@ -13,7 +13,7 @@ use Ess\M2ePro\Model\Ebay\Processing\Action;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Exception\Logic;
 
-final class EbayActions extends AbstractTask
+final class EbayActions extends AbstractModel
 {
     const NICK = 'ebay_actions';
     const MAX_MEMORY_LIMIT = 512;

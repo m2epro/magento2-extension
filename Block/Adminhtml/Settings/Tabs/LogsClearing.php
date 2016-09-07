@@ -35,13 +35,13 @@ class LogsClearing extends AbstractTab
         $form->addField('settings_tab_logs_clearing', self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    'Set preferences for automatic clearing of Log data then click <b>Save Config</b>.<br/><br/>
+                    'Set preferences for automatic clearing of Log data then click <b>Save</b>.<br/><br/>
                     To clear a Log completely, click <b>Clear All</b>. To clear a Log of data more than
                     a certain number of days old, choose the number of days then click <b>Run Now</b>.<br/><br/>
                     More detailed information about ability to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(
-                        $componentForUrl, 'Global+Settings#GlobalSettings-LogsClearing'
+                    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                        'x/xgEtAQ'
                     )
                 )
             ]
@@ -92,6 +92,55 @@ class LogsClearing extends AbstractTab
                 'tooltip' => $this->__(
                     'Specify for how long you want to keep Log data before it is automatically cleared.'
                 )
+            ]
+        );
+
+        $fieldSet = $form->addFieldset('magento_block_logs_configuration_clearing_orders',
+            [
+                'legend' => $this->__('Orders Logs & Events Clearing'),
+                'collapsable' => false
+            ]
+        );
+
+        $mode = isset($this->modes[LogClearing::LOG_ORDERS]) ? $this->modes[LogClearing::LOG_ORDERS] : 1;
+        $tooltip = $this->getTooltipHtml(
+            $this->__('Enables automatic clearing of Log data. Can help reduce Database size.')
+        );
+
+        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_mode',
+            self::SELECT,
+            [
+                'name' => LogClearing::LOG_ORDERS . '_log_mode',
+                'label' => $this->__('Enabled'),
+                'title' => $this->__('Enabled'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'value' => $mode,
+                'style' => 'margin-right: 1.5rem',
+                'onchange' => "LogClearingObj.changeModeLog('".LogClearing::LOG_ORDERS."')",
+                'field_extra_attributes' => 'id="'.LogClearing::LOG_ORDERS . '_log_mode_container"',
+                'after_element_html' => $tooltip
+                    . '<span id="'.LogClearing::LOG_ORDERS.'_log_button_clear_all_container">'
+                    . $this->getChildHtml('clear_all_'.LogClearing::LOG_ORDERS).'</span>'
+            ]
+        );
+
+        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_days',
+            'text',
+            [
+                'name' => LogClearing::LOG_ORDERS . '_log_days',
+                'label' => $this->__('Keep For (days)'),
+                'title' => $this->__('Keep For (days)'),
+                'value' => $this->days[LogClearing::LOG_ORDERS],
+                'class' => 'M2ePro-logs-clearing-interval',
+                'required' => true,
+                'field_extra_attributes' => 'id="'.LogClearing::LOG_ORDERS . '_log_days_container"',
+                'tooltip' => $this->__(
+                    'Specify for how long you want to keep Log data before it is automatically cleared.'
+                ),
+                'disabled' => true
             ]
         );
 
@@ -190,55 +239,6 @@ class LogsClearing extends AbstractTab
                 'tooltip' => $this->__(
                     'Specify for how long you want to keep Log data before it is automatically cleared.'
                 )
-            ]
-        );
-
-        $fieldSet = $form->addFieldset('magento_block_logs_configuration_clearing_orders',
-            [
-                'legend' => $this->__('Orders Logs & Events Clearing'),
-                'collapsable' => false
-            ]
-        );
-
-        $mode = isset($this->modes[LogClearing::LOG_ORDERS]) ? $this->modes[LogClearing::LOG_ORDERS] : 1;
-        $tooltip = $this->getTooltipHtml(
-            $this->__('Enables automatic clearing of Log data. Can help reduce Database size.')
-        );
-
-        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_mode',
-            self::SELECT,
-            [
-                'name' => LogClearing::LOG_ORDERS . '_log_mode',
-                'label' => $this->__('Enabled'),
-                'title' => $this->__('Enabled'),
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'value' => $mode,
-                'style' => 'margin-right: 1.5rem',
-                'onchange' => "LogClearingObj.changeModeLog('".LogClearing::LOG_ORDERS."')",
-                'field_extra_attributes' => 'id="'.LogClearing::LOG_ORDERS . '_log_mode_container"',
-                'after_element_html' => $tooltip
-                                        . '<span id="'.LogClearing::LOG_ORDERS.'_log_button_clear_all_container">'
-                                        . $this->getChildHtml('clear_all_'.LogClearing::LOG_ORDERS).'</span>'
-            ]
-        );
-
-        $fieldSet->addField(LogClearing::LOG_ORDERS . '_log_days',
-            'text',
-            [
-                'name' => LogClearing::LOG_ORDERS . '_log_days',
-                'label' => $this->__('Keep For (days)'),
-                'title' => $this->__('Keep For (days)'),
-                'value' => $this->days[LogClearing::LOG_ORDERS],
-                'class' => 'M2ePro-logs-clearing-interval',
-                'required' => true,
-                'field_extra_attributes' => 'id="'.LogClearing::LOG_ORDERS . '_log_days_container"',
-                'tooltip' => $this->__(
-                    'Specify for how long you want to keep Log data before it is automatically cleared.'
-                ),
-                'disabled' => true
             ]
         );
 

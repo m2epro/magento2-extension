@@ -95,8 +95,18 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'data' => ['listing' => $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add')]
         ]);
 
-        return $viewHeaderBlock->toHtml() .
-            parent::getGridHtml();
+        $hideOthersListingsProductsFilterBlock = $this->createBlock(
+            'Listing\Product\ShowOthersListingsProductsFilter'
+        )->setData([
+            'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'controller' => 'ebay_listing_product_add'
+        ]);
+        
+        return $viewHeaderBlock->toHtml()
+               . '<div class="filter_block">'
+               . $hideOthersListingsProductsFilterBlock->toHtml()
+               . '</div>'
+               . parent::getGridHtml();
     }
 
     protected function _toHtml()

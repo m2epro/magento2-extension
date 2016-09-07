@@ -33,7 +33,7 @@ define([
                 return;
             }
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/mapToTemplateDescription'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
                 method: 'post',
                 parameters: {
                     products_ids: self.templateDescriptionPopup.productsIds,
@@ -70,7 +70,7 @@ define([
         unassignFromTemplateDescrition: function (productsIds) {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/unmapFromTemplateDescription'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/unassign'), {
                 method: 'post',
                 parameters: {
                     products_ids: productsIds
@@ -102,7 +102,7 @@ define([
 
             productsIds = productsIds || ListingGridHandlerObj.productSearchHandler.params.productId;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/validateProductsForTemplateDescriptionAssign'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/validateProductsForAssign'), {
                 method: 'post',
                 parameters: {
                     products_ids: productsIds
@@ -144,9 +144,13 @@ define([
 
             MessageObj.clear();
 
-            if (!$('template_description_pop_up_content')) {
-                $('html-body').insert({bottom: contentData});
+            var popupEl = $('template_description_pop_up_content');
+
+            if (popupEl) {
+                popupEl.remove();
             }
+
+            $('html-body').insert({bottom: contentData});
 
             self.templateDescriptionPopup = jQuery('#template_description_pop_up_content');
 
@@ -173,7 +177,7 @@ define([
         loadTemplateDescriptionGrid: function () {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/viewTemplateDescriptionsGrid'), {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/viewGrid'), {
                 method: 'post',
                 parameters: {
                     products_ids: self.templateDescriptionPopup.productsIds,

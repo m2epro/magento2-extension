@@ -25,8 +25,6 @@ class SaveListing extends Template
         // ---------------------------------------
         $data = $this->getPostedTemplatesData();
         $listing->getChildObject()->addData($data);
-        $listing->getChildObject()->setEstimatedFeesObtainAttemptCount(0);
-        $listing->getChildObject()->setEstimatedFeesObtainRequired(true);
         $listing->save();
         // ---------------------------------------
         $newData = $listing->getChildObject()->getDataSnapshot();

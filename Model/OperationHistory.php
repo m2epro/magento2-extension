@@ -198,7 +198,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             }
 
             if (in_array((int)$error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR])) {
-             $stackTrace = @debug_backtrace(false);
+             $stackTrace = debug_backtrace(false);
              $object->setContentData('fatal_error', [
                 'message' => $error['message'],
                 'file' => $error['file'],

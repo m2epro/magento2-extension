@@ -138,7 +138,7 @@ final class Update extends AbstractModel
 
         $account->getChildObject()->setData('defaults_last_synchronization', $changesByAccount['to_time'])->save();
 
-        $this->getHelper('Data\Cache\Session')->setValue(
+        $this->getHelper('Data\Cache\Runtime')->setValue(
             'item_get_changes_data_' . $account->getId(), $changesByAccount
         );
 
@@ -196,7 +196,9 @@ final class Update extends AbstractModel
             $this->getProductStatusChanges($listingProduct, $change)
         );
 
-        $listingProduct->addData($updateData)->save();
+        $listingProduct->addData($updateData);
+        $listingProduct->getChildObject()->addData($updateData);
+        $listingProduct->save();
 
         if ($oldStatus !== $updateData['status']) {
             $listingProduct->getChildObject()->updateVariationsStatus();
@@ -341,13 +343,13 @@ final class Update extends AbstractModel
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR
-                : \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
                 $logType,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }
@@ -637,8 +639,8 @@ final class Update extends AbstractModel
             $this->getLogsActionId(),
             \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
             $logMessage,
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
         );
     }
 

@@ -257,10 +257,9 @@ define([
 
         createSynchNoteHtml: function(synchNote)
         {
-
-            return '<div style="text-align: left"><ul class="messages"><li class="warning-msg"><ul>' +
-                        '<li>'+synchNote+'</li>' +
-            '</ul></li></ul></div>';
+                return '<div class="messages m2epro-messages a-left">' +
+                    '<div class="message message-warning error">' + synchNote+
+                    '</div></div></div>';
         },
 
         createHelpActionHtml: function(action)

@@ -10,7 +10,7 @@ class Index extends Account
     {
         $this->addContent($this->createBlock('Amazon\Account'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Accounts'));
-        $this->setComponentPageHelpLink('Accounts');
+        $this->setPageHelpLink('x/9gEtAQ');
 
         return $this->getResultPage();
     }

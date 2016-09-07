@@ -40,6 +40,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->removeConditionNecessary($data);
 
         $data = $this->appendIsVariationMpnFilledValue($data);
+        $data = $this->appendVariationsThatCanNotBeDeleted($data, $response);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = json_encode($data['additional_data']);

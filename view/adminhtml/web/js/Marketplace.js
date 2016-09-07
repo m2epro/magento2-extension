@@ -293,18 +293,11 @@ define([
             this.markChangedStatus(marketplaceId, element.value);
 
             if (element.value == '1') {
-                // todo
-                //element.removeClassName('lacklustre_selected');
-                //element.addClassName('hightlight_selected');
-
                 if (this.getStoredStatusByMarketplaceId(marketplaceId) == element.value) {
                     runSingleButton && runSingleButton.show();
                 }
 
             } else {
-                // todo
-                //element.removeClassName('hightlight_selected');
-                //element.addClassName('lacklustre_selected');
                 $('synch_info_complete_' + marketplaceId).hide();
                 runSingleButton && runSingleButton.hide();
             }

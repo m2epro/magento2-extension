@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
-class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractDb
+class Item extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
 

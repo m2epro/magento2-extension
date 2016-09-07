@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
-final class Service extends AbstractRunner
+final class Service extends AbstractModel
 {
     private $requestAuthKey      = NULL;
     private $requestConnectionId = NULL;
@@ -37,7 +37,7 @@ final class Service extends AbstractRunner
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractStrategy
+     * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
      */
     protected function getStrategyObject()
     {

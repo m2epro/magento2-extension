@@ -49,7 +49,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
         $variationResource = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource();
 
-        $log = $this->activeRecordFactory->getObject('Log\AbstractLog');
+        $log = $this->getHelper('Module\Log');
 
         if ($ebaySynchronizationTemplate->isListStatusEnabled()) {
 

@@ -48,10 +48,10 @@ class ListRules extends AbstractForm
                     Synchronization <strong>(Amazon Integration > Configuration > Settings > Synchronization)</strong>.
                     Otherwise, Synchronization Policy Rules will not take effect.</p><br>
                     <p>More detailed information about how to work with this Page you can find 
-                    <a href="%url%" target="_blank">here</a>.</p>
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/RQItAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RQItAQ')
                 )
             ]
         );
@@ -64,9 +64,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'list_mode',
-            'select',
+        $fieldset->addField('list_mode',
+            self::SELECT,
             [
                 'name' => 'list_mode',
                 'label' => $this->__('List Action'),
@@ -90,9 +89,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'list_status_enabled',
-            'select',
+        $fieldset->addField('list_status_enabled',
+            self::SELECT,
             [
                 'name' => 'list_status_enabled',
                 'label' => $this->__('Product Status'),
@@ -109,9 +107,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'list_is_in_stock',
-            'select',
+        $fieldset->addField('list_is_in_stock',
+            self::SELECT,
             [
                 'name' => 'list_is_in_stock',
                 'label' => $this->__('Stock Availability'),
@@ -128,9 +125,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'list_qty_magento',
-            'select',
+        $fieldset->addField('list_qty_magento',
+            self::SELECT,
             [
                 'name' => 'list_qty_magento',
                 'label' => $this->__('Magento Quantity'),
@@ -176,9 +172,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'list_qty_calculated',
-            'select',
+        $fieldset->addField('list_qty_calculated',
+            self::SELECT,
             [
                 'name' => 'list_qty_calculated',
                 'label' => $this->__('Calculated Quantity'),

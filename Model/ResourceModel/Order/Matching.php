@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
-class Matching extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Matching extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

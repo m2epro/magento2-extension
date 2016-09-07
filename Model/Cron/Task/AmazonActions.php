@@ -13,9 +13,9 @@ use Ess\M2ePro\Model\Amazon\Processing\Action;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Exception\Logic;
 use Ess\M2ePro\Model\Request\Pending\Single;
-use Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection;
+use Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel as AbstractCollection;
 
-final class AmazonActions extends AbstractTask
+final class AmazonActions extends AbstractModel
 {
     const NICK = 'amazon_actions';
     const MAX_MEMORY_LIMIT = 512;
@@ -353,8 +353,12 @@ final class AmazonActions extends AbstractTask
 
     private function getMaxAllowedMinutesDelay($actionType)
     {
-        if ($this->isProductActionType($actionType)) {
+        if ($this->helperFactory->getObject('Module')->isDevelopmentEnvironment()) {
             return 1;
+        }
+
+        if ($this->isProductActionType($actionType)) {
+            return 15;
         }
 
         return 5;

@@ -1,0 +1,30 @@
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Edition'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->platformMode; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->platformVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Add Secret Key to URLs'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->platformIsSecretKey ? $this->__('Enabled') : $this->__('Disabled'); ?>
+        </td>
+    </tr>
+
+</table>

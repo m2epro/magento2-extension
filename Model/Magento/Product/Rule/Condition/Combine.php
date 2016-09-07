@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Condition;
 
-class Combine extends AbstractCondition
+class Combine extends AbstractModel
 {
     protected $_logger;
     protected $_useCustomOptions = true;
@@ -18,16 +18,16 @@ class Combine extends AbstractCondition
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Rule\Model\Condition\Context $context,
         array $data = []
     )
     {
         $this->_logger = $context->getLogger();
-        parent::__construct($modelFactory, $helperFactory, $context, $data);
+        parent::__construct($helperFactory, $modelFactory, $context, $data);
 
-        $this->setType('Magento\Rule\Model\Condition\Combine')
+        $this->setType('Magento\Product\Rule\Condition\Combine')
             ->setAggregator('all')
             ->setValue(true)
             ->setConditions(array())

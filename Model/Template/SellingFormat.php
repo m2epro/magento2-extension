@@ -31,10 +31,10 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abst
 
     //########################################
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_sellingformat');
-        return parent::save();
+        return parent::save($reloadOnCreate);
     }
 
     //########################################

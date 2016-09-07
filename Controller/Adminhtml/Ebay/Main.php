@@ -47,14 +47,9 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
             $this->getHelper('View\Ebay')->getTitle()
         );
 
-        $this->getResultPage()->setActiveMenu(\Ess\M2ePro\Helper\View\Ebay::MENU_ROOT_NODE_NICK);
-    }
-
-    //########################################
-
-    protected function setComponentPageHelpLink($view = NULL)
-    {
-        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Ebay::NICK, $view);
+        if ($this->getLayoutType() != self::LAYOUT_BLANK) {
+            $this->getResultPage()->setActiveMenu(\Ess\M2ePro\Helper\View\Ebay::MENU_ROOT_NODE_NICK);
+        }
     }
 
     //########################################

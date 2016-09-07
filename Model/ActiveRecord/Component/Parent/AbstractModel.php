@@ -181,10 +181,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     // ---------------------------------------
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         if (!is_null($this->childMode) && is_null($this->getData('component_mode'))) {
             $this->setData('component_mode',$this->childMode);
+        }
+
+        if ($reloadOnCreate) {
+            $this->setData('reload_on_create', true);
         }
 
         $temp = parent::save();

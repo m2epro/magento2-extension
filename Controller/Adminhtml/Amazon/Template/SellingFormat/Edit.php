@@ -38,7 +38,7 @@ class Edit extends Template
 
         $this->addContent($this->createBlock('Amazon\Template\SellingFormat\Edit'));
 
-        $this->setComponentPageHelpLink('Selling+Format');
+        $this->setPageHelpLink('x/DgItAQ');
 
         return $this->getResultPage();
     }

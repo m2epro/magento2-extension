@@ -1,3 +1,51 @@
+* 1.1.0 (r1171) (07/09/2016)
+
+* Added: Ability to create Magento Attributes "On the Fly"
+* Added: Advanced Filter for Magento Products / Listings Views Grids
+* Added: Ability to filter Products presented in other Listings
+* Added: Ability to use customized Magento Order Number
+* Added: UI languages translations (DE,ES,EN,FR,IT)
+* Added: Clearing the Module Data when it will be uninstalled
+* Added: Error / Warning notification when there is issue with module static content (Production Mode only)
+* Added: [eBay] Ability to override Listing Settings for each Product separately
+* Added: [eBay] Preview Tool to show, before the list action, which data will be sent to the Channel
+* Added: [eBay] Ability to download Buyers Feedback with possibility respond on them automatically
+* Added: [eBay] Ability to estimate eBay Fee before the List action, show the fee when Item is Listed
+* Added: [eBay] Preview feature for Description in Description Policy
+* Added: [eBay] Ability to apply Watermark on Main / Gallery / Description images
+* Added: [eBay] WYSIWYG editor which allows change Description in "like in Browser" manner
+* Added: [eBay] Ability to insert Magento Attributes/Images/Gallery/M2E Pro Attributes in Description
+* Added: [eBay] Integration with Terapeak service to provide Item optimization possibilities
+* Added: [Amazon] Integration with M2E Pro Repricing SaaS Service
+* Added: [Amazon] Ability to use Shipping Overrides feature for Products
+* Improvement: Compatibility with Magento 2.1.0 version and higher
+* Improvement: Ability to filter rows in grids by specified Time (not only Date)
+* Improvement: Additional icon was added for module external Links
+* Improvement: [eBay] Variation Options label can be renamed now without further errors from eBay Trading API
+* Improvement: [eBay] Preventing the eBay Trading API errors if Magento Child Product will be unassigned from Parent
+* Improvement: [Amazon] Display the Channel Gift Message(s) as comment on Magento Order page
+* Fix: Many admin panel interface fixes (100+ changes/fixes/improvements)
+* Fix: Unable to install the module through the Component Manager for Magento v2.1+
+* Fix: Errors that happens during setup:di:compile and setup:di:compile-multi-tenant
+* Fix: Some Products Synchronizations could not work correctly
+* Fix: Some sort of issues of Magento Order creation process
+* Fix: Product Thumbnail was not shown correctly in Listings Grids
+* Fix: Many fixes/improvements related to the PublicServices Models
+* Fix: M2E Pro Global Notification Messages were not shown
+* Fix: Subscription Error Messages were not shown for Accounts
+* Fix: [eBay] Items duplicates because User could List Items with "Listed (Hidden)" status manually
+* Fix: [eBay] An error "There is another Item with the same eBay User ID, Product ID and eBay Site" during automatic List
+* Fix: [eBay] Images were not Imported when Magento Product had been created during Magento Order creation process
+* Fix: [eBay] 3rd Party Listings were downloaded on the "Full" basis constantly (instead of using events)
+* Fix: [eBay] Tax Categories were not shown in the Selling Format Policy
+* Fix: [eBay] Payment Policy could not be changes if PayPal business account was configured
+* Fix: [Amazon] Some sort of bugs in Automatic Search ASIN tool
+* Fix: [Amazon] Issue during the removing process of Variation Parent Product
+* Fix: [Amazon] Parent Product ASIN was shown for Child Products instead of Child ASIN in Search ASIN tool
+* Fix: [Amazon] Some sort of issues when Products have being adding to the Listing (during wizard interface)
+* Fix: [Amazon] Incorrect behavior during adding Virtual Attributes to active Variation Products
+* Removed: [eBay] List/Relist Scheduling was removed from Synchronization Policy
+
 * 1.0.0 (r752) (04/07/2016)
 
 * Initial version for Magento v2.*

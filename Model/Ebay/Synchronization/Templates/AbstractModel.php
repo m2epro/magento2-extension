@@ -79,8 +79,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\Abst
             $logModel->getNextActionId(),
             $this->getActionForLog(),
             $exception->getMessage(),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
 
         $this->getHelper('Module\Exception')->process($exception);

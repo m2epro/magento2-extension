@@ -33,6 +33,8 @@ class MoveToListingGrid extends Listing
                 'moving_handler_js' => $movingHandlerJs,
             ]]
         );
-        $this->getResponse()->setBody($block->toHtml());
+
+        $this->setAjaxContent($block->toHtml());
+        return $this->getResult();
     }
 }

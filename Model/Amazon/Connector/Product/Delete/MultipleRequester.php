@@ -88,7 +88,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
                 $this->getLogger()->logListingProductMessage(
                     $listingProduct,
                     $message,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
             }
 
@@ -158,9 +158,11 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
             );
 
             $listingProduct->addData(array(
+                'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
+            ));
+            $amazonListingProduct->addData(array(
                 'general_id'          => null,
                 'is_general_id_owner' => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
-                'status'              => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
             ));
             $listingProduct->save();
 
@@ -253,7 +255,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Amazon\Connector\Product\Reque
             $this->getLogger()->logListingProductMessage(
                 $listingProduct,
                 $message,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
 
             unset($this->listingsProducts[$key]);

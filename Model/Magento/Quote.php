@@ -90,8 +90,7 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
 
             $this->quote->collectTotals()->save();
 
-            // todo investigate
-//            $this->prepareOrderNumber();
+            $this->prepareOrderNumber();
             // ---------------------------------------
         } catch (\Exception $e) {
             $this->quote->setIsActive(false)->save();
@@ -252,6 +251,14 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
                 $quoteItem->setAdditionalData($quoteItemBuilder->getAdditionalData($quoteItem));
             }
         }
+
+        $allItems = $this->quote->getAllItems();
+        $this->quote->getItemsCollection()->removeAllItems();
+
+        foreach ($allItems as $item) {
+            $item->save();
+            $this->quote->getItemsCollection()->addItem($item);
+        }
     }
 
     /**
@@ -290,10 +297,6 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->proxyOrder->isOrderNumberPrefixSourceChannel()) {
             $orderNumber = $this->addPrefixToOrderNumberIfNeed($this->proxyOrder->getChannelOrderNumber());
-            if ($this->getHelper('Magento')->isMagentoOrderIdUsed($orderNumber)) {
-                $orderNumber .= '(1)';
-            }
-
             $this->quote->setReservedOrderId($orderNumber);
             return;
         }
@@ -304,10 +307,6 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $orderNumber = $this->addPrefixToOrderNumberIfNeed($orderNumber);
-
-        if ($this->quote->getResource()->isOrderIncrementIdUsed($orderNumber)) {
-            $orderNumber = $this->quote->getResource()->getReservedOrderId($this->quote);
-        }
 
         $this->quote->setReservedOrderId($orderNumber);
     }

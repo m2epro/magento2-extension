@@ -11,12 +11,43 @@
  */
 namespace Ess\M2ePro\Model\Ebay\Template;
 
+use Ess\M2ePro\Model\ActiveRecord\Factory;
+
 class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
+    private $ebayParentFactory;
+
     /**
      * @var \Ess\M2ePro\Model\Marketplace
      */
     private $marketplaceModel = NULL;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayParentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    ) {
+        $this->ebayParentFactory = $ebayParentFactory;
+
+        parent::__construct(
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     //########################################
 
@@ -96,7 +127,7 @@ class Payment extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getMarketplace()
     {
         if (is_null($this->marketplaceModel)) {
-            $this->marketplaceModel = $this->getHelper('Component\Ebay')->getCachedObject(
+            $this->marketplaceModel = $this->ebayParentFactory->getCachedObjectLoaded(
                 'Marketplace', $this->getMarketplaceId()
             );
         }

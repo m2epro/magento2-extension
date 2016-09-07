@@ -36,6 +36,10 @@ class Synchronization extends AbstractModel
 
     public function runBySkus(array $skus)
     {
+        if (empty($skus)) {
+            return true;
+        }
+
         $response = $this->sendRequest(array(
             'skus_list' => $skus,
         ));
@@ -164,7 +168,7 @@ class Synchronization extends AbstractModel
 
     private function addListingsProductsRepricing(array $newOffersData)
     {
-        $listingProductCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
             array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
             'l.id = main_table.listing_id',
@@ -236,7 +240,7 @@ class Synchronization extends AbstractModel
 
     private function addListingOthersRepricing(array $newOffersData)
     {
-        $listingOtherCollection = $this->activeRecordFactory->getObject('Listing\Other')->getCollection();
+        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('account_id', $this->getAccount()->getId());
         $listingOtherCollection->addFieldToFilter('sku', array('in' => array_keys($newOffersData)));
 
@@ -322,7 +326,7 @@ class Synchronization extends AbstractModel
 
     private function updateListingsProductsRepricing(array $updatedOffersData)
     {
-        $listingProductCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
             array('l' => $this->resourceConnection->getTableName('m2epro_listing')),
             'l.id = main_table.listing_id',
@@ -429,7 +433,7 @@ class Synchronization extends AbstractModel
 
     private function updateListingsOthersRepricing(array $updatedOffersData)
     {
-        $listingOtherCollection = $this->activeRecordFactory->getObject('Listing\Other')->getCollection();
+        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('account_id', $this->getAccount()->getId());
         $listingOtherCollection->addFieldToFilter('sku', array('in' => array_keys($updatedOffersData)));
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);

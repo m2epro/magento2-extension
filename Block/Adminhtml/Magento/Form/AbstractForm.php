@@ -30,6 +30,9 @@ abstract class AbstractForm extends Generic
     /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory */
     protected $parentFactory;
 
+    /** @var \Magento\Framework\Data\Form\Element\Factory */
+    protected $elementFactory;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -48,6 +51,8 @@ abstract class AbstractForm extends Generic
         $this->jsTranslator = $context->getJsTranslator();
         $this->jsUrl = $context->getJsUrl();
 
+        $this->elementFactory = $context->getElementFactory();
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -62,5 +67,7 @@ abstract class AbstractForm extends Generic
         \Magento\Framework\Data\Form::setFieldsetRenderer(
             $this->createBlock('Magento\Form\Renderer\Fieldset')
         );
+        
+        return $this;
     }
 }

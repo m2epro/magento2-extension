@@ -1,0 +1,57 @@
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Version'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlVersion; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Server API'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlApi; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Database Name'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlDatabaseName; ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Tables Prefix'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlPrefix != '' ? $this->mySqlPrefix : $this->__('Disabled'); ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Connection Timeout'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlSettings['connect_timeout']; ?> <?php echo $this->__('sec'); ?>.
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Wait Timeout'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->mySqlSettings['wait_timeout']; ?> <?php echo $this->__('sec'); ?>.
+        </td>
+    </tr>
+
+</table>

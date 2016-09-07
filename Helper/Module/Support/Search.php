@@ -53,7 +53,7 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $curlObject = curl_init();
 
-        $url = $this->getHelper('Module\Support')->getMainSupportUrl('extension/search');
+        $url = $this->getHelper('Module\Support')->getSupportUrl() . '/extension/search/';
         $url = $url . '?'.http_build_query($params,'','&');
         curl_setopt($curlObject, CURLOPT_URL, $url);
 

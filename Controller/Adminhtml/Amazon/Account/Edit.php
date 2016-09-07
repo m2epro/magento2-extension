@@ -33,11 +33,11 @@ class Edit extends Account
             return $this->_redirect('*/amazon_account');
         }
 
-        if ($id) {
-            $this->getHelper('Data\GlobalData')->setValue('license_message', $this->getLicenseMessage($account));
+        if (!is_null($account)) {
+            $this->addLicenseMessage($account);
         }
 
-        $this->getHelper('Data\GlobalData')->setValue('temp_data', $account);
+        $this->getHelper('Data\GlobalData')->setValue('edit_account', $account);
 
         // Set header text
         // ---------------------------------------
@@ -60,15 +60,15 @@ class Edit extends Account
 
         $this->addLeft($this->createBlock('Amazon\Account\Edit\Tabs'));
         $this->addContent($this->createBlock('Amazon\Account\Edit'));
-        $this->setComponentPageHelpLink('Accounts');
+        $this->setPageHelpLink('x/9gEtAQ');
 
         return $this->getResultPage();
     }
 
-    private function getLicenseMessage(\Ess\M2ePro\Model\Account $account)
+    private function addLicenseMessage(\Ess\M2ePro\Model\Account $account)
     {
         try {
-            $dispatcherObject = $this->modelFactory->getObject('Connector\Dispatcher');
+            $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account','get','info', array(
                 'account' => $account->getChildObject()->getServerHash(),
                 'channel' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
@@ -81,14 +81,15 @@ class Edit extends Account
         }
 
         if (!isset($response['info']['status']) || empty($response['info']['note'])) {
-            return '';
+            return;
         }
 
         $status = (bool)$response['info']['status'];
         $note   = $response['info']['note'];
 
         if ($status) {
-            return 'MagentoMessageObj.addNotice(\''.$note.'\');';
+            $this->addExtendedNoticeMessage($note);
+            return;
         }
 
         $errorMessage = $this->__(
@@ -96,6 +97,7 @@ class Edit extends Account
             array('error_message' => $note)
         );
 
+        $this->addExtendedErrorMessage($errorMessage);
         return 'MagentoMessageObj.addError(\''.$errorMessage.'\');';
     }
 }

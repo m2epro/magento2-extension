@@ -25,7 +25,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         switch ($step) {
             case 1:
                 return $this->stepOne();
-                break;
         }
 
         return $this->_redirect('*/*/index', array('_current' => true,'step' => 1));
@@ -38,11 +37,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         switch ($this->getRequest()->getParam('source')) {
             case \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_PRODUCT:
                 return $this->stepOneSourceProducts();
-                break;
 
             case \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\SourceMode::MODE_CATEGORY:
                 return $this->stepOneSourceCategories();
-                break;
         }
 
         return $this->_redirect('*/*/sourceMode', array('_current' => true));
@@ -68,6 +65,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             }
         }
 
+        // Set rule model
+        // ---------------------------------------
+        $this->setRuleData('ebay_product_add_step_one');
+        // ---------------------------------------
+
         // Set Hide Products In Other Listings
         // ---------------------------------------
         $prefix = $this->getHideProductsInOtherListingsPrefix();
@@ -87,7 +89,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
         
-        $this->setComponentPageHelpLink('Adding+Product+from+the+List');
+        $this->setPageHelpLink('x/jgItAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
         $this->addContent($this->createBlock('Ebay\Listing\Product\Add'));
@@ -98,6 +100,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
     private function stepOneSourceCategories()
     {
         $this->setWizardStep('productSelection');
+
+        // Set rule model
+        // ---------------------------------------
+        $this->setRuleData('ebay_product_add_step_one');
+        // ---------------------------------------
 
         // Set Hide Products In Other Listings
         // ---------------------------------------
@@ -131,7 +138,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setComponentPageHelpLink('Adding+Products+from+Category');
+        $this->setPageHelpLink('x/9QMtAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 
@@ -184,6 +191,40 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$listingId);
 
         $listing->getChildObject()->setData('product_add_ids',json_encode(array()))->save();
+    }
+
+    //########################################
+
+    protected function setRuleData($prefix)
+    {
+        $listingData = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_add');
+
+        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
+        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            [
+                'prefix' => $prefix,
+                'store_id' => $storeId,
+            ]
+        );
+
+        $ruleParam = $this->getRequest()->getPost('rule');
+        if (!empty($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue(
+                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+            );
+        } elseif (!is_null($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue($prefix, []);
+        }
+
+        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        if (!empty($sessionRuleData)) {
+            $ruleModel->loadFromSerialized($sessionRuleData);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
     }
 
     //########################################

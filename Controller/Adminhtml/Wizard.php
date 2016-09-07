@@ -58,24 +58,24 @@ abstract class Wizard extends Main
             ]))
         );
 
-        $this->_addNextWizardPresentation();
-
         return $this->getResult();
     }
 
     protected function indexAction()
     {
         if ($this->isNotStarted() || $this->isActive()) {
-            return $this->_redirect('*/*/installation', array('_current' => true));
+            $this->installationAction();
+            return;
         }
 
-        return $this->_redirect('*/*/congratulation');
+        return $this->congratulationAction();
     }
 
     protected function installationAction()
     {
         if ($this->isFinished()) {
-            return $this->_redirect('*/*/index');
+            $this->congratulationAction();
+            return;
         }
 
         if ($this->isNotStarted()) {
@@ -233,23 +233,6 @@ abstract class Wizard extends Main
         ));
 
         return $this->getResult();
-    }
-
-    //########################################
-
-    protected function _addNextWizardPresentation()
-    {
-        $nextWizard = $this->getWizardHelper()->getActiveWizard($this->getCustomViewNick());
-        if ($nextWizard) {
-            $presentationBlock = $this->createBlock(
-                'Wizard\\' . $this->getWizardHelper()->getNick($nextWizard). '\\Presentation'
-            )->setData([
-                'nick' => $this->getWizardHelper()->getNick($nextWizard)
-            ]);
-            $presentationBlock && $this->addContent($presentationBlock);
-        }
-
-        return $this;
     }
 
     //########################################

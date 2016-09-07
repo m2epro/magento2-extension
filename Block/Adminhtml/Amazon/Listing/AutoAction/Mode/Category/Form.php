@@ -118,7 +118,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
                 'field_extra_attributes' => 'id="auto_action_amazon_add_and_create_asin"',
                 'tooltip' => $this->__(
                     'Should M2E Pro try to create new ASIN/ISBN in case Search
-                    Settings are not set or contain the incorrect values ?'
+                    Settings are not set or contain the incorrect values?'
                 )
             ]
         );
@@ -154,7 +154,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
         $url = $this->getUrl('*/amazon_template_description/new', array(
             'is_new_asin_accepted'  => 1,
-            'marketplace_id'        => $this->getListing()->getMarketplaceId()
+            'marketplace_id'        => $this->getListing()->getMarketplaceId(),
+            'close_on_save' => true
         ));
 
         $fieldSet->addField('adding_description_template_id',

@@ -41,8 +41,8 @@ define([
             this.productSearchHandler.clearSearchResultsAndOpenSearchMenu = function () {
                 var self = this;
 
-                if (confirm(M2ePro.translator.translate('Confirm'))) {
-                    popUp.close();
+                if (confirm(M2ePro.translator.translate('Are you sure?'))) {
+                    self.popup.modal('closeModal');
                     self.unmapFromGeneralId(self.params.productId);
                 }
             };
@@ -155,15 +155,16 @@ define([
                         title: M2ePro.translator.translate('new_asin_popup_title'),
                         type: 'popup',
                         buttons: [{
-                            text: M2ePro.translator.translate('Yes'),
-                            class: 'action primary',
-                            click: function () {
-                                self.showNewAsinPopup(1);
-                            }
-                        }, {
+                            class: 'action-secondary action-dismiss',
                             text: M2ePro.translator.translate('No'),
                             click: function () {
                                 self.showNewAsinPopup(0);
+                            }
+                        }, {
+                            text: M2ePro.translator.translate('Yes'),
+                            class: 'action-primary action-accept',
+                            click: function () {
+                                self.showNewAsinPopup(1);
                             }
                         }]
                     }, self.newAsinPopup);

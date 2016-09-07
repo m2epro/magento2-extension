@@ -35,7 +35,7 @@ class RelistRules extends AbstractForm
         $form = $this->_formFactory->create();
 
         $form->addField(
-            'amazon_template_synchronization_general',
+            'amazon_template_synchronization_relist',
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
@@ -47,10 +47,10 @@ class RelistRules extends AbstractForm
                     by Amazon), M2E Pro will attempt to relist the Item again only if there is a change of 
                     Product Status, Stock Availability or Quantity in Magento.</p><br>
                     <p>More detailed information about how to work with this Page you can find 
-                    <a href="%url%">here</a>.</p>
+                    <a href="%url%" class="external-link">here</a>.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/SQItAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SQItAQ')
                 )
             ]
         );
@@ -63,9 +63,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_mode',
-            'select',
+        $fieldset->addField('relist_mode',
+            self::SELECT,
             [
                 'name' => 'relist_mode',
                 'label' => $this->__('Relist Action'),
@@ -80,9 +79,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_filter_user_lock',
-            'select',
+        $fieldset->addField('relist_filter_user_lock',
+            self::SELECT,
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
                 'name' => 'relist_filter_user_lock',
@@ -98,9 +96,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_send_data',
-            'select',
+        $fieldset->addField('relist_send_data',
+            self::SELECT,
             [
                 'container_id' => 'relist_send_data_tr_container',
                 'name' => 'relist_send_data',
@@ -127,9 +124,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_status_enabled',
-            'select',
+        $fieldset->addField('relist_status_enabled',
+            self::SELECT,
             [
                 'name' => 'relist_status_enabled',
                 'label' => $this->__('Product Status'),
@@ -147,9 +143,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_is_in_stock',
-            'select',
+        $fieldset->addField('relist_is_in_stock',
+            self::SELECT,
             [
                 'name' => 'relist_is_in_stock',
                 'label' => $this->__('Stock Availability'),
@@ -167,9 +162,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_qty_magento',
-            'select',
+        $fieldset->addField('relist_qty_magento',
+            self::SELECT,
             [
                 'name' => 'relist_qty_magento',
                 'label' => $this->__('Magento Quantity'),
@@ -216,9 +210,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'relist_qty_calculated',
-            'select',
+        $fieldset->addField('relist_qty_calculated',
+            self::SELECT,
             [
                 'name' => 'relist_qty_calculated',
                 'label' => $this->__('Calculated Quantity'),

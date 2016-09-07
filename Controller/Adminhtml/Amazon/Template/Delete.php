@@ -28,7 +28,7 @@ class Delete extends Template
         $deleted = $locked = 0;
 
         foreach ($ids as $id) {
-            if (strtolower($type) == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE) {
+            if ($type === 'ShippingOverride') {
                 $template = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')->load($id);
             } else {
                 $template = $this->amazonFactory->getObjectLoaded('Template\\' . $type, $id);
@@ -61,7 +61,7 @@ class Delete extends Template
         }
 
         if ($type == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE) {
-            return 'shippingOverride';
+            return 'ShippingOverride';
         }
 
         return ucfirst($type);

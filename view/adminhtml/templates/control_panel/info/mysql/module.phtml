@@ -1,0 +1,36 @@
+<style type="text/css">
+    .category {
+        text-decoration: underline;
+        font-size: 14px;
+    }
+    td.edit-database a {
+        padding-left: 10px !important;
+    }
+</style>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php foreach ($this->getInfoTables() as $category=>$tables) : ?>
+            <tr>
+                <td class="label category" colspan="3">
+                    <label><?php echo $category; ?>: </label>
+                </td>
+            </tr>
+
+            <?php foreach ($tables as $table=>$data) : ?>
+                <tr>
+                    <td class="label">
+                        <?php echo $table; ?>
+                    </td>
+                    <td class="value">
+                        <?php echo $data['count']; ?>
+                    </td>
+                    <td class="value edit-database">
+                        <a href="<?php echo $data['url']?>">Edit</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+             <tr><td class="label"></td></tr>
+    <?php endforeach; ?>
+
+</table>

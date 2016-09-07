@@ -165,7 +165,9 @@ final class StopQueue extends AbstractModel
             $connectorObj = $dispatcher->getVirtualConnector($entity, $type, $name, $requestData);
             $dispatcher->process($connectorObj);
 
-        } catch (\Exception $exception) {}
+        } catch (\Exception $exception) {
+            $this->helperFactory->getObject('Module\Exception')->process($exception);
+        }
     }
 
     //########################################

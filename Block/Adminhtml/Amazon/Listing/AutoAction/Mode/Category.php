@@ -55,12 +55,13 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Categ
                 is added to the Magento Category with regard to the Store View selected for the M2E Pro Listing.
                 In other words, after a Magento Product is added to the selected Magento Category, it can be 
                 automatically added to M2E Pro Listing if the settings are enabled.</p><br>
-                <p>Accordingly, if a Magento Product present in the the M2E Pro Listing is removed from the 
+                <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed from the 
                 Magento Category, the Item will be removed from the Listing and its sale will 
                 be stopped on Channel.</p><br>
                 
-                <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/lgYtAQ')
+                <p>More detailed information you can find 
+                <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/lgYtAQ')
             )
         ]);
 

@@ -85,10 +85,11 @@ class Switcher extends AbstractSwitcher
             Using this Mode, you can easily find Products based on Magento Product information 
             (i.e. Magento QTY, Stock Status, etc);</p></li>
             </ul>
-            <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
+            <p>More detailed information you can find 
+            <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/nAYtAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/nAYtAQ')
             )
         );
     }

@@ -22,14 +22,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $listingProduct;
 
     protected $amazonFactory;
-    protected $priceCurrency;
+    protected $localeCurrency;
     protected $resourceConnection;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Magento\Directory\Model\PriceCurrency $priceCurrency,
+        \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -37,7 +37,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     )
     {
         $this->amazonFactory = $amazonFactory;
-        $this->priceCurrency = $priceCurrency;
+        $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -108,15 +108,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             )
         );
 
-//        TODO
-//        $collection->getSelect()->joinLeft(
-//            array('malpr' => Mage::getResourceModel('M2ePro/Amazon_Listing_Product_Repricing')->getMainTable()),
-//            '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
-//            array(
-//                'is_repricing' => 'listing_product_id',
-//                'is_repricing_disabled' => 'is_online_disabled',
-//            )
-//        );
+        $alprTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+            ->getResource()->getMainTable();
+        $collection->getSelect()->joinLeft(
+            array('malpr' => $alprTable),
+            '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
+            array(
+                'is_repricing' => 'listing_product_id',
+                'is_repricing_disabled' => 'is_online_disabled',
+            )
+        );
 
         // Set collection to grid
         $this->setCollection($collection);
@@ -208,11 +209,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'frame_callback' => array($this, 'callbackColumnPrice'),
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         );
-
-//        TODO
-//        if (Mage::helper('M2ePro/Component_Amazon_Repricing')->isEnabled()) {
-//            $priceColumn['filter'] = 'M2ePro/adminhtml_common_amazon_grid_column_filter_price';
-//        }
+        
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            $this->getListingProduct()->getListing()->getAccount()->getChildObject()->isRepricing()) {
+            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+        }
 
         $this->addColumn('online_price', $priceColumn);
 
@@ -556,9 +557,7 @@ HTML;
         <div class="in-stock">{$inStock}: <span></span></div>
     </div>
     <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}','{$productId}',{$accountId})">
-        {$afn}
-    </a>
+        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}','{$productId}',{$accountId})">{$afn}</a>
 </div>
 HTML;
         }
@@ -578,37 +577,30 @@ HTML;
         }
 
         $repricingHtml ='';
+        
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            (bool)(int)$row->getData('is_repricing')) {
 
-//        TODO
-//        if (Mage::helper('M2ePro/Component_Amazon_Repricing')->isEnabled() &&
-//            (bool)(int)$row->getData('is_repricing')) {
-//
-//            $image = 'money';
-//            $text = $this->__(
-//                'This product is used by Amazon Repricing Tool.
-//                 The Price cannot be updated through the M2E Pro.'
-//            );
-//
-//            if ((int)$row->getData('is_repricing_disabled') == 1) {
-//                $image = 'money_disabled';
-//                $text = $this->__(
-//                    'This product is disabled on Amazon Repricing Tool.
-//                     The Price is updated through the M2E Pro.'
-//                );
-//            }
-//
-//            $repricingHtml = <<<HTML
-//<span style="float:right; text-align: left;">&nbsp;
-//    <img class="tool-tip-image"
-//         style="vertical-align: middle; width: 16px;"
-//         src="{$this->getSkinUrl('M2ePro/images/'.$image.'.png')}">
-//    <span class="tool-tip-message tool-tip-message tip-left" style="display:none;">
-//        <img src="{$this->getSkinUrl('M2ePro/images/i_icon.png')}">
-//        <span>{$text}</span>
-//    </span>
-//</span>
-//HTML;
-//        }
+            $icon = 'repricing-enabled';
+            $text = $this->__(
+                'This product is used by Amazon Repricing Tool.
+                 The Price cannot be updated through the M2E Pro.'
+            );
+
+            if ((int)$row->getData('is_repricing_disabled') == 1) {
+                $icon = 'repricing-disabled';
+                $text = $this->__(
+                    'This product is disabled on Amazon Repricing Tool.
+                     The Price is updated through the M2E Pro.'
+                );
+            }
+
+            $repricingHtml = <<<HTML
+<div class="fix-magento-tooltip {$icon}" style="float:right; text-align: left; margin-left: 5px;">
+    {$this->getTooltipHtml($text)}
+</div>
+HTML;
+        }
 
         if (is_null($value) || $value === '') {
             return $this->__('N/A') . $repricingHtml;
@@ -636,9 +628,7 @@ HTML;
    sku="{$sku}"
    account_id="{$accountId}"
    href="javascript:void(0)"
-   onclick="CommonAmazonListingRepricingPriceHandlerObj.showRepricingPrice()">
-    {$priceValue}
-</a>
+   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$priceValue}</a>
 HTML;
         }
 
@@ -920,13 +910,12 @@ HTML;
 
         }
 
-//        TODO
-//        if (Mage::helper('M2ePro/Component_Amazon_Repricing')->isEnabled() && !empty($value['is_repricing'])) {
-//            if (!empty($condition)) {
-//                $condition = '(' . $condition . ') OR ';
-//            }
-//            $condition .= '`malpr`.`listing_product_id` IS NOT NULL';
-//        }
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
+            if (!empty($condition)) {
+                $condition = '(' . $condition . ') OR ';
+            }
+            $condition .= '`malpr`.`listing_product_id` IS NOT NULL';
+        }
 
         $collection->getSelect()->where($condition);
     }
@@ -1002,9 +991,9 @@ HTML;
             usort($actionsRow['items'], function($a, $b)
             {
                 $sortOrder = array(
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 1,
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 2,
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 3,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 1,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 2,
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 3,
                 );
 
                 return $sortOrder[$a["type"]] > $sortOrder[$b["type"]];
@@ -1012,15 +1001,15 @@ HTML;
         }
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'Last Action was completed with warning(s).'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary', '', ['data' => [
@@ -1096,15 +1085,15 @@ HTML;
 
     public function getMainTypeForActionId($actionRows)
     {
-        $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS;
+        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
 
         foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
                 break;
             }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
             }
         }
 
@@ -1276,14 +1265,12 @@ HTML;
     public function getTooltipHtml($content, $id = '')
     {
         return <<<HTML
-<div style="width: 25px; display: inline-block; margin-left: -23px;">
-    <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip" style="vertical-align: inherit; margin: 0;">
+    <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content" style="">
             {$content}
         </div>
     </div>
-</div>
 HTML;
     }
 
@@ -1636,7 +1623,7 @@ HTML;
 
     private function convertAndFormatPriceCurrency($price, $currency)
     {
-        return $this->priceCurrency->convertAndFormat($price, null, null, null, $currency);
+        return $this->localeCurrency->getCurrency($currency)->toCurrency($price);
     }
 
     //########################################

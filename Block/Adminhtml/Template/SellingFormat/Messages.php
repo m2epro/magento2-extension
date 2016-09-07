@@ -150,10 +150,6 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 $model = $this->activeRecordFactory->getObject('Amazon\Template\SellingFormat');
                 break;
-            // TODO NOT SUPPORTED FEATURES
-//            case \Ess\M2ePro\Helper\Component\Buy::NICK:
-//                $model = $this->modelFactory->getObject('Buy\Template\SellingFormat');
-//                break;
         }
 
         if (is_null($model)) {

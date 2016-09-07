@@ -13,6 +13,10 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
     {
         $this->addClass('select admin__control-select');
 
+        if ($this->getData('create_magento_attribute') === true) {
+            $this->addClass('M2ePro-custom-attribute-can-be-created');
+        }
+
         $html = '';
         if ($this->getBeforeElementHtml()) {
             $html .= '<label class="addbefore" for="' .
@@ -36,7 +40,8 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
                 if (!is_array($option)) {
                     $html .= $this->_optionToHtml(['value' => $key, 'label' => $option], $value);
                 } elseif (is_array($option['value'])) {
-                    $html .= '<optgroup label="' . $option['label'] . '" '.$this->addCustomOptionAttribute($option)
+                    $html .= '<optgroup label="' . $option['label'] . '" '
+                             . $this->addCustomOptGroupAttributes($option)
                              . ' >' . "\n";
                     foreach ($option['value'] as $groupItem) {
                         $html .= $this->_optionToHtml($groupItem, $value);
@@ -70,7 +75,8 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
     protected function _optionToHtml($option, $selected)
     {
         if (is_array($option['value'])) {
-            $html = '<optgroup label="' . $option['label'] . '" '.$this->addCustomOptionAttribute($option)
+            $html = '<optgroup label="' . $option['label'] . '" '
+                    . $this->addCustomOptGroupAttributes($option)
                     . ' >' . "\n";
             foreach ($option['value'] as $groupItem) {
                 $html .= $this->_optionToHtml($groupItem, $selected);
@@ -80,7 +86,7 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
             $html = '<option value="' . $this->_escape($option['value']) . '"';
             $html .= isset($option['title']) ? 'title="' . $this->_escape($option['title']) . '"' : '';
             $html .= isset($option['style']) ? 'style="' . $option['style'] . '"' : '';
-            $html .= $this->addCustomOptionAttribute($option);
+            $html .= $this->addCustomOptionAttributes($option);
             if (in_array($option['value'], $selected)) {
                 $html .= ' selected="selected"';
             }
@@ -89,7 +95,32 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
         return $html;
     }
 
-    protected function addCustomOptionAttribute(array $attributeData)
+    protected function addCustomOptGroupAttributes(array $attributeData)
+    {
+        if ($this->getData('create_magento_attribute') === true
+            && !empty($attributeData['attrs']['is_magento_attribute'])) {
+            
+            if (empty($attributeData['attrs']) || !is_array($attributeData['attrs'])) {
+
+                $attributeData['attrs'] = ['class' => 'M2ePro-custom-attribute-optgroup'];
+
+            } else {
+
+                if (isset($attributeData['attrs']['class'])) {
+                    $attributeData['attrs']['class'] = $attributeData['attrs']['class']
+                                                       . ' M2ePro-custom-attribute-optgroup';
+                } else {
+                    $attributeData['attrs']['class'] = 'M2ePro-custom-attribute-optgroup';
+                }
+            }
+
+            unset($attributeData['attrs']['is_magento_attribute']);
+        }
+
+        return $this->addCustomOptionAttributes($attributeData);
+    }
+
+    protected function addCustomOptionAttributes(array $attributeData)
     {
         if (empty($attributeData['attrs']) || !is_array($attributeData['attrs'])) {
             return '';

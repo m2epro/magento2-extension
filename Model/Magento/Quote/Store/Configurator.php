@@ -261,13 +261,6 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             return $defaultCustomerGroupId;
         }
 
-        //TODO
-        // ugliest hack ever!
-        // we have to remove exist singleton instance from the Mage registry
-        // because Mage\Tax\Model\Calculation::getDefaultCustomerTaxClass() method stores the customer tax class
-        // after the first call in protected variable and then it doesn't care what store was given to it
-//        Mage::unregister('_singleton/tax/calculation');
-
         // default customer tax class depends on default customer group
         // so we override store setting for this with the customer group from the quote
         // this is done to make store & address tax requests equal

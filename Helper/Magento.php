@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Helper;
 
 class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 {
+    protected $deploymentVersionStorageFile;
+    protected $filesystem;
+    protected $themeResolver;
     protected $productMetadata;
     protected $resource;
     protected $moduleList;
@@ -20,15 +23,18 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     protected $translatedLists;
     protected $countryFactory;
     protected $notificationFactory;
-    protected $eavConfig;
     protected $entityStore;
     protected $objectManager;
     protected $appCache;
     protected $eventConfig;
+    protected $sequenceManager;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\App\View\Deployment\Version\Storage\File $deploymentVersionStorageFile,
+        \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Magento\Framework\App\ResourceConnection $resource,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
@@ -39,15 +45,18 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Locale\TranslatedLists $translatedLists,
         \Magento\Directory\Model\CountryFactory $countryFactory,
         \Magento\AdminNotification\Model\InboxFactory $notificationFactory,
-        \Magento\Eav\Model\Config $eavConfig,
         \Magento\Eav\Model\Entity\Store $entityStore,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Magento\Framework\App\CacheInterface $appCache,
         \Magento\Framework\Event\Config $eventConfig,
+        \Magento\SalesSequence\Model\Manager $sequenceManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->deploymentVersionStorageFile = $deploymentVersionStorageFile;
+        $this->filesystem = $filesystem;
+        $this->themeResolver = $themeResolver;
         $this->productMetadata = $productMetadata;
         $this->resource = $resource;
         $this->moduleList = $moduleList;
@@ -58,11 +67,12 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $this->translatedLists = $translatedLists;
         $this->countryFactory = $countryFactory;
         $this->notificationFactory = $notificationFactory;
-        $this->eavConfig = $eavConfig;
         $this->entityStore = $entityStore;
         $this->objectManager = $objectManager;
         $this->appCache = $appCache;
         $this->eventConfig = $eventConfig;
+        $this->sequenceManager = $sequenceManager;
+
         parent::__construct($helperFactory, $context);
     }
 
@@ -88,45 +98,19 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getEditionName()
     {
-        if ($this->isProfessionalEdition()) {
-            return 'professional';
-        }
-        if ($this->isEnterpriseEdition()) {
-            return 'enterprise';
-        }
-        if ($this->isCommunityEdition()) {
-            return 'community';
-        }
-
-        return 'undefined';
+        return strtolower($this->productMetadata->getEdition());
     }
 
     // ---------------------------------------
 
-    public function isProfessionalEdition()
-    {
-        //TODO
-//        return Mage::getConfig()->getModuleConfig('Enterprise_Enterprise') &&
-//               !Mage::getConfig()->getModuleConfig('Enterprise_AdminGws') &&
-//               !Mage::getConfig()->getModuleConfig('Enterprise_Checkout') &&
-//               !Mage::getConfig()->getModuleConfig('Enterprise_Customer');
-        return false;
-    }
-
     public function isEnterpriseEdition()
     {
-        //TODO
-//        return Mage::getConfig()->getModuleConfig('Enterprise_Enterprise') &&
-//               Mage::getConfig()->getModuleConfig('Enterprise_AdminGws') &&
-//               Mage::getConfig()->getModuleConfig('Enterprise_Checkout') &&
-//               Mage::getConfig()->getModuleConfig('Enterprise_Customer');
-        return false;
+        return $this->getEditionName() == 'enterprise';
     }
 
     public function isCommunityEdition()
     {
-        return !$this->isProfessionalEdition() &&
-               !$this->isEnterpriseEdition();
+        return $this->getEditionName() == 'community';
     }
 
     //########################################
@@ -134,6 +118,16 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     public function isDeveloper()
     {
         return $this->appState->getMode() == \Magento\Framework\App\State::MODE_DEVELOPER;
+    }
+
+    public function isProduction()
+    {
+        return $this->appState->getMode() == \Magento\Framework\App\State::MODE_PRODUCTION;
+    }
+
+    public function isDefault()
+    {
+        return $this->appState->getMode() == \Magento\Framework\App\State::MODE_DEFAULT;
     }
 
     public function isCronWorking()
@@ -174,6 +168,11 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $localeComponents = explode('_' , $this->localeResolver->getLocale());
         return strtolower(array_shift($localeComponents));
     }
+    
+    public function getDefaultLocale()
+    {
+        return $this->localeResolver->getDefaultLocale();
+    }
 
     public function getBaseCurrency()
     {
@@ -183,6 +182,13 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         );
     }
 
+    // ---------------------------------------
+    
+    public function getThemePath()
+    {
+        return $this->themeResolver->get()->getFullPath();
+    }
+    
     // ---------------------------------------
 
     public function isSecretKeyToUrl()
@@ -209,14 +215,43 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
                                           $url = NULL)
     {
         $dataForAdd = [
-            'title' => $title,
+            'title' => !is_null($title) ? $title : $this->getHelper('Module\Translation')->__('M2E Pro Notification'),
             'description' => $description,
-            'url' => !is_null($url) ? $url : 'http://m2epro.com/?'.sha1($title),
+            'url' => !is_null($url) ? $url : 'http://m2epro.com/?' . sha1(!is_null($title) ? $title : $description),
             'severity' => $type,
             'date_added' => date('Y-m-d H:i:s')
         ];
 
         $this->notificationFactory->create()->parse([$dataForAdd]);
+    }
+
+    //########################################
+
+    public function isStaticContentExists($path = null)
+    {
+        $directoryReader = $this->filesystem->getDirectoryRead(
+            \Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW
+        );
+        
+        $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR
+                    . $this->getDefaultLocale() . DIRECTORY_SEPARATOR;
+        
+        if (!is_null($path)) {
+            $basePath .= $path;
+        }
+        
+        return $directoryReader->isExist($basePath);
+    }
+    
+    public function getLastStaticContentDeployDate()
+    {
+        try {
+            $deployedTimeStamp = $this->deploymentVersionStorageFile->load();
+        } catch (\Exception $e) {
+            return false;
+        }
+        
+        return $deployedTimeStamp ? $this->getHelper('Data')->getDate($deployedTimeStamp) : false;
     }
 
     //########################################
@@ -320,15 +355,14 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $modules = $this->moduleList->getAll();
 
-        // TODO
         $conflictedModules = [];
 
         $result = [];
-        foreach ($conflictedModules as $expression=>$description) {
+        foreach ($conflictedModules as $expression => $description) {
 
             foreach ($modules as $module => $data) {
                 if (preg_match($expression, $module)) {
-                    $result[$module] = array_merge($data, ['description'=>$description]);
+                    $result[$module] = array_merge($data, ['description' => $description]);
                 }
             }
         }
@@ -374,45 +408,11 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getNextMagentoOrderId()
     {
-        $orderEntityType = $this->eavConfig->getEntityType('order');
-        $defaultStoreId = $this->getHelper('Magento\Store')->getDefaultStoreId();
-
-        if (!$orderEntityType->getIncrementModel()) {
-            return false;
-        }
-
-        $entityStoreConfig = $this->entityStore->loadByEntityStore(
-            $orderEntityType->getId(), $defaultStoreId
+        $sequence = $this->sequenceManager->getSequence(
+            \Magento\Sales\Model\Order::ENTITY, $this->getHelper('Magento\Store')->getDefaultStoreId()
         );
 
-        if (!$entityStoreConfig->getId()) {
-            $entityStoreConfig
-                ->setEntityTypeId($orderEntityType->getId())
-                ->setStoreId($defaultStoreId)
-                ->setIncrementPrefix($defaultStoreId)
-                ->save();
-        }
-
-        $incrementInstance = $this->objectManager->create($orderEntityType->getIncrementModel())
-            ->setPrefix($entityStoreConfig->getIncrementPrefix())
-            ->setPadLength($orderEntityType->getIncrementPadLength())
-            ->setPadChar($orderEntityType->getIncrementPadChar())
-            ->setLastId($entityStoreConfig->getIncrementLastId())
-            ->setEntityTypeId($entityStoreConfig->getEntityTypeId())
-            ->setStoreId($entityStoreConfig->getStoreId());
-
-        return $incrementInstance->getNextId();
-    }
-
-    public function isMagentoOrderIdUsed($orderId)
-    {
-        $connRead = $this->resource->getConnection();
-        $select    = $connRead->select();
-
-        $table = $this->objectManager->create('Magento\Sales\Model\Order')->getResource()->getMainTable();
-        $select->from($table, 'entity_id')->where('increment_id = :increment_id');
-
-        return $connRead->fetchOne($select, array(':increment_id' => $orderId)) > 0;
+        return $sequence->getNextValue();
     }
 
     //########################################

@@ -53,8 +53,8 @@ HTML;
                 <p>In this section, you can find the list of the Orders imported from Amazon.</p><br>
                 
                 <p>An Amazon Order, for which Magento Order is created, contains a value in 
-                <strong>Magento Order #</strong>column of the grid. You can find the corresponding Magento Order 
-                in <br>Sales > Orders section of your Magento</p><br>
+                <strong>Magento Order </strong>column of the grid. You can find the corresponding Magento Order 
+                in Sales > Orders section of your Magento.</p><br>
                 <p>To manage the imported Amazon Orders, you can use Mass Action options available in the 
                 Actions bulk: Reserve QTY, Cancel QTY Reserve, Mark Order(s) as Shipped 
                 and Resend Shipping Information.</p><br>
@@ -81,6 +81,15 @@ HTML
         return
           $editItemBlock->toHtml()
         . parent::getGridHtml();
+    }
+
+    protected function _beforeToHtml()
+    {
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Controller\Adminhtml\Order\EditItem')
+        );
+
+        return parent::_beforeToHtml();
     }
 
     //########################################

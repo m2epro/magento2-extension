@@ -32,7 +32,6 @@ class Index extends Settings
         switch ($step) {
             case 1:
                 return $this->stepOne();
-                break;
             case 2:
                 $action = 'stepTwo';
                 break;
@@ -119,7 +118,7 @@ class Index extends Settings
         $this->addContent($block);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Categories'));
-        $this->setComponentPageHelpLink('Set+eBay+Categories');
+        $this->setPageHelpLink('x/lAItAQ');
 
         return $this->getResult();
     }
@@ -405,7 +404,7 @@ class Index extends Settings
         ]);
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Specifics'));
-        $this->setComponentPageHelpLink('Set+Item+Specifics');
+        $this->setPageHelpLink('x/7gMtAQ');
 
         $this->addContent($specificBlock);
 
@@ -475,7 +474,7 @@ class Index extends Settings
         $wrapper->setChild('specific', $this->getSpecificBlock());
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Set eBay Specifics'));
-        $this->setComponentPageHelpLink('Set+Item+Specifics');
+        $this->setPageHelpLink('x/7gMtAQ');
 
         $this->addContent($wrapper);
 

@@ -55,10 +55,10 @@ class ListRules extends AbstractTab
                     Otherwise, Synchronization Policy Rules will not take effect.</p><br>
                     
                     <p>More detailed information about how to work with this Page you can find 
-                    <a href="%url%" target="_blank">here</a>.</p>
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/PQItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/PQItAQ')
                 )
             ]
         );
@@ -71,7 +71,7 @@ HTML
         );
 
         $fieldset->addField('list_mode',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[list_mode]',
                 'label' => $this->__('List Action'),
@@ -91,7 +91,7 @@ HTML
         );
 
         $fieldset->addField('list_status_enabled',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[list_status_enabled]',
                 'label' => $this->__('Product Status'),
@@ -109,7 +109,7 @@ HTML
         );
 
         $fieldset->addField('list_is_in_stock',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[list_is_in_stock]',
                 'label' => $this->__('Stock Availability'),
@@ -126,7 +126,7 @@ HTML
         );
 
         $fieldset->addField('list_qty_magento',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[list_qty_magento]',
                 'label' => $this->__('Magento Quantity'),
@@ -171,7 +171,7 @@ HTML
         );
 
         $fieldset->addField('list_qty_calculated',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[list_qty_calculated]',
                 'label' => $this->__('Calculated Quantity'),

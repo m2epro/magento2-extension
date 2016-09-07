@@ -40,8 +40,7 @@ final class Launcher extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractMode
     {
         $result = true;
 
-        //TODO UNSUPPORTED FEATURE
-        //$result = !$this->processTask('General') ? false : $result;
+        $result = !$this->processTask('General') ? false : $result;
         $result = !$this->processTask('ListingsProducts') ? false : $result;
         $result = !$this->processTask('Orders') ? false : $result;
         $result = !$this->processTask('OtherListings') ? false : $result;

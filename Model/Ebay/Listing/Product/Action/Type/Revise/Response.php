@@ -37,6 +37,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendGalleryImagesValues($data, $response, $responseParams);
 
         $data = $this->appendIsVariationMpnFilledValue($data);
+        $data = $this->appendVariationsThatCanNotBeDeleted($data, $response);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = json_encode($data['additional_data']);

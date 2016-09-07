@@ -26,7 +26,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Marketplace $marketplace,
         \Ess\M2ePro\Model\Account $account,
@@ -103,7 +103,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     protected function isNeedSendRequest()
     {
         if ($this->order->getMarketplace()->getCode() == 'India'
-            && stripos($this->order->getChildObject()->getPaymentMethod(), 'paisa')
+            && stripos($this->order->getChildObject()->getPaymentMethod(), 'paisa') !== false
         ) {
             $this->order->addErrorLog('eBay Order Status was not updated. Reason: %msg%', array(
                 'msg' => 'Status of India Site Orders cannot be updated if the Buyer uses PaisaPay payment method.'

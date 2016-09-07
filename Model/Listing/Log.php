@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
-class Log extends \Ess\M2ePro\Model\Log\AbstractLog
+class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const ACTION_UNKNOWN = 1;
     const _ACTION_UNKNOWN = 'System';
@@ -78,9 +78,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractLog
     const ACTION_CHANNEL_CHANGE = 25;
     const _ACTION_CHANNEL_CHANGE = 'Change Item on Channel';
 
-// TODO NOT SUPPORTED FEATURES
-//    const ACTION_TRANSLATE_PRODUCT = 28;
-//    const _ACTION_TRANSLATE_PRODUCT = 'Translation';
+    const ACTION_TRANSLATE_PRODUCT = 28;
+    const _ACTION_TRANSLATE_PRODUCT = 'Translation';
 
     //########################################
 

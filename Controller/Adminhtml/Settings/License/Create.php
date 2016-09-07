@@ -21,6 +21,7 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
                 'email',
                 'firstname',
                 'lastname',
+                'phone',
                 'country',
                 'city',
                 'postal_code',
@@ -64,15 +65,14 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
             }
 
             $primaryConfig = $this->getHelper('Primary')->getConfig();
-            $oldLicenseKey = $primaryConfig->getGroupValue(
-                '/'.$this->getHelper('Module')->getName().'/license/','key'
-            );
-            $primaryConfig->setGroupValue('/'.$this->getHelper('Module')->getName().'/license/','key','');
+            $oldLicenseKey = $primaryConfig->getGroupValue('/license/', 'key');
+            $primaryConfig->setGroupValue('/license/', 'key', '');
 
             $licenseResult = $this->getHelper('Module\License')->obtainRecord(
                 $licenseData['email'],
                 $licenseData['firstname'], $licenseData['lastname'],
-                $licenseData['country'], $licenseData['city'], $licenseData['postal_code']
+                $licenseData['country'], $licenseData['city'], 
+                $licenseData['postal_code'], $licenseData['phone']
             );
 
             if ($licenseResult) {
@@ -81,18 +81,14 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
                 $registry->setData('value', json_encode($licenseData));
                 $registry->save();
 
-                $licenseKey = $this->getHelper('Primary')->getConfig()->getGroupValue(
-                    '/'.$this->getHelper('Module')->getName().'/license/','key'
-                );
+                $licenseKey = $this->getHelper('Primary')->getConfig()->getGroupValue('/license/', 'key');
                 $this->setAjaxContent(json_encode(array(
                     'success' => true,
                     'message' => $this->__('The License Key has been successfully created.'),
                     'license_key' => $licenseKey
                 )), false);
             } else {
-                $primaryConfig->setGroupValue(
-                    '/'.$this->getHelper('Module')->getName().'/license/','key', $oldLicenseKey
-                );
+                $primaryConfig->setGroupValue('/license/','key', $oldLicenseKey);
 
                 $this->setAjaxContent(json_encode(array(
                     'success' => false,

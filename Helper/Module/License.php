@@ -12,18 +12,21 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $modelFactory;
     protected $primaryConfig;
+    protected $country;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
+        \Magento\Config\Model\Config\Source\Locale\Country $country,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
-    )
-    {
+    ) {
         $this->modelFactory = $modelFactory;
         $this->primaryConfig = $primaryConfig;
+        $this->country = $country;
+
         parent::__construct($helperFactory, $context);
     }
 
@@ -31,70 +34,53 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getKey()
     {
-        $key = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/','key'
-        );
-        return !is_null($key) ? (string)$key : '';
+        return (string)$this->primaryConfig->getGroupValue('/license/', 'key');
     }
 
     // ---------------------------------------
 
     public function getStatus()
     {
-        $status = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/','status'
-        );
-        return (bool)$status;
+        return (bool)$this->primaryConfig->getGroupValue('/license/', 'status');
     }
 
     // ---------------------------------------
 
     public function getDomain()
     {
-        $domain = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/','domain'
-        );
-        return !is_null($domain) ? (string)$domain : '';
+        return (string)$this->primaryConfig->getGroupValue('/license/', 'domain');
     }
 
     public function getIp()
     {
-        $ip = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/','ip'
-        );
-        return !is_null($ip) ? (string)$ip : '';
+        return (string)$this->primaryConfig->getGroupValue('/license/', 'ip');
     }
 
     // ---------------------------------------
 
     public function getEmail()
     {
-        $email = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/info/','email'
-        );
-        return !is_null($email) ? (string)$email : '';
+        return (string)$this->primaryConfig->getGroupValue('/license/info/', 'email');
     }
 
     // ---------------------------------------
 
     public function isValidDomain()
     {
-        $isValid = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/valid/','domain');
+        $isValid = $this->primaryConfig->getGroupValue('/license/valid/', 'domain');
         return is_null($isValid) || (bool)$isValid;
     }
 
     public function isValidIp()
     {
-        $isValid = $this->primaryConfig->getGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/valid/','ip');
+        $isValid = $this->primaryConfig->getGroupValue('/license/valid/','ip');
         return is_null($isValid) || (bool)$isValid;
     }
 
     //########################################
 
     public function obtainRecord($email = NULL, $firstName = NULL, $lastName = NULL,
-                                 $country = NULL, $city = NULL, $postalCode = NULL)
+                                 $country = NULL, $city = NULL, $postalCode = NULL, $phone = NULL)
     {
         $requestParams = array(
             'domain' => $this->getHelper('Client')->getDomain(),
@@ -104,6 +90,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         !is_null($email) && $requestParams['email'] = $email;
         !is_null($firstName) && $requestParams['first_name'] = $firstName;
         !is_null($lastName) && $requestParams['last_name'] = $lastName;
+        !is_null($phone) && $requestParams['phone'] = $phone;
         !is_null($country) && $requestParams['country'] = $country;
         !is_null($city) && $requestParams['city'] = $city;
         !is_null($postalCode) && $requestParams['postal_code'] = $postalCode;
@@ -111,8 +98,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
         try {
 
             $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record',
-                                                                   $requestParams);
+            $connectorObj = $dispatcherObject->getVirtualConnector('license', 'add', 'record', $requestParams);
             $dispatcherObject->process($connectorObj);
             $response = $connectorObj->getResponseData();
 
@@ -124,9 +110,7 @@ class License extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        $this->primaryConfig->setGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/license/','key',(string)$response['key']
-        );
+        $this->primaryConfig->setGroupValue('/license/', 'key', (string)$response['key']);
 
         $this->modelFactory->getObject('Servicing\Dispatcher')->processTask(
             $this->modelFactory->getObject('Servicing\Task\License')->getPublicNick()

@@ -199,19 +199,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             null,
             'left'
         );
-        
-//        TODO
-//        $atsTable = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')
-//->getResource()->getMainTable();
-//        $collection->joinTable(
-//            array('ats' => $atsTable),
-//            'id=template_shipping_override_id',
-//            array(
-//                'template_shipping_override_title' => 'title'
-//            ),
-//            null,
-//            'left'
-//        );
+
+        $atsTable = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')
+            ->getResource()->getMainTable();
+        $collection->joinTable(
+            array('atso' => $atsTable),
+            'id=template_shipping_override_id',
+            array(
+                'template_shipping_override_title' => 'title'
+            ),
+            null,
+            'left'
+        );
 
         // ---------------------------------------
 
@@ -272,16 +271,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnTemplateDescription')
         ));
 
-//        TODO
-//        $this->addColumn('shipping_override_template', array(
-//            'header' => $this->__('Shipping Override Policy'),
-//            'align' => 'left',
-//            'width' => '170px',
-//            'type' => 'text',
-//            'index' => 'template_shipping_override_title',
-//            'filter_index' => 'template_shipping_override_title',
-//            'frame_callback' => array($this, 'callbackColumnTemplateShippingOverride')
-//        ));
+        $this->addColumn('shipping_override_template', array(
+            'header' => $this->__('Shipping Override Policy'),
+            'align' => 'left',
+            'width' => '170px',
+            'type' => 'text',
+            'index' => 'template_shipping_override_title',
+            'filter_index' => 'template_shipping_override_title',
+            'frame_callback' => array($this, 'callbackColumnTemplateShippingOverride')
+        ));
 
         $this->addColumn('actions', array(
             'header'    => $this->__('Actions'),
@@ -306,8 +304,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     {
         return array(
             'edit_template_description' => $this->__('Description Policy'),
-//            TODO
-//            'edit_template_shipping_override' => $this->__('Shipping Override Policy'),
+            'edit_template_shipping_override' => $this->__('Shipping Override Policy'),
         );
     }
 
@@ -328,20 +325,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'onclick_action' => 'ListingGridHandlerObj.unassignTemplateDescriptionIdActionConfrim'
             ),
 
-//            TODO
-//            'assignTemplateShippingOverride' => array(
-//                'caption' => $this->__('Assign'),
-//                'group'   => 'edit_template_shipping_override',
-//                'field'   => 'id',
-//                'onclick_action' => 'ListingGridHandlerObj.actions[\'assignTemplateShippingOverrideIdAction\']'
-//            ),
-//
-//            'unassignTemplateShippingOverride' => array(
-//                'caption' => $this->__('Unassign'),
-//                'group'   => 'edit_template_shipping_override',
-//                'field'   => 'id',
-//                'onclick_action' => 'ListingGridHandlerObj.unassignTemplateShippingOverrideIdActionConfrim'
-//            )
+            'assignTemplateShippingOverride' => array(
+                'caption' => $this->__('Assign'),
+                'group'   => 'edit_template_shipping_override',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.actions[\'assignTemplateShippingOverrideIdAction\']'
+            ),
+
+            'unassignTemplateShippingOverride' => array(
+                'caption' => $this->__('Unassign'),
+                'group'   => 'edit_template_shipping_override',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.unassignTemplateShippingOverrideIdActionConfrim'
+            )
         );
 
         return $actions;
@@ -361,8 +357,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $groups = array(
             'description_policy' => $this->__('Description Policy'),
-//            TODO
-//            'shipping_override_policy' => $this->__('Shipping Override Policy'),
+            'shipping_override_policy' => $this->__('Shipping Override Policy'),
             'other'              => $this->__('Other'),
         );
 
@@ -380,18 +375,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'confirm'  => $this->__('Are you sure?')
         ), 'description_policy');
 
-//        TODO
-//        $this->getMassactionBlock()->addItem('assignTemplateShippingOverrideId', array(
-//            'label'    => $this->__('Assign'),
-//            'url'      => '',
-//            'confirm'  => $this->__('Are you sure?')
-//        ), 'shipping_override_policy');
-//
-//        $this->getMassactionBlock()->addItem('unassignTemplateShippingOverrideId', array(
-//            'label'    => $this->__('Unassign'),
-//            'url'      => '',
-//            'confirm'  => $this->__('Are you sure?')
-//        ), 'shipping_override_policy');
+        $this->getMassactionBlock()->addItem('assignTemplateShippingOverrideId', array(
+            'label'    => $this->__('Assign'),
+            'url'      => '',
+            'confirm'  => $this->__('Are you sure?')
+        ), 'shipping_override_policy');
+
+        $this->getMassactionBlock()->addItem('unassignTemplateShippingOverrideId', array(
+            'label'    => $this->__('Unassign'),
+            'url'      => '',
+            'confirm'  => $this->__('Are you sure?')
+        ), 'shipping_override_policy');
 
         $this->getMassactionBlock()->addItem('moving', array(
             'label'    => $this->__('Move Item(s) to Another Listing'),
@@ -561,7 +555,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = @json_decode($generalIdSearchInfo, true);
+            $generalIdSearchInfo = json_decode($generalIdSearchInfo, true);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {

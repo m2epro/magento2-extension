@@ -495,17 +495,16 @@ define([
                 alert(result['error']);
             });
 
-            // TODO NOT SUPPORTED FEATURES
-            //var trElem = new Element('tr', {class: 'add-new-one-attribute-tr'});
-            //trElem.appendChild(new Element('td', {style: 'color: brown;'})).update(M2ePro.translator.translate('Create a New One...'));
-            //trElem.appendChild(new Element('td', {style: 'padding-left: 55px;'}))
-            //    .appendChild(new Element('a', {
-            //        href: 'javascript:void(0);',
-            //        onclick: handlerObj.id + '.showPopup({\'allowed_attribute_types\':\'text,select\'});'
-            //    }))
-            //    .update(M2ePro.translator.translate('Select'));
-            //
-            //$$('#chooser_attributes_table tbody').first().appendChild(trElem);
+            var trElem = new Element('tr', {class: 'add-new-one-attribute-tr'});
+            trElem.appendChild(new Element('td', {style: 'color: brown;'})).update(M2ePro.translator.translate('Create a New One...'));
+            trElem.appendChild(new Element('td', {style: 'padding-left: 55px;'}))
+               .appendChild(new Element('a', {
+                   href: 'javascript:void(0);',
+                   onclick: handlerObj.id + '.showPopup({\'allowed_attribute_types\':\'text,select\'});'
+               }))
+               .update(M2ePro.translator.translate('Select'));
+
+            $$('#chooser_attributes_table tbody').first().appendChild(trElem);
         },
 
         renderRecent: function () {

@@ -20,7 +20,8 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 
             $redirectUrl = $this->getUrl('*/*/index', array(
                 'step' => 5,
-                'id' => $this->getRequest()->getParam('id')
+                'id' => $this->getRequest()->getParam('id'),
+                'wizard' => $this->getRequest()->getParam('wizard')
             ));
             $this->setJsonContent(['redirect' => $redirectUrl]);
 
@@ -36,7 +37,8 @@ class CheckSearchResults extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             $this->setJsonContent([
                 'redirect' => $this->getUrl('*/*/index', array(
                     'id' => $this->getRequest()->getParam('id'),
-                    'step' => $showNewAsinStep ? 4 : 5
+                    'step' => $showNewAsinStep ? 4 : 5,
+                    'wizard' => $this->getRequest()->getParam('wizard')
                 ))
             ]);
 

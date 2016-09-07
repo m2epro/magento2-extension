@@ -26,7 +26,7 @@ class Index extends Main
 
         $this->addContent($this->createBlock('Amazon\Listing\Search'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Search Products'));
-        $this->setComponentPageHelpLink('Search+Products');
+        $this->setPageHelpLink('x/-gEtAQ');
 
         return $this->getResult();
     }

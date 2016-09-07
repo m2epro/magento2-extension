@@ -41,14 +41,16 @@ class Options extends AbstractModel
             return;
         }
 
+        $channelVariations = $this->getProcessor()->getTypeModel()->getChannelVariations();
+
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $variationManager */
-            $variationManager = $listingProduct->getChildObject()->getVariationManager();
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+            $amazonListingProduct = $listingProduct->getChildObject();
 
             /** @var ChildRelation $typeModel */
-            $typeModel = $variationManager->getTypeModel();
+            $typeModel = $amazonListingProduct->getVariationManager()->getTypeModel();
 
             if (!$typeModel->isActualProductAttributes() ||
                 !$typeModel->isActualMatchedAttributes() ||
@@ -56,6 +58,15 @@ class Options extends AbstractModel
                 !$typeModel->isActualProductVariation())
             ) {
                 $typeModel->resetProductVariation();
+            }
+
+            if ($typeModel->isVariationChannelMatched()) {
+                $currentChannelOptions = $channelVariations[$amazonListingProduct->getGeneralId()];
+                $childChannelOptions   = $typeModel->getChannelOptions();
+
+                if ($currentChannelOptions != $childChannelOptions) {
+                    $typeModel->setChannelVariation($currentChannelOptions);
+                }
             }
 
             if (!$typeModel->isVariationProductMatched() && !$typeModel->isVariationChannelMatched()) {

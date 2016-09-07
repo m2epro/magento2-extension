@@ -46,19 +46,9 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Main
             $this->getHelper('Component\Amazon')->getTitle()
         );
 
-        $this->getResultPage()->setActiveMenu('Ess_M2ePro::amazon');
-    }
-
-    //########################################
-
-    protected function setComponentPageHelpLink($view = NULL, $component = NULL)
-    {
-        if (!is_null($component)) {
-            $this->setPageHelpLink($component, $view);
-            return;
+        if ($this->getLayoutType() != self::LAYOUT_BLANK) {
+            $this->getResultPage()->setActiveMenu(\Ess\M2ePro\Helper\View\Amazon::MENU_ROOT_NODE_NICK);
         }
-
-        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, $view);
     }
 
     //########################################

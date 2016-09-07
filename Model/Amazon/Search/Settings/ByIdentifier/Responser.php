@@ -57,8 +57,8 @@ class Responser
             NULL,
             \Ess\M2ePro\Model\Listing\Log::ACTION_UNKNOWN,
             $messageText,
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-            \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
 
         $amazonListingProduct = $this->getListingProduct()->getChildObject();

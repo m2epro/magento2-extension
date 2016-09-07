@@ -22,7 +22,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $params = []

@@ -274,8 +274,6 @@ $numColumns = sizeof($block->getColumns());
         <?php endif; ?>
 
         require(deps, function(<?php echo ($block->getDependencyJsObject() ? 'registry' : '') ?>){
-            <?php //TODO: getJsObjectName and getRowClickCallback has unexpected behavior. Should be removed ?>
-
             //<![CDATA[
             <?php if ($block->getDependencyJsObject()): ?>
             registry.get('<?php /* @escapeNotVerified */ echo $block->getDependencyJsObject() ?>', function (<?php /* @escapeNotVerified */ echo $block->getDependencyJsObject() ?>) {
@@ -303,6 +301,21 @@ $numColumns = sizeof($block->getColumns());
             <?php endif; ?>
             //]]>
 
+        });
+
+        //fix magento time picker event loop deadlock
+        require(['jquery', 'jquery/jquery-ui-timepicker-addon'], function(jQuery) {
+
+            var base_updateDateTime = jQuery.timepicker.constructor.prototype._updateDateTime;
+
+            jQuery.timepicker.constructor.prototype._updateDateTime = function(dp_inst) {
+                var triggerFunc = this.$input.trigger;
+                this.$input.trigger = function() {};
+
+                base_updateDateTime.call(this, dp_inst);
+
+                this.$input.trigger = triggerFunc;
+            };
         });
     </script>
 <?php endif; ?>

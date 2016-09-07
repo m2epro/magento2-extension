@@ -12,31 +12,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 
 class Form extends AbstractForm
 {
-    /**
-     * @var \Magento\Framework\View\Asset\Repository
-     */
-    protected $assetRepo;
-
-    /**
-     * @var \Magento\Framework\Data\Form\Element\Factory
-     */
-    protected $factoryElement;
-
     //########################################
-
-    public function __construct(
-        \Magento\Framework\View\Asset\Repository $assetRepo,
-        \Magento\Framework\Data\Form\Element\Factory $factoryElement,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        array $data = []
-    )
-    {
-        $this->assetRepo = $assetRepo;
-        $this->factoryElement = $factoryElement;
-        parent::__construct($context, $registry, $formFactory, $data);
-    }
 
     public function _construct()
     {
@@ -141,6 +117,8 @@ class Form extends AbstractForm
             }
         }
 
+        $this->addStaticMarketplaces($form);
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -208,6 +186,44 @@ class Form extends AbstractForm
         // ---------------------------------------
     }
 
+    protected function addStaticMarketplaces(\Magento\Framework\Data\Form $form)
+    {
+        $staticData = [
+            [
+                'group_id' => 3,
+                'label' => $this->__('Japan'),
+                'note' => 'amazon.co.jp',
+            ],
+            [
+                'group_id' => 3,
+                'label' => $this->__('China'),
+                'note' => 'amazon.cn',
+            ],
+            [
+                'group_id' => 3,
+                'label' => $this->__('India'),
+                'note' => 'amazon.in',
+            ],
+            [
+                'group_id' => 1,
+                'label' => $this->__('Mexico'),
+                'note' => 'amazon.com.mx',
+            ],
+        ];
+
+        foreach ($staticData as $marketplace) {
+            $form->getElement('marketplaces_group_' . $marketplace['group_id'])->addField(
+                $this->mathRandom->getUniqueHash('select_'),
+                self::SELECT,
+                array_merge($marketplace, [
+                    'values' => [\Ess\M2ePro\Model\Marketplace::STATUS_DISABLE => $this->__('Disabled - Coming Soon')],
+                    'value' => \Ess\M2ePro\Model\Marketplace::STATUS_DISABLE,
+                    'disabled' => true
+                ])
+            );
+        }
+    }
+
     //########################################
 
     protected function _toHtml()
@@ -242,7 +258,6 @@ class Form extends AbstractForm
                 )
         ]);
 
-        // todo See CONCAT method
         $storedStatuses = json_encode($this->storedStatuses);
         $this->js->addOnReadyJs(<<<JS
             require([

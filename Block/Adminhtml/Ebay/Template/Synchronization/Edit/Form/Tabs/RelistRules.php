@@ -30,10 +30,10 @@ class RelistRules extends AbstractTab
                     Stock Availability or Quantity in Magento.</p><br>
                     
                     <p>More detailed information about how to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.</p>
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/QQItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/QQItAQ')
                 )
             ]
         );
@@ -46,7 +46,7 @@ HTML
         );
 
         $fieldset->addField('relist_mode',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[relist_mode]',
                 'label' => $this->__('Relist Action'),
@@ -63,7 +63,7 @@ HTML
         );
 
         $fieldset->addField('relist_filter_user_lock',
-            'select',
+            self::SELECT,
             [
                 'container_id' => 'relist_filter_user_lock_tr_container',
                 'name' => 'synchronization[relist_filter_user_lock]',
@@ -81,7 +81,7 @@ HTML
         );
 
         $fieldset->addField('relist_send_data',
-            'select',
+            self::SELECT,
             [
                 'container_id' => 'relist_send_data_tr_container',
                 'name' => 'synchronization[relist_send_data]',
@@ -125,7 +125,7 @@ HTML
         );
 
         $fieldset->addField('relist_status_enabled',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[relist_status_enabled]',
                 'label' => $this->__('Product Status'),
@@ -145,7 +145,7 @@ HTML
         );
 
         $fieldset->addField('relist_is_in_stock',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[relist_is_in_stock]',
                 'label' => $this->__('Stock Availability'),
@@ -164,7 +164,7 @@ HTML
         );
 
         $fieldset->addField('relist_qty_magento',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[relist_qty_magento]',
                 'label' => $this->__('Magento Quantity'),
@@ -210,7 +210,7 @@ HTML
         );
 
         $fieldset->addField('relist_qty_calculated',
-            'select',
+            self::SELECT,
             [
                 'name' => 'synchronization[relist_qty_calculated]',
                 'label' => $this->__('Calculated Quantity'),

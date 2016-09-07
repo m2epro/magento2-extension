@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Magento\Product\Rule\Custom;
 
-class EbayPrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractCustom
+class EbayPrice extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
 

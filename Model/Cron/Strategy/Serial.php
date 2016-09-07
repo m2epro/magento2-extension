@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
-class Serial extends AbstractStrategy
+class Serial extends AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\LockItem
@@ -37,7 +37,7 @@ class Serial extends AbstractStrategy
 
     /**
      * @param $taskNick
-     * @return \Ess\M2ePro\Model\Cron\Task\AbstractTask
+     * @return \Ess\M2ePro\Model\Cron\Task\AbstractModel
      */
     protected function getTaskObject($taskNick)
     {

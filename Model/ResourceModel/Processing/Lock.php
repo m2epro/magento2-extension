@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Processing;
 
-class Lock extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Lock extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################
 

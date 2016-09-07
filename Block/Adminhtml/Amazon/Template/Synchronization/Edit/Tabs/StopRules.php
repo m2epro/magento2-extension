@@ -42,8 +42,8 @@ class StopRules extends AbstractForm
     If all Stop Conditions are enabled, then an Item will be inactivated if at least one of the
     Stop Conditions is met.<br/><br/>
     More detailed information about ability to work with this Page you can find
-    <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/HIMVAQ')
+    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/HIMVAQ')
                 )
             ]
         );
@@ -56,9 +56,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'stop_status_disabled',
-            'select',
+        $fieldset->addField('stop_status_disabled',
+            self::SELECT,
             [
                 'name' => 'stop_status_disabled',
                 'label' => $this->__('Stop When Status Disabled'),
@@ -73,9 +72,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'stop_out_off_stock',
-            'select',
+        $fieldset->addField('stop_out_off_stock',
+            self::SELECT,
             [
                 'name' => 'stop_out_off_stock',
                 'label' => $this->__('Stop When Out Of Stock'),
@@ -91,9 +89,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'stop_qty_magento',
-            'select',
+        $fieldset->addField('stop_qty_magento',
+            self::SELECT,
             [
                 'name' => 'stop_qty_magento',
                 'label' => $this->__('Stop When Magento Quantity Is'),
@@ -135,9 +132,8 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'stop_qty_calculated',
-            'select',
+        $fieldset->addField('stop_qty_calculated',
+            self::SELECT,
             [
                 'name' => 'stop_qty_calculated',
                 'label' => $this->__('Stop When Calculated Quantity Is'),

@@ -1,0 +1,20 @@
+M2E Pro Module is currently in a technical maintenance mode. This mode restricts interaction with the Module’s Interface and terminates all the tasks which were running in the background.
+The technical maintenance mode could be enabled automatically by M2E Pro due to several reasons:<br /><br />
+
+<ul style="margin-left: 30px;">
+    <li>
+        <strong>Incorrect Module Installation</strong>
+        <p>Improper Installation via Magento Component Manager, the incompatibility of Magento and its Modules or other technical issues of different nature might cause enabling of the maintenance mode.</p>
+    </li>
+    <li>
+        <strong>Incorrect Module upgrade to the latest version</strong>
+        <p>If during the upgrade there was any M2E Pro data failure via Composer or the command php %magento2_installation_dir%/bin/magento setup:upgrade was not run properly, the maintenance mode will be enabled.</p>
+    </li>
+    <li>
+        <strong>Incompleted migration process from M2E Pro for M1 to M2E Pro for M2</strong>
+        <p>If any data failure occurs while the database is porting, the maintenance mode will be enabled.</p>
+    </li>
+</ul>
+
+In order to disable maintenance mode, the problem, which triggered its enabling, should be solved. If you are not aware of any reasons which might cause a maintenance mode in your system, you should contact our Support Team via email <a href=mailto:support@m2epro.com">support@m2epro.com</a> or re-install M2E Pro.<br />
+<strong>Note:</strong> the re-installation process might require some technical skills and knowledge. So, please, be thoughtful whether to run it.

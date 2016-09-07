@@ -94,6 +94,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             }
         }
 
+        if ($this->isRepricing()) {
+            $this->getRepricing()->delete();
+        }
+
         $this->variationManager = NULL;
 
         return parent::delete();
@@ -376,7 +380,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isRepricing()
     {
-        return (bool)$this->getRepricing()->getId();
+        return !is_null($this->getRepricing());
     }
 
     /**
@@ -820,6 +824,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $descriptionTemplate = $this->getDescriptionTemplate();
         if (!is_null($descriptionTemplate)) {
             $attributes = array_merge($attributes, $descriptionTemplate->getTrackingAttributes());
+        }
+
+        if ($this->isRepricing()) {
+            $attributes = array_merge($attributes, $this->getAmazonAccount()->getRepricing()->getTrackingAttributes());
         }
 
         return array_unique($attributes);

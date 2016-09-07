@@ -75,7 +75,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Magento Parent Product was successfully linked to Amazon Parent Product by %general_id_type% "%general_id%" via Search Settings.
                     $this->addMessage(
-                        $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                        $this->getHelper('Module\Log')->encodeDescription(
                             'Magento Parent Product was successfully linked
                              to Amazon Parent Product by %general_id_type% "%general_id%" via Search Settings.',
                             array('!general_id_type' => $generalIdType, '!general_id' => $generalId)
@@ -86,7 +86,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Unexpected error has occurred while trying to link Magento Parent Product, although the %general_id_type% "%general_id%" was successfully found on Amazon.
                     $this->addMessage(
-                        $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                        $this->getHelper('Module\Log')->encodeDescription(
                             'Unexpected error has occurred while trying to link Magento Parent Product,
                              although the %general_id_type% "%general_id%" was successfully found on Amazon.',
                             array('general_id' => $generalId, 'general_id_type' => $generalIdType)
@@ -169,7 +169,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // 'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings for ASIN/ISBN Search were specified in Listing Search Settings and a value %general_id% were set in Magento Attribute for that Product.'
         if ($this->getAmazonListingProduct()->isGeneralIdOwner()) {
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings
                     for ASIN/ISBN Search were specified in Listing Search Settings and a value
                     %general_id% were set in Magento Attribute for that Product.',
@@ -185,7 +185,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The value "%general_id%" provided for ASIN/ISBN in Listing Search Settings is invalid. Please set the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The value "%general_id%" provided for ASIN/ISBN in Listing Search Settings is invalid.
                      Please set the correct value and try again.',
                     array('!general_id' => $generalId)
@@ -202,7 +202,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // %general_id_type% %general_id% provided in Listing Search Settings is not found on Amazon. Please set the correct value and try again. Note: Due to Amazon API restrictions M2E Pro might not see all the existing Products on Amazon.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     '%general_id_type% %general_id% provided in Listing Search Settings
                      is not found on Amazon.
                      Please set the correct value and try again.
@@ -219,7 +219,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // There is more than one Product found on Amazon using Search by %general_id_type% %general_id%. First, you should select certain one using manual search.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'There is more than one Product found on Amazon using Search
                      by %general_id_type% %general_id%.
                      First, you should select certain one using manual search.',
@@ -237,7 +237,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Amazon Parent Product was found using Search by %general_id_type% %general_id% while Simple or Child Product ASIN/ISBN is required.
                 $this->addMessage(
-                    $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                    $this->getHelper('Module\Log')->encodeDescription(
                         'Amazon Parent Product was found using Search by %general_id_type% %general_id%
                          while Simple or Child Product ASIN/ISBN is required.',
                         array('!general_id_type' => $generalIdType, '!general_id' => $generalId)
@@ -251,7 +251,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Working with Amazon Parent Product found using Search by %general_id_type% %general_id% is limited due to Amazon API restrictions.
                 $this->addMessage(
-                    $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                    $this->getHelper('Module\Log')->encodeDescription(
                         'Working with Amazon Parent Product found using Search by %general_id_type% %general_id%
                          is limited due to Amazon API restrictions.',
                         array('!general_id_type' => $generalIdType, '!general_id' => $generalId)
@@ -268,7 +268,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The number of Variation Attributes of the Amazon Parent Product found using Search by %general_id_type% %general_id% does not match the number of Variation Attributes of the Magento Parent Product.
                 $this->addMessage(
-                    $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                    $this->getHelper('Module\Log')->encodeDescription(
                         'The number of Variation Attributes of the Amazon Parent Product found
                          using Search by %general_id_type% %general_id% does not match the number
                          of Variation Attributes of the Magento Parent Product.',
@@ -286,7 +286,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Amazon Simple or Child Product was found using Search by %general_id_type% %general_id% while Parent Product ASIN/ISBN is required.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'Amazon Simple or Child Product was found using Search by %general_id_type% %general_id%
                      while Parent Product ASIN/ISBN is required.',
                     array('!general_id_type' => $generalIdType, '!general_id' => $generalId)
@@ -312,7 +312,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
 // M2ePro\TRANSLATIONS
 // 'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings for UPC/EAN Search were specified in Listing Search Settings and a value %worldwide_id% were set in Magento Attribute for that Product.'
-        $changingListTypeMessage = $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+        $changingListTypeMessage = $this->getHelper('Module\Log')->encodeDescription(
             'M2E Pro did not use New ASIN/ISBN Creation feature assigned because settings
             for UPC/EAN Search were specified in Listing Search Settings and a value
             %worldwide_id% were set in Magento Attribute for that Product.',
@@ -329,7 +329,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The value "%worldwide_id%" provided for UPC/EAN in Listing Search Settings is invalid. Please set the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The value "%worldwide_id%" provided for UPC/EAN in Listing Search Settings is invalid.
                      Please set the correct value and try again.',
                     array('!worldwide_id' => $worldwideId)
@@ -350,7 +350,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // %worldwide_id_type% %worldwide_id% provided in Listing Search Settings is not found on Amazon. Please set Description Policy to create New ASIN/ISBN.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     '%worldwide_id_type% %worldwide_id% provided in Search Settings
                      is not found on Amazon. Please set Description Policy to create New ASIN/ISBN.',
                     array('!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId)
@@ -370,7 +370,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // There is more than one Product found on Amazon using Search by %worldwide_id_type% %worldwide_id%. First, you should select certain one using manual search.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'There is more than one Product found on Amazon using Search by %worldwide_id_type% %worldwide_id%.
                      First, you should select certain one using manual search.',
                     array('!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId)
@@ -389,7 +389,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Amazon Parent Product was found using Search by %worldwide_id_type% %worldwide_id% while Simple or Child Product ASIN/ISBN is required.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'Amazon Parent Product was found using Search by %worldwide_id_type% %worldwide_id%
                      while Simple or Child Product ASIN/ISBN is required.',
                     array('!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId)
@@ -435,7 +435,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The value "%worldwide_id%" provided for UPC/EAN in Description Policy is invalid. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The value "%worldwide_id%" provided for UPC/EAN in Description Policy is invalid.
                      Please provide the correct value and try again.',
                     array('!worldwide_id' => $worldwideId)
@@ -456,7 +456,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // There is more than one Product found on Amazon using %worldwide_id_type% %worldwide_id% provided in Description Policy. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'There is more than one Product found on Amazon using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy. Please provide the correct value and try again.',
                     array('!worldwide_id_type' => $worldwideIdType, '!worldwide_id' => $worldwideId)
@@ -475,7 +475,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Amazon Parent Product was found using %worldwide_id_type% %worldwide_id% provided in Description Policy while Simple or Child Product is required. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'Amazon Parent Product was found using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy while Simple or Child Product is required.
                      Please provide the correct value and try again.',
@@ -502,7 +502,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The Product found on Amazon using %worldwide_id_type% %worldwide_id% provided in Description Policy is not a Child Product. Linking was failed because only Child Product is required. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The Product found on Amazon using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy is not a Child Product.
                      Linking was failed because only Child Product is required.
@@ -518,7 +518,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The Product with the same %worldwide_id_type% %worldwide_id% provided in Description Policy was found on Amazon. Linking was failed because this %worldwide_id_type% has already been assigned to another Child Product of this parent. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The Product with the same %worldwide_id_type% %worldwide_id% provided in Description Policy
                      was found on Amazon. Linking was failed because this %worldwide_id% has already been assigned
                      to another Child Product of this parent.
@@ -540,7 +540,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The Product was found on Amazon using %worldwide_id_type% %worldwide_id% provided in Description Policy. Linking was failed because found Child Product is related to different Parent. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The Product was found on Amazon using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy. Linking was failed because found Child Product is related to
                      different Parent. Please provide the correct value and try again.',
@@ -559,7 +559,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The Product was found on Amazon using %worldwide_id_type% %worldwide_id% provided in Description Policy. Linking was failed because the respective Parent has no Child Product with required combination of the Variation Attributes values. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The Product was found on Amazon using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy. Linking was failed because the respective Parent has no
                      Child Product with required combination of the Variation Attributes values.
@@ -580,7 +580,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // The Product was found on Amazon using %worldwide_id_type% %worldwide_id% provided in Description Policy. The Child Product with required combination of the Attributes values has already been added to your Parent Product. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'The Product was found on Amazon using %worldwide_id_type% %worldwide_id%
                      provided in Description Policy. The Child Product with required combination
                      of the Attributes values has already been added to your Parent Product.
@@ -692,7 +692,7 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 // M2ePro\TRANSLATIONS
 // Product cannot be Listed. New ASIN/ISBN cannot be created because %worldwide_id_type% %worldwide_id% provided in the Description Policy has been found on Amazon. Please provide the correct value and try again.
             $this->addMessage(
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->encodeDescription(
+                $this->getHelper('Module\Log')->encodeDescription(
                     'Product cannot be Listed. New ASIN/ISBN cannot be created because %worldwide_id_type%
                      %worldwide_id% provided in the Description Policy has been found on Amazon.
                      Please provide the correct value and try again.',

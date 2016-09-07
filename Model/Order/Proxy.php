@@ -272,6 +272,44 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    abstract public function hasTax();
+
+    abstract public function isSalesTax();
+
+    abstract public function isVatTax();
+
+    // ---------------------------------------
+
+    abstract public function getProductPriceTaxRate();
+
+    abstract public function getShippingPriceTaxRate();
+
+    // ---------------------------------------
+
+    abstract public function isProductPriceIncludeTax();
+
+    abstract public function isShippingPriceIncludeTax();
+
+    // ---------------------------------------
+
+    abstract public function isTaxModeNone();
+
+    abstract public function isTaxModeChannel();
+
+    abstract public function isTaxModeMagento();
+
+    /**
+     * @return bool
+     */
+    public function isTaxModeMixed()
+    {
+        return !$this->isTaxModeNone() &&
+        !$this->isTaxModeChannel() &&
+        !$this->isTaxModeMagento();
+    }
+
+    //########################################
+
     /**
      * @return array
      */
@@ -327,44 +365,6 @@ COMMENT;
         }
 
         return $comments;
-    }
-
-    //########################################
-
-    abstract public function hasTax();
-
-    abstract public function isSalesTax();
-
-    abstract public function isVatTax();
-
-    // ---------------------------------------
-
-    abstract public function getProductPriceTaxRate();
-
-    abstract public function getShippingPriceTaxRate();
-
-    // ---------------------------------------
-
-    abstract public function isProductPriceIncludeTax();
-
-    abstract public function isShippingPriceIncludeTax();
-
-    // ---------------------------------------
-
-    abstract public function isTaxModeNone();
-
-    abstract public function isTaxModeChannel();
-
-    abstract public function isTaxModeMagento();
-
-    /**
-     * @return bool
-     */
-    public function isTaxModeMixed()
-    {
-        return !$this->isTaxModeNone() &&
-               !$this->isTaxModeChannel() &&
-               !$this->isTaxModeMagento();
     }
 
     //########################################

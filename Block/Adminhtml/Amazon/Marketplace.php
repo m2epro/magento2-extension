@@ -54,8 +54,9 @@ class Marketplace extends AbstractContainer
                 where you can sell your Items.</p><br>
                 <p><strong>Enable</strong> only those Marketplaces that you want to sell on. 
                 High number of enabled Marketplaces will take longer to process the necessary data.</p><br>
-                <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/9AEtAQ')
+                <p>More detailed information you can find 
+                <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/9AEtAQ')
             )
         ]);
 

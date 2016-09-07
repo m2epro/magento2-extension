@@ -7,17 +7,6 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class TryToMoveToListing extends Listing
 {
-    protected $parentFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        Context $context
-    )
-    {
-        $this->parentFactory = $parentFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');

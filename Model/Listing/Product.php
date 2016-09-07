@@ -100,8 +100,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                                     // M2ePro\TRANSLATIONS
                                     // Item was successfully Deleted
                                     'Item was successfully Deleted',
-                                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+                                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
 
         $this->listingModel = NULL;
         $this->magentoProductModel = NULL;

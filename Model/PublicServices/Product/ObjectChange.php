@@ -5,29 +5,60 @@
  * @copyright  2011-2015 ESS-UA [M2E Pro]
  * @license    Commercial use is forbidden
  */
-//todo Fit to Magento2 Observers
+
 /*
-    $model = $this->modelFactory->getObject('PublicServices_Product_ObjectChange');
+    // $this->modelFactory instanceof \Ess\M2ePro\Model\Factory
+    $model = $this->modelFactory->getObject('PublicServices\Product\ObjectChange');
 
     // you have a product ID for observing
     $model->observeProduct(561);
 
-    // you have 'catalog/product' object for observing
-    $product = Mage::getModel('catalog/product')
-                          ->setStoreId(2)
-                          ->load(562);
+    // you have '\Magento\Catalog\Model\Product' object for observing
+    $product = $this->productFactory->create();
+    $product->load(561);
+
     $model->observeProduct($product);
 
-   // make changes for these products by direct sql
-
+    // make changes for these products by direct sql
     $model->applyChanges();
 */
 
 namespace Ess\M2ePro\Model\PublicServices\Product;
 
+use Magento\Framework\Event\Observer;
+
 class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $observers = array();
+    private $productFactory;
+    private $stockRegistry;
+
+    private $observerProductSaveBeforeFactory;
+    private $observerProductSaveAfterFactory;
+    private $observerStockItemSaveAfterFactory;
+
+    protected $observers = [];
+
+    //########################################
+
+    public function __construct(
+        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Ess\M2ePro\Observer\Product\AddUpdate\BeforeFactory $observerProductSaveBeforeFactory,
+        \Ess\M2ePro\Observer\Product\AddUpdate\AfterFactory $observerProductSaveAfterFactory,
+        \Ess\M2ePro\Observer\StockItem\Save\AfterFactory $observerStockItemSaveAfterFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->productFactory = $productFactory;
+        $this->stockRegistry  = $stockRegistry;
+
+        $this->observerProductSaveBeforeFactory  = $observerProductSaveBeforeFactory;
+        $this->observerProductSaveAfterFactory   = $observerProductSaveAfterFactory;
+        $this->observerStockItemSaveAfterFactory = $observerStockItemSaveAfterFactory;
+
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
 
     //########################################
 
@@ -37,16 +68,13 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
             return $this;
         }
 
-        /** @var \Ess\M2ePro\Model\Observer\Dispatcher $dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Observer\Dispatcher');
-
         foreach ($this->observers as $productObserver) {
 
             $product = $productObserver->getEvent()->getData('product');
             $stockItemObserver = $this->prepareStockItemObserver($product);
 
-            $dispatcher->catalogInventoryStockItemSaveAfter($stockItemObserver);
-            $dispatcher->catalogProductSaveAfter($productObserver);
+            $this->observerStockItemSaveAfterFactory->create()->execute($stockItemObserver);
+            $this->observerProductSaveAfterFactory->create()->execute($productObserver);
         }
 
         return $this->flushObservers();
@@ -70,8 +98,7 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
      */
     public function observeProduct($product, $storeId = 0)
     {
-        $productId = $product instanceof \Magento\Catalog\Model\Product ? $product->getId()
-                                                                    : $product;
+        $productId = $product instanceof \Magento\Catalog\Model\Product ? $product->getId() : $product;
         $key = $productId.'##'.$storeId;
 
         if (array_key_exists($key, $this->observers)) {
@@ -80,16 +107,13 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 
         if (!($product instanceof \Magento\Catalog\Model\Product)) {
 
-            $product = Mage::getModel('catalog/product')
-                ->setStoreId($storeId)
-                ->load($product);
+            $product = $this->productFactory->create()->setStoreId($storeId);
+            $product->load($productId);
         }
 
         $observer = $this->prepareProductObserver($product);
 
-        /** @var \Ess\M2ePro\Model\Observer\Dispatcher $dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Observer\Dispatcher');
-        $dispatcher->catalogProductSaveBefore($observer);
+        $this->observerProductSaveBeforeFactory->create()->execute($observer);
 
         $this->observers[$key] = $observer;
         return $this;
@@ -99,30 +123,29 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareProductObserver(\Magento\Catalog\Model\Product $product)
     {
-        $event = new \Varien_Event();
-        $event->setProduct($product);
+        $data = ['product' => $product];
 
-        $observer = new Varien_Event_Observer();
-        $observer->setEvent($event);
+        $event = new \Magento\Framework\Event($data);
+
+        $observer = new Observer();
+        $observer->setData(array_merge(['event' => $event], $data));
 
         return $observer;
     }
 
     private function prepareStockItemObserver(\Magento\Catalog\Model\Product $product)
     {
-        /** @var $stockItem \Magento\CatalogInventory\Model\Stock\Item */
-        $stockItem = Mage::getModel('cataloginventory/stock_item');
+        $stockItem = $this->stockRegistry->getStockItem(
+            $product->getId(),
+            $product->getStore()->getWebsiteId()
+        );
 
-        $stockItem->loadByProduct($product->getId())
-                  ->setProductId($product->getId());
+        $data = ['object' => $stockItem];
 
-        foreach ($product->getData('stock_item')->getData() as $key => $value) {
-            $stockItem->setOrigData($key, $value);
-        }
+        $event = new \Magento\Framework\Event($data);
 
-        $observer = new Varien_Event_Observer();
-        $observer->setEvent(new Varien_Event());
-        $observer->setData('item', $stockItem);
+        $observer = new Observer();
+        $observer->setData(array_merge(['event' => $event], $data));
 
         return $observer;
     }

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description;
 
-class Specific extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Specific extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

@@ -47,7 +47,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function buildTaxRule($rate = 0, $countryId, $customerTaxClassId = NULL)
+    public function buildTaxRule($rate, $countryId, $customerTaxClassId = NULL)
     {
         // Init product tax class
         // ---------------------------------------

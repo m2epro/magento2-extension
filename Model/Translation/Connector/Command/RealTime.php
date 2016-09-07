@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Model\Translation\Connector;
+namespace Ess\M2ePro\Model\Translation\Connector\Command;
 
 abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 {
@@ -17,7 +17,7 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Account $account,

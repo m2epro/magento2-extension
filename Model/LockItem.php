@@ -140,11 +140,6 @@ class LockItem extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $parentLockModel->getId() && $parentLockModel->activate();
         }
 
-        if ($lockModel->getData('kill_now')) {
-            $this->remove();
-            exit('kill now.');
-        }
-
         $lockModel->setData('data',$lockModel->getData('data'))->save();
 
         return true;

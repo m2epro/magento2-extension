@@ -36,7 +36,6 @@ class ReviseRules extends AbstractForm
         );
 
         $formData = array_merge($defaults, $formData);
-        $isEdit = !!$this->getRequest()->getParam('id');
         
         $form = $this->_formFactory->create();
 
@@ -61,10 +60,10 @@ class ReviseRules extends AbstractForm
                     fully Revised.</p></li>
                     </ul><br>
                     <p>More detailed information about how to work with this Page you can find
-                    <a href="%url%" target="_blank">here</a>.</p>
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/RwItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/RwItAQ')
                 )
             ]
         );
@@ -77,9 +76,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_update_qty',
-            'select',
+        $fieldset->addField('revise_update_qty',
+            self::SELECT,
             [
                 'name' => 'revise_update_qty',
                 'label' => $this->__('Quantity'),
@@ -95,9 +93,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_update_qty_max_applied_value_mode',
-            'select',
+        $fieldset->addField('revise_update_qty_max_applied_value_mode',
+            self::SELECT,
             [
                 'container_id' => 'revise_update_qty_max_applied_value_mode_tr',
                 'name' => 'revise_update_qty_max_applied_value_mode',
@@ -137,9 +134,8 @@ HTML
             []
         );
 
-        $fieldset->addField(
-            'revise_update_price',
-            'select',
+        $fieldset->addField('revise_update_price',
+            self::SELECT,
             [
                 'name' => 'revise_update_price',
                 'label' => $this->__('Price'),
@@ -155,9 +151,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_update_price_max_allowed_deviation_mode',
-            'select',
+        $fieldset->addField('revise_update_price_max_allowed_deviation_mode',
+            self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_mode_tr',
                 'name' => 'revise_update_price_max_allowed_deviation_mode',
@@ -181,9 +176,8 @@ HTML
             $priceDeviationValue >= 5 && $percentageStep = 1;
         }
 
-        $fieldset->addField(
-            'revise_update_price_max_allowed_deviation',
-            'select',
+        $fieldset->addField('revise_update_price_max_allowed_deviation',
+            self::SELECT,
             [
                 'container_id' => 'revise_update_price_max_allowed_deviation_tr',
                 'name' => 'revise_update_price_max_allowed_deviation',
@@ -214,9 +208,8 @@ HTML
             []
         );
 
-        $fieldset->addField(
-            'revise_update_details',
-            'select',
+        $fieldset->addField('revise_update_details',
+            self::SELECT,
             [
                 'name' => 'revise_update_details',
                 'label' => $this->__('Details'),
@@ -233,9 +226,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_update_images',
-            'select',
+        $fieldset->addField('revise_update_images',
+            self::SELECT,
             [
                 'name' => 'revise_update_images',
                 'label' => $this->__('Images'),
@@ -259,9 +251,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_change_listing',
-            'select',
+        $fieldset->addField('revise_change_listing',
+            self::SELECT,
             [
                 'name' => 'revise_change_listing',
                 'label' => $this->__('Listing Settings'),
@@ -274,9 +265,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_change_selling_format_template',
-            'select',
+        $fieldset->addField('revise_change_selling_format_template',
+            self::SELECT,
             [
                 'name' => 'revise_change_selling_format_template',
                 'label' => $this->__('Selling Format Policy'),
@@ -293,9 +283,8 @@ HTML
             ]
         );
 
-        $fieldset->addField(
-            'revise_change_description_template',
-            'select',
+        $fieldset->addField('revise_change_description_template',
+            self::SELECT,
             [
                 'name' => 'revise_change_description_template',
                 'label' => $this->__('Description Policy'),
@@ -308,21 +297,22 @@ HTML
             ]
         );
 
-        // TODO NOT SUPPORTED FEATURES
-//        $fieldset->addField(
-//            'revise_change_shipping_override_template',
-//            'select',
-//            [
-//                'name' => 'revise_change_shipping_override_template',
-//                'label' => $this->__('Shipping Override Policy'),
-//                'value' => $formData['revise_change_shipping_override_template'],
-//                'values' => [
-//                    Synchronization::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_NONE => $this->__('No'),
-//                    Synchronization::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_YES => $this->__('Yes'),
-//                ],
-//       'tooltip' => $this->__('Automatically revises Amazon Listing(s) if its Shipping Override Policy was changed.')
-//            ]
-//        );
+        $fieldset->addField(
+            'revise_change_shipping_override_template',
+            self::SELECT,
+            [
+                'name' => 'revise_change_shipping_override_template',
+                'label' => $this->__('Shipping Override Policy'),
+                'value' => $formData['revise_change_shipping_override_template'],
+                'values' => [
+                    Synchronization::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_NONE => $this->__('No'),
+                    Synchronization::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_YES => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(
+                    'Automatically revises Amazon Listing(s) if its Shipping Override Policy was changed.'
+                )
+            ]
+        );
 
         $form->addField(
             'revise_qty_max_applied_value_confirmation_popup_template',

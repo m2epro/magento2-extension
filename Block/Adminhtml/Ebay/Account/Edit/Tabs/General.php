@@ -9,7 +9,7 @@ class General extends AbstractForm
 {
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $ebayUserId = null;
@@ -40,12 +40,6 @@ class General extends AbstractForm
 
         $isEdit = !!$this->getRequest()->getParam('id');
 
-        $licenseMessage = '';
-
-        if ($isEdit) {
-            $licenseMessage = (string)$this->getHelper('Data\GlobalData')->getValue('license_message');
-        }
-
         $form = $this->_formFactory->create();
 
         if (!$isEdit) {
@@ -62,7 +56,7 @@ status will change to \'Yes\' and you can click <b>Save and Continue Edit</b>.<b
 <b>Note:</b> A Production (Live) eBay Account only works on a live Marketplace.
 A Sandbox (Test) Account only works on the eBay Sandbox test Environment.
 To register for a Sandbox Account, register at
-<a href="https://developer.ebay.com/join/" target="_blank">developer.ebay.com/join</a>.
+<a href="https://developer.ebay.com/join/" target="_blank" class="external-link">developer.ebay.com/join</a>.
 HTML
             );
         } else {
@@ -71,9 +65,9 @@ This Page shows the Environment for your eBay Account and details of the authori
 to your eBay Account.<br/><br/>
 If your token has expired or is not activated, click <b>Get Token</b>.<br/><br/>
 More detailed information about ability to work with this Page you can find
-<a href="%url%" target="_blank">here</a>.
+<a href="%url%" target="_blank" class="external-link">here</a>.
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/KgItAQ'));
+                , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/KgItAQ'));
         }
 
         $form->addField(
@@ -126,7 +120,7 @@ HTML
                         ),
                         'class' => 'control-value',
                         'target' => '_blank',
-                        'style' => 'text-decoration: underline;' //todo
+                        'style' => 'text-decoration: underline;'
                     ]
                 );
             } else {
@@ -147,7 +141,6 @@ HTML
             [
                 'label' => $this->__('Environment'),
                 'name' => 'mode',
-                'required' => true,
                 'values' => [
                     Account::MODE_PRODUCTION => $this->__('Production (Live)'),
                     Account::MODE_SANDBOX => $this->__('Sandbox (Test)'),
@@ -234,7 +227,6 @@ HTML
 
         $this->setForm($form);
 
-        $this->js->add($licenseMessage);
         $this->js->add("M2ePro.formData.mode = '" . $this->getHelper('Data')->escapeJs($formData['mode']) . "';");
         $this->js->add(
             "M2ePro.formData.token_session

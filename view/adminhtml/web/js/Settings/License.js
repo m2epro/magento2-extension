@@ -166,7 +166,7 @@ define([
                 type: type,
                 buttons: [{
                     text: M2ePro.translator.translate('Cancel'),
-                    class: 'action-secondary action-dismiss',
+                    class: type == 'popup' ? 'action-secondary action-dismiss' : 'action-default action-dismiss',
                     click: function () {
                         this.closeModal();
                     }

@@ -83,9 +83,9 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Description')
         );
 
-        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_template_description/viewTemplateDescriptionsGrid', [
+        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_template_description/viewGrid', [
             'map_to_template_js_fn' => 'selectTemplateDescription'
-        ]), 'amazon_listing_product_template_description/viewTemplateDescriptionsGrid');
+        ]), 'amazon_listing_product_template_description/viewGrid');
 
         $this->jsUrl->add(
             $this->getUrl('*/amazon_listing_product_add/checkNewAsinManualProducts', ['_current' => true]),

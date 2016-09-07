@@ -7,20 +7,6 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 
 class PrepareMoveToListing extends Listing
 {
-    protected $resourceConnection;
-    protected $parentFactory;
-
-    public function __construct(
-        \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
-        Context $context
-    )
-    {
-        $this->resourceConnection = $resourceConnection;
-        $this->parentFactory = $parentFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');

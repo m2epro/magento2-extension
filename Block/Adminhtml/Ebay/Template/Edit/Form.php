@@ -46,9 +46,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _prepareForm()
     {
-        $form = $this->_formFactory->create(
-            ['data' => ['id' => 'edit_form', 'action' => 'javascript:void(0)', 'method' => 'post']]
-        );
+        $form = $this->_formFactory->create(['data' => [
+            'id' => 'edit_form',
+            'action' => 'javascript:void(0)',
+            'method' => 'post',
+            'enctype' => 'multipart/form-data'
+        ]]);
 
         $fieldset = $form->addFieldset(
             'general_fieldset',

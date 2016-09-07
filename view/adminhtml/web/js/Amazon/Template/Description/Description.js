@@ -234,7 +234,7 @@ define([
             // set is required
             parseInt(this.value) ? $('category_path').addClassName('M2ePro-required-when-visible')
                 : $('category_path').removeClassName('M2ePro-required-when-visible');
-            self.updateSpanRequirements($('category_path_container'), this.value);
+            self.updateSpanRequirements($('template_description_edit_category_container'), this.value);
 
             self.updateFieldRequirements($('manufacturer_mode'), this.value);
             self.updateFieldRequirements($('brand_mode'), this.value);
@@ -756,8 +756,8 @@ define([
 
         updateSpanRequirements: function(element, dependence)
         {
-            parseInt(dependence) ? element.addClassName('_required')
-                : element.removeClassName('_required');
+            parseInt(dependence) ? element.up('.field').addClassName('_required')
+                : element.up('.field').removeClassName('_required');
         },
 
         updateFieldRequirements: function(element, dependence, className)

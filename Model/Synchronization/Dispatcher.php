@@ -89,8 +89,8 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($exception->getMessage()),
-                \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
 

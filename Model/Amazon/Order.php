@@ -32,8 +32,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     private $carrierFactory;
 
-    private $eventManager;
-
     private $subTotalPrice = NULL;
 
     private $grandTotalPrice = NULL;
@@ -43,7 +41,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Shipping\Model\CarrierFactory $carrierFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -57,7 +54,6 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->carrierFactory = $carrierFactory;
-        $this->eventManager = $eventManager;
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -540,7 +536,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         }
 
         if ($this->isFulfilledByAmazon() && !$this->getAmazonAccount()->isMagentoOrdersFbaStockEnabled()) {
-            $this->eventManager->dispatch('ess_amazon_fba_magento_order_place_after', array(
+            $this->_eventManager->dispatch('ess_amazon_fba_magento_order_place_after', array(
                 'magento_order' => $this->getParentObject()->getMagentoOrder()
             ));
         }

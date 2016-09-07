@@ -78,6 +78,9 @@ class Builder extends AbstractModel
         $existItem->addData($this->getData());
         $existItem->save();
 
+        $existItem->getChildObject()->addData($this->getData());
+        $existItem->getChildObject()->save();
+
         return $existItem;
     }
 

@@ -8,13 +8,11 @@ use Ess\M2ePro\Block\Adminhtml\StoreSwitcher;
 class Form extends AbstractForm
 {
     protected $amazonFactory;
-    protected $elementFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
@@ -22,7 +20,6 @@ class Form extends AbstractForm
     )
     {
         $this->amazonFactory = $amazonFactory;
-        $this->elementFactory = $elementFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
     
@@ -113,7 +110,6 @@ class Form extends AbstractForm
             [
                 'label' => $this->__('Account'),
                 'style' => 'line-height: 32px; display: initial;',
-                'required' => count($accounts) > 1,
                 'text' => <<<HTML
     <span id="account_label"></span>
     {$accountSelect->toHtml()}

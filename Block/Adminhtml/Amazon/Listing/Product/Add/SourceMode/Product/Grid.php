@@ -63,6 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $this->hideMassactionDropDown = true;
+        $this->showAdvancedFilterProductsOption = false;
     }
 
     //########################################
@@ -134,8 +135,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         // Hide products others listings
         // ---------------------------------------
-        $prefix = $this->getHelper('Data\GlobalData')->getValue('hide_products_others_listings_prefix');
-        is_null($hideParam = $this->getHelper('Data\Session')->getValue($prefix)) && $hideParam = true;
+        $hideParam = true;
+        if ($this->getRequest()->has('show_products_others_listings')) {
+            $hideParam = false;
+        }
 
         if ($hideParam || isset($this->listing['id'])) {
 
@@ -351,6 +354,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     protected function _toHtml()
     {
         if ($this->getRequest()->isXmlHttpRequest()) {
+            $this->massactionMassSelectStyleFix();
             return parent::_toHtml();
         }
 
@@ -397,9 +401,30 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     });
 JS
         );
+        
+        $this->massactionMassSelectStyleFix();
 
         return parent::_toHtml();
     }
 
+    //########################################
+    
+    protected function massactionMassSelectStyleFix()
+    {
+        $this->js->add(<<<JS
+        require([
+        'M2ePro/General/PhpFunctions',
+    ], function(){
+        
+        wait(function() {
+            return typeof ProductGridObj != 'undefined';
+        }, function() {
+          return ProductGridObj.massactionMassSelectStyleFix();
+        }, 20);
+    });
+JS
+        );
+    }
+    
     //########################################
 }

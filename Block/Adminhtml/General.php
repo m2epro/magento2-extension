@@ -13,7 +13,7 @@ class General extends Magento\AbstractBlock
     protected function _prepareLayout()
     {
         if ($this->getIsAjax()) {
-            return parent::_beforeToHtml();
+            return parent::_prepareLayout();
         }
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('General'));
@@ -23,6 +23,12 @@ class General extends Magento\AbstractBlock
         $this->css->addFile('help_block.css');
         $this->css->addFile('style.css');
         $this->css->addFile('grid.css');
+
+        $currentView = $this->getHelper('View')->getCurrentView();
+
+        if (!empty($currentView)) {
+            $this->css->addFile($currentView.'/style.css');
+        }
 
         return parent::_prepareLayout();
     }
@@ -34,7 +40,8 @@ class General extends Magento\AbstractBlock
         }
 
         $this->jsUrl->addUrls([
-            'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro')
+            'm2epro_skin_url' => $this->getViewFileUrl('Ess_M2ePro'),
+            'general/getCreateAttributeHtmlPopup' => $this->getUrl('*/general/getCreateAttributeHtmlPopup')
         ]);
 
         $this->block_notices_show = $this->getHelper('Module')
@@ -59,6 +66,7 @@ class General extends Magento\AbstractBlock
             'None'          => $this->__('None'),
             'Add'           => $this->__('Add'),
             'Save'          => $this->__('Save'),
+            'Send'          => $this->__('Send'),
             'Cancel'        => $this->__('Cancel'),
             'Reset'         => $this->__('Reset'),
             'Confirm'       => $this->__('Confirm'),
@@ -68,6 +76,11 @@ class General extends Magento\AbstractBlock
             'Complete'      => $this->__('Complete'),
             'Yes'           => $this->__('Yes'),
             'No'            => $this->__('No'),
+
+            'Collapse' => $this->__('Collapse'),
+            'Expand'   => $this->__('Expand'),
+
+            'Reset Auto Rules' => $this->__('Reset Auto Rules'),
 
             'Please select the Products you want to perform the Action on.' => $this->__(
                 'Please select the Products you want to perform the Action on.'
@@ -92,7 +105,8 @@ class General extends Magento\AbstractBlock
             'You should select Store View' => $this->__('You should select Store View'),
 
             'Insert Magento Attribute in %s%' => $this->__('Insert Magento Attribute in %s%'),
-            'Magento Attribute' => $this->__('Magento Attribute'),
+            'Attribute' => $this->__('Attribute'),
+            'Insert' => $this->__('Insert'),
         ]);
 
         return parent::_beforeToHtml();

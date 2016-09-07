@@ -12,9 +12,18 @@ class Custom extends \Magento\Framework\Data\Collection\AbstractDb
 {
     //########################################
 
+    public function load($printQuery = false, $logQuery = false)
+    {
+        if ($this->getSelect()) {
+            return parent::load($printQuery, $logQuery);
+        }
+
+        return $this;
+    }
+
     public function getResource()
     {
-        // TODO: Implement getResource() method.
+        return NULL;
     }
 
     public function setCustomSize($size)

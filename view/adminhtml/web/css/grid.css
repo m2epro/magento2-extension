@@ -129,3 +129,48 @@ td.help_line .hl_footer {
 .grid-listing-column-products_total_count {
     width: 200px;
 }
+
+/* ================================================ */
+
+#advanced_filter_button {
+    margin-left: 0.7em;
+}
+
+.advanced-filter-button-active {
+    background-color: #fff;
+    border-bottom-color: #fff;
+    border-left-color: #ccc;
+    border-right-color: #ccc;
+    font-weight: 600;
+    margin: -0.1rem 0 0;
+    padding-bottom: 1.6rem;
+    padding-top: .8rem;
+    position: relative;
+    z-index: 281;
+    color: #514943;
+    text-shadow: none;
+}
+
+.advanced-filter-button-active:hover,
+.advanced-filter-button-active:active,
+.advanced-filter-button-active:focus {
+    background-color: #fff;
+    color: #514943;
+    border-color: inherit;
+    box-shadow: none;
+    border-bottom-color: #fff;
+    border-left-color: #ccc;
+    border-right-color: #ccc;
+}
+
+.advanced-filter-button-active:before {
+    background-color: #eb5202;
+    bottom: 100%;
+    content: '';
+    height: 3px;
+    left: -1px;
+    position: absolute;
+    right: -1px;
+}
+
+/* ================================================ */

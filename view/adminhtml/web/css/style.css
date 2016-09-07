@@ -15,11 +15,32 @@
     margin-top: 1px;
 }
 
-.m2epro-box-style {
-    background-color: #f8f8f8 !important;
-    border-top: 1px solid #e3e3e3 !important;
-    border-bottom: 1px solid #e3e3e3 !important;
+.skippable-global-message {
+    float: right;
+    cursor: pointer;
 }
+
+#globalMessages .message-success,
+.page-content .message-success,
+.m2epro-messages .message-success {
+    background-color: #efffcc !important;
+}
+
+#globalMessages .message-warning,
+.page-content .message-warning,
+.m2epro-messages .message-warning {
+    background-color: #fddaad !important;
+}
+
+/* Magento 2.1 compatibility */
+/* ================================================ */
+.admin__fieldset > .admin__field > .admin__field-label {
+    width: calc( (100%) * 0.33333333 - 30px );
+}
+.admin__fieldset-wrapper-content .admin__fieldset {
+    padding-top: 0 !important;
+}
+/* ================================================ */
 
 .admin__old .fieldset > .legend {
     position: static;
@@ -66,7 +87,7 @@
     font-weight: normal;
 }
 
-.modals-wrapper a, .main-col a:not(.ui-tabs-anchor) {
+.modals-wrapper a:not(.ui-tabs-anchor), .main-col a:not(.ui-tabs-anchor) {
     cursor: pointer;
     text-decoration: underline;
 }
@@ -97,6 +118,10 @@
 
 .multiselect {
     max-height: 115px
+}
+.admin__field-control input[type="file"] {
+    margin-top: 5px !important;
+    color: #000 !important;
 }
 .admin__field.with-note .note {
     color: #303030;
@@ -226,6 +251,10 @@ a.hover-underline:hover {
 
 .magento-attribute-btn {
     margin-left: .5em;
+}
+
+.modal-slide .modal-header > #messages .message {
+    margin: 0 0 .6rem !important;
 }
 
 /* Errors Summary */
@@ -413,3 +442,51 @@ a.amazon-listing-view-switch-variation-mode:before {
 #container .admin__field-tooltip-content strong {
     background-color: transparent;
 }
+
+
+/* Fix for Magento tooltip */
+/* ================================================ */
+
+.fix-magento-tooltip {
+    width: 25px !important;
+    display: inline-block;
+}
+
+.fix-magento-tooltip div.m2epro-field-tooltip .admin__field-tooltip {
+    width: 25px !important;
+    margin-top: 0 !important;
+    right: 0 !important;
+}
+
+.fix-magento-tooltip a.admin__field-tooltip-action {
+    width: 25px !important;
+    margin-left: 0 !important;
+}
+
+.fix-magento-tooltip div.admin__field-tooltip {
+    width: 25px !important;
+    margin-top: 0 !important;
+    vertical-align: baseline;
+    right: 0 !important;
+}
+
+.fix-magento-tooltip div.admin__field-tooltip-content {
+    right: -25px !important;
+}
+
+.external-link:after {
+    -webkit-font-smoothing: antialiased;
+    font-size: 1.2rem;
+    color: #514943;
+    content: '\e903';
+    font-family: 'M2ePro';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+    margin: 0 0 0 0.2rem;
+}
+
+/* ================================================ */

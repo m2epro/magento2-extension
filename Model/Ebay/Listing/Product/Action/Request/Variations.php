@@ -38,6 +38,10 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
         $data['variation_image'] = $this->getImagesData();
 
+        if ($variationsThatCanNotBeDeleted = $this->getVariationsThatCanNotBeDeleted()) {
+            $data['variations_that_can_not_be_deleted'] = $variationsThatCanNotBeDeleted;
+        }
+
         return $data;
     }
 
@@ -159,6 +163,17 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         return false;
     }
 
+    public function getVariationsThatCanNotBeDeleted()
+    {
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+
+        if (isset($additionalData['variations_that_can_not_be_deleted'])) {
+            return $additionalData['variations_that_can_not_be_deleted'];
+        }
+
+        return false;
+    }
+
     /**
      * @return array
      */
@@ -209,7 +224,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
-                    'Reason: eBay Primary Category allows to list only Simple Items.'
+                    'Reason: eBay Catalog Primary Category allows to list only Simple Items.'
                 )
             );
             return;

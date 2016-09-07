@@ -38,7 +38,7 @@ class Edit extends Description
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        $this->setComponentPageHelpLink('Description');
+        $this->setPageHelpLink('x/EAItAQ');
 
         return $this->getResultPage();
     }

@@ -58,20 +58,6 @@ class Switcher extends AbstractSwitcher
             )
         );
 
-        // TODO NOT SUPPORTED FEATURES "Translation"
-//        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-//        $listingProductCollection->addFieldToFilter('listing_id', (int)$this->getRequest()->getParam('id'));
-//        $listingProductCollection->addFieldToFilter('translation_status', array('neq' =>
-//            \Ess\M2ePro\Model\Ebay\Listing\Product::TRANSLATION_STATUS_NONE
-//        ));
-//
-//        if ($listingProductCollection->getSize()) {
-//            $data[] = array(
-//                'value' => 'translation',
-//                'label' => $this->__('Translation')
-//            );
-//        }
-
         return $data;
     }
 
@@ -93,10 +79,11 @@ class Switcher extends AbstractSwitcher
             Using this Mode, you can easily find Products based on Magento Product information 
             (i.e. Magento QTY, Stock Status, etc);</p></li>
             </ul>
-            <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
+            <p>More detailed information you can find 
+            <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/mAItAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/mAItAQ')
             )
         );
     }

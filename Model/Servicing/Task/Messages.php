@@ -20,35 +20,6 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
         return 'messages';
     }
 
-    protected $primaryConfig;
-
-    //########################################
-
-    public function __construct(
-        \Ess\M2ePro\Model\Config\Manager\Primary $primaryConfig,
-        \Magento\Eav\Model\Config $config,
-        \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\ResourceConnection $resource,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory
-    )
-    {
-        $this->primaryConfig = $primaryConfig;
-        parent::__construct(
-            $config,
-            $cacheConfig,
-            $storeManager,
-            $modelFactory,
-            $helperFactory,
-            $resource,
-            $activeRecordFactory,
-            $parentFactory
-        );
-    }
-
     //########################################
 
     /**
@@ -69,8 +40,9 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
 
     private function updateMagentoMessages(array $messages)
     {
-        $messages = array_filter($messages,array($this,'updateMagentoMessagesFilterMagentoMessages'));
-        !is_array($messages) && $messages = array();
+        $messages = array_filter($messages, function ($message) {
+            return isset($message['is_global']) && (bool)$message['is_global'];
+        });
 
         $magentoTypes = array(
             \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE =>
@@ -92,42 +64,23 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
         }
     }
 
-    public function updateMagentoMessagesFilterMagentoMessages($message)
-    {
-        if (!isset($message['title']) || !isset($message['text']) || !isset($message['type'])) {
-            return false;
-        }
-
-        if (!isset($message['is_global']) || !(bool)$message['is_global']) {
-            return false;
-        }
-
-        return true;
-    }
-
     //########################################
 
     private function updateModuleMessages(array $messages)
     {
-        $messages = array_filter($messages,array($this,'updateModuleMessagesFilterModuleMessages'));
-        !is_array($messages) && $messages = array();
+        $messages = array_filter($messages, function ($message) {
+            return !isset($message['is_global']) || !(bool)$message['is_global'];
+        });
 
-        $this->primaryConfig->setGroupValue(
-            '/'.$this->getHelper('Module')->getName().'/server/','messages',json_encode($messages)
-        );
-    }
+        /** @var \Ess\M2ePro\Model\Registry $registryModel */
+        $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
 
-    public function updateModuleMessagesFilterModuleMessages($message)
-    {
-        if (!isset($message['text']) || !isset($message['type'])) {
-            return false;
+        if (is_null($registryModel)) {
+            $registryModel = $this->activeRecordFactory->getObject('Registry');
+            $registryModel->setData('key', '/server/messages/');
         }
 
-        if (isset($message['is_global']) && (bool)$message['is_global']) {
-            return false;
-        }
-
-        return true;
+        $registryModel->setData('value', json_encode($messages))->save();
     }
 
     //########################################

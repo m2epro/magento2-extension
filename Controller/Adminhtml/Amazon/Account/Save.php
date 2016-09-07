@@ -341,6 +341,24 @@ class Save extends Account
             $post['other_listings_move_synch']);
         $model->getChildObject()->save();
 
+        // Repricing
+        // ---------------------------------------
+        if (!empty($post['repricing'])) {
+
+            /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricingModel */
+            $repricingModel = $model->getChildObject()->getRepricing();
+
+            $repricingOldData = $repricingModel->getData();
+
+            $repricingModel->addData($post['repricing']);
+            $repricingModel->save();
+
+            $repricingNewData = $repricingModel->getData();
+
+            $repricingModel->setProcessRequired($repricingNewData, $repricingOldData);
+        }
+        // ---------------------------------------
+
         try {
 
             // Add or update server
@@ -414,6 +432,13 @@ class Save extends Account
             return $this->_redirect('*/amazon_account');
         }
 
+        if ($this->isAjax()) {
+            $this->setJsonContent([
+                'success' => true
+            ]);
+            return $this->getResult();
+        }
+
         $this->messageManager->addSuccess($this->__('Account was successfully saved'));
 
         /* @var $wizardHelper \Ess\M2ePro\Helper\Module\Wizard */
@@ -426,13 +451,6 @@ class Save extends Account
         if ($wizardHelper->isActive(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) &&
             $wizardHelper->getStep(\Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK) == 'account') {
             $routerParams['wizard'] = true;
-        }
-
-        if ($this->isAjax()) {
-            $this->setJsonContent([
-                'success' => true
-            ]);
-            return $this->getResult();
         }
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl('list',array(),array('edit'=>$routerParams)));

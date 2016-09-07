@@ -24,13 +24,36 @@ class Account extends AbstractContainer
 3rd Party Listings import including options of Mapping them to Magento Products and Moving them to M2E Pro Listings,
 etc. can be specified for each Account separately.</p><br>
 <p><strong>Note:</strong> eBay Account can be deleted only if it is not being used for any of M2E Pro Listings.</p><br>
-<p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/4gEtAQ')
+
 )
+        ]);
+
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback'));
+
+        $this->jsTranslator->addTranslations([
+            'Should be between 2 and 80 characters long.' => $this->__('Should be between 2 and 80 characters long.')
         ]);
 
         return parent::_prepareLayout();
     }
+
+    protected function _toHtml()
+    {
+        $this->js->add(<<<JS
+
+    require([
+        'M2ePro/Ebay/Account/Grid'
+    ], function(){
+
+        window.EbayAccountGridObj = new EbayAccountGrid(
+            '{$this->getChildBlock('grid')->getId()}'
+        );
+    });
+JS
+        );
+
+        return parent::_toHtml();
+    }
+
 }

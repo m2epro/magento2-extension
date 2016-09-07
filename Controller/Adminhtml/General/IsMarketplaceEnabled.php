@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: HardRock
- * Date: 14.03.2016
- * Time: 16:40
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Controller\Adminhtml\General;

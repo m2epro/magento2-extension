@@ -12,11 +12,6 @@ use Ess\M2ePro\Model\Ebay\Template\Manager;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    // TODO NOT SUPPORTED FEATURES "ebay motors"
-//    /** @var Mage_Eav_Model_Entity_Attribute_Abstract */
-//    private $motorsAttribute = NULL;
-//    private $productsMotorsData = array();
-
     protected $templateManager;
     protected $magentoProductCollectionFactory;
     protected $ebayFactory;
@@ -50,39 +45,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->setId('ebayListingViewSettingsGrid'.$this->listing->getId());
         // ---------------------------------------
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->isMotorsAvailable()) {
-//            $attributeCode = Mage::helper('M2ePro/Component_Ebay_Motors')
-//                ->getAttribute($this->getMotorsType());
-//
-//
-//            $this->motorsAttribute = Mage::getModel('catalog/product')->getResource()->getAttribute($attributeCode);
-//        }
+        $this->css->addFile('ebay/template.css');
+        
+        $this->showAdvancedFilterProductsOption = false;
     }
-
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "ebay motors"
-//    public function getMotorsType()
-//    {
-//        if (!$this->isMotorsAvailable()) {
-//            return null;
-//        }
-//
-//        if ($this->isMotorEpidsAvailable()) {
-//            return Ess_M2ePro_Helper_Component_Ebay_Motors::TYPE_EPID;
-//        }
-//
-//        return Ess_M2ePro_Helper_Component_Ebay_Motors::TYPE_KTYPE;
-//    }
-
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//    protected function isShowRuleBlock()
-//    {
-//        return parent::isShowRuleBlock();
-//    }
 
     //########################################
 
@@ -220,21 +186,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->motorsAttribute) {
-//            $collection->addAttributeToSelect($this->motorsAttribute->getAttributeCode());
-//
-//            $collection->joinTable(
-//                array('eea' => Mage::getSingleton('core/resource')->getTableName('eav_entity_attribute')),
-//                'attribute_set_id=attribute_set_id',
-//                array(
-//                    'is_motors_attribute_in_product_attribute_set' => 'entity_attribute_id',
-//                ),
-//                '{{table}}.attribute_id = ' . $this->motorsAttribute->getAttributeId(),
-//                'left'
-//            );
-//        }
-
         $lpvTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()->getMainTable();
         $elpvTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')
             ->getResource()->getMainTable();
@@ -264,11 +215,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         parent::_prepareCollection();
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->isMotorsAvailable()) {
-//            $this->prepareExistingMotorsData();
-//        }
-
         return $this;
     }
 
@@ -294,36 +240,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         ));
 
         $title = $this->__('eBay Categories');
-        if ($this->isExistsListingSettingsOverwrites()) {
-            $title = $this->__('eBay Categories / Listing Settings Overwrites');
+        $isExistsListingSettingsOverwrites = $this->isExistsListingSettingsOverwrites();
+        if ($isExistsListingSettingsOverwrites) {
+            $title = $this->__('eBay Categories / Listing Policies Overrides');
         }
         $this->addColumn('category', array(
             'header'    => $title,
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
+            'is_exists_listing_settings_overwrites' => $isExistsListingSettingsOverwrites,
             'filter'    => '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Grid\Column\Filter\Category',
             'frame_callback' => array($this, 'callbackColumnCategory'),
             'filter_condition_callback' => array($this, 'callbackFilterCategory')
         ));
-
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->isMotorsAvailable() && $this->motorsAttribute) {
-//            $this->addColumnAfter('parts_motors_attribute_value', array(
-//                'header'    => $this->__('Compatibility'),
-//                'align'     => 'left',
-//                'width'     => '100px',
-//                'type'      => 'options',
-//                'index'     => $this->motorsAttribute->getAttributeCode(),
-//                'sortable'  => false,
-//                'options'   => array(
-//                    1 => $this->__('Filled'),
-//                    0 => $this->__('Empty')
-//                ),
-//                'frame_callback' => array($this, 'callbackColumnMotorsAttribute'),
-//                'filter_condition_callback' => array($this, 'callbackFilterMotorsAttribute'),
-//            ), 'name');
-//        }
 
         $this->addColumn('actions', array(
             'header'    => $this->__('Actions'),
@@ -363,7 +293,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected function _prepareMassactionGroup()
     {
         $this->getMassactionBlock()->setGroups(array(
-            'edit_settings'            => $this->__('Edit General Settings'),
+            'edit_settings'            => $this->__('Edit Listing Policies Overrides'),
             'edit_categories_settings' => $this->__('Edit eBay Categories'),
             'other'                    => $this->__('Other')
         ));
@@ -373,26 +303,47 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareMassactionItems()
     {
-        // TODO
-//        $this->getMassactionBlock()->addItem('editAllSettings', array(
-//            'label'    => $this->__('All Settings'),
-//            'url'      => '',
-//        ), 'edit_settings');
-//
-//        $this->getMassactionBlock()->addItem('editSellingSettings', array(
-//            'label'    => $this->__('Selling'),
-//            'url'      => '',
-//        ), 'edit_settings');
-//
-//        $this->getMassactionBlock()->addItem('editSynchSettings', array(
-//            'label'    => $this->__('Synchronization'),
-//            'url'      => '',
-//        ), 'edit_settings');
-//
-//        $this->getMassactionBlock()->addItem('editGeneralSettings', array(
-//            'label'    => $this->__('Payment and Shipping'),
-//            'url'      => '',
-//        ), 'edit_settings');
+        // --- Payment and Shipping Settings -----
+
+        $this->getMassactionBlock()->addItem('editPaymentSettings', array(
+            'label'    => $this->__('Payment'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        $this->getMassactionBlock()->addItem('editShippingSettings', array(
+            'label'    => $this->__('Shipping'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        $this->getMassactionBlock()->addItem('editReturnSettings', array(
+            'label'    => $this->__('Return'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        // ---------------------------------------
+
+        // ---------- Selling Settings -----------
+
+        $this->getMassactionBlock()->addItem('editPriceQuantityFormatSettings', array(
+            'label'    => $this->__('Price, Quantity and Format'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        $this->getMassactionBlock()->addItem('editDescriptionSettings', array(
+            'label'    => $this->__('Description'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        // ---------------------------------------
+
+        // ---------- Synchronization ------------
+
+        $this->getMassactionBlock()->addItem('editSynchSettings', array(
+            'label'    => $this->__('Synchronization'),
+            'url'      => '',
+        ), 'edit_settings');
+
+        // ---------------------------------------
 
         $this->getMassactionBlock()->addItem('editCategorySettings', array(
             'label'    => $this->__('All Categories'),
@@ -411,25 +362,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             ), 'edit_categories_settings');
         }
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->isMotorsAvailable() && $this->motorsAttribute) {
-//            $this->getMassactionBlock()->addItem('editMotors', array(
-//                'label' => $this->__('Add Compatible Vehicles'),
-//                'url'   => ''
-//            ), 'other');
-//        }
-
         $this->getMassactionBlock()->addItem('moving', array(
             'label'    => $this->__('Move Item(s) to Another Listing'),
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ), 'other');
-
-        // TODO
-//        $this->getMassactionBlock()->addItem('transferring', array(
-//            'label'    => $this->__('Sell on Another eBay Site'),
-//            'url'      => '',
-//        ), 'other');
 
         return $this;
     }
@@ -472,7 +409,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($row->getData('category_main_mode') == \Ess\M2ePro\Model\Ebay\Template\Category::CATEGORY_MODE_NONE) {
             $value .= $this->getCategoryInfoHtml(
-                $this->__('eBay Primary Category'),
+                $this->getHelper('Component\Ebay\Category')->getCategoryTitle(
+                    \Ess\M2ePro\Helper\Component\Ebay\Category::TYPE_EBAY_MAIN
+                ),
                 '<span style="color: red">'.$this->__('Not Set').'</span>'
             );
         } else {
@@ -493,8 +432,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             Manager::TEMPLATE_PAYMENT => $this->__('Payment'),
             Manager::TEMPLATE_SHIPPING => $this->__('Shipping'),
             Manager::TEMPLATE_RETURN_POLICY => $this->__('Return'),
-            Manager::TEMPLATE_DESCRIPTION => $this->__('Description'),
             Manager::TEMPLATE_SELLING_FORMAT => $this->__('Price, Quantity and Format'),
+            Manager::TEMPLATE_DESCRIPTION => $this->__('Description'),
             Manager::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
         ];
 
@@ -514,31 +453,29 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
             } else if ($templateMode == Manager::MODE_TEMPLATE) {
 
+                $id = (int)$row->getData('template_' .$templateNick. '_id');
                 $url = $this->getUrl('m2epro/ebay_template/edit', [
-                    'id' => (int)$row->getData('template_' .$templateNick. '_id'),
+                    'id' => $id,
                     'nick' => $templateNick
                 ]);
+                $objTitle = $this->templateManager->setTemplate($templateNick)
+                                                       ->getTemplateModel()
+                                                       ->load($id)
+                                                       ->getTitle();
                 $templateLink = '<a href="'.$url.'" target="_blank">'
-                                . $templateTitle . ' ' . $this->__('Template')
+                                . $objTitle
                                 . '</a>';
             }
 
-            $removeUrl = $this->getUrl('m2epro/ebay_listing/DeleteTemplateFromListingProduct', [
-                'id' => (int)$row->getData('listing_product_id'),
-                'nick' => $templateNick
-            ]);
             $productTemplatesHtml .= "<div style='padding: 2px 0 0 10px'>
                                     <strong>{$templateTitle}:</strong>
                                     <span style='padding: 0 10px 0 5px'>{$templateLink}</span>
-                                    <a href='#' 
-                                       onclick='EbayListingViewSettingsGridObj.removeTemplate(this, \"{$removeUrl}\")' 
-                                       class='remove_template'></a>
                                    </div>";
         }
         
         if (!empty($productTemplatesHtml)) {
             $value .= "<div class='product_templates' style='text-decoration: underline;'>
-                        {$this->__('Listing Settings Overwrites')}
+                        {$this->__('Listing Policies Overrides')}
                        </div>"
                    . $productTemplatesHtml;
         }
@@ -836,7 +773,7 @@ HTML;
     protected function getGroupOrder()
     {
         return array(
-            'edit_general_settings'    => $this->__('Edit General Settings'),
+            'edit_general_settings'    => $this->__('Edit Listing Policies Overrides'),
             'edit_categories_settings' => $this->__('Edit eBay Categories'),
             'other'                    => $this->__('Other')
         );
@@ -870,44 +807,58 @@ HTML;
             );
         }
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        if ($this->isMotorsAvailable() && $this->motorsAttribute) {
-//            $actions['addCompatibleVehicles'] =  array(
-//                'caption' => $this->__('Add Compatible Vehicles'),
-//                'group'   => 'other',
-//                'field'   => 'id',
-//                'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editMotorsAction\']'
-//            );
-//        }
+        // --- Payment and Shipping Settings -----
 
-        // TODO
-//        $actions['allSettings'] =  array(
-//            'caption' => $this->__('All Settings'),
-//            'group' => 'edit_general_settings',
-//            'field' => 'id',
-//            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editAllSettingsAction\']'
-//        );
-//
-//        $actions['editSelling'] =  array(
-//            'caption' => $this->__('Selling'),
-//            'group'   => 'edit_general_settings',
-//            'field'   => 'id',
-//            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editSellingSettingsAction\']'
-//        );
-//
-//        $actions['editSynchSettings'] =  array(
-//            'caption' => $this->__('Synchronization'),
-//            'group'   => 'edit_general_settings',
-//            'field'   => 'id',
-//            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editSynchSettingsAction\']'
-//        );
-//
-//        $actions['paymentAndShipping'] =  array(
-//            'caption' => $this->__('Payment and Shipping'),
-//            'group'   => 'edit_general_settings',
-//            'field'   => 'id',
-//            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editGeneralSettingsAction\']'
-//        );
+        $actions['editPayment'] = [
+            'caption' => $this->__('Payment'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editPaymentSettingsAction\']'
+        ];
+
+        $actions['editShipping'] = [
+            'caption' => $this->__('Shipping'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editShippingSettingsAction\']'
+        ];
+
+        $actions['editReturn'] = [
+            'caption' => $this->__('Return'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editReturnSettingsAction\']'
+        ];
+
+        // ---------------------------------------
+
+        // ---------- Selling Settings -----------
+        $actions['priceQuantityFormat'] = [
+            'caption' => $this->__('Price, Quantity and Format'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editPriceQuantityFormatSettingsAction\']'
+        ];
+
+        $actions['editDescription'] = [
+            'caption' => $this->__('Description'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editDescriptionSettingsAction\']'
+        ];
+
+        // ---------------------------------------
+
+        // ---------- Synchronization ------------
+
+        $actions['editSynchSettings'] = [
+            'caption' => $this->__('Synchronization'),
+            'group'   => 'edit_general_settings',
+            'field'   => 'id',
+            'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editSynchSettingsAction\']'
+        ];
+
+        // ---------------------------------------
 
         return $actions;
     }
@@ -933,6 +884,7 @@ JS
 
         // ---------------------------------------
         $this->jsPhp->addConstants($helper->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay\Category'));
+        $this->jsPhp->addConstants($helper->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Manager'));
         // ---------------------------------------
 
         // ---------------------------------------
@@ -962,22 +914,20 @@ JS
             'moveToListingGridHtml'
         );
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
-        $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProductsGrid'), 'getFailedProductsGridHtml');
+        $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProducts'), 'getFailedProductsHtml');
         $this->jsUrl->add($this->getUrl('*/listing_moving/tryToMoveToListing'), 'tryToMoveToListing');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
-        $this->jsUrl->add($this->getUrl('*/ebay_template/editListingProduct'), 'ebay_template/editListingProduct');
-        $this->jsUrl->add($this->getUrl('*/ebay_template/saveListingProduct'), 'ebay_template/saveListingProduct');
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_template/editListingProductsPolicy'),
+            'ebay_template/editListingProductsPolicy'
+        );
+        $this->jsUrl->add(
+            $this->getUrl('*/ebay_template/saveListingProductsPolicy'),
+            'ebay_template/saveListingProductsPolicy'
+        );
 
         // ---------------------------------------
-
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        $this->jsUrl->addUrls($helper->getControllerActions('adminhtml_ebay_motor'));
-//        if ($this->getMotorsType() == Ess_M2ePro_Helper_Component_Ebay_Motors::TYPE_EPID) {
-//            $motorsTypeTitle = 'ePID';
-//        } else {
-//            $motorsTypeTitle = 'kType';
-//        }
 
         // M2ePro_TRANSLATIONS
         // %task_title%" Task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.
@@ -991,9 +941,13 @@ JS
 
         //------------------------------
         $this->jsTranslator->addTranslations([
-            'Edit Payment and Shipping Settings' => $this->__('Edit Payment and Shipping Settings'),
-            'Edit Selling Settings' => $this->__('Edit Selling Settings'),
-            'Edit Synchronization Settings' => $this->__('Edit Synchronization Settings'),
+            'Edit Return Policy Setting' => $this->__('Edit Return Policy Setting'),
+            'Edit Payment Policy Setting' => $this->__('Edit Payment Policy Setting'),
+            'Edit Shipping Policy Setting' => $this->__('Edit Shipping Policy Setting'),
+            'Edit Description Policy Setting' => $this->__('Edit Description Policy Setting'),
+            'Edit Price, Quantity and Format Policy Setting' =>
+                $this->__('Edit Price, Quantity and Format Policy Setting'),
+            'Edit Synchronization Policy Setting' => $this->__('Edit Synchronization Policy Setting'),
             'Edit Settings' => $this->__('Edit Settings'),
             'for' => $this->__('for'),
             'eBay Categories' => $this->__('eBay Categories'),
@@ -1007,7 +961,7 @@ JS
                            .' If you are planning to order more Items for Translation in future,'
                            .' you can credit the sum greater than the one needed for current Translation.'
                            .' Click <a href="%url%" target="_blank">here</a> to find out more.',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL,
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl(
                     'x/BQAJAQ#SellonanothereBaySite-Account')
                 ),
             'Amount to Pay.' => $this->__('Amount to Pay'),
@@ -1052,14 +1006,9 @@ JS
                 $this->__('Some Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.'),
 
             'task_completed_warning_message' => $this->__($taskCompletedWarningMessage),
-            $taskCompletedErrorMessage => $this->__($taskCompletedErrorMessage)
+            $taskCompletedErrorMessage => $this->__($taskCompletedErrorMessage),
+            'Add New Listing' => $this->__('Add New Listing')
         ]);
-
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        $motorsType = '';
-//        if ($this->isMotorsAvailable()) {
-//            $motorsType = $this->getMotorsType();
-//        }
 
         $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list',true);
         $productsIdsForList = empty($temp) ? '' : $temp;
@@ -1077,8 +1026,6 @@ JS
 JS
         );
 
-        // TODO NOT SUPPORTED FEATURES "ebay motors"
-//        EbayMotorsHandlerObj = new EbayMotorsHandler({$this->listing->getId()}, '{$motorsType}');
         $this->js->addOnReadyJs(
 <<<JS
     require([
@@ -1119,126 +1066,6 @@ JS
 
         return parent::_toHtml();
     }
-
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "ebay motors"
-//    private function isMotorsAvailable()
-//    {
-//        return $this->isMotorEpidsAvailable() || $this->isMotorKtypesAvailable();
-//    }
-//
-//    private function isMotorEpidsAvailable()
-//    {
-//        return Mage::helper('M2ePro/Component_Ebay_Motors')->isMarketplaceSupportsEpid(
-//            $this->listing->getMarketplaceId()
-//        );
-//    }
-//
-//    private function isMotorKtypesAvailable()
-//    {
-//        return Mage::helper('M2ePro/Component_Ebay_Motors')->isMarketplaceSupportsKtype(
-//            $this->listing->getMarketplaceId()
-//        );
-//    }
-
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "ebay motors"
-//    private function prepareExistingMotorsData()
-//    {
-//        $motorsHelper = Mage::helper('M2ePro/Component_Ebay_Motors');
-//
-//        $products = $this->getCollection()->getItems();
-//
-//        $productsMotorsData = array();
-//
-//        $items = array();
-//        $filters = array();
-//        $groups = array();
-//
-//        foreach ($products as $product) {
-//            if (!$product->getData('is_motors_attribute_in_product_attribute_set')) {
-//                continue;
-//            }
-//
-//            $productId = $product->getData('listing_product_id');
-//
-//            $attributeCode = $this->motorsAttribute->getAttributeCode();
-//            $attributeValue = $product->getData($attributeCode);
-//
-//            $productsMotorsData[$productId] = $motorsHelper->parseAttributeValue($attributeValue);
-//
-//            $items = array_merge($items, array_keys($productsMotorsData[$productId]['items']));
-//            $filters = array_merge($filters, $productsMotorsData[$productId]['filters']);
-//            $groups = array_merge($groups, $productsMotorsData[$productId]['groups']);
-//        }
-//
-//        //-------------------------------
-//        $typeIdentifier = $motorsHelper->getIdentifierKey($this->getMotorsType());
-//
-//        $select = Mage::getResourceModel('core/config')->getReadConnection()
-//            ->select()
-//            ->from(
-//                $motorsHelper->getDictionaryTable($this->getMotorsType()),
-//                array($typeIdentifier)
-//            )
-//            ->where('`'.$typeIdentifier.'` IN (?)', $items);
-//
-//        $existedItems = $select->query()->fetchAll(PDO::FETCH_COLUMN);
-//        //-------------------------------
-//
-//        //-------------------------------
-//        $filtersTable = Mage::getSingleton('core/resource')->getTableName('m2epro_ebay_motor_filter');
-//        $select = Mage::getResourceModel('core/config')->getReadConnection()
-//            ->select()
-//            ->from(
-//                $filtersTable,
-//                array('id')
-//            )
-//            ->where('`id` IN (?)', $filters);
-//
-//        $existedFilters = $select->query()->fetchAll(PDO::FETCH_COLUMN);
-//        //-------------------------------
-//
-//        //-------------------------------
-//        $groupsTable = Mage::getSingleton('core/resource')->getTableName('m2epro_ebay_motor_group');
-//        $select = Mage::getResourceModel('core/config')->getReadConnection()
-//            ->select()
-//            ->from(
-//                $groupsTable,
-//                array('id')
-//            )
-//            ->where('`id` IN (?)', $groups);
-//
-//        $existedGroups = $select->query()->fetchAll(PDO::FETCH_COLUMN);
-//        //-------------------------------
-//
-//        foreach ($productsMotorsData as $productId => $productMotorsData) {
-//
-//            foreach ($productMotorsData['items'] as $item => $itemData) {
-//                if (!in_array($item, $existedItems)) {
-//                    unset($productsMotorsData[$productId]['items'][$item]);
-//                }
-//            }
-//
-//            foreach ($productMotorsData['filters'] as $key => $filterId) {
-//                if (!in_array($filterId, $existedFilters)) {
-//                    unset($productsMotorsData[$productId]['filters'][$key]);
-//                }
-//            }
-//
-//            foreach ($productMotorsData['groups'] as $key => $groupId) {
-//                if (!in_array($groupId, $existedGroups)) {
-//                    unset($productsMotorsData[$productId]['groups'][$key]);
-//                }
-//            }
-//        }
-//
-//        $this->productsMotorsData = $productsMotorsData;
-//
-//        return $this;
-//    }
 
     //########################################
 }

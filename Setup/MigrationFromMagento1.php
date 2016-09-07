@@ -8,14 +8,8 @@
 
 namespace Ess\M2ePro\Setup;
 
-use Ess\M2ePro\Model\Exception;
-use Ess\M2ePro\Setup\Modifier\Config;
-use Ess\M2ePro\Setup\Modifier\ConfigFactory;
-use Ess\M2ePro\Setup\Modifier\Table;
-use Ess\M2ePro\Setup\Modifier\TableFactory;
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
-use Magento\Framework\Module\Setup;
 use Magento\Framework\App\ResourceConnection;
 use Magento\Setup\Module\Setup as MagentoSetup;
 
@@ -23,7 +17,9 @@ class MigrationFromMagento1
 {
     const BACKUP_TABLE_SUFFIX = '_backup_mv1_';
 
-    protected $tablesObject;
+    protected $helperFactory;
+
+    protected $modelFactory;
 
     protected $configModifierFactory;
 
@@ -36,16 +32,13 @@ class MigrationFromMagento1
     //########################################
 
     public function __construct(
-        Tables $tablesObject,
-        ConfigFactory $configModifierFactory,
-        TableFactory $tableModifierFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
         ResourceConnection $resourceConnection,
         DeploymentConfig $deploymentConfig
     ) {
-        $this->tablesObject = $tablesObject;
-
-        $this->configModifierFactory = $configModifierFactory;
-        $this->tableModifierFactory  = $tableModifierFactory;
+        $this->helperFactory = $helperFactory;
+        $this->modelFactory  = $modelFactory;
 
         $this->installer = new MagentoSetup($resourceConnection);
 
@@ -67,7 +60,7 @@ class MigrationFromMagento1
 
         foreach ($allM2eProTables as $oldTableName) {
             $clearTableName = str_replace($oldTablesPrefix.'m2epro_', '', $oldTableName);
-            $this->getConnection()->renameTable($oldTableName, $this->tablesObject->getFullName($clearTableName));
+            $this->getConnection()->renameTable($oldTableName, $this->getFullTableName($clearTableName));
         }
     }
 
@@ -75,20 +68,111 @@ class MigrationFromMagento1
 
     public function process()
     {
-        $this->migrateProcessingModelNames();
-        $this->migrateReturnTemplateSchema();
-        $this->migrateConfigs();
-        $this->migrateWizardsData();
+        $this->migrateModuleConfig();
+        $this->migrateServerLocation();
+        $this->migrateModuleName();
+        $this->migrateInfrastructureUrls();
+
+        $this->migrateProcessing();
+        $this->migrateLockItem();
+
+        $this->migrateWizards();
+
+        $this->migrateEbayReturnTemplate();
+        $this->migrateEbaySynchronizationTemplate();
+
+        $this->migrateAmazonMarketplaces();
+
         $this->createSetupTable();
         $this->removeAndBackupBuyData();
+
+        $this->migrateOther();
     }
 
     //########################################
 
-    private function migrateProcessingModelNames()
+    private function migrateModuleConfig()
     {
-        $this->modifyTableRows($this->tablesObject->getFullName('processing'), function ($row) {
-            $params = (array)@json_decode($row['params'], true);
+        $this->getConnection()->renameTable(
+            $this->getFullTableName('config'),
+            $this->getFullTableName('module_config')
+        );
+    }
+
+    private function migrateServerLocation()
+    {
+        $primaryConfigModifier = $this->getConfigModifier('primary');
+
+        $primaryConfigModifier->getEntity('/server/', 'default_baseurl_index')->updateGroup('/server/location/');
+        $primaryConfigModifier->getEntity('/server/location/', 'default_baseurl_index')->updateKey('default_index');
+
+        $query = $this->getConnection()->select()
+            ->from($this->getFullTableName('primary_config'))
+            ->where("`group` = '/server/' AND (`key` LIKE 'baseurl_%' OR `key` LIKE 'hostname_%')");
+
+        $result = $this->getConnection()->fetchAll($query);
+
+        foreach ($result as $row) {
+
+            $key = (strpos($row['key'], 'baseurl') !== false) ? 'baseurl' : 'hostname';
+            $index = str_replace($key.'_', '', $row['key']);
+            $group = "/server/location/{$index}/";
+
+            $primaryConfigModifier->getEntity('/server/', $row['key'])->updateGroup($group);
+            $primaryConfigModifier->getEntity($group, $row['key'])->updateKey($key);
+        }
+    }
+
+    private function migrateModuleName()
+    {
+        $primaryConfigModifier = $this->getConfigModifier('primary');
+
+        $primaryConfigModifier->delete('/modules/');
+
+        $select = $this->getConnection()->select()->from($this->getFullTableName('primary_config'));
+        $select->reset(\Zend_Db_Select::COLUMNS);
+        $select->columns('group');
+        $select->where('`group` like ?', '/M2ePro/%');
+
+        $groupsForRenaming = $this->getConnection()->fetchCol($select);
+
+        foreach (array_unique($groupsForRenaming) as $group) {
+            $newGroup = preg_replace('/^\/M2ePro/', '', $group);
+            $primaryConfigModifier->updateGroup($newGroup, ['`group` = ?' => $group]);
+        }
+
+        $primaryConfigModifier->getEntity('/server/', 'application_key')
+            ->updateValue('02edcc129b6128f5fa52d4ad1202b427996122b6');
+    }
+
+    private function migrateInfrastructureUrls()
+    {
+        $moduleConfigModifier = $this->getConfigModifier('module');
+
+        $moduleConfigModifier->insert('/support/', 'forum_url', 'https://community.m2epro.com/', NULL);
+
+        $moduleConfigModifier->getEntity('/support/', 'main_website_url')->updateKey('website_url');
+        $moduleConfigModifier->getEntity('/support/', 'website_url')->updateValue('https://m2epro.com/');
+
+        $moduleConfigModifier->getEntity('/support/', 'main_support_url')->updateKey('support_url');
+        $moduleConfigModifier->getEntity('/support/', 'support_url')->updateValue('https://support.m2epro.com/');
+
+        $moduleConfigModifier->getEntity('/support/', 'documentation_url')->updateValue('https://docs.m2epro.com/');
+        $moduleConfigModifier->getEntity('/support/', 'knowledge_base_url')->delete();
+        $moduleConfigModifier->getEntity('/support/', 'ideas')->delete();
+
+        $moduleConfigModifier->getEntity('/support/', 'magento_connect_url')->updateKey('magento_marketplace_url');
+
+        $marketplaceUrl = 'https://marketplace.magento.com/'
+            . 'm2epro-ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization.html';
+
+        $moduleConfigModifier->getEntity('/support/', 'magento_marketplace_url')->updateValue($marketplaceUrl);
+    }
+
+    private function migrateProcessing()
+    {
+        $this->modifyTableRows($this->getFullTableName('processing'), function ($row) {
+            $params = (array)json_decode($row['params'], true);
 
             if (!empty($params['responser_model_name'])) {
                 $params['responser_model_name'] = $this->modifyModelName($params['responser_model_name']);
@@ -102,17 +186,57 @@ class MigrationFromMagento1
 
         // ---------------------------------------
 
-        $this->modifyTableRows($this->tablesObject->getFullName('processing_lock'), function ($row) {
+        $this->modifyTableRows($this->getFullTableName('processing_lock'), function ($row) {
             $row['model_name'] = $this->modifyModelName($row['model_name']);
             return $row;
         });
     }
 
-    private function migrateReturnTemplateSchema()
+    private function migrateLockItem()
+    {
+        $this->getTableModifier('lock_item')->dropColumn('kill_now');
+    }
+
+    private function migrateWizards()
+    {
+        $wizardsData = [
+            [
+                'nick'     => 'migrationFromMagento1',
+                'view'     => '*',
+                'status'   => 0,
+                'step'     => NULL,
+                'type'     => 1,
+                'priority' => 1,
+            ],
+            [
+                'nick'     => 'installationEbay',
+                'view'     => 'ebay',
+                'status'   => empty($this->getTableRows($this->getFullTableName('ebay_account')))
+                    ? 0 : 2,
+                'step'     => NULL,
+                'type'     => 1,
+                'priority' => 2,
+            ],
+            [
+                'nick'     => 'installationAmazon',
+                'view'     => 'amazon',
+                'status'   => empty($this->getTableRows($this->getFullTableName('amazon_account')))
+                    ? 0 : 2,
+                'step'     => NULL,
+                'type'     => 1,
+                'priority' => 3,
+            ]
+        ];
+
+        $this->getConnection()->truncateTable($this->getFullTableName('wizard'));
+        $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), $wizardsData);
+    }
+
+    private function migrateEbayReturnTemplate()
     {
         $this->getConnection()->renameTable(
-            $this->tablesObject->getFullName('ebay_template_return'),
-            $this->tablesObject->getFullName('ebay_template_return_policy')
+            $this->getFullTableName('ebay_template_return'),
+            $this->getFullTableName('ebay_template_return_policy')
         );
 
         // ---------------------------------------
@@ -153,74 +277,26 @@ class MigrationFromMagento1
         );
     }
 
-    private function migrateConfigs()
+    private function migrateEbaySynchronizationTemplate()
     {
-        $this->getConnection()->renameTable(
-            $this->tablesObject->getFullName('config'),
-            $this->tablesObject->getFullName('module_config')
-        );
-
-        $moduleConfigModifier = $this->getConfigModifier('module');
-
-        $moduleConfigModifier->insert('/support/', 'community', 'https://community.m2epro.com/', NULL);
-        $moduleConfigModifier->insert('/support/', 'ideas', 'https://support.m2epro.com/ideas/', NULL);
-        $moduleConfigModifier->insert('/setup/upgrade/', 'is_need_rollback_backup', 0, NULL);
-
-        $this->getConnection()->delete(
-            $this->tablesObject->getFullName('module_config'),
-            array('`group` REGEXP \'^\/component\/(ebay|amazon|buy){1}\/$\' AND `key` = \'allowed\'')
-        );
-
-        $this->getConnection()->delete(
-            $this->tablesObject->getFullName('module_config'),
-            array('`group` = \'/view/common/component/\'')
-        );
-
-        $this->getConnection()->update(
-            $this->tablesObject->getFullName('module_config'),
-            array('group' => '\'/view/amazon/autocomplete/\''),
-            array('`group` = \'/view/common/autocomplete/\'')
-        );
+        $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_mode');
+        $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_interval_settings');
+        $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_week_settings');
     }
 
-    private function migrateWizardsData()
+    private function migrateAmazonMarketplaces()
     {
-        $wizardsData = [
-            [
-                'nick'     => 'migrationFromMagento1',
-                'view'     => '*',
-                'status'   => 0,
-                'step'     => NULL,
-                'type'     => 1,
-                'priority' => 1,
-            ],
-            [
-                'nick'     => 'installationEbay',
-                'view'     => 'ebay',
-                'status'   => empty($this->getTableRows($this->tablesObject->getFullName('ebay_account')))
-                    ? 0 : 2,
-                'step'     => NULL,
-                'type'     => 1,
-                'priority' => 2,
-            ],
-            [
-                'nick'     => 'installationAmazon',
-                'view'     => 'amazon',
-                'status'   => empty($this->getTableRows($this->tablesObject->getFullName('amazon_account')))
-                    ? 0 : 2,
-                'step'     => NULL,
-                'type'     => 1,
-                'priority' => 3,
-            ]
-        ];
-
-        $this->getConnection()->truncateTable($this->tablesObject->getFullName('wizard'));
-        $this->getConnection()->insertMultiple($this->tablesObject->getFullName('wizard'), $wizardsData);
+        $this->getConnection()->delete($this->getFullTableName('marketplace'), [
+            'id IN (?)' => [27, 32]
+        ]);
+        $this->getConnection()->delete($this->getFullTableName('amazon_marketplace'), [
+            'marketplace_id IN (?)' => [27, 32]
+        ]);
     }
 
     private function createSetupTable()
     {
-        $setupTable = $this->getConnection()->newTable($this->tablesObject->getFullName('setup'))
+        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
             ->addColumn(
                 'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
@@ -265,7 +341,7 @@ class MigrationFromMagento1
 
     private function removeAndBackupBuyData()
     {
-        $needBackup = !empty($this->getTableRows($this->tablesObject->getFullName('buy_account')));
+        $needBackup = !empty($this->getTableRows($this->getFullTableName('buy_account')));
 
         $wholeBackupTables = [
             'primary_config',
@@ -298,16 +374,16 @@ class MigrationFromMagento1
                 $resultTableName = $this->getBackupTableName($tableName);
 
                 $backupTable = $this->getConnection()->createTableByDdl(
-                    $this->tablesObject->getFullName($tableName), $resultTableName
+                    $this->getFullTableName($tableName), $resultTableName
                 );
                 $this->getConnection()->createTable($backupTable);
 
-                $select = $this->getConnection()->select()->from($this->tablesObject->getFullName($tableName));
+                $select = $this->getConnection()->select()->from($this->getFullTableName($tableName));
                 $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
             }
 
             if (strpos($tableName, 'buy_') === 0) {
-                $this->getConnection()->dropTable($this->tablesObject->getFullName($tableName));
+                $this->getConnection()->dropTable($this->getFullTableName($tableName));
             }
         }
 
@@ -331,14 +407,14 @@ class MigrationFromMagento1
 
         foreach ($byComponentModeBackupTables as $tableName) {
             $select = $this->getConnection()->select()
-                ->from($this->tablesObject->getFullName($tableName))
+                ->from($this->getFullTableName($tableName))
                 ->where('component_mode = ?', 'buy');
 
             if ($needBackup) {
                 $resultTableName = $this->getBackupTableName($tableName);
 
                 $backupTable = $this->getConnection()->createTableByDdl(
-                    $this->tablesObject->getFullName($tableName), $resultTableName
+                    $this->getFullTableName($tableName), $resultTableName
                 );
                 $this->getConnection()->createTable($backupTable);
 
@@ -346,48 +422,70 @@ class MigrationFromMagento1
             }
 
             $this->getConnection()->query(
-                $this->getConnection()->deleteFromSelect($select, $this->tablesObject->getFullName($tableName))
+                $this->getConnection()->deleteFromSelect($select, $this->getFullTableName($tableName))
             );
         }
 
         $this->getConnection()->delete(
-            $this->tablesObject->getFullName('module_config'),
+            $this->getFullTableName('module_config'),
             [
                 '`group` like ?' => '/component/buy/%'
             ]
         );
 
         $this->getConnection()->delete(
-            $this->tablesObject->getFullName('module_config'),
+            $this->getFullTableName('module_config'),
             [
                 '`group` like ?' => '/buy/%'
             ]
         );
 
         $this->getConnection()->delete(
-            $this->tablesObject->getFullName('synchronization_config'),
+            $this->getFullTableName('synchronization_config'),
             [
                 '`group` like ?' => '/buy/%'
             ]
         );
 
         $select = $this->getConnection()->select()
-            ->from($this->tablesObject->getFullName('processing'), 'id')
+            ->from($this->getFullTableName('processing'), 'id')
             ->where('model like ?', 'Buy%');
 
         $processingIdsForRemove = $this->getConnection()->fetchCol($select);
 
         if (!empty($processingIdsForRemove)) {
             $this->getConnection()->delete(
-                $this->tablesObject->getFullName('processing'),
+                $this->getFullTableName('processing'),
                 ['id IN (?)' => $processingIdsForRemove]
             );
 
             $this->getConnection()->delete(
-                $this->tablesObject->getFullName('processing_lock'),
+                $this->getFullTableName('processing_lock'),
                 ['processing_id IN (?)' => $processingIdsForRemove]
             );
         }
+    }
+
+    private function migrateOther()
+    {
+        $this->getConnection()->delete(
+            $this->getFullTableName('module_config'),
+            array('`group` REGEXP \'^\/component\/(ebay|amazon|buy){1}\/$\' AND `key` = \'allowed\'')
+        );
+
+        $this->getConnection()->delete(
+            $this->getFullTableName('module_config'),
+            array('`group` = \'/view/common/component/\'')
+        );
+
+        $this->getConnection()->delete(
+            $this->getFullTableName('module_config'),
+            array('`group` = \'/view/common/autocomplete/\'')
+        );
+
+        $this->getConfigModifier('module')->getEntity(NULL, 'is_disabled')->delete();
+
+        $this->getConfigModifier('primary')->getEntity('/server/', 'messages')->delete();
     }
 
     //########################################
@@ -422,7 +520,7 @@ class MigrationFromMagento1
 
     private function getBackupTableName($tableName)
     {
-        return $this->installer->getTable(Tables::M2E_PRO_TABLE_PREFIX.self::BACKUP_TABLE_SUFFIX.$tableName);
+        return $this->getFullTableName(self::BACKUP_TABLE_SUFFIX.$tableName);
     }
 
     //########################################
@@ -432,15 +530,20 @@ class MigrationFromMagento1
         return $this->installer->getConnection();
     }
 
+    private function getFullTableName($tableName)
+    {
+        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
+    }
+
     //########################################
 
     /**
      * @param $tableName
-     * @return Table
+     * @return \Ess\M2ePro\Model\Setup\Database\Modifier\Table
      */
     protected function getTableModifier($tableName)
     {
-        return $this->tableModifierFactory->create(
+        return $this->modelFactory->getObject('Setup\Database\Modifier\Table',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,
@@ -450,13 +553,13 @@ class MigrationFromMagento1
 
     /**
      * @param $configName
-     * @return Config
+     * @return \Ess\M2ePro\Model\Setup\Database\Modifier\Config
      */
     protected function getConfigModifier($configName)
     {
         $tableName = $configName.'_config';
 
-        return $this->configModifierFactory->create(
+        return $this->modelFactory->getObject('Setup\Database\Modifier\Config',
             [
                 'installer' => $this->installer,
                 'tableName' => $tableName,

@@ -41,6 +41,14 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
     {
         $this->initializeVariations();
 
+        if (!$this->getIsVariationItem()) {
+            return;
+        }
+
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+        $additionalData['variations_that_can_not_be_deleted'] = [];
+        $this->getListingProduct()->setSettings('additional_data', $additionalData)->save();
+
         $variations = $this->getListingProduct()->getVariations(true);
 
         foreach ($variations as $variation) {

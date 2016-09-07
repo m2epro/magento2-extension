@@ -22,7 +22,7 @@ abstract class AbstractTab extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abst
 
         $content = $this->__("These settings are global for all the Integrations you are using.");
         return '<div id="global_messages" style="overflow: hidden; padding-right: 20px;">
-                   <div class="messages"><div class="message">'
+                   <div class="messages m2epro-messages"><div class="message">'
                 . $content
                 . '</div></div></div>';
     }

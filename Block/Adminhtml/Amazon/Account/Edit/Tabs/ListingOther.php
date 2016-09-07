@@ -15,7 +15,7 @@ class ListingOther extends AbstractForm
         $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
 
         /** @var $account \Ess\M2ePro\Model\Account */
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data');
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
@@ -55,10 +55,10 @@ class ListingOther extends AbstractForm
 You can set preferences whether you would like to import 3rd Party Listings 
 (Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool), 
 automatically map them to Magento Product, etc..</p><br>
-<p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
+<p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/NAItAQ')
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/NAItAQ')
                 )
             ]
         );
@@ -160,19 +160,23 @@ HTML
             [
                 'name' => 'mapping_sku_mode',
                 'label' => $this->__('SKU'),
-                'class' => 'attribute-mode-select M2ePro-custom-attribute-can-be-created',
+                'class' => 'attribute-mode-select',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_PRODUCT_ID => $this->__('Product ID'),
                     [
                         'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
                     ]
                 ],
                 'value' => isset($mappingSettings['sku']['mode'])
                     && $mappingSettings['sku']['mode'] != Account::OTHER_LISTINGS_MAPPING_SKU_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['sku']['mode'] : '',
+                'create_magento_attribute' => true,
             ]
         )->setAfterElementHtml(<<<HTML
 <div id="mapping_sku_priority_td">
@@ -222,17 +226,21 @@ HTML
             [
                 'name' => 'mapping_general_id_mode',
                 'label' => $this->__('ASIN / ISBN'),
-                'class' => 'attribute-mode-select M2ePro-custom-attribute-can-be-created',
+                'class' => 'attribute-mode-select',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE => $this->__('None'),
                     [
                         'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
                     ]
                 ],
                 'value' => isset($mappingSettings['general_id']['mode'])
                     && $mappingSettings['general_id']['mode'] != $modeCustomAttribute
-                    ? $mappingSettings['general_id']['mode'] : ''
+                    ? $mappingSettings['general_id']['mode'] : '',
+                'create_magento_attribute' => true,
             ]
         )->setAfterElementHtml(<<<HTML
 <div id="mapping_general_id_priority_td">
@@ -280,18 +288,22 @@ HTML
             [
                 'name' => 'mapping_title_mode',
                 'label' => $this->__('Listing Title'),
-                'class' => 'attribute-mode-select M2ePro-custom-attribute-can-be-created',
+                'class' => 'attribute-mode-select',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),
                     [
                         'label' => $this->__('Magento Attributes'),
-                        'value' => $preparedAttributes
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
                     ]
                 ],
                 'value' => isset($mappingSettings['title']['mode'])
                     && $mappingSettings['title']['mode'] != Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_CUSTOM_ATTRIBUTE
                     ? $mappingSettings['title']['mode'] : '',
+                'create_magento_attribute' => true,
             ]
         )->setAfterElementHtml(<<<HTML
 <div id="mapping_title_priority_td">

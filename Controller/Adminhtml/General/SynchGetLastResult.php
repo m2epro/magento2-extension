@@ -26,7 +26,7 @@ class SynchGetLastResult extends General
 
         $logCollection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $logCollection->addFieldToFilter('operation_history_id', (int)$operationHistory->getId());
-        $logCollection->addFieldToFilter('type', array('in' => array(\Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR)));
+        $logCollection->addFieldToFilter('type', array('in' => array(\Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR)));
 
         if ($logCollection->getSize() > 0) {
             $this->setAjaxContent('error', false);
@@ -35,7 +35,9 @@ class SynchGetLastResult extends General
 
         $logCollection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $logCollection->addFieldToFilter('operation_history_id', (int)$operationHistory->getId());
-        $logCollection->addFieldToFilter('type', array('in' => array(\Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING)));
+        $logCollection->addFieldToFilter('type', 
+            array('in' => array(\Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING))
+        );
 
         if ($logCollection->getSize() > 0) {
             $this->setAjaxContent('warning', false);

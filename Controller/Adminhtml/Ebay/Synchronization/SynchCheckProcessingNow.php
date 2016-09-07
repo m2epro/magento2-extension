@@ -24,13 +24,11 @@ class SynchCheckProcessingNow extends Settings
             ->getSize();
 
         // M2ePro_TRANSLATIONS
-        // eBay 3rd Party Listings are being downloaded now. They will be available soon in %menu_root%. You can continue working with M2E Pro.
+        // eBay 3rd Party Listings are being downloaded now. You can continue working with M2E Pro.
         if ($synchronizationEbayOtherListingsProcessing > 0) {
             $warningMessages[] = $this->__(
                 'eBay 3rd Party Listings are being downloaded now. ' .
-                'They will be available soon in %menu_root%. ' .
                 'You can continue working with M2E Pro.'
-//              todo  Mage::helper('M2ePro/View_Ebay')->getPageNavigationPath('listings', '3rd Party')
             );
         }
 

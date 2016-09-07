@@ -33,15 +33,15 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getEndpoint()
     {
-        if ($this->getCurrentBaseUrlIndex() != $this->getDefaultBaseUrlIndex()) {
+        if ($this->getCurrentIndex() != $this->getDefaultIndex()) {
 
             $currentTimeStamp = $this->getHelper('Data')->getCurrentGmtDate(true);
 
             $interval = self::MAX_INTERVAL_OF_RETURNING_TO_DEFAULT_BASEURL;
-            $switchingDateTime = $this->cacheConfig->getGroupValue('/server/baseurl/','datetime_of_last_switching');
+            $switchingDateTime = $this->cacheConfig->getGroupValue('/server/location/','datetime_of_last_switching');
 
             if (is_null($switchingDateTime) || strtotime($switchingDateTime) + $interval <= $currentTimeStamp) {
-                $this->setCurrentBaseUrlIndex($this->getDefaultBaseUrlIndex());
+                $this->setCurrentIndex($this->getDefaultIndex());
             }
         }
 
@@ -50,7 +50,7 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function switchEndpoint()
     {
-        $previousIndex = $this->getCurrentBaseUrlIndex();
+        $previousIndex = $this->getCurrentIndex();
         $nextIndex = $previousIndex + 1;
 
         if (is_null($this->getBaseUrlByIndex($nextIndex))) {
@@ -61,9 +61,9 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
             return false;
         }
 
-        $this->setCurrentBaseUrlIndex($nextIndex);
+        $this->setCurrentIndex($nextIndex);
 
-        $this->cacheConfig->setGroupValue('/server/baseurl/','datetime_of_last_switching',
+        $this->cacheConfig->setGroupValue('/server/location/','datetime_of_last_switching',
                                         $this->getHelper('Data')->getCurrentGmtDate());
 
         return true;
@@ -73,15 +73,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getAdminKey()
     {
-        return (string)$this->primary->getGroupValue('/server/','admin_key');
+        return (string)$this->primary->getGroupValue('/server/', 'admin_key');
     }
 
     public function getApplicationKey()
     {
-        $moduleName = $this->getHelper('Module')->getName();
-        return (string)$this->primary->getGroupValue(
-            '/'.$moduleName.'/server/','application_key'
-        );
+        return (string)$this->primary->getGroupValue('/server/', 'application_key');
     }
 
     //########################################
@@ -181,34 +178,33 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getCurrentBaseUrl()
     {
-        return $this->getBaseUrlByIndex($this->getCurrentBaseUrlIndex());
+        return $this->getBaseUrlByIndex($this->getCurrentIndex());
     }
 
     private function getCurrentHostName()
     {
-        return $this->getHostNameByIndex($this->getCurrentBaseUrlIndex());
+        return $this->getHostNameByIndex($this->getCurrentIndex());
     }
 
     // ---------------------------------------
 
-    private function getDefaultBaseUrlIndex()
+    private function getDefaultIndex()
     {
-        $index = (int)$this->primary
-                        ->getGroupValue('/server/','default_baseurl_index');
+        $index = (int)$this->primary->getGroupValue('/server/location/','default_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
-            $this->setDefaultBaseUrlIndex($index = 1);
+            $this->setDefaultIndex($index = 1);
         }
 
         return $index;
     }
 
-    private function getCurrentBaseUrlIndex()
+    private function getCurrentIndex()
     {
-        $index = (int)$this->cacheConfig->getGroupValue('/server/baseurl/','current_index');
+        $index = (int)$this->cacheConfig->getGroupValue('/server/location/','current_index');
 
         if ($index <= 0 || $index > $this->getMaxBaseUrlIndex()) {
-            $this->setCurrentBaseUrlIndex($index = $this->getDefaultBaseUrlIndex());
+            $this->setCurrentIndex($index = $this->getDefaultIndex());
         }
 
         return $index;
@@ -216,15 +212,14 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    private function setDefaultBaseUrlIndex($index)
+    private function setDefaultIndex($index)
     {
-        $this->primary
-             ->setGroupValue('/server/','default_baseurl_index',$index);
+        $this->primary->setGroupValue('/server/location/','default_index',$index);
     }
 
-    private function setCurrentBaseUrlIndex($index)
+    private function setCurrentIndex($index)
     {
-        $this->cacheConfig->setGroupValue('/server/baseurl/','current_index',$index);
+        $this->cacheConfig->setGroupValue('/server/location/','current_index',$index);
     }
 
     //########################################
@@ -249,12 +244,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function getBaseUrlByIndex($index)
     {
-        return $this->primary->getGroupValue('/server/','baseurl_'.$index);
+        return $this->primary->getGroupValue('/server/location/'.$index.'/','baseurl');
     }
 
     private function getHostNameByIndex($index)
     {
-        return $this->primary->getGroupValue('/server/','hostname_'.$index);
+        return $this->primary->getGroupValue('/server/location/'.$index.'/','hostname');
     }
 
     //########################################

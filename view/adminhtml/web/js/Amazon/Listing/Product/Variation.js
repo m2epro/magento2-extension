@@ -48,8 +48,14 @@ define([
                         type: 'popup',
                         modalClass: 'width-50',
                         buttons: [{
+                            text: M2ePro.translator.translate('No'),
+                            class: 'action-secondary action-dismiss',
+                            click: function () {
+                                self.switchToIndividualModePopUp.modal('closeModal');
+                            }
+                        }, {
                             text: M2ePro.translator.translate('Yes'),
-                            class: 'action primary',
+                            class: 'action-primary action-accept',
                             click: function () {
                                 if ($('switch_to_individual_remember_checkbox').checked) {
                                     new Ajax.Request(M2ePro.url.get('saveListingAdditionalData'), {
@@ -66,12 +72,6 @@ define([
 
                                 self.switchToIndividualModePopUp.modal('closeModal');
                                 self.showManagePopup(title);
-                            }
-                        },{
-                            text: M2ePro.translator.translate('No'),
-                            class: 'action primary',
-                            click: function () {
-                                self.switchToIndividualModePopUp.modal('closeModal');
                             }
                         }]
                     }, self.switchToIndividualModePopUp);
@@ -101,8 +101,14 @@ define([
                         title: M2ePro.translator.translate('switch_to_parent_mode_popup_title'),
                         type: 'popup',
                         buttons: [{
+                            text: M2ePro.translator.translate('No'),
+                            class: 'action-secondary action-dismiss',
+                            click: function () {
+                                self.switchToParentModePopUp.modal('closeModal');
+                            }
+                        }, {
                             text: M2ePro.translator.translate('Yes'),
-                            class: 'action primary',
+                            class: 'action-primary action-accept',
                             click: function () {
                                 if ($('switch_to_parent_remember_checkbox').checked) {
                                     new Ajax.Request(M2ePro.url.get('saveListingAdditionalData'), {
@@ -116,12 +122,6 @@ define([
 
                                 self.switchToParentModePopUp.modal('closeModal');
                                 self.resetListingProductVariation();
-                            }
-                        },{
-                            text: M2ePro.translator.translate('No'),
-                            class: 'action primary',
-                            click: function () {
-                                self.switchToParentModePopUp.modal('closeModal');
                             }
                         }]
                     }, self.switchToParentModePopUp);
@@ -214,7 +214,7 @@ define([
             this.variationAttributes.each((function (attribute, i) {
 
                 var tr = container.appendChild(new Element('tr'));
-                tr.appendChild(new Element('td', {class: 'label', style: 'vertical-align: inherit;'}))
+                tr.appendChild(new Element('td', {class: 'label', style: 'width: 25%; vertical-align: inherit;'}))
                     .insert(attribute + ': <span class="required">*</span>');
 
                 var select = tr

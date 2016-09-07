@@ -17,6 +17,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     private $activeRecordFactory;
     private $modelFactory;
     private $moduleConfig;
+    protected $phpEnvironmentRequest;
 
     //########################################
 
@@ -25,12 +26,14 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     )
     {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;
+        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
     }
     
@@ -123,7 +126,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $fatalErrors = array(E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR);
 
             if (in_array((int)$error['type'], $fatalErrors)) {
-                $trace = @debug_backtrace(false);
+                $trace = debug_backtrace(false);
                 $traceInfo = $exceptionHelper->getFatalStackTraceInfo($trace);
                 $exceptionHelper->processFatal($error,$traceInfo);
             }
@@ -246,9 +249,9 @@ TRACE;
 
     private function getCurrentUserActionInfo()
     {
-        $server = isset($_SERVER) ? print_r($_SERVER, true) : '';
-        $get = isset($_GET) ? print_r($_GET, true) : '';
-        $post = isset($_POST) ? print_r($_POST, true) : '';
+        $server = print_r($this->phpEnvironmentRequest->getServer()->toArray(), true);
+        $get = print_r($this->phpEnvironmentRequest->getQuery()->toArray(), true);
+        $post = print_r($this->phpEnvironmentRequest->getPost()->toArray(), true);
 
         $actionInfo = <<<ACTION
 -------------------------------- ACTION INFO -------------------------------------

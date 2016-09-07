@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Strategy;
 
-class Parallel extends AbstractStrategy
+class Parallel extends AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\LockItem

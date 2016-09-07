@@ -1,0 +1,24 @@
+/* Ebay Fee */
+/* ================================================ */
+
+.ebay-fee {
+    color: #303030;
+}
+
+/* ================================================ */
+
+/* Ebay Auction */
+/* ================================================ */
+
+.ebay-auction-grid-tooltip .admin__field-tooltip .admin__field-tooltip-content {
+    bottom: 40px;
+    right: -37px;
+    width: 240px;
+}
+
+.ebay-auction-grid-tooltip .admin__field-tooltip .admin__field-tooltip-action:before {
+    font-size: 1.5rem;
+    content: '\e61a';
+}
+
+/* ================================================ */

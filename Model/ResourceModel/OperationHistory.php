@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
-class OperationHistory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class OperationHistory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

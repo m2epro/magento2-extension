@@ -67,10 +67,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // Get collection products in listing
         // ---------------------------------------
         $nameAttribute = $this->resourceCatalogProduct->getAttribute('name');
-        $nameAttributeId = $nameAttribute ? (int)$nameAttribute->getId() : 0;
 
         $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->distinct();
+
+        // Communicate with magento product table
+        // ---------------------------------------
+        $dbSelect = $this->resourceConnection->getConnection()
+            ->select()
+            ->from($this->resourceConnection->getTableName('catalog_product_entity_varchar'),
+                new \Zend_Db_Expr('MAX(`store_id`)'))
+            ->where("`entity_id` = `main_table`.`product_id`")
+            ->where("`attribute_id` = `ea`.`attribute_id`")
+            ->where("`store_id` = 0 OR `store_id` = `l`.`store_id`");
 
         $listingProductCollection->getSelect()->join(
             array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
@@ -84,14 +93,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $listingProductCollection->getSelect()->join(
             array('cpe' => $this->resourceConnection->getTableName('catalog_product_entity')),
-            'cpe.entity_id = `main_table`.product_id'
+            'cpe.entity_id = `main_table`.product_id',
+            array('magento_sku'=>'sku')
         );
 
         $listingProductCollection->getSelect()->joinLeft(
             array('cpev' => $this->resourceConnection->getTableName('catalog_product_entity_varchar')),
-            '`cpev`.`entity_id` = `main_table`.`product_id`'
-                . ' AND `cpev`.`attribute_id` = ' . $nameAttributeId
-                . ' AND `cpev`.`store_id` = 0'
+            "(`cpev`.`entity_id` = `main_table`.product_id)",
+            array('value')
         );
 
         $listingProductCollection->getSelect()->joinLeft(
@@ -99,6 +108,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             '(`ebit`.`id` = `second_table`.`ebay_item_id`)',
             array('item_id')
         );
+
+        $listingProductCollection->getSelect()->join(
+            array('ea'=> $this->resourceConnection->getTableName('eav_attribute')),
+            '(`cpev`.`attribute_id` = `ea`.`attribute_id` AND `ea`.`attribute_code` = \'name\')',
+            array()
+        );
+
+        $listingProductCollection->getSelect()->where('`cpev`.`store_id` = ('.$dbSelect->__toString().')');
         // ---------------------------------------
 
         // add stock availability, status & visibility to select
@@ -114,6 +131,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $listingProductCollection->getSelect()->columns(
             array(
                 'account_id'            => 'l.account_id',
+                'store_id'              => 'l.store_id',
                 'marketplace_id'        => 'l.marketplace_id',
                 'product_id'            => 'main_table.product_id',
                 'product_name'          => 'cpev.value',
@@ -192,6 +210,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $listingOtherCollection->getSelect()->columns(
             array(
                 'account_id'            => 'main_table.account_id',
+                'store_id'              => new \Zend_Db_Expr(0),
                 'marketplace_id'        => 'main_table.marketplace_id',
                 'product_id'            => 'main_table.product_id',
                 'product_name'          => 'second_table.title',
@@ -238,6 +257,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             array('main_table' => $unionSelect),
             array(
                 'account_id',
+                'store_id',
                 'marketplace_id',
                 'product_id',
                 'product_name',
@@ -625,8 +645,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $startPriceText = $this->__('Start Price');
 
-            $iconHelpPath = $this->getViewFileUrl('Ess_M2ePro::images/i_logo.png');
-            $toolTipIconPath = $this->getSkinUrl('Ess_M2ePro::images/i_icon.png');
             $onlineCurrentPriceHtml = '';
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
@@ -649,17 +667,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 $onlineBuyItNowPriceHtml = '<strong>'.$buyItNowText.':</strong> '.$onlineBuyItNowStr;
             }
 
-            $intervalHtml = <<<HTML
-<img class="tool-tip-image"
-     style="vertical-align: middle;"
-     src="{$toolTipIconPath}"><span class="tool-tip-message" style="display:none; text-align: left; min-width: 140px;">
-    <img src="{$iconHelpPath}"><span style="color:gray;">
-        {$onlineCurrentPriceHtml}
-        <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
-        {$onlineReservePriceHtml}
-        {$onlineBuyItNowPriceHtml}
-    </span>
+            $intervalHtml = $this->getTooltipHtml(<<<HTML
+<span style="color:gray;">
+    {$onlineCurrentPriceHtml}
+    <strong>{$startPriceText}:</strong> {$onlineStartStr}<br/>
+    {$onlineReservePriceHtml}
+    {$onlineBuyItNowPriceHtml}
 </span>
+HTML
+            );
+
+            $intervalHtml = <<<HTML
+<div class="fix-magento-tooltip ebay-auction-grid-tooltip">{$intervalHtml}</div>
 HTML;
 
             if ($onlineCurrentPrice > $onlineStartPrice) {

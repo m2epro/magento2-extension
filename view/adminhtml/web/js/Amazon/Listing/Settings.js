@@ -37,7 +37,7 @@ define([
             Common.prototype.saveClick.call(this, url);
         },
 
-        saveAndEitClick: function (url, lastActiveTab, skipValidation) {
+        saveAndEditClick: function (url, lastActiveTab, skipValidation) {
             if (typeof skipValidation == 'undefined' && !this.isValidForm()) {
                 return;
             }
@@ -51,7 +51,7 @@ define([
             }
 
             if (lastActiveTab && url) {
-                var tabsUrl = '|tab=' + $('amazonListingEditTabs').select('.ui-state-active a')[0].id.split('_').pop();;
+                var tabsUrl = '|tab=' + jQuery('#amazonListingEditTabs').data().tabs.active.find('a')[0].id.split('_').pop();
                 url = url + 'back/' + base64_encode('edit' + tabsUrl) + '/';
             }
 
@@ -64,41 +64,6 @@ define([
 
         reloadSynchronizationTemplates: function () {
             AmazonListingSettingsObj.reload(M2ePro.url.get('getSynchronizationTemplates'), 'template_synchronization_id');
-        },
-
-        // ---------------------------------------
-
-        initSellingFormatTemplateAutocomplete: function () {
-            $('template_selling_format_autocomplete').remove();
-
-            var newInput = new Element('input', {
-                'id': 'template_selling_format_autocomplete',
-                'class': 'input-text',
-                'selected_id': '',
-                'style': 'width: 275px; color: gray;',
-                'value': M2ePro.text.typeTemplateNameHere,
-                'onblur': 'if (this.value.trim().length == 0) { this.value = M2ePro.text.typeTemplateNameHere; this.style.color = "gray"; }',
-                'onfocus': 'if (this.value == M2ePro.text.typeTemplateNameHere) { this.value = ""; this.style.color = ""}'
-            });
-
-            if (M2ePro.formData.template_selling_format_id > 0) {
-                newInput.setStyle({color: 'initial'});
-            }
-
-            $('template_selling_format_cell').insert({top: newInput});
-
-            AutoCompleteHandler.bind(
-                "template_selling_format_autocomplete",
-                M2ePro.autoCompleteData.url.getSellingFormatTemplates,
-                M2ePro.formData.template_selling_format_id > 0 ? M2ePro.formData.template_selling_format_id : '',
-                M2ePro.formData.template_selling_format_title,
-                AmazonListingSettingsObj.selling_format_template_id_change.bind(AmazonListingSettingsObj)
-            );
-
-            M2ePro.formData.template_selling_format_id = 0;
-            M2ePro.formData.template_selling_format_title = '';
-
-            $('template_selling_format_id').value = $('template_selling_format_autocomplete').readAttribute('selected_id');
         },
 
         // ---------------------------------------
@@ -118,11 +83,7 @@ define([
             }, 250);
         },
 
-        selling_format_template_id_change: function (autoCompleteId) {
-            if (parseInt(autoCompleteId) > 0) {
-                $('template_selling_format_id').value = autoCompleteId;
-            }
-
+        selling_format_template_id_change: function () {
             AmazonListingSettingsObj.checkMessages();
             AmazonListingSettingsObj.hideEmptyOption(this);
         },

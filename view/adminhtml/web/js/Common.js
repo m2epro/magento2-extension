@@ -145,8 +145,7 @@ define([
 
                 var tabsUrl = '';
                 if (typeof tabsId != 'undefined') {
-                    //todo
-                    //tabsUrl = '|tab=' + $$('#' + tabsId + ' a.active')[0].name;
+                    tabsUrl = '|tab=' + jQuery('#' + tabsId).data().tabs.active.find('a').attr('name');
                 }
 
                 url = M2ePro.url.get('formSubmit', {'back': base64_encode('edit' + tabsUrl)});
@@ -203,7 +202,7 @@ define([
 
             form.submit();
 
-            formaction = oldAction;
+            form.action = oldAction;
         },
 
         postForm: function(url, params)

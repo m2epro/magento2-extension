@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Amazon\Listing;
 
 use Ess\M2ePro\Model\Account;
 
-class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractDb
+class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child\AbstractModel
 {
     protected $_isPkAutoIncrement = false;
 
@@ -44,7 +44,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     public function getAllRepricingSkus(Account $account)
     {
-        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
+        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
 

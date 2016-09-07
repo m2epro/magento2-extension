@@ -1,0 +1,51 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection\OtherIssues $this */
+?>
+
+<table class="form-list" cellspacing="0" cellpadding="0">
+
+    <?php if ($this->isMagicQuotesEnabled()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('PHP Magic Quotes'); ?>: </label>
+            </td>
+            <td class="value">
+                <span style="color: red"><b>Enabled</b></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($this->isGdLibraryUnAvailable()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('PHP GD Library'); ?>: </label>
+            </td>
+            <td class="value">
+                <span style="color: red"><b>Not Installed</b></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($this->isZendOpcacheAvailable()) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Zend Opcache'); ?>: </label>
+            </td>
+            <td class="value">
+                <span style="color: red"><b>Enabled</b></span>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if ($this->isSystemLogNotEmpty()) : ?>
+            <tr>
+                <td class="label">
+                    <label><?php echo $this->__('System Log'); ?>: </label>
+                </td>
+                <td class="value">
+                    <a style="margin-left: 10px;" href="<?php echo $this->getUrl('*/controlPanel_database/manageTable', array('table' => 'm2epro_system_log')); ?>">Show</a>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+</table>

@@ -56,7 +56,7 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function _construct()
     {
         parent::_construct();
-        $this->_init('Ebay\Feedback');
+        $this->_init('Ess\M2ePro\Model\ResourceModel\Ebay\Feedback');
     }
 
     //########################################

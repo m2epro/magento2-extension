@@ -133,7 +133,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'general_id'                    => 'second_table.general_id',
                 'is_afn_channel'                => 'second_table.is_afn_channel',
                 'is_variation_parent'           => 'second_table.is_variation_parent',
-//                'is_repricing'                  => 'second_table.is_repricing',
                 'variation_child_statuses'      => 'second_table.variation_child_statuses',
                 'online_sku'                    => 'second_table.sku',
                 'online_qty'                    => 'second_table.online_qty',
@@ -210,6 +209,67 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             )
         );
 
+        $alprTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+            ->getResource()->getMainTable();
+        $listingProductCollection->getSelect()->joinLeft(
+            array('malpr' => $alprTable),
+            '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
+            array(
+                'is_repricing' => 'listing_product_id',
+                'is_repricing_disabled' => 'is_online_disabled'
+            )
+        );
+
+        $alpTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product')->getResource()->getMainTable();
+        $listingProductCollection->getSelect()->joinLeft(
+            new \Zend_Db_Expr('(
+                SELECT
+                    `malp`.`variation_parent_id`,
+                    COUNT(*) AS `variation_repricing_enabled_count`
+                FROM `'. $alpTable .'` as malp
+                LEFT JOIN `'.$alprTable.'`
+                    AS `malpr` ON (`malp`.`listing_product_id` = `malpr`.`listing_product_id`)
+                WHERE `malp`.`listing_product_id` IS NOT NULL AND `malpr`.`is_online_disabled` = 0
+                GROUP BY `malp`.`variation_parent_id`
+            )'),
+            'second_table.listing_product_id=t_2.variation_parent_id',
+            array(
+                'variation_repricing_enabled_count' => 'variation_repricing_enabled_count',
+            )
+        );
+
+        $listingProductCollection->getSelect()->joinLeft(
+            new \Zend_Db_Expr('(
+                SELECT
+                    `malp`.`variation_parent_id`,
+                    COUNT(*) AS `variation_repricing_disabled_count`
+                FROM `'. $alpTable .'` as malp
+                LEFT JOIN `'.$alprTable.'`
+                    AS `malpr` ON (`malp`.`listing_product_id` = `malpr`.`listing_product_id`)
+                WHERE `malp`.`listing_product_id` IS NOT NULL AND `malpr`.`is_online_disabled` = 1
+                GROUP BY `malp`.`variation_parent_id`
+            )'),
+            'second_table.listing_product_id=t_3.variation_parent_id',
+            array(
+                'variation_repricing_disabled_count' => 'variation_repricing_disabled_count',
+            )
+        );
+
+        $listingProductCollection->getSelect()->joinLeft(
+            new \Zend_Db_Expr('(
+                SELECT
+                    `malp`.`variation_parent_id`,
+                    COUNT(*) AS `variation_afn_count`
+                FROM `'. $alpTable .'` as malp
+                WHERE `malp`.`is_afn_channel` = 1
+                GROUP BY `malp`.`variation_parent_id`
+            )'),
+            'second_table.listing_product_id=t_4.variation_parent_id',
+            array(
+                'variation_afn_count' => 'variation_afn_count',
+            )
+        );
+
         // ---------------------------------------
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->getSelect()->distinct();
@@ -246,7 +306,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'general_id'                    => 'second_table.general_id',
                 'is_afn_channel'                => 'second_table.is_afn_channel',
                 'is_variation_parent'           => new \Zend_Db_Expr('NULL'),
-//                'is_repricing'             => 'second_table.is_repricing',
                 'variation_child_statuses'      => new \Zend_Db_Expr('NULL'),
                 'online_sku'                    => 'second_table.sku',
                 'online_qty'                    => 'second_table.online_qty',
@@ -257,7 +316,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'min_online_price'              => 'second_table.online_price',
                 'max_online_price'              => 'second_table.online_price',
                 'variation_min_price'           => new \Zend_Db_Expr('NULL'),
-                'variation_max_price'           => new \Zend_Db_Expr('NULL')
+                'variation_max_price'           => new \Zend_Db_Expr('NULL'),
+                'is_repricing'                  => 'second_table.is_repricing',
+                'is_repricing_disabled'         => 'second_table.is_repricing_disabled',
+                'variation_repricing_enabled_count'  => new \Zend_Db_Expr('NULL'),
+                'variation_repricing_disabled_count' => new \Zend_Db_Expr('NULL'),
+                'variation_afn_count'                => new \Zend_Db_Expr('NULL')
             )
         );
         // ---------------------------------------
@@ -293,7 +357,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'general_id',
                 'is_afn_channel',
                 'is_variation_parent',
-//                'is_repricing',
                 'variation_child_statuses',
                 'online_sku',
                 'online_qty',
@@ -304,7 +367,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'min_online_price',
                 'max_online_price',
                 'variation_min_price',
-                'variation_max_price'
+                'variation_max_price',
+                'is_repricing',
+                'is_repricing_disabled',
+                'variation_repricing_enabled_count',
+                'variation_repricing_disabled_count',
+                'variation_afn_count'
             )
         );
 
@@ -413,9 +481,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         );
 
-//        if ($this->getHelper('Component\Amazon')->isRepricingEnabled()) {
-//            $priceColumn['filter'] = 'M2ePro/adminhtml_common_amazon_grid_column_filter_price';
-//        }
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            $this->activeRecordFactory->getObject('Amazon\Account\Repricing')->getCollection()->getSize() > 0) {
+            $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
+        }
 
         $this->addColumn('online_price', $priceColumn);
 
@@ -506,7 +575,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         } else {
             $urlParams = array();
             $urlParams['id'] = $row->getData('listing_id');
-            $urlParams['back'] = $this->getHelper('Data')->makeBackUrlParam('*/adminhtml_amazon_listing/search');
+            $urlParams['back'] = $this->getHelper('Data')->makeBackUrlParam('*/amazon_listing/search');
 
             $listingUrl = $this->getUrl('*/amazon_listing/view',$urlParams);
             $listingTitle = $this->getHelper('Data')->escapeHtml($row->getData('listing_title'));
@@ -653,9 +722,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         <div class="in-stock">{$inStock}: <span></span></div>
     </div>
     <a href="javascript:void(0)"
-        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}','{$productId}',{$accountId})">
-        {$afn}
-    </a>
+        onclick="AmazonListingAfnQtyObj.showAfnQty(this,'{$sku}','{$productId}',{$accountId})">{$afn}</a>
 </div>
 HTML;
             }
@@ -694,11 +761,17 @@ HTML;
             return $value;
         }
 
-        if ($value == 0 && (bool)$row->getData('is_afn_channel')) {
-            return $this->__('AFN');
+        $resultValue = $this->__('AFN');
+
+        if ($row->getData('variation_afn_count')) {
+            $resultValue = $resultValue."&nbsp;[".$row->getData('variation_afn_count')."]";
         }
 
-        return $value . '<br/>' . $this->__('AFN');
+        if ($value > 0) {
+            $resultValue = $value . '<br/>' . $resultValue;
+        }
+
+        return $resultValue;
     }
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
@@ -709,29 +782,59 @@ HTML;
 
         $repricingHtml ='';
 
-        /*
-        if (!$row->getData('is_variation_parent') &&
-            Mage::helper('M2ePro/Component_Amazon')->isRepricingEnabled() &&
-            (int)$row->getData('is_repricing') === \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_YES) {
 
-            $text = $this->__(
-                'This product is used by Amazon Repricing Tool.
-                     The Price cannot be updated through the M2E Pro.'
-            );
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            ($row->getData('is_repricing') || $row->getData('is_variation_parent'))
+        ) {
 
-            $repricingHtml = <<<HTML
-<span style="float:right; text-align: left;">&nbsp;
-    <img class="tool-tip-image"
-         style="vertical-align: middle; width: 16px;"
-         src="{$this->getSkinUrl('M2ePro/images/money.png')}">
-    <span class="tool-tip-message tool-tip-message tip-left" style="display:none;">
-        <img src="{$this->getSkinUrl('M2ePro/images/i_icon.png')}">
-        <span>{$text}</span>
-    </span>
-</span>
+            $enabledCount  = $row->getData('variation_repricing_enabled_count');
+            $disabledCount = $row->getData('variation_repricing_disabled_count');
+
+            if ($row->getData('is_variation_parent') && ($enabledCount || $disabledCount)) {
+
+                if ($enabledCount && $disabledCount) {
+                    $icon = 'repricing-enabled-disabled';
+                    $countHtml = '['.$enabledCount.'/'.$disabledCount.']';
+                    $text = $this->__('This Parent has either Enabled and Disabled for Repricing Child Products.');
+                } elseif ($enabledCount) {
+                    $icon = 'repricing-enabled';
+                    $countHtml = '['.$enabledCount.']';
+                    $text = $this->__('All Child Product of this Parent are Enabled for Repricing.');
+                } else {
+                    $icon = 'repricing-disabled';
+                    $countHtml = '['.$disabledCount.']';
+                    $text = $this->__('All Child Products of this Parent are Disabled for Repricing.');
+                }
+
+                $repricingHtml = <<<HTML
+<br />
+<div class="fix-magento-tooltip {$icon}" style="float:right;">
+    {$this->getTooltipHtml($text)}
+</div>
+    &nbsp;$countHtml&nbsp;
 HTML;
+            } elseif (!$row->getData('is_variation_parent')) {
+                $icon = 'repricing-enabled';
+                $text = $this->__(
+                    'This product is used by Amazon Repricing Tool.
+                 The Price cannot be updated through the M2E Pro.'
+                );
+
+                if ((int)$row->getData('is_repricing_disabled') == 1) {
+                    $icon = 'repricing-disabled';
+                    $text = $this->__(
+                        'This product is disabled on Amazon Repricing Tool.
+                     The Price is updated through the M2E Pro.'
+                    );
+                }
+
+                $repricingHtml = <<<HTML
+&nbsp;<div class="fix-magento-tooltip {$icon}" style="float:right;">
+    {$this->getTooltipHtml($text)}
+</div>
+HTML;
+            }
         }
-        */
 
         $onlineMinPrice = $row->getData('min_online_price');
         $onlineMaxPrice = $row->getData('max_online_price');
@@ -756,7 +859,8 @@ HTML;
             $onlineMinPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMinPrice);
             $onlineMaxPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineMaxPrice);
 
-            return $onlineMinPriceStr . (($onlineMinPrice != $onlineMaxPrice) ? ' &ndash; ' . $onlineMaxPriceStr :  '');
+            return $onlineMinPriceStr . (($onlineMinPrice != $onlineMaxPrice) ?
+                ' &ndash; ' . $onlineMaxPriceStr :  '') . $repricingHtml;
         }
 
         $onlinePrice = $row->getData('online_price');
@@ -766,10 +870,27 @@ HTML;
             $priceValue = $this->localeCurrency->getCurrency($currency)->toCurrency($onlinePrice);
         }
 
+        if ($row->getData('is_repricing') &&
+            !$row->getData('is_repricing_disabled') &&
+            !$row->getData('is_variation_parent')
+        ) {
+            $accountId = $row->getData('account_id');
+            $sku = $row->getData('online_sku');
+
+            $priceValue =<<<HTML
+<a id="m2epro_repricing_price_value_{$sku}"
+   class="m2epro-repricing-price-value"
+   sku="{$sku}"
+   account_id="{$accountId}"
+   href="javascript:void(0)"
+   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$priceValue}</a>
+HTML;
+        }
+
         $resultHtml = '';
 
         $salePrice = $row->getData('online_sale_price');
-        if (!$row->getData('is_variation_parent') && (float)$salePrice > 0) {
+        if (!$row->getData('is_variation_parent') && (float)$salePrice > 0 && !$row->getData('is_repricing')) {
             $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
 
             $startDateTimestamp = strtotime($row->getData('online_sale_price_start_date'));
@@ -1014,14 +1135,15 @@ HTML;
 
         }
 
-        /*
-        if (Mage::helper('M2ePro/Component_Amazon')->isRepricingEnabled() && !empty($value['is_repricing'])) {
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
-            $condition .= 'is_repricing = ' . \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_YES;
+
+            $condition .= 'is_repricing > 0 OR
+                           variation_repricing_enabled_count > 0 OR
+                           variation_repricing_disabled_count > 0';
         }
-        */
 
         $collection->getSelect()->where($condition);
     }
@@ -1043,11 +1165,14 @@ HTML;
     protected function _toHtml() 
     {
         $this->jsUrl->add($this->getUrl('*/amazon_listing/getAFNQtyBySku'), 'amazon_listing/getAFNQtyBySku');
+        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_repricing/getUpdatedPriceBySkus'));
 
         $this->js->addRequireJs([
-            'alq' => 'M2ePro/Amazon/Listing/AfnQty'
+            'alq' => 'M2ePro/Amazon/Listing/AfnQty',
+            'alprp' => 'M2ePro/Amazon/Listing/Product/Repricing/Price'
         ], <<<JS
         window.AmazonListingAfnQtyObj = new AmazonListingAfnQty();
+        window.AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
 JS
         );
 

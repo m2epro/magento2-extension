@@ -14,20 +14,25 @@ abstract class Main extends Base
 
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        parent::preDispatch($request);
+        $result = parent::preDispatch($request);
+
+        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
+            return $this->_redirect('*/maintenance');
+        }
+
+        if (empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
+            return $this->_redirect('admin/dashboard');
+        }
 
         $blockerWizardNick = $this->getBlockerWizardNick();
         if ($blockerWizardNick !== false) {
             $this->_redirect('*/wizard_' . $blockerWizardNick);
-            return;
+            return false;
         }
 
         $this->addNotificationMessages();
 
         if ($request->isGet() && !$request->isPost() && !$request->isXmlHttpRequest()) {
-            if (empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
-                throw new \Ess\M2ePro\Model\Exception('At least 1 channel of current View should be enabled.');
-            }
 
             try {
                 $this->getHelper('Client')->updateBackupConnectionData(false);
@@ -42,8 +47,8 @@ abstract class Main extends Base
             } catch (\Exception $exception) {}
         }
 
-        /** @var Maintenance\Developer $maintenanceHelper */
-        $maintenanceHelper = $this->getHelper('Module\Maintenance\Developer');
+        /** @var Maintenance\Debug $maintenanceHelper */
+        $maintenanceHelper = $this->getHelper('Module\Maintenance\Debug');
 
         if ($maintenanceHelper->isEnabled()) {
 
@@ -52,6 +57,21 @@ abstract class Main extends Base
             } elseif ($maintenanceHelper->isExpired()) {
                 $maintenanceHelper->disable();
             }
+        }
+
+        return $result;
+    }
+
+    //########################################
+
+    protected function initResultPage()
+    {
+        parent::initResultPage();
+
+        if ($this->isContentLocked()) {
+            $this->resultPage->getLayout()->unsetChild('page.wrapper', 'page_content');
+            $this->resultPage->getLayout()->unsetChild('header', 'header.inner.left');
+            $this->resultPage->getLayout()->unsetChild('header', 'header.inner.right');
         }
     }
 
@@ -109,16 +129,21 @@ abstract class Main extends Base
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()) {
-
+            
+            $staticNotification = $this->addStaticContentNotification();
             $browserNotification = $this->addBrowserNotifications();
             $maintenanceNotification = $this->addMaintenanceNotifications();
 
-            $muteMessages = $browserNotification || $maintenanceNotification;
+            $muteMessages = $staticNotification || $browserNotification || $maintenanceNotification;
 
             if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
                 $this->addLicenseNotifications();
             }
 
+            if (!$muteMessages) {
+                $this->addStaticContentWarningNotification();
+            }
+            
             $this->addServerNotifications();
 
             if (!$muteMessages) {
@@ -145,11 +170,11 @@ abstract class Main extends Base
 
     protected function addMaintenanceNotifications()
     {
-        if (!$this->getHelper('Module\Maintenance\Developer')->isEnabled()) {
+        if (!$this->getHelper('Module\Maintenance\Debug')->isEnabled()) {
             return false;
         }
 
-        if ($this->getHelper('Module\Maintenance\Developer')->isOwner()) {
+        if ($this->getHelper('Module\Maintenance\Debug')->isOwner()) {
 
             $this->getMessageManager()->addNotice($this->__(
                 'Maintenance is Active.'
@@ -167,6 +192,24 @@ abstract class Main extends Base
 
         return true;
     }
+    
+    protected function addStaticContentNotification()
+    {
+        if (!$this->getHelper('Magento')->isProduction()) {
+            return false;
+        }
+        
+        if (!$this->getHelper('Module')->isStaticContentDeployed()) {
+            $this->getMessageManager()->addErrorMessage(
+                $this->__('Run "setup:static-content:deploy" TODO TEXT'),
+                self::GLOBAL_MESSAGES_GROUP
+            );
+
+            return true;
+        }
+        
+        return false;
+    }
 
     protected function addLicenseNotifications()
     {
@@ -174,6 +217,8 @@ abstract class Main extends Base
         $this->addLicenseValidationFailNotifications() ||
         $this->addLicenseStatusNotifications();
     }
+
+    // ---------------------------------------
 
     protected function addServerNotifications()
     {
@@ -185,22 +230,44 @@ abstract class Main extends Base
 
                 switch ($message['type']) {
                     case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_ERROR:
-                        $this->getMessageManager()->addError($this->__($message['text']));
+                        $this->getMessageManager()->addError(
+                            $this->prepareServerNotificationMessage($message),
+                            self::GLOBAL_MESSAGES_GROUP
+                        );
                         break;
                     case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_WARNING:
-                        $this->getMessageManager()->addWarning($this->__($message['text']));
+                        $this->getMessageManager()->addWarning(
+                            $this->prepareServerNotificationMessage($message),
+                            self::GLOBAL_MESSAGES_GROUP
+                        );
                         break;
                     case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_SUCCESS:
-                        $this->getMessageManager()->addSuccess($this->__($message['text']));
+                        $this->getMessageManager()->addSuccess(
+                            $this->prepareServerNotificationMessage($message),
+                            self::GLOBAL_MESSAGES_GROUP
+                        );
                         break;
                     case \Ess\M2ePro\Helper\Module::SERVER_MESSAGE_TYPE_NOTICE:
                     default:
-                        $this->getMessageManager()->addNotice($this->__($message['text']));
+                        $this->getMessageManager()->addNotice(
+                            $this->prepareServerNotificationMessage($message),
+                            self::GLOBAL_MESSAGES_GROUP
+                        );
                         break;
                 }
             }
         }
     }
+
+    protected function prepareServerNotificationMessage(array $message)
+    {
+        if ($message['title']) {
+            return "<strong>{$this->__($message['title'])}</strong><br/>{$this->__($message['text'])}";
+        }
+        return $this->__($message['text']);
+    }
+
+    // ---------------------------------------
 
     protected function addLicenseActivationNotifications()
     {
@@ -282,16 +349,70 @@ abstract class Main extends Base
 
         return false;
     }
+    
+    protected function addStaticContentWarningNotification()
+    {
+        if (!$this->getHelper('Magento')->isProduction()) {
+            return;
+        }
+        
+        $skipMessageForVersion = $this->modelFactory->getObject('Config\Manager\Cache')->getGroupValue(
+            '/global/notification/message/', 'skip_static_content_validation_message'
+        );
+
+        if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getVersion(), '==')) {
+            return;
+        }
+
+        $deployDate = $this->getHelper('Magento')->getLastStaticContentDeployDate();
+        if (!$deployDate) {
+            return;
+        }
+        
+        $lastDbModificationDate = $this->getHelper('Module')->getLastUpgradeDate();
+        if (empty($lastDbModificationDate)) {
+            $lastDbModificationDate = $this->getHelper('Module')->getInstallationDate();
+        }
+
+        if (empty($lastDbModificationDate)) {
+            return;
+        }
+
+        $lastDbModificationDate = new \DateTime($lastDbModificationDate, new \DateTimeZone('UTC'));
+        $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
+
+        /** We check only database version because we can't retrieve date of update our module from composer */
+        if ($deployDate > $lastDbModificationDate) {
+            return;
+        }
+
+        $url = $this->getUrl('*/general/skipStaticContentValidationMessage',
+            ['skip_message' => true, 'back' => base64_encode($this->getUrl('*/*/*'))]
+        );
+
+        $this->addExtendedWarningMessage(
+            $this->__(
+                'Run "setup:static-content:deploy" TODO TEXT 
+                    <a href="'.$url.'" class="skippable-global-message">Don\'t Show Again</a>'
+            ),
+            self::GLOBAL_MESSAGES_GROUP
+        );
+    }
 
     //########################################
 
     private function isContentLocked()
     {
-        return $this->getHelper('Module\Maintenance\Setup')->isEnabled() || $this->getHelper('Client')->isBrowserIE() ||
-                (
-                    $this->getHelper('Module\Maintenance\Developer')->isEnabled() &&
-                    !$this->getHelper('Module\Maintenance\Developer')->isOwner()
-                );
+        return $this->getHelper('Module\Maintenance\General')->isEnabled()
+                || $this->getHelper('Client')->isBrowserIE()
+                || (
+                       $this->getHelper('Magento')->isProduction() &&
+                       !$this->getHelper('Module')->isStaticContentDeployed()
+                   )
+                || (
+                       $this->getHelper('Module\Maintenance\Debug')->isEnabled() &&
+                       !$this->getHelper('Module\Maintenance\Debug')->isOwner()
+                   );
     }
 
     private function getBlockerWizardNick()

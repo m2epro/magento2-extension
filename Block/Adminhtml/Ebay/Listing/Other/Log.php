@@ -61,9 +61,9 @@ class Log extends AbstractContainer
                 'content' => $this->__('This Log contains all information about Actions, which were done on 3rd Party
                                         Listings.<br/><br/>
                                         More detailed information about ability to work with this Page you can find
-                                        <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(
-                        NULL, NULL, 'x/MAAJAQ#Logs.-3rdPartyListingsLog(advancedmodeonly)'
+                                        <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                        'x/MAAJAQ#Logs.-3rdPartyListingsLog(advancedmodeonly)'
                     )
                 )
             ]);

@@ -45,7 +45,8 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             $backUrl = $this->getUrl('*/*/index', array(
                 'id' => $listingId,
                 'skip_products_steps' => empty($tempProducts),
-                'step' => 3
+                'step' => 3,
+                'wizard' => $this->getRequest()->getParam('wizard')
             ));
 
             $this->clearSession();

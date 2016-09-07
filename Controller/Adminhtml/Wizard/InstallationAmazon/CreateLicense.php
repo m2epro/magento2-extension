@@ -12,6 +12,7 @@ class CreateLicense extends InstallationAmazon
             'email',
             'firstname',
             'lastname',
+            'phone',
             'country',
             'city',
             'postal_code',
@@ -47,7 +48,8 @@ class CreateLicense extends InstallationAmazon
         $licenseResult = $this->getHelper('Module\License')->obtainRecord(
             $licenseData['email'],
             $licenseData['firstname'], $licenseData['lastname'],
-            $licenseData['country'], $licenseData['city'], $licenseData['postal_code']
+            $licenseData['country'], $licenseData['city'],
+            $licenseData['postal_code'], $licenseData['phone']
         );
 
         $this->setJsonContent(array('status' => $licenseResult));

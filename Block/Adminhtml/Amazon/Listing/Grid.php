@@ -11,20 +11,17 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
     protected $amazonFactory;
-    protected $storeManager;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
         $this->amazonFactory = $amazonFactory;
-        $this->storeManager = $storeManager;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -235,12 +232,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
         $accountTitle = $row->getData('account_title');
         $marketplaceTitle = $row->getData('marketplace_title');
 
-        // TODO
-        //$storeModel = $this->storeManager->getStore($row->getStoreId());
-        $storeModel = $this->storeManager->getStore();
-        $storeView = $storeModel->getWebsite()->getName();
+        $storeModel = $this->_storeManager->getStore($row->getStoreId());
+        $storeView = $this->_storeManager->getWebsite($storeModel->getWebsiteId())->getName();
         if (strtolower($storeView) != 'admin') {
-            $storeView .= ' > '.$storeModel->getGroup()->getName();
+            $storeView .= ' > '.$this->_storeManager->getGroup($storeModel->getStoreGroupId())->getName();
             $storeView .= ' > '.$storeModel->getName();
         } else {
             $storeView = $this->__('Admin (Default Values)');

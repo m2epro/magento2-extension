@@ -3,7 +3,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Payment\Edit\Form;
 
 class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    protected $elementFactory;
     protected $paypalConfigFactory;
 
     public $formData = [];
@@ -12,7 +11,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     //########################################
 
     public function __construct(
-        \Magento\Framework\Data\Form\ElementFactory $elementFactory,
         \Magento\Paypal\Model\Config\Factory $paypalConfigFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -20,7 +18,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         array $data = []
     )
     {
-        $this->elementFactory = $elementFactory;
         $this->paypalConfigFactory = $paypalConfigFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
@@ -105,12 +102,13 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'label' => $this->__('Immediate Payment Required'),
                 'value' => 1,
                 'checked' => (bool)$this->formData['pay_pal_immediate_payment'],
-                'class' => 'input-text admin__control-checkbox',
-                'after_element_html' => '<label for="pay_pal_mode"></label>',
+                'class' => 'admin__control-checkbox',
                 'field_extra_attributes' => 'id="pay_pal_immediate_payment_container" style="display: none;"',
-                'tooltip' => $this->__('This is only applicable to Items Listed on PayPal-enabled
-                                        Marketplaces in Categories that support immediate payment,
-                                        when a Seller has a Premier or Business PayPal Account.')
+                'after_element_html' => '<label for="pay_pal_mode"></label>'.$this->getTooltipHtml($this->__(
+                    'This is only applicable to Items Listed on PayPal-enabled
+                    Marketplaces in Categories that support immediate payment,
+                    when a Seller has a Premier or Business PayPal Account.'
+                ), true)
             ]
         );
 
@@ -217,9 +215,9 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $payPalConfig = $this->paypalConfigFactory->create('Magento\Paypal\Model\Config');
         $payPalConfig->setStoreId($store->getId());
 
-        if ($payPalConfig->getValue('business_account')) {
+        if ($businessAccount = $payPalConfig->getValue('business_account')) {
             $default['pay_pal_mode'] = 1;
-            $default['pay_pal_email_address'] = $payPalConfig->business_account;
+            $default['pay_pal_email_address'] = $businessAccount;
         }
         // ---------------------------------------
 
@@ -242,11 +240,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $policyLocalization = $this->getData('policy_localization');
 
         if (!empty($policyLocalization)) {
-            /** @var ]Ess\M2ePro\Model\Magento\Translate $translator */
-            //TODO
-//            $translator = Mage::getModel('M2ePro/Magento\Translate');
-//            $translator->setLocale($policyLocalization);
-//            $translator->init();
             $translator = $this->getHelper('Module\Translation');
 
             foreach ($data['services'] as $key => $item) {

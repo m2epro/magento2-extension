@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel;
 
-class Listing extends ActiveRecord\Component\Parent\AbstractDb
+class Listing extends ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################
 

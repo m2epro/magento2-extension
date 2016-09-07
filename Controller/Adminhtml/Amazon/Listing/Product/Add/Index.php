@@ -80,7 +80,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         }
 
         $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SourceMode'));
-        $this->setComponentPageHelpLink('Add+Magento+Products');
+        $this->setPageHelpLink('x/jgYtAQ');
     }
 
     //########################################
@@ -104,6 +104,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             'products_source', \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT
         );
 
+        $this->setRuleData('amazon_rule_add_listing_product');
+
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
         if ($this->getRequest()->isPost()) {
@@ -120,7 +122,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Adding+Products+from+the+List');
+        $this->setPageHelpLink('x/4wYtAQ');
 
         $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SourceMode\Product'));
     }
@@ -144,6 +146,8 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             'products_source',
             \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_CATEGORY
         );
+
+        $this->setRuleData('amazon_rule_add_listing_product');
 
         $prefix = $this->getHideProductsInOtherListingsPrefix();
 
@@ -174,7 +178,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Adding+Products+from+Category');
+        $this->setPageHelpLink('x/4wYtAQ');
 
         $gridContainer = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category');
         $this->addContent($gridContainer);
@@ -226,13 +230,13 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=18188583');
+        $this->setPageHelpLink('x/NQctAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Search Existing Amazon Products (ASIN/ISBN)')
         );
 
-        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=19728181');
+        $this->setPageHelpLink('x/NQctAQ');
 
         $this->addContent($this->createBlock('Amazon\Listing\Product\Add\SearchAsin'));
     }
@@ -248,7 +252,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=18188493');
+        $this->setPageHelpLink('x/SwctAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('New ASIN/ISBN Creation'));
 
@@ -347,5 +351,41 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
         return $connection->fetchCol($select);
     }
 
+    //########################################
+
+    protected function setRuleData($prefix)
+    {
+        $listingData = $this->getHelper('Data\GlobalData')
+                            ->getValue('listing_for_products_add')
+                            ->getData();
+
+        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
+        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            [
+                'prefix' => $prefix,
+                'store_id' => $storeId,
+            ]
+        );
+
+        $ruleParam = $this->getRequest()->getPost('rule');
+        if (!empty($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue(
+                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+            );
+        } elseif (!is_null($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue($prefix, []);
+        }
+
+        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        if (!empty($sessionRuleData)) {
+            $ruleModel->loadFromSerialized($sessionRuleData);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
+    }
+    
     //########################################
 }

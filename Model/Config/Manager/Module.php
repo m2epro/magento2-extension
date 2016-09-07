@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Config\Manager;
 
-class Module extends AbstractManager
+class Module extends AbstractModel
 {
     //########################################
 

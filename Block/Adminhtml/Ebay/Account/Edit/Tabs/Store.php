@@ -9,8 +9,8 @@ class Store extends AbstractForm
 {
     protected function _prepareForm()
     {
-        $account = $this->getHelper('Data\GlobalData')->getValue('temp_data')
-            ? $this->getHelper('Data\GlobalData')->getValue('temp_data') : array();
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account')
+            ? $this->getHelper('Data\GlobalData')->getValue('edit_account') : array();
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $defaults = array(
@@ -43,9 +43,9 @@ class Store extends AbstractForm
                 'content' => $this->__(<<<HTML
 <p>This tab displays information about your eBay Store and might be helpful for the
 Category settings via M2E Pro.</p><br>
-<p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
+<p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
-                    , $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/MAItAQ'))
+                    , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MAItAQ'))
             ]
         );
 

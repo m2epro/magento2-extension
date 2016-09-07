@@ -55,7 +55,7 @@ class Grid extends AbstractGrid
                 '(mea.account_id = `main_table`.account_id)',
                 array('account_mode' => 'mode'))
             ->joinLeft(
-                array('so' => $this->resourceConnection->getTableName('sales_order')), //todo
+                array('so' => $this->resourceConnection->getTableName('sales_order')),
                 '(so.entity_id = `main_table`.magento_order_id)',
                 array('magento_order_num' => 'increment_id'));
 
@@ -100,6 +100,7 @@ class Grid extends AbstractGrid
             'align'  => 'left',
             'type'   => 'datetime',
             'format' => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'  => 'purchase_create_date',
             'width'  => '170px',
             'frame_callback' => array($this, 'callbackPurchaseCreateDate'),
@@ -221,11 +222,6 @@ class Grid extends AbstractGrid
             'general' => $this->__('General'),
         );
 
-        // TODO NOT SUPPORTED FEATURES
-//        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-//            $groups['in_store_pickup'] = $this->__('In-Store Pickup');
-//        }
-
         $this->getMassactionBlock()->setGroups($groups);
 
         // Set mass-action
@@ -261,29 +257,6 @@ class Grid extends AbstractGrid
         ), 'general');
         // ---------------------------------------
 
-        // TODO NOT SUPPORTED FEATURES
-//        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-//            return parent::_prepareMassaction();
-//        }
-
-//        $this->getMassactionBlock()->addItem('mark_as_ready_for_pickup', array(
-//            'label'    => $this->__('Mark as Ready For Pickup'),
-//            'url'      => $this->getUrl('*/ebay_order/markAsReadyForPickup'),
-//            'confirm'  => $this->__('Are you sure?')
-//        ), 'in_store_pickup');
-//
-//        $this->getMassactionBlock()->addItem('mark_as_picked_up', array(
-//            'label'    => $this->__('Mark as Picked Up'),
-//            'url'      => $this->getUrl('*/ebay_order/markAsPickedUp'),
-//            'confirm'  => $this->__('Are you sure?')
-//        ), 'in_store_pickup');
-//
-//        $this->getMassactionBlock()->addItem('mark_as_cancelled', array(
-//            'label'    => $this->__('Mark as Cancelled'),
-//            'url'      => $this->getUrl('*/ebay_order/markAsCancelled'),
-//            'confirm'  => $this->__('Are you sure?')
-//        ), 'in_store_pickup');
-
         return parent::_prepareMassaction();
     }
 
@@ -305,7 +278,13 @@ class Grid extends AbstractGrid
             }
         }
 
-        return $returnString.$this->getViewLogIconHtml($row->getId());
+        $logIconHtml = $this->getViewLogIconHtml($row->getId());
+
+        if ($logIconHtml !== '') {
+            return '<div style="min-width: 100px">' . $returnString . $logIconHtml . '</div>';
+        }
+
+        return $returnString;
     }
 
     private function getViewLogIconHtml($orderId)
@@ -342,21 +321,21 @@ class Grid extends AbstractGrid
         // ---------------------------------------
 
         $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__(
                 'Last order Action was completed successfully.'
             ),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__(
                 'Last order Action was completed with error(s).'
             ),
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => $this->__(
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__(
                 'Last order Action was completed with warning(s).'
             )
         );
 
         $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING => 'warning'
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
         );
 
         $summary = $this->createBlock('Log\Grid\Summary')->setData(array(
@@ -405,26 +384,6 @@ class Grid extends AbstractGrid
             $returnString .= '<br/> [ <b>SM: </b> # ' . $row->getChildObject()->getData('selling_manager_id') . ' ]';
         }
 
-        // TODO NOT SUPPORTED FEATURES
-        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-            return $returnString;
-        }
-
-        if (empty($row->getChildObject()->getData('shipping_details'))) {
-            return $returnString;
-        }
-
-        $shippingDetails = json_decode($row->getChildObject()->getData('shipping_details'), true);
-
-        // TODO NOT SUPPORTED FEATURES
-        if (empty($shippingDetails['in_store_pickup_details'])) {
-            return $returnString;
-        }
-
-        $skinUrl = $this->getViewFileUrl('M2ePro');
-
-        $returnString = '<img src="'.$skinUrl.'/images/in_store_pickup.png" />&nbsp;'.$returnString;
-
         return $returnString;
     }
 
@@ -465,7 +424,7 @@ class Grid extends AbstractGrid
                 $orderItemId = $item->getId();
                 $orderItemEditLabel = $this->__('edit');
 
-                $js = "{OrderEditItemHandlerObj.edit('{$gridId}', {$orderItemId});}";
+                $js = "{OrderEditItemObj.edit('{$gridId}', {$orderItemId});}";
 
                 $editItemHtml = <<<HTML
 <span>&nbsp;<a href="javascript:void(0);" onclick="{$js}">[{$orderItemEditLabel}]</a></span>
@@ -698,7 +657,7 @@ HTML;
         $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
         $tempGridIds = json_encode($tempGridIds);
 
-        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractLog'));
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
 
         $this->jsUrl->addUrls([
             'ebay_order/view' => $this->getUrl(

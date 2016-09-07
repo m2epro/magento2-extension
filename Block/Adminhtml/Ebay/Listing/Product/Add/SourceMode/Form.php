@@ -28,8 +28,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     be added into it. <br> The Products you add to the Listing will further be Listed on eBay.</p><br>
                     <p>There are several different options of how Magento products can be found/selected 
                     and added to the Listing.</p><br>
-                    <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/dwItAQ')
+                    <p>More detailed information you can find 
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/dwItAQ')
                 )
             ]
         );

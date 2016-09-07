@@ -20,8 +20,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
     private $productBuilderFactory;
     
-    private $eventManager;
-
     private $productFactory;
 
     /** @var $channelItem \Ess\M2ePro\Model\Amazon\Item */
@@ -31,7 +29,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Product\BuilderFactory $productBuilderFactory,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -45,7 +42,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     )
     {
         $this->productBuilderFactory = $productBuilderFactory;
-        $this->eventManager = $eventManager;
         $this->productFactory = $productFactory;
         parent::__construct(
             $parentFactory,
@@ -305,7 +301,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
                     ->getFirstItem();
 
             if ($product->getId()) {
-                $this->eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
+                $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
                     'product'    => $product,
                     'order_item' => $this->getParentObject(),
                 ));
@@ -317,7 +313,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
 
         $product = $this->createProduct();
 
-        $this->eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
+        $this->_eventManager->dispatch('ess_associate_amazon_order_item_to_product', array(
             'product'    => $product,
             'order_item' => $this->getParentObject(),
         ));

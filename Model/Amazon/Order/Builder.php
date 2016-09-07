@@ -241,14 +241,18 @@ class Builder extends AbstractModel
     private function createOrUpdateOrder()
     {
         if (!$this->isNew() && $this->getData('status') == \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED) {
-            $this->order->setData('status', \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED);
-            $this->order->setData('purchase_update_date', $this->getData('purchase_update_date'));
+            $this->order->getChildObject()->setData('status', \Ess\M2ePro\Model\Amazon\Order::STATUS_CANCELED);
+            $this->order->getChildObject()->setData('purchase_update_date', $this->getData('purchase_update_date'));
+            $this->order->getChildObject()->save();
         } else {
             $this->setData('shipping_address', json_encode($this->getData('shipping_address')));
             $this->order->addData($this->getData());
+            $this->order->save();
+
+            $this->order->getChildObject()->addData($this->getData());
+            $this->order->getChildObject()->save();
         }
 
-        $this->order->save();
         $this->order->setAccount($this->account);
 
         if ($this->order->getChildObject()->isCanceled() && $this->order->getReserve()->isPlaced()) {
@@ -443,8 +447,8 @@ class Builder extends AbstractModel
                         $logsActionId,
                         \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                     );
 
                     $listingProduct->save();
@@ -487,8 +491,8 @@ class Builder extends AbstractModel
                         $logsActionId,
                        \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                     );
                 }
 
@@ -545,7 +549,7 @@ class Builder extends AbstractModel
                     continue;
                 }
 
-                $currentOnlineQty = $otherListing->getData('online_qty');
+                $currentOnlineQty = $amazonOtherListing->getData('online_qty');
 
                 if ($currentOnlineQty > $orderItem['qty_purchased']) {
                     $otherListing->setData('online_qty', $currentOnlineQty - $orderItem['qty_purchased']);
@@ -564,8 +568,8 @@ class Builder extends AbstractModel
                         $logsActionId,
                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                     );
 
                     $otherListing->save();
@@ -605,8 +609,8 @@ class Builder extends AbstractModel
                         $logsActionId,
                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
-                        \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS,
-                        \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_LOW
+                        \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
+                        \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
                     );
                 }
 

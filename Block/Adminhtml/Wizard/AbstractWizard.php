@@ -6,18 +6,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 
 abstract class AbstractWizard extends AbstractContainer
 {
-    protected $nameBuilder;
-
-    public function __construct(
-        \Magento\Framework\Code\NameBuilder $nameBuilder,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
-        array $data = []
-    )
-    {
-        $this->nameBuilder = $nameBuilder;
-        parent::__construct($context, $data);
-    }
-
     protected function _prepareLayout()
     {
         $this->css->addFile('wizard.css');

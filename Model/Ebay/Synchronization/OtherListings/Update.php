@@ -123,7 +123,7 @@ final class Update extends AbstractModel
 
     private function executeUpdateInventoryDataAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $sinceTime = $account->getData('other_listings_last_synchronization');
+        $sinceTime = $account->getChildObject()->getData('other_listings_last_synchronization');
 
         if (empty($sinceTime)) {
 
@@ -159,7 +159,7 @@ final class Update extends AbstractModel
 
     private function getChangesByAccount(\Ess\M2ePro\Model\Account $account, $sinceTime)
     {
-        $cacheData = $this->getHelper('Data\Cache\Session')->getValue('item_get_changes_data_' . $account->getId());
+        $cacheData = $this->getHelper('Data\Cache\Runtime')->getValue('item_get_changes_data_' . $account->getId());
 
         if (!empty($cacheData) &&
             strtotime($cacheData['from_time']) <= strtotime($sinceTime) &&
@@ -255,13 +255,13 @@ final class Update extends AbstractModel
                 continue;
             }
 
-            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR
-                : \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING;
+            $logType = $message->isError() ? \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR
+                : \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
 
             $this->getLog()->addMessage(
                 $this->getHelper('Module\Translation')->__($message->getText()),
                 $logType,
-                \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_HIGH
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
             );
         }
     }

@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action;
 
 class Collection
-    extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection
+    extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
 

@@ -132,11 +132,11 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         foreach ($items as $item) {
             $item->delete();
         }
-
-// TODO NOT SUPPORTED FEATURE repricing
-//        if ($this->isRepricing()) {
-//            $this->getRepricing()->delete();
-//        }
+        
+        if ($this->isRepricing()) {
+            $this->getRepricing()->delete();
+            $this->repricingModel = NULL;
+        }
 
         $this->marketplaceModel = NULL;
 
@@ -182,7 +182,22 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
      */
     public function isRepricing()
     {
-        return (bool)$this->getRepricing()->getId();
+        $cacheKey = 'amazon_account_'.$this->getId().'_is_repricing';
+        $cacheData = $this->getHelper('Data\Cache\Permanent')->getValue($cacheKey);
+
+        if ($cacheData !== NULL) {
+            return (bool)$cacheData;
+        }
+
+        $repricingCollection = $this->activeRecordFactory->getObject('Amazon\Account\Repricing')->getCollection();
+        $repricingCollection->addFieldToFilter('account_id', $this->getId());
+        $isRepricing = (int)(bool)$repricingCollection->getSize();
+
+        $this->getHelper('Data\Cache\Permanent')->setValue(
+            $cacheKey, $isRepricing, array('account'), $this->getCacheLifetime()
+        );
+
+        return (bool)$isRepricing;
     }
 
     /**
@@ -191,7 +206,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getRepricing()
     {
         if (is_null($this->repricingModel)) {
-            $this->repricingModel = $this->activeRecordFactory->getObjectLoaded(
+            $this->repricingModel = $this->activeRecordFactory->getCachedObjectLoaded(
                 'Amazon\Account\Repricing', $this->getId(), NULL
             );
         }

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
-final class Magento extends AbstractRunner
+final class Magento extends AbstractModel
 {
     const MIN_DISTRIBUTION_EXECUTION_TIME = 300;
     const MAX_DISTRIBUTION_WAIT_INTERVAL  = 59;
@@ -37,7 +37,7 @@ final class Magento extends AbstractRunner
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractStrategy
+     * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
      */
     protected function getStrategyObject()
     {
@@ -75,7 +75,7 @@ final class Magento extends AbstractRunner
 
     protected function beforeStart()
     {
-        /* //todo investigete Magento 2 cron
+        /*
          * Magento can execute M2ePro cron multiple times in same php process.
          * It can cause problems with items that were cached in first execution.
          */

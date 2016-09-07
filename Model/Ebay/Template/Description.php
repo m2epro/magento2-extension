@@ -96,11 +96,42 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     const WATERMARK_CACHE_TIME = 604800; // 7 days
     const GALLERY_IMAGES_COUNT_MAX = 11;
+    
+    protected $driverPool;
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Description\Source[]
      */
     private $descriptionSourceModels = array();
+
+    //########################################
+    
+    public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Model\Context $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
+    )
+    {
+        $this->driverPool = $driverPool;
+        parent::__construct(
+            $parentFactory,
+            $modelFactory,
+            $activeRecordFactory,
+            $helperFactory,
+            $context,
+            $registry,
+            $resource,
+            $resourceCollection,
+            $data
+        );
+    }
 
     //########################################
 
@@ -156,17 +187,19 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     public function delete()
     {
-        // TODO NOT SUPPORTED FEATURES
         // Delete watermark if exists
         // ---------------------------------------
-//        $varDir = new Ess\M2ePro\Model\VariablesDir(
-//            array('child_folder' => 'ebay/template/description/watermarks')
-//        );
-//
-//        $watermarkPath = $varDir->getPath().$this->getId().'.png';
-//        if (is_file($watermarkPath)) {
-//            @unlink($watermarkPath);
-//        }
+        /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
+        $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
+            'child_folder' => 'ebay/template/description/watermarks'
+        ]]);
+
+        $watermarkPath = $varDir->getPath().$this->getId().'.png';
+        
+        $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
+        if ($fileDriver->isFile($watermarkPath)) {
+            $fileDriver->deleteFile($watermarkPath);
+        }
         // ---------------------------------------
 
         $temp = parent::delete();

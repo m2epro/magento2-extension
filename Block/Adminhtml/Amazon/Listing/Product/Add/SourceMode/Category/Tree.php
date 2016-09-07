@@ -220,8 +220,8 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
 
         $collection = $this->resourceConnection->getConnection();
 
-        $ccpTable = $collection->getTableName('catalog_category_product');
-        $cpeTable = $collection->getTableName('catalog_product_entity');
+        $ccpTable = $this->resourceConnection->getTableName('catalog_category_product');
+        $cpeTable = $this->resourceConnection->getTableName('catalog_product_entity');
 
         $dbSelect = $collection->select()
             ->from(array('ccp' => $ccpTable),new \Zend_Db_Expr('DISTINCT `ccp`.`product_id`'))
@@ -276,7 +276,7 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
 
         $dbSelect = $collection->getConnection()->select()
-             ->from($collection->getConnection()->getTableName('catalog_category_product'), 'category_id')
+             ->from($this->resourceConnection->getTableName('catalog_category_product'), 'category_id')
              ->where('`product_id` IN(?)',$this->getSelectedIds());
 
         $affectedCategoriesCount = $collection->getSelectCountSql()
@@ -304,8 +304,8 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
         $select = $collection->getSelect();
         $select->joinLeft(
-            $collection->getConnection()->getTableName('catalog_category_product'),
-            "entity_id = category_id AND product_id IN ({$ids})",
+            ['ccp' => $this->resourceConnection->getTableName('catalog_category_product')],
+            "e.entity_id = ccp.category_id AND ccp.product_id IN ({$ids})",
             array('product_id')
         );
 
@@ -369,7 +369,7 @@ HTML;
 
         $select = $collection->getConnection()->select();
         $select->from(
-                array('main_table' => $collection->getTable('catalog_category_product')),
+                array('main_table' => $this->resourceConnection->getTableName('catalog_category_product')),
                 array('category_id', new \Zend_Db_Expr('COUNT(main_table.product_id)'))
             )
             ->where($collection->getConnection()->quoteInto('main_table.category_id IN(?)', array_keys($items)))

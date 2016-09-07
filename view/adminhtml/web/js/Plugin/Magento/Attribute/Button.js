@@ -2,6 +2,7 @@ define([
     'jquery',
     'Magento_Ui/js/modal/modal',
     'underscore',
+    'M2ePro/Plugin/Magento/AttributeCreator',
     'M2ePro/Attribute'
 ], function (jQuery, modal, _) {
 
@@ -61,7 +62,8 @@ define([
             var self = this;
 
             this._id = element.id;
-            var popupElement = $('magento-attribute-button-popup'+self._id);
+            var popupElement = $('magento-attribute-button-popup'+self._id),
+                isFirstCreation = !popupElement;
 
             if (!popupElement) {
                 popupElement = new Element('div', {
@@ -79,12 +81,13 @@ define([
                 type: 'popup',
                 buttons: [{
                     text: M2ePro.translator.translate('Cancel'),
+                    class: 'action-secondary action-dismiss',
                     click: function () {
                         this.closeModal();
                     }
                 },{
-                    text: M2ePro.translator.translate('Confirm'),
-                    class: 'primary',
+                    text: M2ePro.translator.translate('Insert'),
+                    class: 'action-primary action-accept',
                     id: 'save_popup_button',
                     click: function () {
                         AttributeObj.appendToText(
@@ -96,6 +99,12 @@ define([
                     }
                 }]
             });
+
+            if (isFirstCreation) {
+                var handlerObj = new AttributeCreator('magento-attribute-select-'+this._id);
+                handlerObj.setSelectObj($('magento-attribute-select-'+this._id));
+                handlerObj.injectAddOption();
+            }
 
             popup.modal('openModal');
         },
@@ -115,7 +124,8 @@ define([
             var select = new Element('select',
                 _.extend({
                     id: 'magento-attribute-select-'+this._id,
-                    class: 'select admin__control-select'
+                    class: 'select admin__control-select M2ePro-custom-attribute-can-be-created',
+                    
                 }, this.getSelectCustomAttributes())
             );
 
@@ -130,7 +140,7 @@ define([
 
             containerElement.innerHTML = _.template(this._template)( {
                 id: 'magento-attribute-select-'+this._id,
-                title: M2ePro.translator.translate('Magento Attribute'),
+                title: M2ePro.translator.translate('Attribute'),
                 select: select.outerHTML
             });
         }

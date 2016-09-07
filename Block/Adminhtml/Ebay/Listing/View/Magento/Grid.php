@@ -56,30 +56,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     //########################################
 
-    public function getAdvancedFilterButtonHtml()
-    {
-        return '';
-        // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//        if (!Mage::helper('M2ePro/View_Ebay')->isAdvancedMode()) {
-//        }
-//
-//        return parent::getAdvancedFilterButtonHtml();
-    }
-
-    //########################################
-
-    // TODO NOT SUPPORTED FEATURES "Advanced filters"
-//    protected function isShowRuleBlock()
-//    {
-//        if (Mage::helper('M2ePro/View_Ebay')->isSimpleMode()) {
-//            return false;
-//        }
-//
-//        return parent::isShowRuleBlock();
-//    }
-
-    //########################################
-
     protected function _prepareCollection()
     {
         /** @var \Ess\M2ePro\Model\Listing $listing */
@@ -209,11 +185,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->getCollection()->addWebsiteNamesToResult();
 
         return parent::_prepareCollection();
-    }
-
-    protected function _prepareMassactionBlock()
-    {
-        return $this;
     }
 
     protected function _prepareColumns()

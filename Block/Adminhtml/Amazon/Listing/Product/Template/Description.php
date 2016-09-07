@@ -37,8 +37,8 @@ class Description extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
     <strong>Note:</strong> you can always add new Description Policy by pressing Add New
     Description Policy Button.<br/><br/>
     More detailed information about ability to work with this Page you can find
-    <a href="%url%" target="_blank">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/uYgVAQ')
+    <a href="%url%" target="_blank" class="external-link">here</a>.',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/uYgVAQ')
                 )
             ]);
         } else {

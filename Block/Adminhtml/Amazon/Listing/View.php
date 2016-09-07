@@ -43,7 +43,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     protected function _prepareLayout()
     {
         $this->css->addFile('listing/autoAction.css');
-        $this->css->addFile('amazon/style.css');
         $this->css->addFile('amazon/listing/view.css');
         $this->css->addFile('amazon/listing/product/variation/grid.css');
 
@@ -54,9 +53,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
                     '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a 
                     particular Account. M2E Pro has several options to display the content of Listings 
                     referring to different data details. Each of the view options contains a unique set of 
-                    available Actions accessible in the Mass Actions drop-down.</p><br>
-                    <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/eQItAQ')
+                    available Actions accessible in the Mass Actions drop-down.</p>'
                 )
             ]);
             
@@ -149,65 +146,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     //########################################
 
-    // TODO NOT SUPPORTED FEATURES "Listing header selector"
-//    public function getHeaderHtml()
-//    {
-//        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-//
-//        // ---------------------------------------
-//        $collection = Mage::getModel('M2ePro/Listing')->getCollection();
-//        $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK);
-//        $collection->addFieldToFilter('id', array('neq' => $this->listing['id']));
-//        $collection->setPageSize(200);
-//        $collection->setOrder('title', 'ASC');
-//
-//        $items = array();
-//        foreach ($collection->getItems() as $item) {
-//            $items[] = array(
-//                'label' => $item->getTitle(),
-//                'url' => $this->getUrl('*/*/view', array('id' => $item->getId()))
-//            );
-//        }
-//        // ---------------------------------------
-//
-//        if (count($items) == 0) {
-//            return parent::getHeaderHtml();
-//        }
-//
-//        // ---------------------------------------
-//        $data = array(
-//            'target_css_class' => 'listing-profile-title',
-//            'style' => 'max-height: 120px; overflow: auto; width: 200px;',
-//            'items' => $items
-//        );
-//        $dropDownBlock = $this->getLayout()->createBlock('M2ePro/adminhtml_widget_button_dropDown');
-//        $dropDownBlock->setData($data);
-//        // ---------------------------------------
-//
-//        return parent::getHeaderHtml() . $dropDownBlock->toHtml();
-//    }
-
-// TODO NOT SUPPORTED FEATURES "Listing header selector"
-//    public function getHeaderText()
-//    {
-//        // ---------------------------------------
-//        $changeProfile = $this->__('Change Listing');
-//        $headerText = parent::getHeaderText();
-//        $this->listing = $this->getHelper('Data\GlobalData')->getValue('temp_data');
-//        $listingTitle = $this->getHelper('Data')->escapeHtml($this->listing['title']);
-//        // ---------------------------------------
-//
-//        return <<<HTML
-//{$headerText} <a href="javascript: void(0);"
-//   id="listing-profile-title"
-//   class="listing-profile-title"
-//   style="font-weight: bold;"
-//   title="{$changeProfile}"><span class="drop_down_header">"{$listingTitle}"</span></a>
-//HTML;
-//    }
-
-    //########################################
-
     protected function _toHtml()
     {
         return '<div id="listing_view_progress_bar"></div>' .
@@ -271,6 +209,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsUrl->addUrls(
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Description')
         );
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\ShippingOverride')
+        );
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation'));
         $this->jsUrl->addUrls(
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Manage')
@@ -285,7 +226,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             ), 'moveToListingGridHtml'
         );
         $this->jsUrl->add($this->getUrl('*/listing_moving/prepareMoveToListing'), 'prepareData');
-        $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProductsGrid'), 'getFailedProductsGridHtml');
+        $this->jsUrl->add($this->getUrl('*/listing_moving/getFailedProducts'), 'getFailedProductsHtml');
         $this->jsUrl->add($this->getUrl('*/listing_moving/tryToMoveToListing'), 'tryToMoveToListing');
         $this->jsUrl->add($this->getUrl('*/listing_moving/moveToListing'), 'moveToListing');
 
@@ -295,14 +236,13 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'id' => $this->listing['id']
         ]), 'saveListingAdditionalData');
 
-//        TODO
-//        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
-//            'amazon_listing_repricing',
-//            array(
-//                'id' => $this->listing['id'],
-//                'account_id' => $this->listing['account_id']
-//            )
-//        ));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
+            'Amazon\Listing\Product\Repricing',
+            array(
+                'id' => $this->listing['id'],
+                'account_id' => $this->listing['account_id']
+            )
+        ));
 
         // ---------------------------------------
 
@@ -317,11 +257,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;
-
-//        TODO
-//        $getUpdatedRepricingPriceBySkus = $this->getUrl(
-//            '*/amazon_listing_repricing/getUpdatedPriceBySkus'
-//        );
 
         $templateDescriptionPopupTitle = $this->__('Assign Description Policy');
 
@@ -407,6 +342,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
 
+            'Add New Shipping Override Policy' => $this->__('Add New Shipping Override Policy'),
+            'Add New Listing' => $this->__('Add New Listing'),
+
             'Clear Search Results' => $this->__('Clear Search Results'),
 
             'popup_title' => $popupTitle,
@@ -481,7 +419,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         'M2ePro/Amazon/Listing/View/Grid',
         'M2ePro/Amazon/Listing/AfnQty',
         'M2ePro/Amazon/Listing/AutoAction',
-        'M2ePro/Amazon/Listing/Product/Variation'
+        'M2ePro/Amazon/Listing/Product/Variation',
+        'M2ePro/Amazon/Listing/Product/Repricing/Price'
     ], function(){
 
         M2ePro.productsIdsForList = '{$productsIdsForList}';
@@ -517,20 +456,13 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         }
     
         AmazonListingAfnQtyObj = new AmazonListingAfnQty();
-        // TODO
-        // CommonAmazonListingRepricingPriceHandlerObj = new CommonAmazonListingRepricingPriceHandler();
+
+        AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();
     });
 JS
         );
 
         $productSearchBlock = $this->createBlock('Amazon\Listing\Product\Search\Main');
-
-        // TODO NOT SUPPORTED FEATURES "Listing header selector"
-//        // ---------------------------------------
-//        $listingSwitcher = $this->getLayout()->createBlock(
-//            'M2ePro/adminhtml_common_amazon_listing_view_listingSwitcher'
-//        );
-//        // ---------------------------------------
 
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
@@ -538,21 +470,9 @@ JS
         ]);
         // ---------------------------------------
 
-//        // ---------------------------------------
-//        $switchToIndividualPopup = $this->getLayout()->createBlock(
-//            'M2ePro/adminhtml_common_amazon_listing_variation_product_switchToIndividualPopup');
-//        // ---------------------------------------
-//
-//        // ---------------------------------------
-//        $switchToParentPopup = $this->getLayout()->createBlock(
-//            'M2ePro/adminhtml_common_amazon_listing_variation_product_switchToParentPopup');
-//        // ---------------------------------------
-
         return $viewHeaderBlock->toHtml()
 //            . $listingSwitcher->toHtml()
             . $productSearchBlock->toHtml()
-//            . $switchToIndividualPopup->toHtml()
-//            . $switchToParentPopup->toHtml()
             . parent::getGridHtml();
     }
 

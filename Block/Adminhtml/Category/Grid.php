@@ -85,8 +85,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             )
             ->where('ccev.entity_id IN ('.implode(',',$ids).')')
             ->where('ccev.attribute_id = ?', $attribute->getAttributeId())
-            // TODO no type id ?
-//            ->where('ccev.entity_type_id = ?', $attribute->getEntityTypeId())
             ->where('ccev.store_id = ('.$dbSelect1->__toString().')');
 
         $cacheData = array();

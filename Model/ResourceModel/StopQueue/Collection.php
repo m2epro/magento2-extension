@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\StopQueue;
 
-class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractCollection
+class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     //########################################
 

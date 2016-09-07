@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Helper\Module\Database;
 
+use Ess\M2ePro\Helper\Module;
+use Magento\Framework\Component\ComponentRegistrar;
+
 class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TABLE_GROUP_CONFIGS           = 'configs';
@@ -27,15 +30,28 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     protected $resourceConnection;
 
+    protected $directoryReaderFactory;
+
+    protected $componentRegistrar;
+
+    protected $activeRecordFactory;
+
     //########################################
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory,
+        ComponentRegistrar $componentRegistrar,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
-        $this->resourceConnection = $resourceConnection;
+        $this->resourceConnection     = $resourceConnection;
+        $this->directoryReaderFactory = $directoryReaderFactory;
+        $this->componentRegistrar     = $componentRegistrar;
+        $this->activeRecordFactory    = $activeRecordFactory;
+
         parent::__construct($helperFactory, $context);
     }
 
@@ -397,18 +413,47 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         return isset($info[$columnName]) ? $info[$columnName] : null;
     }
 
-    // TODO magento 2
     public function getTableModel($tableName)
     {
-        $tableModels = Mage::getConfig()->getNode('global/models/M2ePro_mysql4/entities');
-
-        foreach ($tableModels->asArray() as $model => $infoData) {
-            if ($infoData['table'] == $tableName) {
-                return $model;
-            }
+        $tablesModels = $this->getTablesModels();
+        if (!isset($tablesModels[$tableName])) {
+            return NULL;
         }
 
-        return null;
+        return $tablesModels[$tableName];
+    }
+
+    private function getTablesModels()
+    {
+        $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER)
+            .DIRECTORY_SEPARATOR.'Model'.DIRECTORY_SEPARATOR.'ResourceModel';
+        $directoryReader = $this->directoryReaderFactory->create($path);
+
+        $tablesModels = [];
+
+        foreach ($directoryReader->readRecursively() as $directoryItem) {
+            if (!$directoryReader->isFile($directoryItem)) {
+                continue;
+            }
+
+            $modelName = preg_replace('/\.php$/', '', str_replace('/', '\\', $directoryItem));
+            $className = '\Ess\M2ePro\Model\\'.$modelName;
+
+            if (!\class_exists($className)) {
+                continue;
+            }
+
+            $reflectionClass = new \ReflectionClass($className);
+            if ($reflectionClass->isAbstract()) {
+                continue;
+            }
+
+            $object = $this->activeRecordFactory->getObject($modelName);
+
+            $tablesModels[$object->getResource()->getMainTable()] = $modelName;
+        }
+
+        return $tablesModels;
     }
 
     // ---------------------------------------
@@ -416,7 +461,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
     public function getIdColumn($table)
     {
         $tableModel = $this->getTableModel($table);
-        $tableModel = Mage::getModel('M2ePro/'.$tableModel);
+        $tableModel = $this->activeRecordFactory->getObject($tableModel);
 
         return $tableModel->getIdFieldName();
     }
@@ -434,8 +479,8 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
     public function getConfigSnapshot($table)
     {
         $tableModel = $this->getTableModel($table);
+        $tableModel = $this->activeRecordFactory->getObject($tableModel);
 
-        $tableModel = Mage::getModel('M2ePro/'.$tableModel);
         $collection = $tableModel->getCollection()->toArray();
 
         $result = array();

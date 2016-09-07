@@ -45,10 +45,9 @@ Spain and Italy Marketplaces, although you can still use the same Merchant ID. <
 3rd Party Listings import including options of Mapping them to Magento Products and Moving them to M2E Pro Listings,
 etc. can be specified for each Account separately.</p><br>
 <p><strong>Note:</strong> Amazon Account can be deleted only if it is not being used 
-for any of M2E Pro Listings.</p><br>
-<p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>
+for any of M2E Pro Listings.</p>
 HTML
-                , $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/9gEtAQ'))
+)
         ]);
 
         return parent::_prepareLayout();

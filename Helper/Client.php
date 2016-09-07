@@ -15,6 +15,7 @@ class Client extends AbstractHelper
     protected $cacheConfig;
     protected $filesystem;
     protected $resource;
+    protected $phpEnvironmentRequest;
 
     //########################################
 
@@ -23,12 +24,14 @@ class Client extends AbstractHelper
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\App\ResourceConnection $resource,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\App\Helper\Context $context
+        \Magento\Framework\App\Helper\Context $context,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
     )
     {
         $this->cacheConfig = $cacheConfig;
         $this->filesystem = $filesystem;
         $this->resource = $resource;
+        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
     }
 
@@ -50,7 +53,7 @@ class Client extends AbstractHelper
             return strtolower(trim($domain));
         }
 
-        $domain = isset($_SERVER['HTTP_HOST']) ? rtrim($_SERVER['HTTP_HOST'], '/') : NULL;
+        $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
 
         if (!empty($domain)) {
             return strtolower(trim($domain));
@@ -67,8 +70,8 @@ class Client extends AbstractHelper
             return strtolower(trim($ip));
         }
 
-        $ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : NULL;
-        empty($ip) && $ip = isset($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR'] : NULL;
+        $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
+        empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
 
         if (!empty($ip)) {
             return strtolower(trim($ip));
@@ -111,12 +114,14 @@ class Client extends AbstractHelper
             return;
         }
 
-        $domain = isset($_SERVER['HTTP_HOST']) ? rtrim($_SERVER['HTTP_HOST'], '/') : '127.0.0.1';
+        $domain = rtrim($this->phpEnvironmentRequest->getServer('HTTP_HOST'), '/');
+        empty($domain) && $domain = '127.0.0.1';
         strpos($domain,'www.') === 0 && $domain = substr($domain,4);
         $this->cacheConfig->setGroupValue('/location_info/', 'domain', $domain);
 
-        $ip = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : NULL;
-        empty($ip) && $ip = isset($_SERVER['LOCAL_ADDR']) ? $_SERVER['LOCAL_ADDR'] : '127.0.0.1';
+        $ip = $this->phpEnvironmentRequest->getServer('SERVER_ADDR');
+        empty($ip) && $ip = $this->phpEnvironmentRequest->getServer('LOCAL_ADDR');
+        empty($ip) && $ip = '127.0.0.1';
         $this->cacheConfig->setGroupValue('/location_info/', 'ip', $ip);
 
         $directory = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT);
@@ -131,12 +136,12 @@ class Client extends AbstractHelper
 
     public function getPhpVersion()
     {
-        return @phpversion();
+        return phpversion();
     }
 
     public function getPhpApiName()
     {
-        return @php_sapi_name();
+        return php_sapi_name();
     }
 
     // ---------------------------------------
@@ -157,7 +162,7 @@ class Client extends AbstractHelper
     {
         return array(
             'memory_limit' => $this->getMemoryLimit(),
-            'max_execution_time' => $this->isPhpApiApacheHandler() ? @ini_get('max_execution_time') : NULL,
+            'max_execution_time' => $this->isPhpApiApacheHandler() ? ini_get('max_execution_time') : NULL,
             'phpinfo' => $this->getPhpInfoArray()
         );
     }
@@ -296,7 +301,7 @@ class Client extends AbstractHelper
 
     public function isBrowserIE()
     {
-        return isset($_SERVER['HTTP_USER_AGENT']) && strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE') !== false;
+        return strpos($this->phpEnvironmentRequest->getServer('HTTP_USER_AGENT'), 'MSIE') !== false;
     }
 
     // ---------------------------------------
@@ -362,7 +367,7 @@ class Client extends AbstractHelper
      */
     public function setPcreRecursionLimit($limit = 1000)
     {
-        @ini_set('pcre.recursion_limit', $limit);
+        ini_set('pcre.recursion_limit', $limit);
     }
 
     //########################################

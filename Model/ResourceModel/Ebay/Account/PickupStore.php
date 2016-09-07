@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Ebay\Account;
 
-class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class PickupStore extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

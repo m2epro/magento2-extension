@@ -18,11 +18,13 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
     /* @var \Magento\Framework\Data\Tree\Node */
     protected $currentNode = NULL;
 
+    protected $resourceConnection;
     protected $categoryTreeFactory;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Catalog\Model\ResourceModel\Category\TreeFactory $categoryTreeFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $blockContext,
         \Magento\Backend\Block\Template\Context $context,
@@ -32,6 +34,7 @@ class Tree extends \Ess\M2ePro\Block\Adminhtml\Listing\Category\Tree
         array $data = []
     )
     {
+        $this->resourceConnection = $resourceConnection;
         $this->categoryTreeFactory = $categoryTreeFactory;
         parent::__construct(
             $blockContext,
@@ -236,7 +239,7 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
 
         $dbSelect = $collection->getConnection()->select()
-             ->from($collection->getResource()->getTable('catalog_category_product'), 'category_id')
+             ->from($this->resourceConnection->getTableName('catalog_category_product'), 'category_id')
              ->where('`product_id` IN(?)',$this->getSelectedIds());
 
         $affectedCategoriesCount = $collection->getSelectCountSql()
@@ -264,8 +267,8 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
         $select = $collection->getSelect();
         $select->joinLeft(
-            $collection->getResource()->getTable('catalog_category_product'),
-            "entity_id = category_id AND product_id IN ({$ids})",
+            ['ccp' => $this->resourceConnection->getTableName('catalog_category_product')],
+            "e.entity_id = ccp.category_id AND ccp.product_id IN ({$ids})",
             array('product_id')
         );
 
@@ -329,7 +332,7 @@ HTML;
 
         $select = $collection->getConnection()->select();
         $select->from(
-                array('main_table' => $collection->getTable('catalog_category_product')),
+                array('main_table' => $this->resourceConnection->getTableName('catalog_category_product')),
                 array('category_id', new \Zend_Db_Expr('COUNT(main_table.product_id)'))
             )
             ->where($collection->getConnection()->quoteInto('main_table.category_id IN(?)', array_keys($items)))

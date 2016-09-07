@@ -60,8 +60,6 @@ class Tabs extends AbstractTabs
             ]
         );
 
-        $this->setActiveTab($this->getRequest()->getParam('tab', 'list'));
-
         return parent::_prepareLayout();
     }
 

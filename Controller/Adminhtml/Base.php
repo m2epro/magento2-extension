@@ -14,9 +14,10 @@ abstract class Base extends Action
 {
     const LAYOUT_ONE_COLUMN  = '1column';
     const LAYOUT_TWO_COLUMNS = '2columns';
-    const LAYOUT_EMPTY       = 'empty';
+    const LAYOUT_BLANK       = 'blank';
 
-    const GLOBAL_MESSAGES_GROUP = 'ess_m2epro_global_messages';
+    const MESSAGE_IDENTIFIER    = 'm2epro_messages';
+    const GLOBAL_MESSAGES_GROUP = 'm2epro_global_messages_group';
 
     /** @var HelperFactory $helperFactory */
     protected $helperFactory = NULL;
@@ -109,11 +110,43 @@ abstract class Base extends Action
         return $this->messageManager;
     }
 
+    // ---------------------------------------
+
+    protected function addExtendedErrorMessage($message, $group = null)
+    {
+        $this->getMessageManager()->addComplexErrorMessage(
+            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+        );
+    }
+    
+    protected function addExtendedWarningMessage($message, $group = null)
+    {
+        $this->getMessageManager()->addComplexWarningMessage(
+            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+        );
+    } 
+    
+    protected function addExtendedNoticeMessage($message, $group = null)
+    {
+        $this->getMessageManager()->addComplexNoticeMessage(
+            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+        );
+    }    
+    
+    protected function addExtendedSuccessMessage($message, $group = null)
+    {
+        $this->getMessageManager()->addComplexSuccessMessage(
+            self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
+        );
+    }
+
     //########################################
 
     public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        $this->preDispatch($request);
+        if (($preDispatchResult = $this->preDispatch($request)) !== true) {
+            return $preDispatchResult;
+        }
 
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
@@ -125,7 +158,8 @@ abstract class Base extends Action
             if ($request->getControllerName() ==
                 $this->getHelper('Module\Support')->getPageControllerName()
             ) {
-                exit($exception->getMessage());
+                $this->getRawResult()->setContents($exception->getMessage());
+                return $this->getRawResult();
             }
 
             if ($this->getHelper('Module')->isDevelopmentEnvironment()) {
@@ -135,7 +169,8 @@ abstract class Base extends Action
             $this->getHelper('Module\Exception')->process($exception);
 
             if ($request->isXmlHttpRequest() || $request->getParam('isAjax')) {
-                exit($exception->getMessage());
+                $this->getRawResult()->setContents($exception->getMessage());
+                return $this->getRawResult();
             }
 
             $this->getMessageManager()->addError(
@@ -163,16 +198,28 @@ abstract class Base extends Action
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
-            exit(json_encode(array(
+            $this->getRawResult()->setContents(json_encode(array(
                 'ajaxExpired'  => 1,
                 'ajaxRedirect' => $this->_redirect->getRefererUrl()
             )));
+
+            return $this->getRawResult();
         }
+
+        return true;
     }
 
     protected function postDispatch(\Magento\Framework\App\RequestInterface $request)
     {
         ob_get_clean();
+
+        if ($this->isAjax($request)) {
+            return;
+        }
+
+        if ($this->getLayoutType() == self::LAYOUT_BLANK) {
+            $this->addCss('layout/blank.css');
+        }
 
         foreach ($this->cssRenderer->getFiles() as $file) {
             $this->addCss($file);
@@ -231,7 +278,7 @@ abstract class Base extends Action
         $this->resultPage = $this->resultPageFactory->create();
         $this->resultPage->addHandle($this->getLayoutType());
 
-        $this->resultPage->getConfig()->getTitle()->set($this->__('M2ePro'));
+        $this->resultPage->getConfig()->getTitle()->set($this->__('M2E Pro'));
     }
 
     // ---------------------------------------
@@ -332,7 +379,7 @@ abstract class Base extends Action
         }
 
         $generalBlock = $this->createBlock(\Ess\M2ePro\Helper\View::GENERAL_BLOCK_PATH);
-        $this->getLayout()->setChild('footer', $generalBlock->getNameInLayout(), '');
+        $this->getLayout()->setChild('js', $generalBlock->getNameInLayout(), '');
 
         $this->generalBlockWasAppended = true;
     }
@@ -395,14 +442,14 @@ abstract class Base extends Action
 
     //########################################
 
-    protected function setPageHelpLink($component = NULL, $article = NULL, $tinyLink = NULL)
+    protected function setPageHelpLink($tinyLink)
     {
         /** @var \Magento\Theme\Block\Html\Title $pageTitleBlock */
         $pageTitleBlock = $this->getLayout()->getBlock('page.title');
 
         $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationUrl(
-                $component, $article, $tinyLink
+            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
+                $tinyLink
             )
         ]);
 

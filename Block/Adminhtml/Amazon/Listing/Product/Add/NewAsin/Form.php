@@ -91,9 +91,9 @@ CSS
     <input id="description_template_id" name="description_template_id" value="" type="hidden" />
     <input id="products_ids" name="products_ids" type="hidden" value="">
 </div>
-<div style="margin: 7px 52px; display: none;" class="validation-advice" id="same_description_template_error" >
+<label style="margin: 0 52px; display: none;" class="mage-error" id="same_description_template_error" >
     {$this->__('Please select Description Policy.')}
-</div>
+</label>
 HTML
             ]
         );
@@ -213,32 +213,18 @@ HTML
         loadTemplateDescriptionGrid = function() {
     
             new Ajax.Request(
-                '{$this->getUrl('*/amazon_listing_product_template_description/viewTemplateDescriptionsGrid'
+                '{$this->getUrl('*/amazon_listing_product_template_description/viewGrid'
             )}', {
                 method: 'post',
                 parameters: {
                     products_ids : filteredProductsIds,
                     check_is_new_asin_accepted : 1,
-                    map_to_template_js_fn : 'selectTemplateDescription'
+                    map_to_template_js_fn : 'selectTemplateDescription',
+                    create_new_template_js_fn : 'createTemplateDescriptionInNewTab'
                 },
                 onSuccess: function (transport) {
                     $('template_description_grid').update(transport.responseText);
                     $('template_description_grid').show();
-    
-                    var newLink = $('template_description_addNew_link'),
-                        refreshBtn = $('description_template_refresh_btn');
-    
-                    if (newLink) {
-                        $('template_description_addNew_link').onclick = function () {
-                            createTemplateDescriptionInNewTab(M2ePro.url.get('newTemplateDescriptionUrl'))
-                       };
-                    }
-                    
-                    if (refreshBtn) {
-                        $('description_template_refresh_btn').onclick = function () {
-                            loadTemplateDescriptionGrid();
-                        };
-                    }
                 }
             })
         };

@@ -68,8 +68,8 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         // Attention! Last eBay AUTOMATIC Synchronization was performed by Cron more than 1 hour ago. You should set up Cron Job, otherwise no Automatic Synchronization will be performed.<br/>You can check this <a href="%url%" target="_blank">Article</a> to get how to set Cron Job.
         $message = 'Attention! Last eBay AUTOMATIC Synchronization was performed by Cron ';
         $message .= 'more than 1 hour ago. You should set up Cron Job, otherwise no Automatic Synchronization ';
-        $message .= 'will be performed.<br/>You can check this <a href="%url%" target="_blank">Article</a> '.
-                    'to get how to set Cron Job.';
+        $message .= 'will be performed.<br/>You can check this 
+                     <a href="%url%" target="_blank" class="external-link">Article</a> to get how to set Cron Job.';
 
         $controller->getMessageManager()->addNotice(
             $this->getHelper('Module\Translation')->__($message, $url),
@@ -84,7 +84,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         // M2ePro_TRANSLATIONS
         // New Buyer negative Feedback was received. Go to the <a href="%url%" target="blank">feedback Page</a>.
         $message = 'New Buyer negative Feedback was received. '
-            .'Go to the <a href="%url%" target="blank">Feedback Page</a>.';
+            .'Go to the <a href="%url%" target="blank" class="external-link">Feedback Page</a>.';
         $message = $this->getHelper('Module\Translation')->__($message, $url);
 
         $controller->getMessageManager()->addNotice(
@@ -96,11 +96,9 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function addTokenExpirationDateNotificationMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $tokenExpirationMessages = $this->getHelper('Data\Cache\Permanent')->getValue(
-            'ebay_accounts_token_expiration_messages'
-        );
+        $tokenExpirationMessages = $this->getHelper('Data\Cache\Permanent')->getValue(__METHOD__);
 
-        if ($tokenExpirationMessages === false) {
+        if ($tokenExpirationMessages === NULL) {
 
             $tokenExpirationMessages = array();
 
@@ -127,7 +125,7 @@ Do not forget to press Save button after returning back to Magento
                 $textToTranslate =
                     'The token for "%account_title%" eBay Account has been expired.<br/>'.
                     'Please, go to %menu_label% > Configuration > eBay Account >'.
-                    '<a href="%url%" target="_blank">General TAB</a>, click on the Get Token Button.'.
+                    '<a href="%url%" target="_blank" class="external-link">General TAB</a>, click on the Get Token Button.'.
                     '(You will be redirected to the eBay website.) Sign-in and press I Agree on eBay Page.'.
                     'Do not forget to press Save Button after returning back to Magento';
 
@@ -136,7 +134,7 @@ Do not forget to press Save button after returning back to Magento
                         trim($textToTranslate),
                         $this->getHelper('Data')->escapeHtml($accountData['title']),
                         $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
-                        $controller->getUrl('*/adminhtml_ebay_account/edit', array('id' => $accountData['id']))
+                        $controller->getUrl('*/ebay_account/edit', array('id' => $accountData['id']))
                     );
                     $tokenExpirationMessages[] = array(
                         'type' => 'error',
@@ -154,7 +152,7 @@ Attention! The token for "%account_title%" eBay Account will be expired soon ( %
 Do not forget to press Save Button after returning back to Magento
  */
                 $textToTranslate =
-                   'Attention! The token for "%account_title%" eBay Account will be expired soon ( %date% ).'.
+                    'Attention! The token for "%account_title%" eBay Account will be expired soon ( %date% ).'.
                     '<br/>Please, go to %menu_label% > Configuration > eBay Account >'.
                     '<a href="%url%" target="_blank">General TAB</a>, click on the Get Token Button.'.
                     '(You will be redirected to the eBay website.) Sign-in and press I Agree on eBay Page.'.
@@ -165,10 +163,9 @@ Do not forget to press Save Button after returning back to Magento
                     $tempMessage = $this->getHelper('Module\Translation')->__(
                         trim($textToTranslate),
                         $this->getHelper('Data')->escapeHtml($accountData['title']),
-                        $this->localeDate->date(strtotime($accountData['token_expired_date']))
-                                                ->toString($format),
-                        $this->getHelper('View_Ebay')->getMenuRootNodeLabel(),
-                            $controller->getUrl('*/adminhtml_ebay_account/edit', array('id' => $accountData['id']))
+                        $this->localeDate->date(strtotime($accountData['token_expired_date']))->toString($format),
+                        $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
+                            $controller->getUrl('*/ebay_account/edit', array('id' => $accountData['id']))
                         );
 
                     $tokenExpirationMessages[] = array(
@@ -180,7 +177,7 @@ Do not forget to press Save Button after returning back to Magento
                 }
             }
 
-            $this->getHelper('Data\Cache\Permanent')->setValue('ebay_accounts_token_expiration_messages',
+            $this->getHelper('Data\Cache\Permanent')->setValue(__METHOD__,
                                                          $tokenExpirationMessages,
                                                          array('account','ebay'),
                                                          60*60*24);
@@ -197,9 +194,9 @@ Do not forget to press Save Button after returning back to Magento
     private function addMarketplacesNotUpdatedNotificationMessage(
                             \Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue('ebay_outdated_marketplaces');
+        $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue(__METHOD__);
 
-        if ($outdatedMarketplaces === false) {
+        if ($outdatedMarketplaces === NULL) {
 
             $marketplacesCollection = $this->ebayFactory->getObject('Marketplace')->getCollection();
 
@@ -228,33 +225,24 @@ Do not forget to press Save Button after returning back to Magento
                 $outdatedMarketplaces[] = $marketplace->getTitle();
             }
 
-            $this->getHelper('Data\Cache\Permanent')->setValue('ebay_outdated_marketplaces',
-                                                                  $outdatedMarketplaces,
-                                                                  array('ebay','marketplace'),
-                                                                  60*60*24);
+            $this->getHelper('Data\Cache\Permanent')->setValue(__METHOD__,
+                                                               $outdatedMarketplaces,
+                                                               array('ebay','marketplace'),
+                                                               60*60*24);
         }
 
         if (count($outdatedMarketplaces) <= 0) {
             return;
         }
 
-// M2ePro_TRANSLATIONS
-// %marketplace_title% data was changed on eBay. You need to synchronize it the Extension works properly. Please, go to %menu_label% > Configuration > <a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.
+        $message = '%marketplace_title% data was changed. You need to resynchronize it for the proper Extension work. '.
+                   'Please, go to <a href="%url%" target="_blank">Marketplaces</a> and press an Update All Now button.';
 
-        $message = '%marketplace_title% data was changed on eBay. You need to synchronize it'.
-                   ' the Extension works properly. Please, go to %menu_path% > '.
-                   '<a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.';
-
-        // TODO with configuration
-//        $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
-//            $message,
-//            implode(', ',$outdatedMarketplaces),
-//            $this->getHelper('View\Ebay')->getPageNavigationPath('configuration'),
-//            $controller->getUrl(
-//                '*/adminhtml_ebay_marketplace',
-//                array('tab' => Ess_M2ePro_Block_Adminhtml_Ebay_Configuration_Tabs::TAB_ID_MARKETPLACE)
-//            )
-//        ), \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP);
+        $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
+            $message,
+            implode(', ',$outdatedMarketplaces),
+            $controller->getUrl('*/ebay_marketplace')
+        ), \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP);
     }
 
     //########################################

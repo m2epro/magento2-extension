@@ -226,21 +226,18 @@ define([
         {
             var labelContainer = $('template_' + templateNick + '_nick_label');
             var templateLabel = labelContainer.down('span.template');
-            var parentLabel = labelContainer.down('span.parent');
 
             labelContainer.hide();
-            templateLabel.hide();
+            templateLabel && templateLabel.hide();
 
-            parentLabel && parentLabel.hide();
 
             if (this.isSwitcherValueModeTemplate(templateNick)) {
                 labelContainer.show();
-                templateLabel.show();
+                templateLabel && templateLabel.show();
             }
 
-            if (this.isSwitcherValueModeEmpty(templateNick) && parentLabel) {
-                labelContainer.show();
-                parentLabel.show();
+            if (this.isSwitcherValueModeEmpty(templateNick)) {
+                labelContainer.hide();
             }
         },
 
@@ -289,17 +286,16 @@ define([
                     $$('.template-switcher').each(function(switcher) {
                         params[switcher.name] = switcher.value;
                     });
+                    
+                    if ($('ebayListingTemplateEditTabs')) {
+                        params['tab'] = jQuery('#ebayListingTemplateEditTabs').data().tabs.active.find('a')[0].id.split('_').pop();
+                    }
 
-                    params['tab'] = $('ebayListingTemplateEditTabs').select('.ui-state-active a')[0].id.split('_').pop();
-
-                    // TODO NOT SUPPORTED FEATURE watermark
-                    // if (EbayListingTemplateSwitcherObj.isNeededSaveWatermarkImage(response)) {
-                    //     EbayTemplateDescriptionHandlerObj.saveWatermarkImage(callback, params);
-                    // } else if (typeof callback == 'function') {
-                    //     callback(params);
-                    // }
-
-                    callback(params);
+                    if (EbayListingTemplateSwitcherObj.isNeededSaveWatermarkImage(response)) {
+                        EbayTemplateDescriptionObj.saveWatermarkImage(callback, params);
+                    } else if (typeof callback == 'function') {
+                        callback(params);
+                    }
 
                 }.bind(this)
             });

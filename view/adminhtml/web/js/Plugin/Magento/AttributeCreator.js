@@ -1,4 +1,9 @@
-define([], function () {
+define([
+    'M2ePro/Plugin/Messages',
+    'jquery',
+    'Magento_Ui/js/modal/modal',
+    'prototype'
+], function (MessagesObj, jQuery, modal) {
 
     window.AttributeCreator = Class.create();
     AttributeCreator.prototype = {
@@ -14,7 +19,8 @@ define([], function () {
         // it is for close callback [in order to rest selected option for selectObj]
         attributeWasCreated: false,
 
-        formId: 'general_create_new_attribute_form',
+        formId: 'edit_form',
+        modalId: 'modal_create_magento_attribute',
         addOptionValue: 'new-one-attribute',
 
         onSuccessCallback: null,
@@ -22,37 +28,44 @@ define([], function () {
 
         // ---------------------------------------
 
-        initialize: function (id) {
-
+        initialize: function (id)
+        {
             id = 'AttributeCreator_' + id + '_Obj';
 
             this.id = id;
             window[id] = this;
+
+            MessagesObj.setContainer('.modal-slide:has(#'+this.modalId+')');
         },
 
         // ---------------------------------------
 
-        setSelectObj: function (selectObj) {
+        setSelectObj: function (selectObj)
+        {
             this.selectObj = selectObj;
         },
 
-        setSelectIndexBeforeCreation: function (index) {
+        setSelectIndexBeforeCreation: function (index)
+        {
             this.selectIndexBeforeCreation = index;
         },
 
         // ---------------------------------------
 
-        setOnSuccessCallback: function (funct) {
+        setOnSuccessCallback: function (funct)
+        {
             this.onSuccessCallback = funct;
         },
 
-        setOnFailedCallback: function (funct) {
+        setOnFailedCallback: function (funct)
+        {
             this.onFailedCallback = funct;
         },
 
         // ---------------------------------------
 
-        showPopup: function (params) {
+        showPopup: function (params)
+        {
             var self = this;
             params = params || {};
 
@@ -66,52 +79,84 @@ define([], function () {
 
             params['handler_id'] = self.id;
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_general/getCreateAttributeHtmlPopup'), {
+            new Ajax.Request(M2ePro.url.get('general/getCreateAttributeHtmlPopup'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: params,
                 onSuccess: function (transport) {
 
-                    self.popupObj = Dialog.info(null, {
-                        draggable: true,
-                        resizable: true,
-                        closable: true,
-                        className: "magento",
-                        windowClassName: "popup-window",
+                    var modalDialogMessage = $(self.modalId);
+
+                    if (!modalDialogMessage) {
+                        modalDialogMessage = new Element('div', {
+                            id: self.modalId
+                        });
+                    }
+
+                    self.popupObj = jQuery(modalDialogMessage).modal({
                         title: M2ePro.translator.translate('Creation of New Magento Attribute'),
-                        top: 50,
-                        maxHeight: 520,
-                        width: 560,
-                        zIndex: 100,
-                        hideEffect: Element.hide,
-                        showEffect: Element.show,
-                        onOk: function () {
-                            return self.onOkPopupCallback();
-                        },
-                        onCancel: function () {
-                            return self.onCancelPopupCallback();
-                        },
-                        onClose: function () {
-                            return self.onClosePopupCallback();
+                        type: 'slide',
+                        buttons: [
+                            {
+                                text: M2ePro.translator.translate('Cancel'),
+                                attr: {id: 'magento_attribute_creation_cancel_button'},
+                                class: 'action-dismiss',
+                                click: function () {}
+                            },{
+                                text: M2ePro.translator.translate('Confirm'),
+                                attr: {id: 'magento_attribute_creation_confirm_button'},
+                                class: 'action primary',
+                                click: function () {}
+                            }
+                        ],
+                        closed: function() {
+                            MessagesObj.clear();
                         }
                     });
 
-                    self.attributeWasCreated = false;
-                    self.popupObj.options.destroyOnClose = true;
-                    self.autoHeightFix();
+                    var closeCallback = function (e) {
+                        self.onClosePopupCallback();
+                    };
+                    self.popupObj.data().modal.modal.find('.action-close')
+                        .off('click', closeCallback)
+                        .on('click', closeCallback);
 
-                    $('modal_dialog_message').insert(transport.responseText);
-                    $('modal_dialog_message').evalScripts();
+                    $('magento_attribute_creation_cancel_button')
+                        .stopObserving()
+                        .observe('click', function (e) {
+                            self.onCancelPopupCallback();
+                            self.popupObj.modal('closeModal');
+                        });
+
+                    $('magento_attribute_creation_confirm_button')
+                        .stopObserving()
+                        .observe('click', function (e) {
+                            self.onOkPopupCallback();
+                        });
+
+                    self.popupObj.modal('openModal');
+                    self.attributeWasCreated = false;
+
+                    modalDialogMessage.innerHTML = transport.responseText;
+                    modalDialogMessage.innerHTML.evalScripts();
+
+                    modalDialogMessage.down('#store_label')
+                        .stopObserving()
+                        .observe('keyup', self.onChangeLabel.bind(self));
+                    modalDialogMessage.down('#code')
+                        .stopObserving()
+                        .observe('change', self.onChangeCode.bind(self));
                 }
             });
         },
 
-        create: function (attributeParams) {
+        create: function (attributeParams)
+        {
             var self = this;
 
-            MagentoMessageObj.clearAll();
+            MessagesObj.clear();
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_general/createAttribute'), {
+            new Ajax.Request(M2ePro.url.get('general/createAttribute'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: attributeParams,
@@ -130,36 +175,43 @@ define([], function () {
                     typeof self.onSuccessCallback == 'function'
                         ? self.onSuccessCallback.call(self, attributeParams, result)
                         : self.defaultOnSuccessCallback(attributeParams, result);
+
+                    self.popupObj.modal('closeModal');
+                    self.onClosePopupCallback();
                 }
             });
         },
 
         // ---------------------------------------
 
-        defaultOnSuccessCallback: function (attributeParams, result) {
-            MagentoMessageObj.addSuccess(M2ePro.translator.translate('Attribute has been created.'));
+        defaultOnSuccessCallback: function (attributeParams, result)
+        {
+            MessagesObj.addSuccessMessage(M2ePro.translator.translate('Attribute has been created.'));
             this.chooseNewlyCreatedAttribute(attributeParams, result);
         },
 
-        defaultOnFailedCallback: function (attributeParams, result) {
-            MagentoMessageObj.addError(result['error']);
+        defaultOnFailedCallback: function (attributeParams, result)
+        {
+            MessagesObj.addErrorMessage(result['error']);
             this.onCancelPopupCallback();
         },
 
         // ---------------------------------------
 
-        onOkPopupCallback: function () {
-            if (!new varienForm(this.formId).validate()) {
+        onOkPopupCallback: function ()
+        {
+            if (!jQuery('#'+this.modalId+' #'+this.formId).validation().valid()) {
                 return false;
             }
 
-            this.create($(this.formId).serialize(true));
+            this.create($$('#'+this.modalId+' #'+this.formId)[0].serialize(true));
             this.attributeWasCreated = true;
 
             return true;
         },
 
-        onCancelPopupCallback: function () {
+        onCancelPopupCallback: function ()
+        {
             if (!this.selectObj) {
                 return true;
             }
@@ -170,7 +222,8 @@ define([], function () {
             return true;
         },
 
-        onClosePopupCallback: function () {
+        onClosePopupCallback: function ()
+        {
             if (this.attributeWasCreated || !this.selectObj) {
                 return true;
             }
@@ -179,13 +232,13 @@ define([], function () {
             return true;
         },
 
-        chooseNewlyCreatedAttribute: function (attributeParams, result) {
+        chooseNewlyCreatedAttribute: function (attributeParams, result)
+        {
             var self = this;
 
             var newOption = new Element('option');
 
             if (this.haveOptgroup()) {
-                newOption.addClassName('simple_mode_disallowed');
                 newOption.setAttribute('attribute_code', attributeParams['code']);
             }
 
@@ -227,7 +280,8 @@ define([], function () {
             self.selectObj.simulate('change');
         },
 
-        getNewlyCreatedAttributeValue: function (attributeParams) {
+        getNewlyCreatedAttributeValue: function (attributeParams)
+        {
             if (!this.haveOptgroup()) {
                 return attributeParams['code'];
             }
@@ -243,7 +297,8 @@ define([], function () {
 
         // ---------------------------------------
 
-        injectAddOption: function () {
+        injectAddOption: function ()
+        {
             var self = this;
 
             // -- if select is empty -> inject each one empty option
@@ -279,7 +334,8 @@ define([], function () {
             });
         },
 
-        validateAttributeCode: function (value, el) {
+        validateAttributeCode: function (value, el)
+        {
             if (!value.match(/^[a-z][a-z_0-9]{1,254}$/)) {
                 return false;
             }
@@ -287,10 +343,11 @@ define([], function () {
             return true;
         },
 
-        validateAttributeCodeToBeUnique: function (value, el) {
+        validateAttributeCodeToBeUnique: function (value, el)
+        {
             var result = false;
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_general/isAttributeCodeUnique'), {
+            new Ajax.Request(M2ePro.url.get('general/isAttributeCodeUnique'), {
                 method: 'post',
                 asynchronous: false,
                 parameters: {
@@ -311,13 +368,15 @@ define([], function () {
 
         // ---------------------------------------
 
-        onChangeCode: function (event) {
+        onChangeCode: function (event)
+        {
             if (!$('code').hasClassName('changed-by-user')) {
                 $('code').addClassName('changed-by-user');
             }
         },
 
-        onChangeLabel: function (event) {
+        onChangeLabel: function (event)
+        {
             var self = this;
 
             if ($('code').hasClassName('changed-by-user')) {
@@ -330,8 +389,9 @@ define([], function () {
             }, 600);
         },
 
-        updateCode: function (label) {
-            new Ajax.Request(M2ePro.url.get('adminhtml_general/generateAttributeCodeByLabel'), {
+        updateCode: function (label)
+        {
+            new Ajax.Request(M2ePro.url.get('general/generateAttributeCodeByLabel'), {
                 method: 'post',
                 asynchronous: true,
                 parameters: {
@@ -354,19 +414,14 @@ define([], function () {
 
         // ---------------------------------------
 
-        autoHeightFix: function () {
-            setTimeout(function () {
-                Windows.getFocusedWindow().content.style.height = '';
-                Windows.getFocusedWindow().content.style.maxHeight = '650px';
-            }, 50);
-        },
-
-        haveOptgroup: function () {
+        haveOptgroup: function ()
+        {
             var obj = $$('select[id="' + this.selectObj.id + '"] optgroup.M2ePro-custom-attribute-optgroup').first();
             return typeof obj != 'undefined';
         },
 
-        alreadyHaveAddedOption: function () {
+        alreadyHaveAddedOption: function ()
+        {
             var obj = $$('select[id="' + this.selectObj.id + '"] option[value="' + this.addOptionValue + '"]').first();
             return typeof obj != 'undefined';
         }

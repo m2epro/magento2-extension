@@ -46,8 +46,8 @@ class Edit extends AbstractContainer
         ));
 
         $saveButtonsProps = [];
-        if ($this->getHelper('Data\GlobalData')->getValue('temp_data') &&
-            $this->getHelper('Data\GlobalData')->getValue('temp_data')->getId()) {
+        if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
+            $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()) {
 
             $this->addButton('delete', array(
                 'label'     => $this->__('Delete'),
@@ -69,7 +69,7 @@ class Edit extends AbstractContainer
                 'label' => $this->__('Save And Continue Edit'),
                 'class' => 'add',
                 'button_class' => '',
-                'onclick'   => 'EbayAccountObj.saveAndEditClick(\'\')',
+                'onclick'   => 'EbayAccountObj.saveAndEditClick(\'\', \'ebayAccountEditTabs\')',
                 'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
                 'options' => $saveButtonsProps
             ];

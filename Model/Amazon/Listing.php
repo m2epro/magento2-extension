@@ -1048,6 +1048,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $listingProductRepricing->setData(array(
                 'listing_product_id' => $listingProduct->getId(),
                 'is_online_disabled' => $amazonListingOther->isRepricingDisabled(),
+                'update_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
+                'create_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
             ));
             $listingProductRepricing->save();
         }

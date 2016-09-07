@@ -42,7 +42,7 @@ class StepTwoModeCategoryValidate extends Settings
         $this->setJsonContent([
             'validation' => $isValid,
             'message' => $this->__(
-                'You have not selected the Primary eBay Category for some Magento Categories.'
+                'You have not selected the eBay Catalog Primary Category for some Magento Categories.'
             )
         ]);
 

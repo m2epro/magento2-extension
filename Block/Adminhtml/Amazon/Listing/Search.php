@@ -37,7 +37,6 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     protected function _prepareLayout()
     {
-        $this->css->addFile('amazon/style.css');
         $this->css->addFile('listing/search/grid.css');
 
         $content = $this->__(

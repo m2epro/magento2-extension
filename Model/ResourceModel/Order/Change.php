@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Order;
 
-class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractDb
+class Change extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     //########################################
 

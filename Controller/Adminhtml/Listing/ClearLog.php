@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: HardRock
- * Date: 14.03.2016
- * Time: 17:23
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Controller\Adminhtml\Listing;
@@ -13,17 +13,6 @@ use Ess\M2ePro\Controller\Adminhtml\Listing;
 
 class ClearLog extends Listing
 {
-    protected $activeRecordFactory;
-
-    public function __construct(
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        Context $context
-    )
-    {
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($context);
-    }
-
     public function execute()
     {
         $ids = $this->getRequestIds();

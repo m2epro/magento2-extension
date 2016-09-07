@@ -91,10 +91,10 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
                 <p><strong>Note:</strong> The process of Automatic Search might be time-consuming, depending on
                 the number of added Products the Search is applied to.</p><br>
                 <p>More detailed information about how to work with this Page you can find 
-                <a href="%url%" target="_blank">here</a>.</p>
+                <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/mAYtAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/mAYtAQ')
             )
         ]);
 

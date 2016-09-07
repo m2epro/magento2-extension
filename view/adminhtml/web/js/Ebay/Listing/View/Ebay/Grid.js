@@ -1,6 +1,7 @@
 define([
+    'Magento_Ui/js/modal/modal',
     'M2ePro/Ebay/Listing/View/Grid'
-], function () {
+], function (modal) {
     
     window.EbayListingViewEbayGrid = Class.create(EbayListingViewGrid, {
 
@@ -41,29 +42,40 @@ define([
 
         // ---------------------------------------
 
-        openFeePopUp: function(content)
+        openFeePopUp: function(content, title)
         {
-            Dialog.info(content, {
-                draggable: true,
-                resizable: true,
-                closable: true,
-                className: "magento",
-                windowClassName: "popup-window",
-                title: M2ePro.translator.translate('Estimated Fee Details'),
-                width: 400,
-                zIndex: 100,
-                recenterAuto: true
-            });
+            var feePopup = $('fee_popup');
 
-            Windows.getFocusedWindow().content.style.height = '';
-            Windows.getFocusedWindow().content.style.maxHeight = '550px';
+            if (feePopup) {
+                feePopup.remove();
+            }
+
+            $('html-body').insert({bottom: '<div id="fee_popup"></div>'});
+
+            $('fee_popup').update(content);
+
+            var popup = jQuery('#fee_popup');
+
+            modal({
+                title: title,
+                type: 'popup',
+                buttons: [{
+                    text: M2ePro.translator.translate('Close'),
+                    class: 'action-secondary',
+                    click: function () {
+                        popup.modal('closeModal');
+                    }
+                }]
+            }, popup);
+
+            popup.modal('openModal');
         },
 
         getEstimatedFees: function(listingProductId)
         {
             var self = this;
 
-            new Ajax.Request(M2ePro.url.get('adminhtml_ebay_listing/getEstimatedFees'), {
+            new Ajax.Request(M2ePro.url.get('ebay_listing/getEstimatedFees'), {
                 method: 'get',
                 asynchronous: true,
                 parameters: {
@@ -78,7 +90,7 @@ define([
                         return;
                     }
 
-                    self.openFeePopUp(response.html);
+                    self.openFeePopUp(response.html, response.title);
                 }
             });
         },

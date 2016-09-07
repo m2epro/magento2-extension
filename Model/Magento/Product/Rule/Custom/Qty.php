@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
-class Qty extends AbstractCustom
+class Qty extends AbstractModel
 {
     //########################################
 

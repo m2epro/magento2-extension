@@ -22,6 +22,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $checkNewAsinAccepted = false;
     protected $productsIds;
     protected $mapToTemplateJsFn = 'ListingGridHandlerObj.templateDescriptionHandler.mapToTemplateDescription';
+    protected $createNewTemplateJsFn =
+        'ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab';
 
     protected $customCollectionFactory;
     protected $resourceConnection;
@@ -57,6 +59,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function setMapToTemplateJsFn($mapToTemplateLink)
     {
         $this->mapToTemplateJsFn = $mapToTemplateLink;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return string
+     */
+    public function getCreateNewTemplateJsFn()
+    {
+        return $this->createNewTemplateJsFn;
+    }
+
+    /**
+     * @param string $createNewTemplateJsFn
+     */
+    public function setCreateNewTemplateJsFn($createNewTemplateJsFn)
+    {
+        $this->createNewTemplateJsFn = $createNewTemplateJsFn;
     }
 
     // ---------------------------------------
@@ -255,7 +275,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_description/edit', array(
-            'id' => $row->getData('id')
+            'id' => $row->getData('id'),
+            'wizard' => $this->getHelper('Module\Wizard')->isActive(
+                \Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK
+            )
         ));
 
         $title = $this->getHelper('Data')->escapeHtml($row->getData('title'));
@@ -279,13 +302,11 @@ HTML;
             case self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED:
                 return '<span style="color: #808080;">' .
                     $this->__('New ASIN/ISBN feature is disabled') . '</span>';
-                break;
             case self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED:
                 return '<span style="color: #808080;">' .
                     $this->__(
                         'Selected Category doesn\'t support Variational Products'
                     ) . '</span>';
-                break;
         }
 
         return '<span style="color: green;">' . $this->__('Ready to be assigned') . '</span>';
@@ -303,10 +324,8 @@ HTML;
         switch($row->getData('description_template_action_status')) {
             case self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED:
                 return '<span style="color: #808080;">' . $assignText . '</span>';
-                break;
             case self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED:
                 return '<span style="color: #808080;">' . $assignText . '</span>';
-                break;
         }
 
         return '<a href="javascript:void(0);"'
@@ -320,18 +339,6 @@ HTML;
     {
         $this->jsUrl->add($this->getNewTemplateDescriptionUrl(), 'newTemplateDescriptionUrl');
 
-        $this->js->add(
-<<<JS
-    $$('#amazonTemplateDescriptionGrid div.grid th').each(function(el) {
-        el.style.padding = '5px 5px';
-    });
-
-    $$('#amazonTemplateDescriptionGrid div.grid td').each(function(el) {
-        el.style.padding = '5px 5px';
-    });
-JS
-);
-
         return parent::_toHtml();
     }
 
@@ -339,10 +346,12 @@ JS
 
     public function getGridUrl()
     {
-        return $this->getUrl('*/*/viewTemplateDescriptionsGrid', array(
+        return $this->getUrl('*/*/viewGrid', array(
             '_current' => true,
             '_query' => array(
-                'check_is_new_asin_accepted' => $this->getCheckNewAsinAccepted()
+                'check_is_new_asin_accepted' => $this->getCheckNewAsinAccepted(),
+                'map_to_template_js_fn' => $this->getMapToTemplateJsFn(),
+                'create_new_template_js_fn' => $this->getCreateNewTemplateJsFn()
             ),
             'products_ids' => implode(',', $this->getProductsIds()),
         ));
@@ -381,8 +390,7 @@ JS
         $message = <<<HTML
 <p>{$messageTxt} <a href="javascript:void(0);"
     id="template_description_addNew_link"
-    onclick="ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab(
-        '{$templateDescriptionEditUrl}');">{$linkTitle}</a>
+    onclick="{$this->getCreateNewTemplateJsFn()}('{$templateDescriptionEditUrl}');">{$linkTitle}</a>
 </p>
 HTML;
 

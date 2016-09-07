@@ -68,6 +68,7 @@ function(jQuery) {
                 return;
             }
 
+            var self = EbayTemplateEditObj;
             marketplaceId = this.value || marketplaceId;
 
             new Ajax.Request(M2ePro.url.get('ebay_template/getTemplateHtml'), {
@@ -94,8 +95,8 @@ function(jQuery) {
                             } catch(e) {}
                         });
 
-                    var titleInput = $$('input[name="'+this.templateNick+'[title]"]')[0];
-                    var marketplaceIdInput = $$('input[name="'+this.templateNick+'[marketplace_id]"]')[0];
+                    var titleInput = $$('input[name="'+self.templateNick+'[title]"]')[0];
+                    var marketplaceIdInput = $$('input[name="'+self.templateNick+'[marketplace_id]"]')[0];
 
                     if ($('title').value.trim() == '') {
                         $('title').value = titleInput.value;
@@ -106,7 +107,7 @@ function(jQuery) {
                     }
 
                     callback && callback();
-                }.bind(this)
+                }
             });
         },
 

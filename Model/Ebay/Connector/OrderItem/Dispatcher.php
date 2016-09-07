@@ -70,7 +70,7 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     protected function processItems(array $items, $connectorName, array $params = array())
     {
         if (count($items) == 0) {
-            return false;
+            return;
         }
 
         /** @var $items \Ess\M2ePro\Model\Order\Item[] */
@@ -95,10 +95,7 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
                 return;
             }
-
         }
-
-        return;
     }
 
     // ########################################

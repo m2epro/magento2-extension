@@ -23,18 +23,33 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
      */
     private $descriptionTemplateModel = null;
 
+    protected $driverPool;
+    protected $gd2AdapterFactory;
+    protected $imageFactory;
+    protected $mediaConfig;
+    protected $storeManager;
     protected $emailTemplateFilter;
     protected $filterManager;
 
     //########################################
 
-    function __construct(
+    public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
+        \Magento\Framework\Image\Adapter\Gd2Factory $gd2AdapterFactory,
+        \Magento\Framework\ImageFactory $imageFactory,
+        \Magento\Catalog\Model\Product\Media\Config $mediaConfig,
+        \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Email\Model\Template\Filter $emailTemplateFilter,
         \Magento\Framework\Filter\FilterManager $filterManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->driverPool = $driverPool;
+        $this->gd2AdapterFactory = $gd2AdapterFactory;
+        $this->imageFactory = $imageFactory;
+        $this->mediaConfig = $mediaConfig;
+        $this->storeManager = $storeManager;
         $this->emailTemplateFilter = $emailTemplateFilter;
         $this->filterManager = $filterManager;
         parent::__construct($helperFactory, $modelFactory);
@@ -436,179 +451,178 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    private function imageLinkToPath($imageLink)
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product\Image $imageObj
+     */
+    public function addWatermarkIfNeed($imageObj)
     {
-        $imageLink = str_replace('%20', ' ', $imageLink);
-        $imagePath = '';
-        // TODO
-//        $baseMediaUrl = Mage::app()->getStore($this->getMagentoProduct()->getStoreId())
-//                                   ->getBaseUrl(Mage\Core\Model\Store::URL_TYPE_MEDIA, false).'catalog/product';
-//
-//        $imageLink = preg_replace('/^http(s)?:\/\//i', '', $imageLink);
-//        $baseMediaUrl = preg_replace('/^http(s)?:\/\//i', '', $baseMediaUrl);
-//
-//        $baseMediaPath = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath();
-//
-//        $imagePath = str_replace($baseMediaUrl, $baseMediaPath, $imageLink);
-//        $imagePath = str_replace('/', DS, $imagePath);
-//        $imagePath = str_replace('\\', DS, $imagePath);
+        if (!$this->getEbayDescriptionTemplate()->isWatermarkEnabled()) {
+            return;
+        }
 
-        return $imagePath;
-    }
+        if (!$imageObj->isSelfHosted()) {
+            return;
+        }
+        
+        $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
-    private function pathToImageLink($path)
-    {
-        // TODO
-//        $baseMediaUrl = Mage::app()->getStore($this->getMagentoProduct()->getStoreId())
-//                                   ->getBaseUrl(Mage\Core\Model\Store::URL_TYPE_MEDIA, false).'catalog/product';
-//
-//        $baseMediaPath = Mage::getSingleton('catalog/product_media_config')->getBaseMediaPath();
-//
-//        $imageLink = str_replace($baseMediaPath, $baseMediaUrl, $path);
-//        $imageLink = str_replace(DS, '/', $imageLink);
+        $fileExtension = pathinfo($imageObj->getPath(), PATHINFO_EXTENSION);
+        $pathWithoutExtension = preg_replace('/\.'.$fileExtension.'$/', '', $imageObj->getPath());
 
-        $imageLink = '';
-        return str_replace(' ', '%20', $imageLink);
-    }
+        $markingImagePath = $pathWithoutExtension.'-'.$this->getEbayDescriptionTemplate()->getWatermarkHash()
+            .'.'.$fileExtension;
 
-    // ---------------------------------------
+        if ($fileDriver->isFile($markingImagePath)) {
+            $currentTime = $this->getHelper('Data')->getCurrentGmtDate(true);
+            if (filemtime($markingImagePath) + \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_CACHE_TIME >
+                $currentTime) {
 
-    public function addWatermarkIfNeed($imageLink)
-    {
-        // TODO NOT SUPPORTED FEATURES "descripion policy watermark feature"
+                $imageObj->setPath($markingImagePath)
+                    ->setUrl($imageObj->getUrlByPath())
+                    ->resetHash();
 
-//        if (!$this->getEbayDescriptionTemplate()->isWatermarkEnabled()) {
-//            return $imageLink;
-//        }
-//
-//        $imagePath = $this->imageLinkToPath($imageLink);
-//        if (!is_file($imagePath)) {
-//            return $imageLink;
-//        }
-//
-//        $fileExtension = pathinfo($imagePath, PATHINFO_EXTENSION);
-//        $pathWithoutExtension = preg_replace('/\.'.$fileExtension.'$/', '', $imagePath);
-//
-//        $markingImagePath = $pathWithoutExtension.'-'.$this->getEbayDescriptionTemplate()->getWatermarkHash()
-//                            .'.'.$fileExtension;
-//        if (is_file($markingImagePath)) {
-//            $currentTime = $this->getHelper('Data')->getCurrentGmtDate(true);
-//            if (filemtime($markingImagePath) +\Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_CACHE_TIME >
-//                $currentTime) {
-//                return $this->pathToImageLink($markingImagePath);
-//            }
-//
-//            @unlink($markingImagePath);
-//        }
-//
-//        $prevMarkingImagePath = $pathWithoutExtension.'-'
-//                                .$this->getEbayDescriptionTemplate()->getWatermarkPreviousHash().'.'.$fileExtension;
-//        if (is_file($prevMarkingImagePath)) {
-//            @unlink($prevMarkingImagePath);
-//        }
-//
-//        $varDir = new Ess\M2ePro\Model\VariablesDir(array(
-//            'child_folder' => 'ebay/template/description/watermarks'
-//        ));
-//        $watermarkPath = $varDir->getPath().$this->getEbayDescriptionTemplate()->getId().'.png';
-//        if (!is_file($watermarkPath)) {
-//            $varDir->create();
-//            @file_put_contents($watermarkPath, $this->getEbayDescriptionTemplate()->getWatermarkImage());
-//        }
-//
-//        $watermarkPositions = array(
-//           \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TOP =>
-//                                                                Varien\Image\Adapter\Abstract::POSITION_TOP_RIGHT,
-//           \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_MIDDLE =>
-//                                                                Varien\Image\Adapter\Abstract::POSITION_CENTER,
-//           \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM =>
-//                                                                Varien\Image\Adapter\Abstract::POSITION_BOTTOM_RIGHT
-//        );
-//
-//        $image = new Varien\Image($imagePath);
-//        $imageOriginalHeight = $image->getOriginalHeight();
-//        $imageOriginalWidth = $image->getOriginalWidth();
-//        $image->open();
-//        $image->setWatermarkPosition(
-//            $watermarkPositions[$this->getEbayDescriptionTemplate()->getWatermarkPosition()]
-//        );
-//
-//        $watermark = new Varien\Image($watermarkPath);
-//        $watermarkOriginalHeight = $watermark->getOriginalHeight();
-//        $watermarkOriginalWidth = $watermark->getOriginalWidth();
-//
-//        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeStretch()) {
-//            $image->setWatermarkPosition(Varien\Image\Adapter\AbstractModel::POSITION_STRETCH);
-//        }
-//
-//        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeInWidth()) {
-//            $watermarkWidth = $imageOriginalWidth;
-//            $heightPercent = $watermarkOriginalWidth / $watermarkWidth;
-//            $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
-//
-//            $image->setWatermarkWidth($watermarkWidth);
-//            $image->setWatermarkHeigth($watermarkHeight);
-//        }
-//
-//        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeNone()) {
-//            $image->setWatermarkWidth($watermarkOriginalWidth);
-//            $image->setWatermarkHeigth($watermarkOriginalHeight);
-//
-//            if ($watermarkOriginalHeight > $imageOriginalHeight) {
-//                $image->setWatermarkHeigth($imageOriginalHeight);
-//                $widthPercent = $watermarkOriginalHeight / $imageOriginalHeight;
-//                $watermarkWidth = (int)($watermarkOriginalWidth / $widthPercent);
-//                $image->setWatermarkWidth($watermarkWidth);
-//            }
-//
-//            if ($watermarkOriginalWidth > $imageOriginalWidth) {
-//                $image->setWatermarkWidth($imageOriginalWidth);
-//                $heightPercent = $watermarkOriginalWidth / $imageOriginalWidth;
-//                $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
-//                $image->setWatermarkHeigth($watermarkHeight);
-//            }
-//        }
-//
-//        $opacity = 100;
-//        if ($this->getEbayDescriptionTemplate()->isWatermarkTransparentEnabled()) {
-//            $opacity = 30;
-//        }
-//
-//        $image->setWatermarkImageOpacity($opacity);
-//        $image->watermark($watermarkPath);
-//        $image->save($markingImagePath);
-//
-//        return $this->pathToImageLink($markingImagePath);
+                return;
+            }
+
+            $fileDriver->deleteFile($markingImagePath);
+        }
+
+        $prevMarkingImagePath = $pathWithoutExtension.'-'
+            .$this->getEbayDescriptionTemplate()->getWatermarkPreviousHash().'.'.$fileExtension;
+
+        if ($fileDriver->isFile($prevMarkingImagePath)) {
+            $fileDriver->deleteFile($prevMarkingImagePath);
+        }
+
+        /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
+        $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
+            'child_folder' => 'ebay/template/description/watermarks'
+        ]]);
+        $watermarkPath = $varDir->getPath().$this->getEbayDescriptionTemplate()->getId().'.png';
+        if (!$fileDriver->isFile($watermarkPath)) {
+            $varDir->create();
+            file_put_contents($watermarkPath, $this->getEbayDescriptionTemplate()->getWatermarkImage());
+        }
+
+        $watermarkPositions = array(
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_TOP =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_TOP_RIGHT,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_MIDDLE =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_CENTER,
+            \Ess\M2ePro\Model\Ebay\Template\Description::WATERMARK_POSITION_BOTTOM =>
+                \Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_BOTTOM_RIGHT
+        );
+
+        /** @var \Magento\Framework\Image $image */
+        $image = $this->imageFactory->create([
+            'adapter' => $this->gd2AdapterFactory->create(),
+            'fileName' => $imageObj->getPath()
+        ]);
+        $imageOriginalHeight = $image->getOriginalHeight();
+        $imageOriginalWidth = $image->getOriginalWidth();
+        $image->open();
+        $image->setWatermarkPosition($watermarkPositions[$this->getEbayDescriptionTemplate()->getWatermarkPosition()]);
+
+        /** @var \Magento\Framework\Image $watermark */
+        $watermark = $this->imageFactory->create([
+            'adapter' => $this->gd2AdapterFactory->create(),
+            'fileName' => $watermarkPath
+        ]);
+        $watermarkOriginalHeight = $watermark->getOriginalHeight();
+        $watermarkOriginalWidth = $watermark->getOriginalWidth();
+
+        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeStretch()) {
+            $image->setWatermarkPosition(\Magento\Framework\Image\Adapter\AbstractAdapter::POSITION_STRETCH);
+        }
+
+        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeInWidth()) {
+            $watermarkWidth = $imageOriginalWidth;
+            $heightPercent = $watermarkOriginalWidth / $watermarkWidth;
+            $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
+
+            $image->setWatermarkWidth($watermarkWidth);
+            $image->setWatermarkHeight($watermarkHeight);
+        }
+
+        if ($this->getEbayDescriptionTemplate()->isWatermarkScaleModeNone()) {
+            $image->setWatermarkWidth($watermarkOriginalWidth);
+            $image->setWatermarkHeight($watermarkOriginalHeight);
+
+            if ($watermarkOriginalHeight > $imageOriginalHeight) {
+                $image->setWatermarkHeight($imageOriginalHeight);
+                $widthPercent = $watermarkOriginalHeight / $imageOriginalHeight;
+                $watermarkWidth = (int)($watermarkOriginalWidth / $widthPercent);
+                $image->setWatermarkWidth($watermarkWidth);
+            }
+
+            if ($watermarkOriginalWidth > $imageOriginalWidth) {
+                $image->setWatermarkWidth($imageOriginalWidth);
+                $heightPercent = $watermarkOriginalWidth / $imageOriginalWidth;
+                $watermarkHeight = (int)($watermarkOriginalHeight / $heightPercent);
+                $image->setWatermarkHeight($watermarkHeight);
+            }
+        }
+
+        $opacity = 100;
+        if ($this->getEbayDescriptionTemplate()->isWatermarkTransparentEnabled()) {
+            $opacity = 30;
+        }
+
+        $image->setWatermarkImageOpacity($opacity);
+        $image->watermark($watermarkPath);
+        $image->save($markingImagePath);
+
+        if (!$fileDriver->isFile($markingImagePath)) {
+            return;
+        }
+
+        $imageObj->setPath($markingImagePath)
+            ->setUrl($imageObj->getUrlByPath())
+            ->resetHash();
     }
 
     private function addWatermarkForCustomDescription(&$description)
     {
-        // TODO NOT SUPPORTED FEATURES "descripion policy watermark feature"
+        if (strpos($description, 'm2e_watermark') !== false) {
+            preg_match_all('/<(img|a) [^>]*\bm2e_watermark[^>]*>/i', $description, $tagsArr);
 
-//        if (strpos($description, 'm2e_watermark') !== false) {
-//            preg_match_all('/<(img|a) [^>]*\bm2e_watermark[^>]*>/i', $description, $tagsArr);
-//
-//            $tags = $tagsArr[0];
-//            $tagsNames = $tagsArr[1];
-//
-//            $count = count($tags);
-//            for ($i = 0; $i < $count; $i++) {
-//                $dom = new DOMDocument();
-//                $dom->loadHTML($tags[$i]);
-//                $tag = $dom->getElementsByTagName($tagsNames[$i])->item(0);
-//
-//                $newTag = str_replace(' m2e_watermark="1"', '', $tags[$i]);
-//                if ($tagsNames[$i] === 'a') {
-//                    $newTag = str_replace($tag->getAttribute('href'),
-//                        $this->addWatermarkIfNeed($tag->getAttribute('href')), $newTag);
-//                }
-//                if ($tagsNames[$i] === 'img') {
-//                    $newTag = str_replace($tag->getAttribute('src'),
-//                        $this->addWatermarkIfNeed($tag->getAttribute('src')), $newTag);
-//                }
-//                $description = str_replace($tags[$i], $newTag, $description);
-//            }
-//        }
+            $tags = $tagsArr[0];
+            $tagsNames = $tagsArr[1];
+
+            $count = count($tags);
+            for ($i = 0; $i < $count; $i++) {
+                $dom = new \DOMDocument();
+                $dom->loadHTML($tags[$i]);
+                $tag = $dom->getElementsByTagName($tagsNames[$i])->item(0);
+
+                $newTag = str_replace(' m2e_watermark="1"', '', $tags[$i]);
+                if ($tagsNames[$i] === 'a') {
+
+                    $imageUrl = $tag->getAttribute('href');
+
+                    /** @var \Ess\M2ePro\Model\Magento\Product\Image $image */
+                    $image = $this->modelFactory->getObject('Magento\Product\Image');
+                    $image->setUrl($imageUrl);
+                    $image->setStoreId($this->getMagentoProduct()->getStoreId());
+                    $this->addWatermarkIfNeed($image);
+
+                    $newTag = str_replace($imageUrl, $image->getUrl(), $newTag);
+                }
+                if ($tagsNames[$i] === 'img') {
+
+                    $imageUrl = $tag->getAttribute('src');
+
+                    /** @var \Ess\M2ePro\Model\Magento\Product\Image $image */
+                    $image = $this->modelFactory->getObject('Magento\Product\Image');
+                    $image->setUrl($imageUrl);
+                    $image->setStoreId($this->getMagentoProduct()->getStoreId());
+                    $this->addWatermarkIfNeed($image);
+
+                    $newTag = str_replace($imageUrl, $image->getUrl(), $newTag);
+                }
+                $description = str_replace($tags[$i], $newTag, $description);
+            }
+        }
     }
 
     //########################################

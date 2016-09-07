@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Helper\Data\Cache;
 
+use Ess\M2ePro\Model\Exception;
+
 class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
 {
     /**
@@ -37,12 +39,15 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
     {
         $cacheKey = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$key;
         $value = $this->cache->load($cacheKey);
-        $value !== false && $value = @unserialize($value);
-        return $value;
+        return $value === false ? NULL : unserialize($value);
     }
 
     public function setValue($key, $value, array $tags = array(), $lifeTime = NULL)
     {
+        if ($value === NULL) {
+            throw new Exception('Can\'t store NULL value');
+        }
+
         if (is_null($lifeTime) || (int)$lifeTime <= 0) {
             $lifeTime = 60*60*24*365*5;
         }
@@ -54,7 +59,7 @@ class Permanent extends \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
             $preparedTags[] = \Ess\M2ePro\Helper\Data::CUSTOM_IDENTIFIER.'_'.$tag;
         }
 
-        $this->cache->save(@serialize($value), $cacheKey, $preparedTags, (int)$lifeTime);
+        $this->cache->save(serialize($value), $cacheKey, $preparedTags, (int)$lifeTime);
     }
 
     //########################################

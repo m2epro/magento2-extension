@@ -16,15 +16,14 @@ class View extends Main
             $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
 //            Mage::helper('M2ePro/Data_Global')->setValue('marketplace_id', $model->getMarketplaceId());
 
-            // TODO NOT SUPPORTED FEATURES "Advanced search"
-//            // Set rule model
-//            // ---------------------------------------
-//            $this->setRuleData('amazon_rule_listing_view');
-//            // ---------------------------------------
+            $listingView = $this->createBlock('Amazon\Listing\View');
 
-            $this->setAjaxContent(
-                $this->getLayout()->createBlock('Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View')->getGridHtml()
-            );
+            // Set rule model
+            // ---------------------------------------
+            $this->setRuleData('amazon_rule_listing_view');
+            // ---------------------------------------
+
+            $this->setAjaxContent($listingView->getGridHtml());
             return $this->getResult();
         }
 
@@ -69,23 +68,65 @@ class View extends Main
         // ---------------------------------------
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
-
-        // TODO NOT SUPPORTED FEATURES "Advanced search"
-//        // Set rule model
-//        // ---------------------------------------
-//        $this->setRuleData('amazon_rule_listing_view');
-//        // ---------------------------------------
         
-        $this->setPageHelpLink(\Ess\M2ePro\Helper\Component\Amazon::NICK, 'Manage+M2E+Pro+Listings');
+        $this->setPageHelpLink('x/AgItAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Listing "%listing_title%"', $listing->getTitle())
         );
 
-//        $a = $this->createBlock('Amazon\Listing\View')->toHtml();
-
         $this->addContent($this->createBlock('Amazon\Listing\View'));
 
+        // Set rule model
+        // ---------------------------------------
+        $this->setRuleData('amazon_rule_listing_view');
+        // ---------------------------------------
+
         return $this->getResult();
+    }
+
+    protected function setRuleData($prefix)
+    {
+        $listingData = $this->getHelper('Data\GlobalData')->getValue('view_listing')->getData();
+
+        $storeId = isset($listingData['store_id']) ? (int)$listingData['store_id'] : 0;
+        $prefix .= isset($listingData['id']) ? '_'.$listingData['id'] : '';
+        $this->getHelper('Data\GlobalData')->setValue('rule_prefix', $prefix);
+
+        // ---------------------------------------
+        $useCustomOptions = true;
+        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::VIEW_MODE_MAGENTO;
+        $sessionParamName = 'amazonListingView' . $listingData['id'] . 'view_mode';
+
+        if (($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||
+            $magentoViewMode == $this->getHelper('Data\Session')->getValue($sessionParamName)) {
+            $useCustomOptions = false;
+        }
+        // ---------------------------------------
+
+        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        $ruleModel = $this->activeRecordFactory->getObject('Amazon\Magento\Product\Rule')->setData(
+            [
+                'prefix' => $prefix,
+                'store_id' => $storeId,
+                'use_custom_options' => $useCustomOptions
+            ]
+        );
+
+        $ruleParam = $this->getRequest()->getPost('rule');
+        if (!empty($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue(
+                $prefix, $ruleModel->getSerializedFromPost($this->getRequest()->getPostValue())
+            );
+        } elseif (!is_null($ruleParam)) {
+            $this->getHelper('Data\Session')->setValue($prefix, []);
+        }
+
+        $sessionRuleData = $this->getHelper('Data\Session')->getValue($prefix);
+        if (!empty($sessionRuleData)) {
+            $ruleModel->loadFromSerialized($sessionRuleData);
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
     }
 }

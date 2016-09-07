@@ -7,50 +7,31 @@ use Ess\M2ePro\Model\Ebay\Template\Description;
 
 class Data extends AbstractForm
 {
+    protected $attributes = [];
+    protected $generalAttributes = [];
+    protected $M2eProAttributes = [];
+
+    protected function _construct()
+    {
+        parent::_construct();
+
+        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
+        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+
+        $this->attributes = $magentoAttributeHelper->getAll();
+    }
+
     protected function _prepareForm()
     {
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
         
-        $attributeSets = $this->getHelper('Data\GlobalData')->getValue('ebay_attribute_sets');
-        $attributes = $magentoAttributeHelper->getAll();
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
         $attributesConfigurable = $magentoAttributeHelper->getAllConfigurable();
 
-        $M2eProAttributes = array(
-            'title' => $this->__('Title'),
-            'subtitle' => $this->__('Subtitle'),
-            'condition' => $this->__('Condition'),
-            'condition_description' => $this->__('Seller Notes'),
-            'fixed_price' => $this->__('Fixed Price'),
-            'start_price' => $this->__('Start Price'),
-            'reserve_price' => $this->__('Reserve Price'),
-            'buyitnow_price' => $this->__('Buy It Now Price'),
-            'qty' => $this->__('QTY'),
-            'listing_type' => $this->__('Listing Type'),
-            'listing_duration' => $this->__('Listing Duration'),
-            'handling_time' => $this->__('Dispatch Time'),
-            'primary_category_id' => $this->__('Primary Category Id'),
-            'secondary_category_id' => $this->__('Secondary Category Id'),
-            'store_primary_category_id' => $this->__('Store Primary Category Id'),
-            'store_secondary_category_id' => $this->__('Store Secondary Category Id'),
-            'primary_category_name' => $this->__('Primary Category Name'),
-            'secondary_category_name' => $this->__('Secondary Category Name'),
-            'store_primary_category_name' => $this->__('Store Primary Category Name'),
-            'store_secondary_category_name' => $this->__('Store Secondary Category Name'),
-            'domestic_shipping_method[1]' => $this->__('Domestic Shipping First Method'),
-            'domestic_shipping_cost[1]' => $this->__('Domestic Shipping First Cost'),
-            'domestic_shipping_additional_cost[1]' =>
-                $this->__('Domestic Shipping First Additional Cost'),
-            'international_shipping_method[1]' => $this->__('International Shipping First Method'),
-            'international_shipping_cost[1]' => $this->__('International Shipping First Cost'),
-            'international_shipping_additional_cost[1]' =>
-                $this->__('International Shipping First Additional Cost'),
-        );
-        
         $attributesByInputTypes = array(
-            'text' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text')),
-            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, array('text', 'select')),
+            'text' => $magentoAttributeHelper->filterByInputTypes($this->attributes, array('text')),
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($this->attributes, array('text', 'select')),
         );
 
         $generalAttributesByTypes = array(
@@ -66,8 +47,6 @@ class Data extends AbstractForm
 
         $default = $this->getDefault();
         $formData = $this->getHelper('Data')->arrayReplaceRecursive($default, $formData);
-
-        $tinymceEnabledForJavascript = $formData['editor_type'] == Description::EDITOR_TYPE_TINYMCE ? 'true' : 'false';
 
         $isCustomDescription = ($formData['description_mode'] == Description::DESCRIPTION_MODE_CUSTOM);
 
@@ -185,7 +164,6 @@ class Data extends AbstractForm
             [
                 'name' => 'description[condition_mode]',
                 'label' => $this->__('Condition'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     Description::CONDITION_MODE_NONE => $this->__('None'),
                     [
@@ -196,16 +174,18 @@ class Data extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'duration_attribute M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true,
+                            'class' => 'duration_attribute'
                         ]
                     ]
                 ],
                 'value' => $formData['condition_mode'] == Description::CONDITION_MODE_NONE
                     ? $formData['condition_mode'] : -1,
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('Condition is one of the top factors Buyers consider when
                                 deciding whether to purchase an Item.
                                 When you create your Listing, let your Buyers know exactly what they\'ll
-                                be receiving by specifying its Condition
+                                be receiving by specifying its Condition.
                                 Some Conditions, such as \'new\', are grouped as single selections
                                 because they appear on eBay under slightly different names depending on the Category
                                 of the Item.
@@ -215,7 +195,7 @@ class Data extends AbstractForm
                                    href="http://developer.ebay.com/devzone/finding/callref/Enums/conditionIdList.html">
                                    the eBay API reference: Item Condition IDs and Names</a> for more details.')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
         $fieldset->addField('condition_value',
             'hidden',
@@ -234,26 +214,26 @@ class Data extends AbstractForm
         );
 
         $fieldset->addField('condition_note_mode',
-            'select',
-            [
-                'container_id' => 'condition_note_tr',
-                'label' => $this->__('Seller Notes'),
-                'name' => 'description[condition_note_mode]',
-                'values' => [
-                    Description::CONDITION_NOTE_MODE_NONE => $this->__('None'),
-                    Description::CONDITION_NOTE_MODE_CUSTOM => $this->__('Custom Value'),
-                ],
-                'value' => $formData['condition_note_mode'],
-                'tooltip' => $this->__(
-                    'If Item is not new, you can provide additional details about the Item\'s Condition,
+        'select',
+        [
+            'container_id' => 'condition_note_tr',
+            'label' => $this->__('Seller Notes'),
+            'name' => 'description[condition_note_mode]',
+            'values' => [
+                Description::CONDITION_NOTE_MODE_NONE => $this->__('None'),
+                Description::CONDITION_NOTE_MODE_CUSTOM => $this->__('Custom Value'),
+            ],
+            'value' => $formData['condition_note_mode'],
+            'tooltip' => $this->__(
+                'If Item is not new, you can provide additional details about the Item\'s Condition,
                     such as whether it has defects, missing parts, scratches, or other wear and tear.
                     You have up to 1000 characters.'
-                )
-            ]
-        );
+            )
+        ]
+    );
 
         $preparedAttributes = [];
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributes as $attribute) {
             $preparedAttributes[] = [
                 'value' => $attribute['code'],
                 'label' => $attribute['label'],
@@ -312,7 +292,6 @@ class Data extends AbstractForm
             [
                 'name' => 'description[image_main_mode]',
                 'label' => $this->__('Main Image'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     Description::IMAGE_MAIN_MODE_NONE => $this->__('None'),
                     Description::IMAGE_MAIN_MODE_PRODUCT => $this->__('Product Base Image'),
@@ -320,12 +299,13 @@ class Data extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['image_main_mode'] != Description::IMAGE_MAIN_MODE_ATTRIBUTE
                     ? $formData['image_main_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'The first photo appears in the top left of your eBay Item and next to your Item\'s Title
                     in Search results.
@@ -333,7 +313,7 @@ class Data extends AbstractForm
                     e.g. http://mymagentostore.com/images/baseimage.jpg'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         $fieldset->addField('image_main_attribute',
             'hidden',
@@ -359,7 +339,7 @@ class Data extends AbstractForm
         );
 
         $fieldset->addField('use_supersize_images',
-            'select',
+            self::SELECT,
             [
                 'container_id' => 'use_supersize_images_tr',
                 'label' => $this->__('Super Size'),
@@ -430,7 +410,6 @@ class Data extends AbstractForm
                 'container_id' => 'gallery_images_mode_tr',
                 'name' => 'description[gallery_images_mode]',
                 'label' => $this->__('Gallery Images'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     Description::GALLERY_IMAGES_MODE_NONE => $this->__('None'),
                     [
@@ -441,10 +420,11 @@ class Data extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Adds small thumbnails that appear under the large Base Image.
                      You can add up to 11 additional photos to each Listing on eBay.
@@ -455,7 +435,7 @@ class Data extends AbstractForm
                         http://mymagentostore.com/images/baseimage2.jpg'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
 
         if (count($attributesConfigurable) > 0) {
             $preparedAttributes = [];
@@ -547,7 +527,6 @@ class Data extends AbstractForm
                 'container_id' => 'variation_images_mode_tr',
                 'name' => 'description[variation_images_mode]',
                 'label' => $this->__('Variation Attribute Images'),
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     Description::VARIATION_IMAGES_MODE_NONE => $this->__('None'),
                     [
@@ -558,13 +537,14 @@ class Data extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['variation_images_mode'] != Description::VARIATION_IMAGES_MODE_ATTRIBUTE
                     && $formData['variation_images_mode'] != Description::VARIATION_IMAGES_MODE_PRODUCT
                     ? $formData['variation_images_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Allows to add Images from Product Variations. You can add up to 12 additional photos for each
                     Variation. Please be thoughtful, as the the big number of added Images can decrease the Performance
@@ -576,10 +556,152 @@ class Data extends AbstractForm
                     http://mymagentostore.com/images/baseimage2.jpg
                 ')
             ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select,multiselect');
+
+        $watermarkFieldset = $fieldset->addFieldset('watermark_block', []);
+
+        $watermarkFieldset->addField('old_watermark_settings_transparent',
+            'hidden',
+            [
+                'name' => 'description[old_watermark_settings][transparent]',
+                'value' => $formData['watermark_settings']['transparent'],
+            ]
         );
 
-        // TODO NOT SUPPORTED FEATURES
-        // watermark
+        $watermarkFieldset->addField('old_watermark_settings_scale',
+            'hidden',
+            [
+                'name' => 'description[old_watermark_settings][scale]',
+                'value' => $formData['watermark_settings']['scale'],
+            ]
+        );
+
+        $watermarkFieldset->addField('old_watermark_settings_position',
+            'hidden',
+            [
+                'name' => 'description[old_watermark_settings][position]',
+                'value' => $formData['watermark_settings']['position'],
+            ]
+        );
+
+        $watermarkFieldset->addField('old_watermark_settings_hashes_current',
+            'hidden',
+            [
+                'name' => 'description[old_watermark_settings][hashes][current]',
+                'value' => $formData['watermark_settings']['hashes']['current'],
+            ]
+        );
+
+        $watermarkFieldset->addField('old_watermark_settings_hashes_previous',
+            'hidden',
+            [
+                'name' => 'description[old_watermark_settings][hashes][previous]',
+                'value' => $formData['watermark_settings']['hashes']['previous'],
+            ]
+        );
+
+        $watermarkFieldset->addField('watermark_mode',
+            'select',
+            [
+                'label' => $this->__('Use Watermark'),
+                'name' => 'description[watermark_mode]',
+                'values' => [
+                    Description::WATERMARK_MODE_NO => $this->__('No'),
+                    Description::WATERMARK_MODE_YES => $this->__('Yes'),
+                ],
+                'value' => $formData['watermark_mode'],
+                'tooltip' => $this->__(
+                    'Choose if you want to add a watermark to your gallery images.
+                    More Options will be available if you select <b>Yes</b>.'
+                )
+            ]
+        );
+
+        $watermarkFieldset->addField('watermark_image',
+            'file',
+            [
+                'container_id' => 'watermark_image_container',
+                'label' => $this->__('Watermark Upload'),
+                'name' => 'watermark_image',
+                'required' => is_null($formData['watermark_image']),
+                'values' => [
+                    Description::WATERMARK_MODE_NO => $this->__('No'),
+                    Description::WATERMARK_MODE_YES => $this->__('Yes'),
+                ],
+                'value' => $formData['watermark_mode'],
+                'tooltip' => $this->__('Select image that you want to add as a watermark.'),
+            ]
+        )->addCustomAttribute('accept', 'image/png');
+
+        if (!is_null($formData['watermark_image'])) {
+
+            $encodedImage = base64_encode($formData['watermark_image']);
+            $watermarkFieldset->addField('old_watermark_image',
+                'hidden',
+                [
+                    'name' => 'description[old_watermark_image]',
+                    'value' => $encodedImage
+                ]
+            );
+
+            $watermarkFieldset->addField('watermark_uploaded_image',
+                'note',
+                [
+                    'label' => $this->__('Watermark Preview'),
+                    'container_id' => 'watermark_uploaded_image_container',
+                    'text' => <<<HTML
+<img src="data:image/png;base64,{$encodedImage}" style="max-width: 300px;" />
+HTML
+                ]
+            );
+        }
+
+        $watermarkFieldset->addField('watermark_transparent',
+            'select',
+            [
+                'container_id' => 'watermark_transparent_container',
+                'label' => $this->__('Watermark Transparency'),
+                'name' => 'description[watermark_settings][transparent]',
+                'values' => [
+                    Description::WATERMARK_TRANSPARENT_MODE_NO => $this->__('Disable'),
+                    Description::WATERMARK_TRANSPARENT_MODE_YES => $this->__('Enable'),
+                ],
+                'value' => $formData['watermark_settings']['transparent'],
+                'tooltip' => $this->__('Sets transparency of watermark image to 30 %.')
+            ]
+        );
+
+        $watermarkFieldset->addField('watermark_scale',
+            'select',
+            [
+                'container_id' => 'watermark_scale_container',
+                'label' => $this->__('Scale Watermark Image'),
+                'name' => 'description[watermark_settings][scale]',
+                'values' => [
+                    Description::WATERMARK_SCALE_MODE_NONE => $this->__('None'),
+                    Description::WATERMARK_SCALE_MODE_IN_WIDTH => $this->__('In Width'),
+                    Description::WATERMARK_SCALE_MODE_STRETCH => $this->__('Full Image'),
+                ],
+                'value' => $formData['watermark_settings']['scale'],
+                'tooltip' => $this->__('Scales watermark image in width or full image.')
+            ]
+        );
+
+        $watermarkFieldset->addField('watermark_position',
+            'select',
+            [
+                'container_id' => 'watermark_position_container',
+                'label' => $this->__('Watermark Position'),
+                'name' => 'description[watermark_settings][position]',
+                'values' => [
+                    Description::WATERMARK_POSITION_TOP => $this->__('Top'),
+                    Description::WATERMARK_POSITION_MIDDLE => $this->__('Middle'),
+                    Description::WATERMARK_POSITION_BOTTOM => $this->__('Bottom'),
+                ],
+                'value' => $formData['watermark_settings']['position'],
+                'tooltip' => $this->__('Watermark position on the image.')
+            ]
+        );
 
         $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_details',
             [
@@ -606,7 +728,7 @@ class Data extends AbstractForm
         );
 
         $preparedAttributes = [];
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributes as $attribute) {
             $preparedAttributes[] = [
                 'value' => $attribute['code'],
                 'label' => $attribute['label'],
@@ -626,7 +748,10 @@ class Data extends AbstractForm
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'title_template',
                     'magento_attributes' => $preparedAttributes,
-                    'class' => 'select_attributes_for_title_button primary'
+                    'class' => 'select_attributes_for_title_button primary',
+                    'select_custom_attributes' => [
+                        'apply_to_all_attribute_sets' => 0
+                    ],
                 ])->toHtml()
             ]
         );
@@ -651,7 +776,7 @@ class Data extends AbstractForm
         );
 
         $preparedAttributes = [];
-        foreach ($attributes as $attribute) {
+        foreach ($this->attributes as $attribute) {
             $preparedAttributes[] = [
                 'value' => $attribute['code'],
                 'label' => $attribute['label'],
@@ -671,7 +796,10 @@ class Data extends AbstractForm
                     'label' => $this->__('Insert Attribute'),
                     'destination_id' => 'subtitle_template',
                     'magento_attributes' => $preparedAttributes,
-                    'class' => 'select_attributes_for_title_button primary'
+                    'class' => 'select_attributes_for_title_button primary',
+                    'select_custom_attributes' => [
+                        'apply_to_all_attribute_sets' => 0
+                    ],
                 ])->toHtml()
             ]
         );
@@ -699,12 +827,12 @@ class Data extends AbstractForm
             ]
         );
 
-        // TODO NOT SUPPORTED FEATURES
-//        $button = $this->createBlock('Magento\Button')->addData([
-//            'label' => $this->__('Preview'),
-//            'onclick' => 'EbayTemplateDescriptionObj.preview_click(\''.implode(',', $attributeSets).'\')',
-//            'class' => 'bt_preview'
-//        ]);
+        $button = $this->createBlock('Magento\Button')->addData([
+            'label' => $this->__('Preview'),
+            'onclick' => 'EbayTemplateDescriptionObj.openPreviewPopup()',
+            'class' => 'action-primary',
+            'style' => 'margin-left: 70px;'
+        ]);
 
         $fieldset->addField('description_mode',
             'select',
@@ -717,15 +845,14 @@ class Data extends AbstractForm
                     Description::DESCRIPTION_MODE_CUSTOM => $this->__('Custom Value'),
                 ],
                 'value' => $formData['description_mode'],
-//                'after_element_html' => $button->toHtml(),
-                'tooltip' => $this->__(
-                    <<<HTML
-                    <p>Choose whether to use Magento <strong>Product Description</strong> or <strong>Product Short 
+                'after_element_html' => $this->getTooltipHtml(
+                        $this->__(<<<HTML
+                        <p>Choose whether to use Magento <strong>Product Description</strong> or <strong>Product Short
                     Description</strong> for the eBay Listing Description</p><br>
-                    <p>Alternatively, you can create a <strong>Custom Description</strong> and apply it to all 
+                    <p>Alternatively, you can create a <strong>Custom Description</strong> and apply it to all
                     of the Items Listed on eBay using this M2E Pro Listing. </p>
 HTML
-                )
+                    )) . $button->toHtml()
             ]
         );
 
@@ -738,25 +865,46 @@ HTML
                     'value' => $this->__('View / Edit Custom Description'),
                     'onclick' => 'EbayTemplateDescriptionObj.view_edit_custom_change()',
                     'href' => 'javascript://',
-                    'style' => 'text-decoration: underline;' //todo
+                    'style' => 'text-decoration: underline;'
                 ]
             );
         }
 
+        $showHideWYSIWYGButton = $this->createBlock('Magento\Button')->setData([
+            'id' => 'description_template_show_hide_wysiwyg',
+            'label' => ($formData['editor_type'] == Description::EDITOR_TYPE_SIMPLE)
+                ? $this->__('Show Editor') : $this->__('Hide Editor'),
+            'class' => 'action-primary'
+        ]);
+
+        $openCustomInsertsButton = $this->createBlock('Magento\Button')->setData([
+            'id' => 'custom_inserts_open_popup',
+            'label' => $this->__('Insert Customs'),
+            'class' => 'action-primary'
+        ]);
+
         $fieldset->addField('description_template',
-            'textarea',
+            'editor',
             [
-                'css_class' => 'c-custom_description_tr',
+                'container_id' => 'description_template_tr',
+                'css_class' => 'c-custom_description_tr _required',
                 'label' => $this->__('Description Value'),
                 'name' => 'description[description_template]',
                 'value' => $formData['description_template'],
-                'required' => true
+                'class' => ' admin__control-textarea left M2ePro-validate-description-template',
+                'wysiwyg' => true,
+                'force_load' => true,
+                'config' => new \Magento\Framework\DataObject([
+                    'enabled' => true
+                ]),
+                'after_element_html' => <<<HTML
+<div id="description_template_buttons">
+    {$showHideWYSIWYGButton->toHtml()}
+    {$openCustomInsertsButton->toHtml()}
+</div>
+HTML
             ]
         );
-
-        // TODO NOT SUPPORTED FEATURES
-        // WYSWYG editor
-        // custom inserts
 
         $fieldset = $form->addFieldset('magento_block_ebay_template_description_form_data_product_details',
             [
@@ -780,7 +928,7 @@ HTML
                     Variations pop-up, only for that Variation the Settings of this section will be ignored.<br/><br/>
 
                     <strong>Note:</strong> some eBay Categories require some of these Values. Once you select such
-                    eBay Primary Category, you will see a notification which will
+                    eBay Catalog Primary Category, you will see a notification which will
                     show what Identifier(s) must be specified.
                 ')
             ]
@@ -815,10 +963,11 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
+                'create_magento_attribute' => true,
                 'value' => $formData['product_details']['upc']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                         ? $formData['product_details']['upc']['mode'] : '',
                 'tooltip' => $this->__('
@@ -827,7 +976,7 @@ HTML
                     The UPC or Universal Product Code is a 12 digit unique Identifier for a Product.
                 ')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('product_details_upc_attribute',
             'hidden',
@@ -866,12 +1015,13 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['product_details']['ean']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['ean']['mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('
                     Choose the Magento Attribute that contains the EAN for a Product or use a
                     "Does not apply" Option in case your Product does not have an EAN Value.<br/><br/>
@@ -879,7 +1029,7 @@ HTML
                     the 13 digit unique Identifier for a Product.
                 ')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('product_details_ean_attribute',
             'hidden',
@@ -918,19 +1068,20 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['product_details']['isbn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['isbn']['mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('
                     Choose the Magento Attribute that contains the ISBN for a Product or use a
                     "Does not apply" Option in case your Product does not have an ISBN Value.<br/><br/>
                     The ISBN or International Standard Book Number is a unique Identifier for a book.
                     ')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('product_details_isbn_attribute',
             'hidden',
@@ -968,15 +1119,16 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['product_details']['epid']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['epid']['mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('An eBay Product ID is eBay\'s global reference ID for a Catalog Product.')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('product_details_epid_attribute',
             'hidden',
@@ -1015,18 +1167,19 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['product_details']['brand']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['brand']['mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'Choose the Magento Attribute that contains the Brand for a Product or use an
                     "Unbranded" Option in case your Product does not have an Brand Value.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
 
         $fieldset->addField('product_details_brand_attribute',
             'hidden',
@@ -1064,19 +1217,20 @@ HTML
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['product_details']['mpn']['mode'] != Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
                     ? $formData['product_details']['mpn']['mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('
                     Choose the Magento Attribute that contains the MPN for a Product or use a
                     "Does not apply" Option in case your Product does not have an MPN Value.<br/><br/>
                     The MPN or Manufacturer Part Number is a Identifier specified by the manufacturer.
                     ')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('product_details_mpn_attribute',
             'hidden',
@@ -1233,8 +1387,19 @@ HTML
 
         $this->jsTranslator->addTranslations([
             'Adding Image' => $this->__('Adding Image'),
-            'Seller Notes must be less then 1000 symbols.' => $this->__('Seller Notes must be less then 1000 symbols.')
+            'Seller Notes must be less then 1000 symbols.' => $this->__('Seller Notes must be less then 1000 symbols.'),
+            'Custom Insertions' => $this->__('Custom Insertions'),
+            'Show Editor' => $this->__('Show Editor'),
+            'Hide Editor' => $this->__('Hide Editor'),
+            'Description Preview' => $this->__('Description Preview'),
+            'Please enter a valid Magento product ID.' => $this->__('Please enter a valid Magento product ID.'),
+            'Please enter Description Value.' => $this->__('Please enter Description Value.')
         ]);
+
+        $initWYSIWYG = '';
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $initWYSIWYG = 'EbayTemplateDescriptionObj.initWYSIWYG();';
+        }
 
         $this->js->add(<<<JS
     require([
@@ -1245,6 +1410,7 @@ HTML
         window.AttributeObj = new Attribute();
         window.EbayTemplateDescriptionObj = new EbayTemplateDescription();
         EbayTemplateDescriptionObj.initObservers();
+        {$initWYSIWYG}
 
         window.MagentoAttributeButtonObj = new MagentoAttributeButton();
     });
@@ -1254,6 +1420,11 @@ JS
         $this->setForm($form);
 
         return parent::_prepareForm();
+    }
+
+    protected function _toHtml()
+    {
+        return parent::_toHtml() . $this->getCustomInsertsHtml() . $this->getDescriptionPreviewHtml();
     }
 
     public function isCustom()
@@ -1349,4 +1520,336 @@ JS
 
         return $default;
     }
+
+    //########################################
+
+    protected function getCustomInsertsHtml()
+    {
+        $form = $this->_formFactory->create();
+
+        $fieldset = $form->addFieldset('custom_inserts', ['legend' => $this->__('Attribute')]);
+
+        $preparedAttributes = [];
+        foreach ($this->attributes as $attribute) {
+            $preparedAttributes[] = [
+                'value' => $attribute['code'],
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $button = $this->createBlock('Magento\Button')->setData([
+            'label' => $this->__('Insert'),
+            'class' => 'action-primary',
+            'onclick' => 'EbayTemplateDescriptionObj.insertProductAttribute()',
+            'style' => 'margin-left: 15px;'
+        ]);
+
+        $fieldset->addField('custom_inserts_product_attribute',
+            self::SELECT,
+            [
+                'label' => $this->__('Magento Product'),
+                'class' => 'M2ePro-custom-attribute-can-be-created',
+                'values' => $preparedAttributes,
+                'after_element_html' => $button->toHtml(),
+                'apply_to_all_attribute_sets' => 0
+            ]
+        )->addCustomAttribute('apply_to_all_attribute_sets', 0);
+
+        $M2eProAttributes = array(
+            'title' => $this->__('Title'),
+            'subtitle' => $this->__('Subtitle'),
+            'condition' => $this->__('Condition'),
+            'condition_description' => $this->__('Seller Notes'),
+            'fixed_price' => $this->__('Fixed Price'),
+            'start_price' => $this->__('Start Price'),
+            'reserve_price' => $this->__('Reserve Price'),
+            'buyitnow_price' => $this->__('Buy It Now Price'),
+            'qty' => $this->__('QTY'),
+            'listing_type' => $this->__('Listing Type'),
+            'listing_duration' => $this->__('Listing Duration'),
+            'handling_time' => $this->__('Dispatch Time'),
+            'primary_category_id' => $this->__('Primary Category Id'),
+            'secondary_category_id' => $this->__('Secondary Category Id'),
+            'store_primary_category_id' => $this->__('Store Primary Category Id'),
+            'store_secondary_category_id' => $this->__('Store Secondary Category Id'),
+            'primary_category_name' => $this->__('Primary Category Name'),
+            'secondary_category_name' => $this->__('Secondary Category Name'),
+            'store_primary_category_name' => $this->__('Store Primary Category Name'),
+            'store_secondary_category_name' => $this->__('Store Secondary Category Name'),
+            'domestic_shipping_method[1]' => $this->__('Domestic Shipping First Method'),
+            'domestic_shipping_cost[1]' => $this->__('Domestic Shipping First Cost'),
+            'domestic_shipping_additional_cost[1]' =>
+                $this->__('Domestic Shipping First Additional Cost'),
+            'international_shipping_method[1]' => $this->__('International Shipping First Method'),
+            'international_shipping_cost[1]' => $this->__('International Shipping First Cost'),
+            'international_shipping_additional_cost[1]' =>
+                $this->__('International Shipping First Additional Cost'),
+        );
+
+        $button->setData('onclick', 'EbayTemplateDescriptionObj.insertM2eProAttribute()');
+
+        $fieldset->addField('custom_inserts_m2epro_attribute',
+            'select',
+            [
+                'label' => $this->__('M2E Pro'),
+                'values' => $M2eProAttributes,
+                'after_element_html' => $button->toHtml()
+            ]
+        );
+
+        $fieldset = $form->addFieldset('product_images', ['legend' => $this->__('Image(s)')]);
+
+        $fieldset->addField('select_attributes_image',
+            'select',
+            [
+                'label' => $this->__('Insert'),
+                'values' => [
+                    'image' => $this->__('Image'),
+                    'media_gallery' => $this->__('Gallery'),
+                ],
+                'value' => 'image'
+            ]
+        );
+
+        $preparedValues = [
+             0 => $this->__('Base Image')
+        ];
+
+        for ($i = 1; $i <= 20; $i++) {
+            $preparedValues[$i] = $i;
+        }
+
+        $fieldset->addField('select_attributes_image_order_position',
+            'select',
+            [
+                'label' => $this->__('Position'),
+                'values' => $preparedValues,
+                'css_class' => 'all-products-image'
+            ]
+        );
+
+        $preparedValues[0] = $this->__('All');
+
+        $fieldset->addField('select_attributes_image_count',
+            'select',
+            [
+                'label' => $this->__('Quantity'),
+                'values' => $preparedValues,
+                'css_class' => 'all-products-images'
+            ]
+        );
+
+        $fieldset->addField('display_products_images',
+            'select',
+            [
+                'label' => $this->__('Displaying'),
+                'values' => [
+                    'custom_settings' => $this->__('Custom Settings'),
+                    'gallery_view' => $this->__('Gallery View'),
+                ],
+                'css_class' => 'all-products-images'
+            ]
+        );
+
+        $imageWidth = $this->elementFactory->create('text')->setData([
+            'html_id' => 'image_width',
+            'name' => 'image_width',
+            'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
+        ])->setForm($form);
+
+        $fieldset->addField('image_width_mode',
+            'select',
+            [
+                'label' => $this->__('Width'),
+                'values' => [
+                    0 => $this->__('Original'),
+                    1 => $this->__('Custom'),
+                ],
+                'after_element_html' => <<<HTML
+<span id="image_width_span">{$imageWidth->toHtml()} px</span>
+<span class="custom_settings hidden">{$this->__('Width')}</span>
+<span class="gallery_view hidden">{$this->__('Main Image Width')}</span>
+HTML
+            ,
+                'css_class' => 'products-images-mode-change-label'
+            ]
+        );
+
+        $imageHeight = $this->elementFactory->create('text')->setData([
+            'html_id' => 'image_height',
+            'name' => 'image_height',
+            'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
+        ])->setForm($form);
+
+        $fieldset->addField('image_height_mode',
+            'select',
+            [
+                'label' => $this->__('Height'),
+                'values' => [
+                    0 => $this->__('Original'),
+                    1 => $this->__('Custom'),
+                ],
+                'after_element_html' => <<<HTML
+<span id="image_height_span">{$imageHeight->toHtml()} px</span>
+<span class="custom_settings hidden">{$this->__('Height')}</span>
+<span class="gallery_view hidden">{$this->__('Main Image Height')}</span>
+HTML
+            ,
+                'css_class' => 'products-images-mode-change-label'
+            ]
+        );
+
+        $imageMargin = $this->elementFactory->create('text')->setData([
+            'html_id' => 'image_margin',
+            'name' => 'image_margin',
+            'class' => 'custom_inserts_images_input M2ePro-required-when-visible validate-digits'
+        ])->setForm($form);
+
+        $fieldset->addField('image_margin_mode',
+            'select',
+            [
+                'label' => $this->__('Margin'),
+                'values' => [
+                    0 => $this->__('None'),
+                    1 => $this->__('Custom'),
+                ],
+                'after_element_html' => '<span id="image_margin_span">' . $imageMargin->toHtml() . ' px</span>',
+                'css_class' => 'products-images-custom-settings'
+            ]
+        );
+
+        $fieldset->addField('select_attributes_image_layout',
+            'select',
+            [
+                'label' => $this->__('Layout'),
+                'values' => [
+                    'row' => $this->__('Horizontal'),
+                    'column' => $this->__('Vertical'),
+                ],
+                'css_class' => 'all-products-images'
+            ]
+        );
+
+        $fieldset->addField('gallery_hint_text',
+            'textarea',
+            [
+                'label' => $this->__('Gallery Hint'),
+                'value' => $this->__('Click on the image below to get zoomed view of the Item'),
+                'css_class' => 'products-images-gallery-view'
+            ]
+        );
+
+        $fieldset->addField('image_linked_mode',
+            'select',
+            [
+                'label' => $this->__('Open Original Size in a New Window'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes'),
+                ],
+                'css_class' => 'products-images-custom-settings'
+            ]
+        );
+
+        $fieldset->addField('image_insertion_watermark_mode',
+            'select',
+            [
+                'container_id' => 'products_images_watermark_mode',
+                'label' => $this->__('Use Watermark'),
+                'values' => [
+                    Description::WATERMARK_MODE_NO => $this->__('No'),
+                    Description::WATERMARK_MODE_YES => $this->__('Yes'),
+                ],
+            ]
+        );
+
+        $fieldset->addField($this->mathRandom->getUniqueHash('id_'),
+            'button',
+            [
+                'label' => '',
+                'onclick' => 'EbayTemplateDescriptionObj.insertGallery();',
+                'value' => $this->__('Insert'),
+                'class' => 'action-primary'
+            ]
+        );
+
+        return <<<HTML
+<div class="hidden">
+    <div id="custom_inserts_popup" class="admin__old">{$form->toHtml()}</div>
+</div>
+HTML;
+    }
+
+    protected function getDescriptionPreviewHtml()
+    {
+        $form = $this->_formFactory->create();
+
+        $fieldset = $form->addFieldset('description_preview_fieldset', ['legend' => '']);
+
+        $fieldset->addField('description_preview_help_block',
+            self::HELP_BLOCK,
+            [
+                'content' => $this->__('
+                    If you would like to preview the Description data for the particular Magento Product, please, 
+                    provide its ID into the <strong>Magento Product ID</strong> input and select 
+                    a <strong>Magento Store View</strong> the values 
+                    should be taken from. As a result you will see the Item Description which will be sent to 
+                    eBay basing on the settings you specified.<br />
+    
+                    Also, you can press a <strong>Select Randomly</strong> button to allow M2E Pro to automatically 
+                    select the most suitable Product for its previewing.'
+                )
+            ]
+        );
+
+        $button = $this->createBlock('Magento\Button')->addData([
+            'label' => $this->__('Select Randomly'),
+            'onclick' => 'EbayTemplateDescriptionObj.selectProductIdRandomly()',
+            'class' => 'action-primary',
+            'style' => 'margin-left: 25px'
+        ]);
+
+        $fieldset->addField('description_preview_magento_product_id',
+            'text',
+            [
+                'label' => $this->__('Magento Product ID'),
+                'after_element_html' => $button->toHtml(),
+                'class' => 'M2ePro-required-when-visible validate-digits M2ePro-validate-magento-product-id',
+                'css_class' => '_required',
+                'style' => 'width: 200px',
+                'name' => 'description_preview[magento_product_id]'
+            ]
+        );
+
+        $fieldset->addField('description_preview_store_id',
+            self::STORE_SWITCHER,
+            [
+                'label' => $this->__('Store View'),
+                'name' => 'description_preview[store_id]'
+            ]
+        );
+
+        $fieldset->addField('description_preview_description_mode', 'hidden', [
+            'name' => 'description_preview[description_mode]'
+        ]);
+        $fieldset->addField('description_preview_description_template', 'hidden', [
+            'name' => 'description_preview[description_template]'
+        ]);
+        $fieldset->addField('description_preview_watermark_mode', 'hidden', [
+            'name' => 'description_preview[watermark_mode]'
+        ]);
+
+        $fieldset->addField('description_preview_form_key', 'hidden', [
+            'name' => 'form_key',
+            'value' => $this->formKey->getFormKey()
+        ]);
+
+        return <<<HTML
+<div class="hidden">
+    <div id="description_preview_popup" class="admin__old">{$form->toHtml()}</div>
+</div>
+HTML;
+    }
+
+    //########################################
 }

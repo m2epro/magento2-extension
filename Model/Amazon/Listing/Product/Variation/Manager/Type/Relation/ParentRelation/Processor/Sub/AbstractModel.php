@@ -8,10 +8,13 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor;
+
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     //########################################
 
+    /** @var Processor $processor */
     private $processor = null;
 
     //########################################

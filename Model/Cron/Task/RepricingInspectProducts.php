@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class RepricingInspectProducts extends AbstractTask
+final class RepricingInspectProducts extends AbstractModel
 {
     const NICK = 'repricing_inspect_products';
     const MAX_MEMORY_LIMIT = 512;
@@ -37,9 +37,8 @@ final class RepricingInspectProducts extends AbstractTask
             $skus = $this->getNewNoneSyncSkus($permittedAccount);
 
             /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization   */
-            $repricingSynchronization = $this->modelFactory->getObject(
-                'M2ePro/Amazon_Repricing_Synchronization', $permittedAccount
-            );
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+            $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->runBySkus($skus);
 
             $this->setLastUpdateDate($permittedAccount, $operationDate);
@@ -71,18 +70,29 @@ final class RepricingInspectProducts extends AbstractTask
     {
         $accountId = $account->getId();
 
-        $listingProductCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingProductCollection = $this->parentFactory->getObject(
+            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+        )->getCollection();
+
         $listingProductCollection->getSelect()->join(
             array('l' => $this->resource->getTableName('m2epro_listing')),
             'l.id=main_table.listing_id', array()
         );
         $listingProductCollection->addFieldToFilter('l.account_id', $accountId);
-        $listingProductCollection->addFieldToFilter('main_table.status', array('in' => array(
-            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN)));
-        $listingProductCollection->addFieldToFilter('main_table.update_date',
-            array('gt' => $this->getLastUpdateDate($account)));
+        $listingProductCollection->addFieldToFilter(
+            'main_table.status',
+            array(
+                'in' => array(
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
+                    \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
+                )
+            )
+        );
+        $listingProductCollection->addFieldToFilter(
+            'main_table.update_date',
+            array('gt' => $this->getLastUpdateDate($account))
+        );
 
         $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingProductCollection->getSelect()->columns('second_table.sku');

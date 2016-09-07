@@ -18,20 +18,23 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     private $account = NULL;
 
     protected $activeRecordFactory;
+    protected $amazonFactory;
     protected $resourceConnection;
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Framework\App\ResourceConnection $resourceConnection
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        parent::__construct($helperFactory, $modelFactory);
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
+        parent::__construct($helperFactory, $modelFactory);
     }
 
     //########################################

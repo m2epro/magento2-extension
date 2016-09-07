@@ -32,7 +32,7 @@ class DescriptionTemplateAssignManually extends \Ess\M2ePro\Controller\Adminhtml
             return $this->getResult();
         }
 
-        $this->setPageHelpLink(NULL, 'pages/viewpage.action?pageId=18188493');
+        $this->setPageHelpLink('x/SwctAQ');
         $this->getResultPage()->getConfig()->getTitle()->prepend(
             $this->__('Set Description Policy for New ASIN/ISBN Creation')
         );

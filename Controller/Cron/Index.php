@@ -32,8 +32,6 @@ class Index extends \Magento\Framework\App\Action\Action
         $connectionId && $this->serviceCronRunner->setRequestConnectionId($connectionId);
 
         $this->serviceCronRunner->process();
-
-        exit();
     }
 
     //########################################
@@ -44,7 +42,9 @@ class Index extends \Magento\Framework\App\Action\Action
         ob_start();
 
         ignore_user_abort(true);
-        echo 'processing...';
+
+        $this->getResponse()->setContent('processing...');
+        $this->getResponse()->sendContent();
 
         header('Connection: Close');
         header('Content-Length: '.ob_get_length());
@@ -55,7 +55,7 @@ class Index extends \Magento\Framework\App\Action\Action
             }
         }
 
-        @flush();
+        flush();
     }
 
     //########################################

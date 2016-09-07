@@ -10,6 +10,23 @@ namespace Ess\M2ePro\Model\Ebay\Template\Description;
 
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
+    protected $driverPool;
+    protected $phpEnvironmentRequest;
+
+    public function __construct(
+        \Magento\Framework\Filesystem\DriverPool $driverPool,
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    )
+    {
+        $this->driverPool = $driverPool;
+        $this->phpEnvironmentRequest = $phpEnvironmentRequest;
+        parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
+    }
+
     //########################################
 
     public function build(array $data)
@@ -47,7 +64,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $defaultData['enhancement'] = explode(',', $defaultData['enhancement']);
         $defaultData['product_details'] = json_decode($defaultData['product_details'], true);
-//        $defaultData['watermark_settings'] = json_decode($defaultData['watermark_settings'], true);
+        $defaultData['watermark_settings'] = json_decode($defaultData['watermark_settings'], true);
 
         $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
 
@@ -181,78 +198,82 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['use_supersize_images'] = (int)$data['use_supersize_images'];
         }
 
-//        if (isset($data['watermark_mode'])) {
-//            $prepared['watermark_mode'] = (int)$data['watermark_mode'];
-//        }
+        if (isset($data['watermark_mode'])) {
+            $prepared['watermark_mode'] = (int)$data['watermark_mode'];
+        }
 
         // ---------------------------------------
 
-//        $watermarkSettings = array();
-//        $hashChange = false;
-//
-//        if (isset($data['watermark_settings']['position'])) {
-//            $watermarkSettings['position'] = (int)$data['watermark_settings']['position'];
-//
-//            if (isset($data['old_watermark_settings']) &&
-//                $data['watermark_settings']['position'] != $data['old_watermark_settings']['position']) {
-//                $hashChange = true;
-//            }
-//        }
-//
-//        if (isset($data['watermark_settings']['scale'])) {
-//            $watermarkSettings['scale'] = (int)$data['watermark_settings']['scale'];
-//
-//            if (isset($data['old_watermark_settings']) &&
-//                $data['watermark_settings']['scale'] != $data['old_watermark_settings']['scale']) {
-//                $hashChange = true;
-//            }
-//        }
-//
-//        if (isset($data['watermark_settings']['transparent'])) {
-//            $watermarkSettings['transparent'] = (int)$data['watermark_settings']['transparent'];
-//
-//            if (isset($data['old_watermark_settings']) &&
-//                $data['watermark_settings']['transparent'] != $data['old_watermark_settings']['transparent']) {
-//                $hashChange = true;
-//            }
-//        }
+        $watermarkSettings = array();
+        $hashChange = false;
+
+        if (isset($data['watermark_settings']['position'])) {
+            $watermarkSettings['position'] = (int)$data['watermark_settings']['position'];
+
+            if (isset($data['old_watermark_settings']) &&
+                $data['watermark_settings']['position'] != $data['old_watermark_settings']['position']) {
+                $hashChange = true;
+            }
+        }
+
+        if (isset($data['watermark_settings']['scale'])) {
+            $watermarkSettings['scale'] = (int)$data['watermark_settings']['scale'];
+
+            if (isset($data['old_watermark_settings']) &&
+                $data['watermark_settings']['scale'] != $data['old_watermark_settings']['scale']) {
+                $hashChange = true;
+            }
+        }
+
+        if (isset($data['watermark_settings']['transparent'])) {
+            $watermarkSettings['transparent'] = (int)$data['watermark_settings']['transparent'];
+
+            if (isset($data['old_watermark_settings']) &&
+                $data['watermark_settings']['transparent'] != $data['old_watermark_settings']['transparent']) {
+                $hashChange = true;
+            }
+        }
 
         // ---------------------------------------
 
-//        if (!empty($_FILES['watermark_image']['tmp_name'])) {
-//
-//            $hashChange = true;
-//
-//            $prepared['watermark_image'] = file_get_contents($_FILES['watermark_image']['tmp_name']);
-//
-//            if (isset($prepared['id'])) {
-//
-//                $varDir = $this->modelFactory->getObject(
-//                    'VariablesDir',
-//                    array('child_folder' => 'ebay/template/description/watermarks')
-//                );
-//
-//                $watermarkPath = $varDir->getPath().(int)$prepared['id'].'.png';
-//                if (is_file($watermarkPath)) {
-//                    @unlink($watermarkPath);
-//                }
-//            }
-//
-//        } elseif (!empty($data['old_watermark_image']) && !isset($prepared['id'])) {
-//            $prepared['watermark_image'] = base64_decode($data['old_watermark_image']);
-//        }
+        $watermarkImageFile = $this->phpEnvironmentRequest->getFiles('watermark_image');
+
+        if (!empty($watermarkImageFile['tmp_name'])) {
+
+            $hashChange = true;
+
+            $prepared['watermark_image'] = file_get_contents($watermarkImageFile['tmp_name']);
+
+            if (isset($prepared['id'])) {
+
+                /** @var \Ess\M2ePro\Model\VariablesDir $varDir */
+                $varDir = $this->modelFactory->getObject('VariablesDir', ['data' => [
+                    'child_folder' => 'ebay/template/description/watermarks'
+                ]]);
+
+                $watermarkPath = $varDir->getPath().(int)$prepared['id'].'.png';
+                
+                $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
+                if ($fileDriver->isFile($watermarkPath)) {
+                    $fileDriver->deleteFile($watermarkPath);
+                }
+            }
+
+        } elseif (!empty($data['old_watermark_image']) && !isset($prepared['id'])) {
+            $prepared['watermark_image'] = base64_decode($data['old_watermark_image']);
+        }
 
         // ---------------------------------------
 
-//        if ($hashChange) {
-//            $watermarkSettings['hashes']['previous'] = $data['old_watermark_settings']['hashes']['current'];
-//            $watermarkSettings['hashes']['current'] = substr(sha1(microtime()), 0, 5);
-//        } else {
-//            $watermarkSettings['hashes']['previous'] = $data['old_watermark_settings']['hashes']['previous'];
-//            $watermarkSettings['hashes']['current'] = $data['old_watermark_settings']['hashes']['current'];
-//        }
-//
-//        $prepared['watermark_settings'] = json_encode($watermarkSettings);
+        if ($hashChange) {
+            $watermarkSettings['hashes']['previous'] = $data['old_watermark_settings']['hashes']['current'];
+            $watermarkSettings['hashes']['current'] = substr(sha1(microtime()), 0, 5);
+        } else {
+            $watermarkSettings['hashes']['previous'] = $data['old_watermark_settings']['hashes']['previous'];
+            $watermarkSettings['hashes']['current'] = $data['old_watermark_settings']['hashes']['current'];
+        }
+
+        $prepared['watermark_settings'] = json_encode($watermarkSettings);
 
         // ---------------------------------------
 

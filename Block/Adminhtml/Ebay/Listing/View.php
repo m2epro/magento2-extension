@@ -58,9 +58,7 @@ class View extends AbstractContainer
                     '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace 
                     from a particular Account. M2E Pro has several options to display the content of 
                     Listings referring to different data details. Each of the view options contains a 
-                    unique set of available Actions accessible in the Mass Actions drop-down.</p><br>
-                    <p>More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/eQItAQ')
+                    unique set of available Actions accessible in the Mass Actions drop-down.</p>'
                 )
             ]);
 
@@ -80,21 +78,6 @@ class View extends AbstractContainer
             'onclick' => 'setLocation(\''.$this->getUrl('*/ebay_listing/index') . '\');',
             'class'   => 'back'
         ));
-        // ---------------------------------------
-
-        // ---------------------------------------
-        // TODO NOT SUPPORTED FEATURES "PickupStore"
-//        if ($this->listing->getAccount()->getChildObject()->isPickupStoreEnabled() &&
-//            $this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-//            $pickupStoreUrl = $this->getUrl('*/ebay_listing_pickupStore/index', array(
-//                'id'   => $this->listing->getId()
-//            ));
-//            $this->addButton('pickup_store_management', array(
-//                'label' => $this->__('In-Store Pickup Management'),
-//                'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_current\')',
-//                'class' => 'success'
-//            ));
-//        }
         // ---------------------------------------
 
         $url = $this->getUrl(
@@ -169,63 +152,6 @@ class View extends AbstractContainer
 
     //########################################
 
-    // TODO NOT SUPPORTED FEATURES "Listing header selector"
-//    public function getHeaderHtml()
-//    {
-//        // ---------------------------------------
-//        $collection = Mage::getModel('M2ePro/Listing')->getCollection();
-//        $collection->addFieldToFilter('component_mode', Ess_M2ePro_Helper_Component_Ebay::NICK);
-//        $collection->addFieldToFilter('id', array('neq' => $this->listing->getId()));
-//        $collection->setPageSize(200);
-//        $collection->setOrder('title', 'ASC');
-//
-//        $items = array();
-//        foreach ($collection->getItems() as $item) {
-//            $items[] = array(
-//                'label' => $item->getTitle(),
-//                'url' => $this->getUrl('*/*/view', array('id' => $item->getId()))
-//            );
-//        }
-//        // ---------------------------------------
-//
-//        if (count($items) == 0) {
-//            return parent::getHeaderHtml();
-//        }
-//
-//        // ---------------------------------------
-//        $data = array(
-//            'target_css_class' => 'listing-profile-title',
-//            'style' => 'max-height: 120px; overflow: auto; width: 200px;',
-//            'items' => $items
-//        );
-//        $dropDownBlock = $this->getLayout()->createBlock('M2ePro/adminhtml_widget_button_dropDown');
-//        $dropDownBlock->setData($data);
-//        // ---------------------------------------
-//
-//        return parent::getHeaderHtml() . $dropDownBlock->toHtml();
-//    }
-
-// TODO NOT SUPPORTED FEATURES "Listing header selector"
-//    public function getHeaderText()
-//    {
-//        // ---------------------------------------
-//        $changeProfile = $this->__('Change Listing');
-//        $headerText = parent::getHeaderText();
-//        $listingTitle = Mage::helper('M2ePro')->escapeHtml($this->listing->getTitle());
-//        // ---------------------------------------
-//
-//        return <<<HTML
-//{$headerText}&nbsp;
-//<a href="javascript: void(0);"
-//   id="listing-profile-title"
-//   class="listing-profile-title"
-//   style="font-weight: bold;"
-//   title="{$changeProfile}"><span class="drop_down_header">"{$listingTitle}"</span></a>
-//HTML;
-//    }
-
-    //########################################
-
     protected function _toHtml()
     {
         return '<div id="listing_view_progress_bar"></div>' .
@@ -245,8 +171,6 @@ class View extends AbstractContainer
 
         $html = '';
 
-        // TODO NOT SUPPORTED FEATURES "Listing header selector"
-
         // ---------------------------------------
         $viewHeaderBlock = $this->createBlock('Listing\View\Header','', [
             'data' => ['listing' => $this->listing]
@@ -259,7 +183,6 @@ class View extends AbstractContainer
 
         // ---------------------------------------
 
-        // TODO NOT SUPPORTED FEATURES
         $this->jsUrl->addUrls(array_merge(
             array(),
             $helper->getControllerActions(
@@ -268,23 +191,8 @@ class View extends AbstractContainer
             $helper->getControllerActions(
                 'Ebay\Listing\AutoAction', array('id' => $this->getRequest()->getParam('id'))
             ),
-//            $helper->getControllerActions(
-//                'ebay_listing_transferring', array('listing_id' => $this->getRequest()->getParam('id'))
-//            ),
-//            $helper->getControllerActions('ebay_account'),
-//            $helper->getControllerActions('ebay_listing_product_category_settings'),
-//            $helper->getControllerActions('ebay_marketplace'),
-//            array('logViewUrl' =>
-//                $this->getUrl('*/amazon_listing_log/synchronization',
-//                    array('back'=>$helper->makeBackUrlParam('*/common_synchronization/index')))),
-//            array('runSynchNow' =>
-//                $this->getUrl('*/common_marketplace/runSynchNow')),
-//            array('synchCheckProcessingNow' =>
-//                $this->getUrl('*/common_synchronization/synchCheckProcessingNow')),
             array('variationProductManage' =>
                 $this->getUrl('*/ebay_listing_variation_product_manage/index'))
-//            array('getListingProductBids' =>
-//                $this->getUrl('*/ebay_listing/getListingProductBids'))
         ));
         // ---------------------------------------
 

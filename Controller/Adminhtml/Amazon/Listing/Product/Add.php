@@ -7,6 +7,7 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Main;
 abstract class Add extends Main
 {
     protected $sessionKey = 'amazon_listing_product_add';
+    protected $listing = NULL;
 
     //########################################
 
@@ -56,7 +57,11 @@ abstract class Add extends Main
      */
     protected function getListing()
     {
-        return $this->amazonFactory->getObjectLoaded('Listing',$this->getRequest()->getParam('id'));
+        if (is_null($this->listing)) {
+            $this->listing = $this->amazonFactory->getObjectLoaded('Listing', $this->getRequest()->getParam('id'));
+        }
+
+        return $this->listing;
     }
 
     //########################################

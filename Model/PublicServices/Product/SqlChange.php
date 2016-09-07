@@ -7,8 +7,7 @@
  */
 
 /*
-    todo review and test it in Magento 2
-    $model = $this->modelFactory->getObject('PublicServices_Product_SqlChange');
+    $model = $this->modelFactory->getObject('PublicServices\Product\SqlChange');
 
     // notify M2E Pro about some change of product with ID 17
     $model->markProductChanged(17);

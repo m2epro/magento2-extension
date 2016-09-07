@@ -20,10 +20,10 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstra
 
     //########################################
 
-    public function save()
+    public function save($reloadOnCreate = false)
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('template_description');
-        return parent::save();
+        return parent::save($reloadOnCreate);
     }
 
     //########################################

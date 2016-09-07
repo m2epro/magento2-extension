@@ -119,5 +119,16 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         return $this->getData('state');
     }
 
+    /**
+     * @inheritdoc
+     */
+    public function isEmpty()
+    {
+        if (empty(array_filter($this->_data))) {
+            return true;
+        }
+        return false;
+    }
+
     //########################################
 }

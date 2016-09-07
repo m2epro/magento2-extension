@@ -15,7 +15,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Listing\Product\Acti
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,

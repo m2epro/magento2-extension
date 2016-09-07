@@ -125,22 +125,13 @@ define([
             if (popupMode.indexOf('global') != -1) {
                 popupData = [
                     {
-                        label: M2ePro.translator.translate('Back'),
-                        attr: {id: popupMode+'close_button'},
-                        class: 'back',
-                        callback: function() {
-                            ListingAutoActionObj.loadAutoActionHtml();
-                        },
-                        closeModal: true
-                    },
-                    {
                         label: M2ePro.translator.translate('Continue'),
                         class: 'next continue_button primary forward',
                         attr: {style: 'display: none', id: popupMode+'continue_button'},
                         callback: ListingAutoActionObj.globalStepTwo
                     },
                     {
-                        label: M2ePro.translator.translate('Reset'),
+                        label: M2ePro.translator.translate('Reset Auto Rules'),
                         attr: {style: 'display: none', id: popupMode+'reset_button'},
                         callback: function() {
                             ListingAutoActionObj.reset(false, function() {
@@ -160,22 +151,13 @@ define([
             } else if (popupMode.indexOf('website') != -1) {
                 popupData = [
                     {
-                        label: M2ePro.translator.translate('Back'),
-                        attr: {id: popupMode+'close_button'},
-                        class: 'back',
-                        callback: function() {
-                            ListingAutoActionObj.loadAutoActionHtml();
-                        },
-                        closeModal: true
-                    },
-                    {
                         label: M2ePro.translator.translate('Continue'),
                         class: 'next continue_button primary forward',
                         attr: {style: 'display: none', id: popupMode+'continue_button'},
                         callback: ListingAutoActionObj.websiteStepTwo
                     },
                     {
-                        label: M2ePro.translator.translate('Reset'),
+                        label: M2ePro.translator.translate('Reset Auto Rules'),
                         attr: {style: 'display: none', id: popupMode+'reset_button'},
                         callback: function() {
                             ListingAutoActionObj.reset(false, function() {
@@ -202,7 +184,7 @@ define([
                     },
                     {
                         label: M2ePro.translator.translate('Back'),
-                        attr: {id: popupMode+'cancel_button'},
+                        attr: {style: 'display:none', id: popupMode+'cancel_button'},
                         class: 'back',
                         callback: function() {
                             ListingAutoActionObj.reset(true);
@@ -210,7 +192,7 @@ define([
                         closeModal: true
                     },
                     {
-                        label: M2ePro.translator.translate('Reset'),
+                        label: M2ePro.translator.translate('Reset Auto Rules'),
                         attr: {style: 'display: none', id: popupMode+'reset_button'},
                         callback: function() {
                             ListingAutoActionObj.reset(false, function() {

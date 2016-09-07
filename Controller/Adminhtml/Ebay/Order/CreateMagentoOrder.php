@@ -35,7 +35,7 @@ class CreateMagentoOrder extends Order
         } catch (\Exception $e) {
             $message = $this->__(
                 'Magento Order was not created. Reason: %error_message%',
-                $this->activeRecordFactory->getObject('Log\AbstractLog')->decodeDescription($e->getMessage())
+                $this->getHelper('Module\Log')->decodeDescription($e->getMessage())
             );
             $this->messageManager->addError($message);
         }

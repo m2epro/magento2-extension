@@ -1,9 +1,9 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: HardRock
- * Date: 11.03.2016
- * Time: 19:49
+
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\NewTemplate;
@@ -31,8 +31,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     '<p>Saving Policy under a distinctive title will let you easily and quickly search for 
                     it in case you need to use it in a different M2E Pro Listing in the future.</p><br>
                     <p>More detailed information you can find 
-                    <a href="%url%" target="_blank">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/8wItAQ')
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8wItAQ')
                 )
             ]
         );

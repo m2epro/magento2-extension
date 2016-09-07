@@ -17,7 +17,7 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
     public function getCacheValue($key)
     {
         $key = sha1('magento_product_'.$this->getProductId().'_'.$this->getStoreId().'_'.json_encode($key));
-        return $this->getHelper('Data\Cache\Session')->getValue($key);
+        return $this->getHelper('Data\Cache\Runtime')->getValue($key);
     }
 
     public function setCacheValue($key, $value)
@@ -28,12 +28,12 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
         );
 
-        return $this->getHelper('Data\Cache\Session')->setValue($key, $value, $tags);
+        return $this->getHelper('Data\Cache\Runtime')->setValue($key, $value, $tags);
     }
 
     public function clearCache()
     {
-        return $this->getHelper('Data\Cache\Session')->removeTagValues(
+        return $this->getHelper('Data\Cache\Runtime')->removeTagValues(
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()
         );
     }

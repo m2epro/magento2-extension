@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class RepricingUpdateSettings extends AbstractTask
+final class RepricingUpdateSettings extends AbstractModel
 {
     const NICK = 'repricing_update_settings';
     const MAX_MEMORY_LIMIT = 512;

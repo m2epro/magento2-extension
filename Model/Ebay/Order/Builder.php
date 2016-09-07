@@ -435,6 +435,9 @@ class Builder extends AbstractModel
         $this->order->addData($this->getData());
         $this->order->save();
 
+        $this->order->getChildObject()->addData($this->getData());
+        $this->order->getChildObject()->save();
+
         $this->order->setAccount($this->account);
 
         if ($this->getData('order_status') == \Ess\M2ePro\Model\Ebay\Order::ORDER_STATUS_CANCELLED &&
@@ -510,12 +513,13 @@ class Builder extends AbstractModel
             if ($order->canCancelMagentoOrder()) {
                 $description = 'Magento Order #%order_id% should be canceled '.
                                'as new combined eBay order #%new_id% was created.';
-                $description = $log->encodeDescription($description, array(
+                $description = $this->getHelper('Module\Log')->encodeDescription(
+                    $description, array(
                     '!order_id' => $order->getMagentoOrder()->getRealOrderId(),
                     '!new_id' => $this->order->getData('ebay_order_id')
                 ));
 
-                $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING);
+                $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
                 try {
                     $order->cancelMagentoOrder();
@@ -530,12 +534,13 @@ class Builder extends AbstractModel
             $order->delete();
 
             $description = 'eBay Order #%old_id% was deleted as new combined eBay order #%new_id% was created.';
-            $description = $log->encodeDescription($description, array(
+            $description = $this->getHelper('Module\Log')->encodeDescription(
+                $description, array(
                 '!old_id' => $orderId,
                 '!new_id' => $this->order->getData('ebay_order_id')
             ));
 
-            $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING);
+            $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
         }
     }
 

@@ -82,7 +82,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
             'label' => $this->__('Save And Continue Edit'),
             'class' => 'add',
             'button_class' => '',
-            'onclick'   => 'AmazonListingSettingsObj.saveAndEitClick(\''.$url.'\', 1)',
+            'onclick'   => 'AmazonListingSettingsObj.saveAndEditClick(\''.$url.'\', 1)',
             'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
             'options' => $saveButtonsProps
         ];

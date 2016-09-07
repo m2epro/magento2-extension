@@ -33,8 +33,8 @@ class RunRemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
                     // M2ePro_TRANSLATIONS
                     // Product cannot be deleted because it has Status "In Progress".
                     'Product cannot be deleted because it has Status "In Progress".',
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
 
                 $locked++;
                 continue;

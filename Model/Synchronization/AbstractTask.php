@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
-use Ess\M2ePro\Model\Log\AbstractLog;
+use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
 abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -32,7 +32,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -613,8 +613,8 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getLog()->addMessage(
             $this->getHelper('Module\Translation')->__($exception->getMessage()),
-            AbstractLog::TYPE_ERROR,
-            AbstractLog::PRIORITY_HIGH
+            LogModel::TYPE_ERROR,
+            LogModel::PRIORITY_HIGH
         );
 
         $this->getHelper('Module\Exception')->process($exception);
@@ -631,8 +631,8 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getLog()->addMessage(
             $message,
-            AbstractLog::TYPE_ERROR,
-            AbstractLog::PRIORITY_HIGH
+            LogModel::TYPE_ERROR,
+            LogModel::PRIORITY_HIGH
         );
     }
 

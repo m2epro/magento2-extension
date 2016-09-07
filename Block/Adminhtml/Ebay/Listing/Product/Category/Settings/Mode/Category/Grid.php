@@ -366,6 +366,8 @@ JS;
 JS
     );
 
+        $this->css->add('.grid-listing-column-actions { width:100px; }');
+
         return parent::_toHtml();
     }
 

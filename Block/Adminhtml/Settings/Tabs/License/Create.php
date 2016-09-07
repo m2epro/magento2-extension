@@ -98,6 +98,17 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
+        $fieldSet->addField('create_new_license_phone',
+            'text',
+            [
+                'name' => 'phone',
+                'label' => $this->__('Phone'),
+                'title' => $this->__('Phone'),
+                'value' => '',
+                'required' => true,
+            ]
+        );
+
         $fieldSet->addField('create_new_license_country',
             self::SELECT,
             [

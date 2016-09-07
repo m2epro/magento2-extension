@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Config;
 
-class Cache extends AbstractConfig
+class Cache extends AbstractModel
 {
     //########################################
 

@@ -37,7 +37,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Log
             ));
         } else {
 
-            // todo Remove when Mageto fix Horizontal Tabs bug
+            // Remove when Mageto fix Horizontal Tabs bug
             if ($this->getRequest()->isXmlHttpRequest()) {
                 return $this->_redirect('*/*/grid', ['_current' => true]);
             }

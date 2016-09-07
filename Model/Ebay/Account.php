@@ -124,22 +124,21 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $otherCategoryTemplate->delete();
         }
 
-        // TODO NOT SUPPORTED FEATURES
-//        $feedbacks = $this->getFeedbacks(true);
-//        foreach ($feedbacks as $feedback) {
-//            $feedback->delete();
-//        }
-//
-//        $feedbackTemplates = $this->getFeedbackTemplates(true);
-//        foreach ($feedbackTemplates as $feedbackTemplate) {
-//            $feedbackTemplate->delete();
-//        }
-//
-//        $items = $this->getEbayItems(true);
-//        foreach ($items as $item) {
-//            $item->delete();
-//        }
-//
+        $feedbacks = $this->getFeedbacks(true);
+        foreach ($feedbacks as $feedback) {
+            $feedback->delete();
+        }
+
+        $feedbackTemplates = $this->getFeedbackTemplates(true);
+        foreach ($feedbackTemplates as $feedbackTemplate) {
+            $feedbackTemplate->delete();
+        }
+
+        $items = $this->getEbayItems(true);
+        foreach ($items as $item) {
+            $item->delete();
+        }
+
 //        $pickupStoreCollection = $this->parentFactory->getObject($this->getComponentMode(), 'Account\PickupStore')
 //            ->getCollection()->addFieldToFilter('account_id', $this->getId());
 //        foreach ($pickupStoreCollection as $pickupStore) {

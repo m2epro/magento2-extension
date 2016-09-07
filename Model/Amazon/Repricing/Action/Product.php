@@ -113,7 +113,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
      */
     private function getOffersData(array $listingProductIds, $alreadyOnRepricing = false)
     {
-        $listingProductCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
             array('l' => $this->resourceConnection->getTableName('m2epro_listing')),
             'l.id = main_table.listing_id',

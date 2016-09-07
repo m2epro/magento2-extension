@@ -84,6 +84,7 @@ class Grid extends AbstractGrid
             'width'     => '165px',
             'type'      => 'datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
+            'filter_time' => true,
             'index'     => 'create_date'
         ));
 
@@ -100,16 +101,16 @@ class Grid extends AbstractGrid
     public function callbackColumnType($value, $row, $column, $isExport)
     {
         switch ($value) {
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
                 $message = '<span style="color: green;">'.$this->__('Success').'</span>';
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
                 $message = '<span style="color: blue;">'.$this->__('Notice').'</span>';
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
                 $message = '<span style="color: orange;">'.$this->__('Warning').'</span>';
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
             default:
                 $message = '<span style="color: red;">'.$this->__('Error').'</span>';
                 break;

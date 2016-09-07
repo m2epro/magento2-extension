@@ -28,17 +28,19 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection,
-        array $data,
-        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory
+        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
+        array $data = []
     )
     {
+        $this->amazonFactory = $amazonFactory;
+
         parent::__construct(
             $modelFactory,
             $activeRecordFactory,
@@ -49,8 +51,6 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $resourceCollection,
             $data
         );
-
-        $this->amazonFactory = $amazonFactory;
     }
 
     //########################################

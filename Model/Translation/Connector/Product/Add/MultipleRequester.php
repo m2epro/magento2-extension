@@ -31,7 +31,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
     // ########################################
 
-    function __construct(
+    public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -288,8 +288,8 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
     // ########################################
 
     protected function addListingsProductsLogsMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                      $text, $type = \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE,
-                                                      $priority = \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM)
+                                                      $text, $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+                                                      $priority = \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM)
     {
         $action =\Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT;
 
@@ -302,14 +302,14 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
         }
 
         switch ($type) {
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
                 $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_ERROR);
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_WARNING:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
                 $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_WARNING);
                 break;
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_SUCCESS:
-            case \Ess\M2ePro\Model\Log\AbstractLog::TYPE_NOTICE:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
+            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
                 $this->setStatus(\Ess\M2ePro\Helper\Data::STATUS_SUCCESS);
                 break;
             default:
@@ -344,8 +344,8 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
                 // Another Action is being processed. Try again when the Action is completed.
                 $this->addListingsProductsLogsMessage(
                     $listingProduct, 'Another Action is being processed. Try again when the Action is completed.',
-                    \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                    \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM
+                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                    \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
 
                 unset($listingsProducts[$key]);
@@ -367,8 +367,8 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
                 // M2ePro\TRANSLATIONS
                 // 'Product is Translated or being Translated'
                 $this->addListingsProductsLogsMessage($listingProduct, 'Product is Translated or being Translated',
-                                                      \Ess\M2ePro\Model\Log\AbstractLog::TYPE_ERROR,
-                                                      \Ess\M2ePro\Model\Log\AbstractLog::PRIORITY_MEDIUM);
+                                                      \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                                                      \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM);
                 unset($listingProducts[$key]);
                 continue;
             }

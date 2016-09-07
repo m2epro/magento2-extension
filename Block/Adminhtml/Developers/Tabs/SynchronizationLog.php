@@ -55,7 +55,7 @@ class SynchronizationLog extends AbstractContainer
                 3rd Party Listings Synchronization.</p><br>
                 <p>The records about Orders, Inventory and 3rd party Listings Synchronization are 
                 displayed<br> only in those cases when it results in warning or error messages.</p>',
-                $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/MAAJAQ#Logs.-SynchronizationLog')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MAAJAQ#Logs.-SynchronizationLog')
             )
         ]]);
 

@@ -32,16 +32,16 @@ class MagmiPlugin extends AbstractBlock
             <p><strong>Note:</strong> It is strongly recommended to install M2E Pro Plugin for Magmi Import Tool
             to prevent data re-synchronization between eBay/Amazon and Magento values.</p>
             <p>More detailed information about the Plugin, i.e. how to install, update and use it, you can find
-            <a href="%url1%" target="_blank">here</a></p><br>
+            <a href="%url1%" target="_blank" class="external-link">here</a></p><br>
             <p>Please, remember that, along with the Plugin for Magmi Import Tool, the predefined
             <strong>M2E Pro Models</strong> could be used by developers to modify the code in case the 
             Product Changes are implemented directly into the Magento Database via an external script/tool. 
-            More detailed information can be found <a href="%url2%" target="_blank">here</a></p>
+            More detailed information can be found <a href="%url2%" target="_blank" class="external-link">here</a></p>
             
 HTML
             ,
-            $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/yIQVAQ'),
-            $this->getHelper('Module\Support')->getDocumentationUrl(NULL, NULL, 'x/xYQVAQ')
+            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/yIQVAQ'),
+            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/xYQVAQ')
         );
         return "<div id='text-block'><div>{$text}</div></div>" . parent::_toHtml();
     }

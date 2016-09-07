@@ -7,20 +7,6 @@ use Ess\M2ePro\Model\Amazon\Template\SellingFormat;
 
 class Form extends AbstractForm
 {
-    protected $elementFactory;
-
-    public function __construct(
-        \Magento\Framework\Data\Form\Element\Factory $elementFactory,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Data\FormFactory $formFactory,
-        array $data = []
-    )
-    {
-        $this->elementFactory = $elementFactory;
-        parent::__construct($context, $registry, $formFactory, $data);
-    }
-
     protected function _prepareForm()
     {
         $template = $this->getHelper('Data\GlobalData')->getValue('tmp_template');
@@ -130,9 +116,24 @@ class Form extends AbstractForm
         $preparedAttributes = [
             [
                 'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT_FIXED,
-                'label' => $this->__('QTY') //todo discuss
+                'label' => $this->__('QTY')
             ]
         ];
+
+        if (
+            $formData['qty_mode'] == \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
+            && !$magentoAttributeHelper->isExistInAttributesArray($formData['qty_custom_attribute'], $attributes)
+            && $formData['qty_custom_attribute'] != ''
+        ) {
+            $preparedAttributes[] = [
+                'attrs' => [
+                    'attribute_code' => $formData['qty_custom_attribute'],
+                    'selected' => 'selected',
+                ],
+                'value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
+                'label' => $magentoAttributeHelper->getAttributeLabel($formData['qty_custom_attribute']),
+            ];
+        }
 
         foreach ($attributesByInputTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
@@ -155,7 +156,6 @@ class Form extends AbstractForm
                 'container_id' => 'qty_mode_tr',
                 'label' => $this->__('Quantity'),
                 'name' => 'qty_mode',
-                'class' => 'M2ePro-custom-attribute-can-be-created',
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_PRODUCT => $this->__('Product Quantity'),
                     \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_SINGLE => $this->__('Single Item'),
@@ -165,15 +165,16 @@ class Form extends AbstractForm
                         'value' => $preparedAttributes,
                         'attrs' => [
                             'new_option_value' => \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE,
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['qty_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::QTY_MODE_ATTRIBUTE
                     ? $formData['qty_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('Product Quantity for Amazon Listing(s).')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $fieldset->addField('qty_custom_attribute',
             'hidden',
@@ -204,7 +205,7 @@ class Form extends AbstractForm
         }
 
         $fieldset->addField('qty_percentage',
-            'select',
+            self::SELECT,
             [
                 'container_id' => 'qty_percentage_tr',
                 'label' => $this->__('Quantity Percentage'),
@@ -313,7 +314,7 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'label' => $this->__('Price'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'price_mode',
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT => $this->__('Product Price'),
@@ -322,18 +323,19 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['price_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE
                     ? $formData['price_mode'] : '',
+                'create_magento_attribute' => true,
                 'after_element_html' => $tooltipPriceMode
                     . '<span id="price_coefficient_td">'
                     . $priceCoefficient->toHtml()
                     . $tooltipPriceCoefficient . '</span>'
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
         $fieldset->addField('price_custom_attribute',
             'hidden',
@@ -344,10 +346,10 @@ class Form extends AbstractForm
         );
 
         $fieldset->addField('price_variation_mode',
-            'select',
+            self::SELECT,
             [
                 'label' => $this->__('Variation Price Source'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'price_variation_mode',
                 'values' => [
                     SellingFormat::PRICE_VARIATION_MODE_PARENT => $this->__('Main Product'),
@@ -380,7 +382,7 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'label' => $this->__('Minimum Advertised Price'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'map_price_mode',
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE => $this->__('None'),
@@ -390,12 +392,13 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['map_price_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE
                     ? $formData['map_price_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     'The Selling Price for your Product will not be displayed on the Product Detail
                     Page or Offer Listing Page if it is less than the Minimum Advertised Price.
@@ -403,7 +406,7 @@ class Form extends AbstractForm
                     Item to their Shopping Cart.'
                 )
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
         $fieldset->addField('map_price_custom_attribute',
             'hidden',
@@ -450,7 +453,7 @@ class Form extends AbstractForm
             self::SELECT,
             [
                 'label' => $this->__('Sale Price'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'sale_price_mode',
                 'values' => [
                     \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE => $this->__('None'),
@@ -460,18 +463,19 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['sale_price_mode'] != \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE
                     ? $formData['sale_price_mode'] : '',
+                'create_magento_attribute' => true,
                 'after_element_html' => $tooltipSalePriceMode
                     . '<span id="sale_price_coefficient_td">'
                     . $salePriceCoefficient->toHtml()
                     . $tooltipSalePriceCoefficient . '</span>'
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text');
 
         $this->css->add(
             'label.mage-error[for="price_coefficient"], label.mage-error[for="sale_price_coefficient"]
@@ -487,7 +491,7 @@ class Form extends AbstractForm
         );
 
         $preparedAttributes = [];
-        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+        foreach ($attributesByInputTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
                 $formData['sale_price_start_date_mode'] == SellingFormat::DATE_ATTRIBUTE
@@ -507,7 +511,7 @@ class Form extends AbstractForm
             [
                 'container_id' => 'sale_price_start_date_mode_tr',
                 'label' => $this->__('Start Date'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'sale_price_start_date_mode',
                 'values' => [
                     SellingFormat::DATE_VALUE => $this->__('Custom Value'),
@@ -515,15 +519,16 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['sale_price_start_date_mode'] != SellingFormat::DATE_ATTRIBUTE
                     ? $formData['sale_price_start_date_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('Time and date when the <i>Sale Price</i> will be displayed on Amazon.')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
         $fieldset->addField('sale_price_start_date_custom_attribute',
             'hidden',
@@ -546,7 +551,7 @@ class Form extends AbstractForm
         );
 
         $preparedAttributes = [];
-        foreach ($attributesByInputTypes['text_price'] as $attribute) {
+        foreach ($attributesByInputTypes['text_date'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
                 $formData['sale_price_end_date_mode'] == SellingFormat::DATE_ATTRIBUTE
@@ -566,7 +571,7 @@ class Form extends AbstractForm
             [
                 'container_id' => 'sale_price_end_date_mode_tr',
                 'label' => $this->__('End Date'),
-                'class' => 'select-main M2ePro-custom-attribute-can-be-created',
+                'class' => 'select-main',
                 'name' => 'sale_price_end_date_mode',
                 'values' => [
                     SellingFormat::DATE_VALUE => $this->__('Custom Value'),
@@ -574,15 +579,16 @@ class Form extends AbstractForm
                         'label' => $this->__('Magento Attributes'),
                         'value' => $preparedAttributes,
                         'attrs' => [
-                            'class' => 'M2ePro-custom-attribute-optgroup'
+                            'is_magento_attribute' => true
                         ]
                     ]
                 ],
                 'value' => $formData['sale_price_end_date_mode'] != SellingFormat::DATE_ATTRIBUTE
                     ? $formData['sale_price_end_date_mode'] : '',
+                'create_magento_attribute' => true,
                 'tooltip' => $this->__('Time and date when the <i>Sale Price</i> will be hidden on Amazon.')
             ]
-        );
+        )->addCustomAttribute('allowed_attribute_types', 'text,date');
 
         $fieldset->addField('sale_price_end_date_custom_attribute',
             'hidden',
@@ -605,7 +611,7 @@ class Form extends AbstractForm
         );
 
         $fieldset->addField('price_increase_vat_percent',
-            'select',
+            self::SELECT,
             [
                 'label' => $this->__('Add VAT Percentage'),
                 'class' => 'select-main',
@@ -614,7 +620,7 @@ class Form extends AbstractForm
                     0 => $this->__('No'),
                     1 => $this->__('Yes')
                 ],
-                'value' => (int)($formData['price_vat_percent'] > 0), //todo check
+                'value' => (int)($formData['price_vat_percent'] > 0),
                 'tooltip' => $this->__('
                     Choose whether you want to add VAT to the Price when a Product is Listed on Amazon and
                     provide the appropriate VAT Percent Value.<br/><br/>

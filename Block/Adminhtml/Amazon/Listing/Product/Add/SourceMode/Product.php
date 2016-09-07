@@ -35,11 +35,12 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         if (is_null($this->getRequest()->getParam('back'))) {
             $url = $this->getUrl('*/amazon_listing_product_add/index', array(
-                'id' => $this->getRequest()->getParam('id')
+                'id' => $this->getRequest()->getParam('id'),
+                'wizard' => $this->getRequest()->getParam('wizard')
             ));
         } else {
             $url = $this->getHelper('Data')->getBackUrl(
-                '*/adminhtml_amazon_listing/index'
+                '*/amazon_listing/index'
             );
         }
         $this->addButton('back', array(
@@ -111,7 +112,18 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 JS
         );
 
-        return $viewHeaderBlock->toHtml() . parent::getGridHtml();
+        $hideOthersListingsProductsFilterBlock = $this->createBlock(
+            'Listing\Product\ShowOthersListingsProductsFilter'
+        )->setData([
+            'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'controller' => 'amazon_listing_product_add'
+        ]);
+
+        return $viewHeaderBlock->toHtml()
+               . '<div class="filter_block">'
+               . $hideOthersListingsProductsFilterBlock->toHtml()
+               . '</div>'
+               . parent::getGridHtml();
     }
 
     protected function _toHtml()

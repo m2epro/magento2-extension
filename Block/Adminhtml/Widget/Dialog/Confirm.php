@@ -6,7 +6,7 @@
  * @license    Commercial use is forbidden
  */
 
-namespace Ess\M2ePro\Block\Adminhtml\Widget\Dialog\Confirm;
+namespace Ess\M2ePro\Block\Adminhtml\Widget\Dialog;
 
 class Confirm extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 {

@@ -10,7 +10,7 @@ class Index extends Order
     {
         $this->init();
         $this->addContent($this->createBlock('Ebay\Order'));
-        $this->setComponentPageHelpLink('Sales');
+        $this->setPageHelpLink('x/ngEtAQ');
 
         return $this->getResultPage();
     }
