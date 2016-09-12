@@ -75,7 +75,7 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
 
         $moduleInfo = array();
         $moduleInfo['name'] = $this->getHelper('Module')->getName();
-        $moduleInfo['version'] = $this->getHelper('Module')->getVersion();
+        $moduleInfo['version'] = $this->getHelper('Module')->getPublicVersion();
         $moduleInfo['revision'] = $this->getHelper('Module')->getRevision();
 
         $phpInfo = $this->getHelper('Client')->getPhpSettings();

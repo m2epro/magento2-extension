@@ -30,6 +30,8 @@ class Module extends AbstractHelper
     protected $moduleList;
     protected $cookieMetadataFactory;
     protected $cookieManager;
+    protected $packageInfo;
+    protected $moduleResource;
     
     //########################################
     
@@ -41,6 +43,8 @@ class Module extends AbstractHelper
         \Magento\Framework\Module\ModuleListInterface $moduleList,
         \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
+        \Magento\Framework\Module\PackageInfo $packageInfo,
+        \Magento\Framework\Model\ResourceModel\Db\Context $dbContext,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
@@ -52,6 +56,9 @@ class Module extends AbstractHelper
         $this->moduleList = $moduleList;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
         $this->cookieManager = $cookieManager;
+        $this->packageInfo = $packageInfo;
+        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
+
         parent::__construct($helperFactory, $context);
     }
 
@@ -72,27 +79,56 @@ class Module extends AbstractHelper
         return 'm2epro-m2';
     }
 
-    public function getVersion()
+    //########################################
+
+    public function getPublicVersion()
     {
-        return (string)$this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
+        return '1.1.1';
     }
 
-    public function getRevision()
+    public function getSetupVersion()
     {
-        return '1171';
+        return $this->getConfigSetupVersion();
+    }
+
+    public function getFilesVersion()
+    {
+        return $this->getComposerVersion();
     }
 
     // ---------------------------------------
+
+    public function getConfigSetupVersion()
+    {
+        return $this->moduleList->getOne(self::IDENTIFIER)['setup_version'];
+    }
+
+    public function getMagentoSetupVersion()
+    {
+        // returns only data version because we do not manage schema upgrades separately
+        return $this->moduleResource->getDataVersion(self::IDENTIFIER);
+    }
+
+    public function getComposerVersion()
+    {
+        return $this->packageInfo->getVersion(self::IDENTIFIER);
+    }
+
+    // ---------------------------------------
+
+    public function getRevision()
+    {
+        return '1199';
+    }
+
+    //########################################
 
     public function getInstallationKey()
     {
         return $this->primaryConfig->getGroupValue('/server/', 'installation_key');
     }
 
-    public function getVersionWithRevision()
-    {
-        return $this->getVersion().'r'.$this->getRevision();
-    }
+    //########################################
 
     public function getInstallationDate()
     {

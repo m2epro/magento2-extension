@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 
-use Ess\M2ePro\Helper\Factory;
 use Ess\M2ePro\Model\AbstractModel;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Module\Setup;
@@ -28,7 +27,6 @@ class AbstractModifier extends AbstractModel
 
     public function __construct(
         Setup $installer,
-        Factory $helperFactory,
         $tableName,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,

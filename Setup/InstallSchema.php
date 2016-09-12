@@ -35,15 +35,33 @@ class InstallSchema implements InstallSchemaInterface
 
     //########################################
 
+    /**
+     * Module versions from setup_module magento table uses only by magento for run install or upgrade files.
+     * We do not use these versions in setup & upgrade logic (only set correct values to it, using m2epro_setup table).
+     * So version, that presented in $context parameter, is not used.
+     *
+     * @param SchemaSetupInterface $setup
+     * @param ModuleContextInterface $context
+     */
     public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
+        $this->installer = $setup;
+
+        $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_process', true);
+
+        if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_setup_failed')) {
+            return;
+        }
+
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
             return;
         }
 
-        $this->helperFactory->getObject('Module\Maintenance\General')->enable();
+        if ($this->isInstalled()) {
+            return;
+        }
 
-        $this->installer = $setup;
+        $this->helperFactory->getObject('Module\Maintenance\General')->enable();
         $this->installer->startSetup();
 
         try {
@@ -51,6 +69,8 @@ class InstallSchema implements InstallSchemaInterface
             $this->installEbay();
             $this->installAmazon();
         } catch (\Exception $exception) {
+            $this->installer->endSetup();
+            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
         }
 
@@ -6582,6 +6602,13 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonTemplateSynchronizationTable);
+    }
+
+    //########################################
+
+    private function isInstalled()
+    {
+        return $this->getConnection()->isTableExists($this->getFullTableName('setup'));
     }
 
     //########################################

@@ -377,7 +377,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $data = array();
 
-        $data['info']['version'] = $this->getHelper('Module')->getVersion();
+        $data['info']['version'] = $this->getHelper('Module')->getPublicVersion();
 
         $data = $this->appendTablesInfo($data);
         $data = $this->appendSettingsInfo($data);

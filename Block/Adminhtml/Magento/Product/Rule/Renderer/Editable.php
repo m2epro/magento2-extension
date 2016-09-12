@@ -13,19 +13,16 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Element\Renderer\RendererInterface
 {
-    protected $filterManager;
     protected $translateInline;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\Filter\FilterManager $filterManager,
         \Magento\Framework\Translate\Inline $translateInline,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         array $data = []
     )
     {
-        $this->filterManager = $filterManager;
         $this->translateInline = $translateInline;
         parent::__construct($context, $data);
     }

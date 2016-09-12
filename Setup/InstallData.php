@@ -20,6 +20,9 @@ class InstallData implements InstallDataInterface
     /** @var ModuleListInterface $moduleList */
     private $moduleList;
 
+    /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
+    private $moduleResource;
+
     /** @var ModuleDataSetupInterface $installer */
     private $installer;
 
@@ -28,18 +31,42 @@ class InstallData implements InstallDataInterface
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        \Magento\Framework\Model\ResourceModel\Db\Context $dbContext
     ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory  = $modelFactory;
         $this->moduleList    = $moduleList;
+        $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
     }
 
     //########################################
 
+    /**
+     * Module versions from setup_module magento table uses only by magento for run install or upgrade files.
+     * We do not use these versions in setup & upgrade logic (only set correct values to it, using m2epro_setup table).
+     * So version, that presented in $context parameter, is not used.
+     *
+     * @param ModuleDataSetupInterface $setup
+     * @param ModuleContextInterface $context
+     */
     public function install(ModuleDataSetupInterface $setup, ModuleContextInterface $context)
     {
         $this->installer = $setup;
+
+        if (!$this->helperFactory->getObject('Data\GlobalData')->getValue('is_install_process')) {
+            return;
+        }
+
+        if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_setup_failed')) {
+            return;
+        }
+
+        if ($this->isInstalled()) {
+            $this->setMagentoResourceVersion($this->getModuleSetupVersion());
+            return;
+        }
+
         $this->installer->startSetup();
 
         try {
@@ -47,20 +74,15 @@ class InstallData implements InstallDataInterface
             $this->installEbay();
             $this->installAmazon();
         } catch (\Exception $exception) {
+            $this->installer->endSetup();
+            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
         }
 
         $this->installer->endSetup();
 
-        $this->getConnection()->insert($this->getFullTableName('setup'), [
-            'version_from' => NULL,
-            'version_to'   => $this->getConfigVersion(),
-            'is_completed' => 1,
-            'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
-            'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
-        ]);
-
-        $this->helperFactory->getObject('Module\Maintenance\General')->disable();
+        $this->setModuleSetupRow($this->getConfigVersion());
+        $this->setMagentoResourceVersion($this->getConfigVersion());
     }
 
     //########################################
@@ -1585,6 +1607,59 @@ class InstallData implements InstallDataInterface
 
     //########################################
 
+    private function isInstalled()
+    {
+        if (!$this->getConnection()->isTableExists($this->getFullTableName('setup'))) {
+            return false;
+        }
+
+        $setupRows = $this->getConnection()->select()->from($this->getFullTableName('setup'))->query()->fetchAll();
+
+        return count($setupRows) > 0;
+    }
+
+    // ---------------------------------------
+
+    private function getModuleSetupVersion()
+    {
+        if (!$this->isInstalled()) {
+            return NULL;
+        }
+
+        $setupRows = $this->getConnection()->select()
+            ->from($this->getFullTableName('setup'))
+            ->order(array('id ASC'))
+            ->query()->fetchAll();
+
+        return end($setupRows)['version_to'];
+    }
+
+    private function getConfigVersion()
+    {
+        return $this->moduleList->getOne(Module::IDENTIFIER)['setup_version'];
+    }
+
+    // ---------------------------------------
+
+    private function setModuleSetupRow($version)
+    {
+        $this->getConnection()->insert($this->getFullTableName('setup'), [
+            'version_from' => NULL,
+            'version_to'   => $version,
+            'is_completed' => 1,
+            'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+            'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+        ]);
+    }
+
+    private function setMagentoResourceVersion($version)
+    {
+        $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
+        $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
+    }
+
+    //########################################
+
     /**
      * @return \Magento\Framework\DB\Adapter\Pdo\Mysql
      */
@@ -1612,11 +1687,6 @@ class InstallData implements InstallDataInterface
                 'tableName' => $tableName,
             ]
         );
-    }
-
-    private function getConfigVersion()
-    {
-        return $this->moduleList->getOne(Module::IDENTIFIER)['setup_version'];
     }
 
     //########################################

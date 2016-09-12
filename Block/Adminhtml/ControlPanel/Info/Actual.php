@@ -34,7 +34,7 @@ class Actual extends AbstractBlock
             ' (' . $this->getHelper('Magento')->getVersion() . ')';
 
         // ---------------------------------------
-        $this->moduleVersion = $this->getHelper('Module')->getVersion();
+        $this->moduleVersion = $this->getHelper('Module')->getPublicVersion();
         // ---------------------------------------
 
         // ---------------------------------------

@@ -360,7 +360,7 @@ abstract class Main extends Base
             '/global/notification/message/', 'skip_static_content_validation_message'
         );
 
-        if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getVersion(), '==')) {
+        if (version_compare($skipMessageForVersion, $this->getHelper('Module')->getPublicVersion(), '==')) {
             return;
         }
 
@@ -381,7 +381,10 @@ abstract class Main extends Base
         $lastDbModificationDate = new \DateTime($lastDbModificationDate, new \DateTimeZone('UTC'));
         $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
 
-        /** We check only database version because we can't retrieve date of update our module from composer */
+        /*
+         * We check only database version because we can't retrieve date of update our module from composer
+         * TODO fix this when last composer update date available
+         */
         if ($deployDate > $lastDbModificationDate) {
             return;
         }

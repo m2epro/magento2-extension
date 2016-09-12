@@ -1,0 +1,29 @@
+{
+    "1.1.1": {
+        "versions": {
+            "setup": "1.1.0",
+            "files": "1.1.1"
+        },
+        "revisions": {
+            "svn": "1199"
+        }
+    },
+    "1.1.0": {
+        "versions": {
+            "setup": "1.1.0",
+            "files": "1.1.0"
+        },
+        "revisions": {
+            "svn": "1171"
+        }
+    },
+    "1.0.0": {
+        "versions": {
+            "setup": "1.0.0",
+            "files": "1.0.0"
+        },
+        "revisions": {
+            "svn": "752"
+        }
+    }
+}

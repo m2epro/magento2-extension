@@ -27,15 +27,7 @@ class AboutModule extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             'note',
             [
                 'label' => $this->__('Version'),
-                'text' => $this->getHelper('Module')->getVersion()
-            ]
-        );
-
-        $fieldSet->addField('m2e_revision',
-            'note',
-            [
-                'label' => $this->__('Revision'),
-                'text' => $this->getHelper('Module')->getRevision()
+                'text' => $this->getHelper('Module')->getPublicVersion()
             ]
         );
 

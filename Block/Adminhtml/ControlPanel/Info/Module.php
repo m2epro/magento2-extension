@@ -31,8 +31,7 @@ class Module extends AbstractBlock
     protected function _beforeToHtml()
     {
         $this->moduleName = $this->getHelper('Module')->getName();
-        $this->moduleVersion = $this->getHelper('Module')->getVersion();
-        $this->moduleRevision = $this->getHelper('Module')->getRevision();
+        $this->moduleVersion = $this->getHelper('Module')->getPublicVersion();
 
         return parent::_beforeToHtml();
     }

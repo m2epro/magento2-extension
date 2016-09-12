@@ -21,8 +21,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->addCss('control_panel.css');
 
         $title = $this->__('Control Panel')
-                 .' (M2E Pro '.$this->getHelper('Module')->getVersion()
-                 .'#'.$this->getHelper('Module')->getRevision().')';
+                 .' (M2E Pro '.$this->getHelper('Module')->getPublicVersion().')';
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($title);
     }

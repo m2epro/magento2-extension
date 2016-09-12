@@ -75,7 +75,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
                 ),
                 'module' => array(
                     'name' => $this->getHelper('Module')->getName(),
-                    'version' => $this->getHelper('Module')->getVersion(),
+                    'version' => $this->getHelper('Module')->getPublicVersion(),
                     'revision' => $this->getHelper('Module')->getRevision()
                 ),
                 'location' => array(

@@ -20,7 +20,7 @@ class SkipStaticContentValidationMessage extends General
             $this->modelFactory->getObject('Config\Manager\Cache')->setGroupValue(
                 '/global/notification/message/',
                 'skip_static_content_validation_message',
-                $this->getHelper('Module')->getVersion()
+                $this->getHelper('Module')->getPublicVersion()
             );
         }
         

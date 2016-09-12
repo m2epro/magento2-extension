@@ -11,30 +11,35 @@ use Magento\Framework\Component\ComponentRegistrar;
 
 class Install extends Command
 {
-    protected $directoryReaderFactory;
-
-    protected $componentRegistrar;
-
+    protected $filesystemDriver;
     protected $fileSystem;
+    protected $fileReaderFactory;
+
+    protected $directoryList;
+    protected $componentRegistrar;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\Filesystem\Directory\ReadFactory $directoryReaderFactory,
-        ComponentRegistrar $componentRegistrar,
+        \Magento\Framework\Filesystem\Driver\File $filesystemDriver,
         \Magento\Framework\Filesystem $filesystem,
+        \Magento\Framework\Filesystem\File\ReadFactory $fileReaderFactory,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList,
+        ComponentRegistrar $componentRegistrar,
         Context $context
     ) {
-        $this->directoryReaderFactory = $directoryReaderFactory;
-        $this->fileSystem             = $filesystem;
-        $this->componentRegistrar     = $componentRegistrar;
+        $this->filesystemDriver  = $filesystemDriver;
+        $this->fileSystem        = $filesystem;
+        $this->fileReaderFactory = $fileReaderFactory;
+
+        $this->directoryList      = $directoryList;
+        $this->componentRegistrar = $componentRegistrar;
 
         parent::__construct($context);
     }
 
     //########################################
 
-    //todo implement
     /**
      * @title "Check Files Validity"
      * @description "Check Files Validity"
@@ -42,7 +47,8 @@ class Install extends Command
     public function checkFilesValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info');
+        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info',
+                                                               ['magento_version' => 2]);
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
@@ -51,26 +57,29 @@ class Install extends Command
         }
 
         $problems = array();
-
-        $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
-        $directoryReader = $this->directoryReaderFactory->create($path);
+        $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
 
         foreach ($responseData['files_info'] as $info) {
 
-            if (!$directoryReader->isFile($info['path'])) {
+            $filePath = $basePath .DIRECTORY_SEPARATOR. $info['path'];
+
+            if (!$this->filesystemDriver->isExists($filePath)) {
                 $problems[] = array(
-                    'path' => $info['path'],
+                    'path'   => $info['path'],
                     'reason' => 'File is missing'
                 );
                 continue;
             }
 
-            $fileContent = trim($directoryReader->readFile($info['path']));
+            /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
+            $fileReader = $this->fileReaderFactory->create($filePath, $this->filesystemDriver);
+
+            $fileContent = trim($fileReader->readAll());
             $fileContent = str_replace(array("\r\n","\n\r",PHP_EOL), chr(10), $fileContent);
 
             if (md5($fileContent) != $info['hash']) {
                 $problems[] = array(
-                    'path' => $info['path'],
+                    'path'   => $info['path'],
                     'reason' => 'Hash mismatch'
                 );
                 continue;
@@ -119,7 +128,6 @@ HTML;
         return str_replace('%count%',count($problems),$html);
     }
 
-    //todo implement
     /**
      * @title "Check Tables Structure Validity"
      * @description "Check Tables Structure Validity"
@@ -130,7 +138,10 @@ HTML;
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('tables','get','diff',
-            array('tables_info' => json_encode($tablesInfo)));
+                                                               [
+                                                                   'magento_version' => 2,
+                                                                   'tables_info'     => json_encode($tablesInfo)
+                                                               ]);
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -182,7 +193,9 @@ HTML;
                     }
                 }
 
+                $linkTitle = '';
                 $urlParams = array(
+                    'action'      => 'fixColumn',
                     'table_name'  => $tableName,
                     'column_info' => json_encode($resultInfo['original_data'])
                 );
@@ -190,25 +203,25 @@ HTML;
                 if (empty($resultInfo['current_data']) ||
                     (isset($diffData['type']) || isset($diffData['default']) || isset($diffData['null']))) {
 
+                    $linkTitle = 'Fix Properties';
                     $urlParams['mode'] = 'properties';
-                    $url = $this->getUrl('*/*/fixColumn', $urlParams);
-                    $actionsHtml .= "<a href=\"{$url}\">Fix Properties</a>";
                 }
 
                 if (isset($diffData['key'])) {
 
+                    $linkTitle = 'Fix Index';
                     $urlParams['mode'] = 'index';
-                    $url = $this->getUrl('*/*/fixColumn', $urlParams);
-                    $actionsHtml .= "<a href=\"{$url}\">Fix Index</a>";
                 }
 
                 if (empty($resultInfo['original_data']) && !empty($resultInfo['current_data'])) {
 
+                    $linkTitle = 'Drop';
                     $urlParams['mode'] = 'drop';
                     $urlParams['column_info'] = json_encode($resultInfo['current_data']);
-                    $url = $this->getUrl('*/*/fixColumn', $urlParams);
-                    $actionsHtml .= "<a href=\"{$url}\">Drop</a>";
                 }
+
+                $url = $this->getUrl('*/*/*', $urlParams);
+                $actionsHtml .= "<a href=\"{$url}\">{$linkTitle}</a>";
 
                 $html .= <<<HTML
 <tr>
@@ -225,7 +238,6 @@ HTML;
         return str_replace('%count%',count($responseData['diff']),$html);
     }
 
-    //todo implement
     /**
      * @title "Check Configs Validity"
      * @description "Check Configs Validity"
@@ -233,7 +245,8 @@ HTML;
     public function checkConfigsValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('configs','get','info');
+        $connectorObj = $dispatcherObject->getVirtualConnector('configs','get','info',
+                                                               ['magento_version' => 2]);
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
@@ -247,7 +260,7 @@ HTML;
         foreach ($originalData as $tableName => $configInfo) {
 
             $currentData[$tableName] = $this->getHelper('Module\Database\Structure')
-                ->getConfigSnapshot($tableName);
+                                            ->getConfigSnapshot($tableName);
         }
 
         $differenses = array();
@@ -284,7 +297,15 @@ HTML;
 
         $html = $this->getStyleHtml();
 
+        $srcPath = $this->getHelper('Magento')->getBaseUrl() .
+                   $this->directoryList->getUrlPath(\Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW) .'/'.
+                   $this->getHelper('Magento')->getThemePath() .'/'.
+                   $this->getHelper('Magento')->getDefaultLocale();
+
+
         $html .= <<<HTML
+<script type="text/javascript" src="{$srcPath}/jquery.js"></script>
+
 <h2 style="margin: 20px 0 0 10px">Configs Validity
     <span style="color: #808080; font-size: 15px;">(%count% entries)</span>
 </h2>
@@ -305,33 +326,32 @@ HTML;
             if ($row['solution'] == 'insert') {
 
                 $url = $this->getUrl('*/controlPanel_database/addTableRow', array(
-                    'table'  => $row['table'],
-                    'model'  => $this->getHelper('Module\Database\Structure')->getTableModel($row['table']),
+                    'table' => $row['table'],
                 ));
 
             } else {
 
                 $url = $this->getUrl('*/controlPanel_database/deleteTableRows', array(
-                    'table'  => $row['table'],
-                    'model'  => $this->getHelper('Module\Database\Structure')->getTableModel($row['table']),
-                    'ids'    => $row['item']['id']
+                    'table'=> $row['table'],
+                    'ids'  => $row['item']['id']
                 ));
             }
 
             $actionWord = $row['solution'] == 'insert' ? 'Insert' : 'Drop';
-            $styles = $row['solution'] == 'insert' ? '' : 'color: red;';
+            $styles     = $row['solution'] == 'insert' ? '' : 'color: red;';
 
             $onclickAction = <<<JS
-var elem     = $(this.id),
-    formData = Form.serialize(elem.up('tr').down('form'));
+var elem = $(this);
 
-elem.up('tr').remove();
-
-new Ajax.Request( '{$url}' , {
+new $.ajax({
+    url: '{$url}',
     method: 'get',
-    asynchronous : true,
-    parameters : formData
+    data: elem.parents('tr').find('form').serialize(),
+    success: function(transport) {
+        elem.parents('tr').remove();
+    }
 });
+
 JS;
             $html .= <<<HTML
 <tr>
@@ -363,7 +383,6 @@ HTML;
 
     // ---------------------------------------
 
-    //todo implement
     /**
      * @hidden
      */
@@ -376,18 +395,18 @@ HTML;
         $repairMode = $this->getRequest()->getParam('mode');
 
         if (!$tableName || !$repairMode) {
-            return $this->_redirect('*/*/checkTablesStructureValidity');
+            return $this->_redirect('*/*/*', ['action' => 'checkTablesStructureValidity']);
         }
 
         $helper = $this->getHelper('Module\Database\Repair');
-        $repairMode == 'index' && $helper->fixColumnIndex($tableName, $columnInfo);
-        $repairMode == 'properties' && $helper->fixColumnProperties($tableName, $columnInfo);
-        $repairMode == 'drop' && $helper->dropColumn($tableName, $columnInfo);
 
-        return $this->_redirect('*/*/checkTablesStructureValidity');
+        $repairMode == 'index'      && $helper->fixColumnIndex($tableName, $columnInfo);
+        $repairMode == 'properties' && $helper->fixColumnProperties($tableName, $columnInfo);
+        $repairMode == 'drop'       && $helper->dropColumn($tableName, $columnInfo);
+
+        return $this->_redirect('*/*/*', ['action' => 'checkTablesStructureValidity']);
     }
 
-    //todo implement
     /**
      * @title "Files Diff"
      * @description "Files Diff"
@@ -398,13 +417,21 @@ HTML;
         $filePath     = base64_decode($this->getRequest()->getParam('filePath'));
         $originalPath = base64_decode($this->getRequest()->getParam('originalPath'));
 
-        $path = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
-        $directoryReader = $this->directoryReaderFactory->create($path);
+        $basePath = $this->componentRegistrar->getPath(ComponentRegistrar::MODULE, Module::IDENTIFIER);
+        $fullPath = $basePath .DIRECTORY_SEPARATOR. $filePath;
 
         $params = array(
-            'content' => $directoryReader->read($filePath),
-            'path'    => $originalPath ? $originalPath : $filePath
+            'magento_version' => 2,
+            'content'         => '',
+            'path'            => $originalPath ? $originalPath : $filePath
         );
+
+        if ($this->filesystemDriver->isExists($fullPath)) {
+
+            /** @var \Magento\Framework\Filesystem\File\Read $fileReader */
+            $fileReader = $this->fileReaderFactory->create($fullPath, $this->filesystemDriver);
+            $params['content'] = $fileReader->readAll();
+        }
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('files','get','diff', $params);

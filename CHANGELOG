@@ -1,4 +1,13 @@
-* 1.1.0 (r1171) (07/09/2016)
+* 1.1.1 (12/09/2016)
+
+* Improvement: Different versions values will be used for Marketing and Setup purposes
+* Improvement: Just upgrades will be executed if there are module MySQL tables of previous version
+* Improvement: New composer package name "ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization"
+* Fix: Some errors that happens during setup:di:compile and setup:di:compile-multi-tenant
+* Fix: Much stability of Installation/Upgrade (module sets maintenance and doesn't break setup:upgrade process)
+* Fix: Redefinition of parameter $helperFactory in Ess/M2ePro/Model/Setup/Database/Modifier/AbstractModifier.php on line 29
+
+* 1.1.0 (07/09/2016)
 
 * Added: Ability to create Magento Attributes "On the Fly"
 * Added: Advanced Filter for Magento Products / Listings Views Grids
@@ -46,6 +55,6 @@
 * Fix: [Amazon] Incorrect behavior during adding Virtual Attributes to active Variation Products
 * Removed: [eBay] List/Relist Scheduling was removed from Synchronization Policy
 
-* 1.0.0 (r752) (04/07/2016)
+* 1.0.0 (04/07/2016)
 
 * Initial version for Magento v2.*
