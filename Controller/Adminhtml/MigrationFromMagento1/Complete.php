@@ -7,7 +7,7 @@ use Ess\M2ePro\Controller\Adminhtml\Context;
 
 class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
-    const SUPPORTED_SOURCE_VERSION = '6.5.0.5';
+    const SUPPORTED_SOURCE_VERSION = '6.5.0.6';
 
     protected $dbModifier;
 

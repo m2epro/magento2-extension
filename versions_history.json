@@ -1,4 +1,13 @@
 {
+	"1.1.2": {
+        "versions": {
+            "setup": "1.1.0",
+            "files": "1.1.2"
+        },
+        "revisions": {
+            "svn": "1200"
+        }
+    },
     "1.1.1": {
         "versions": {
             "setup": "1.1.0",

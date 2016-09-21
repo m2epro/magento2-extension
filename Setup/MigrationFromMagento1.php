@@ -286,6 +286,10 @@ class MigrationFromMagento1
 
     private function migrateAmazonMarketplaces()
     {
+		$this->getTableModifier('amazon_marketplace')->renameColumn(
+            'is_new_asin_available', 'is_asin_available', true, true
+        );
+		
         $this->getConnection()->delete($this->getFullTableName('marketplace'), [
             'id IN (?)' => [27, 32]
         ]);

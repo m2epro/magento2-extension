@@ -83,7 +83,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.1.1';
+        return '1.1.2';
     }
 
     public function getSetupVersion()
@@ -118,7 +118,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '1199';
+        return '1200';
     }
 
     //########################################
