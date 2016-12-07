@@ -28,7 +28,7 @@ class Form extends AbstractForm
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-    
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
@@ -123,7 +123,7 @@ class Form extends AbstractForm
                     ? $formData['general_id_mode'] : '',
                 'create_magento_attribute' => true,
                 'after_element_html' => $this->getTooltipHtml($this->__(
-                    'This setting is a source for ASIN/ISBN value which will be used 
+                    'This setting is a source for ASIN/ISBN value which will be used
                     at the time of Automatic Search of Amazon Products.'
                 ), true)
             ]
@@ -192,7 +192,7 @@ class Form extends AbstractForm
                     ? $formData['worldwide_id_mode'] : '',
                 'create_magento_attribute' => true,
                 'after_element_html' => $this->getTooltipHtml($this->__(
-                    'This setting is a source for UPC/EAN value which will be used 
+                    'This setting is a source for UPC/EAN value which will be used
                     at the time of Automatic Search of Amazon Products.'
                 ), true)
             ]
@@ -219,9 +219,9 @@ class Form extends AbstractForm
                 ],
                 'value' => $formData['search_by_magento_title_mode'],
                 'tooltip' => $this->__(
-                    '<p>Enable this additional Setting if you want M2E Pro to perform the search for Amazon 
+                    '<p>Enable this additional Setting if you want M2E Pro to perform the search for Amazon
                     Products based on Magento Product Name.</p><br>
-                    <p><strong>Please note</strong> that this setting is not applied to search for the available 
+                    <p><strong>Please note</strong> that this setting is not applied to search for the available
                     Amazon Products during the List action.</p>'
                 )
             ]
@@ -262,12 +262,12 @@ class Form extends AbstractForm
 .warning-tooltip {
     display: inline-block;
     width: 40px;
-} 
-        
+}
+
 .warning-tooltip .admin__field-tooltip .admin__field-tooltip-action:before {
     content: '\\e623';
     display: inline-block;
-}      
+}
 CSS
         );
 

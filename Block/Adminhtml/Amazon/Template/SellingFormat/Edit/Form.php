@@ -54,13 +54,13 @@ class Form extends AbstractForm
         $formData = array_merge($default, $formData);
 
         if ($formData['sale_price_start_date_value'] != '') {
-            $formData['sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
-                $formData['sale_price_start_date_value'],false,'Y-m-d'
+            $formData['sale_price_start_date_value'] = $this->_localeDate->formatDate(
+                $formData['sale_price_start_date_value']
             );
         }
         if ($formData['sale_price_end_date_value'] != '') {
-            $formData['sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
-                $formData['sale_price_end_date_value'],false,'Y-m-d'
+            $formData['sale_price_end_date_value'] = $this->_localeDate->formatDate(
+                $formData['sale_price_end_date_value']
             );
         }
 
@@ -546,7 +546,7 @@ class Form extends AbstractForm
                 'name' => 'sale_price_start_date_value',
                 'value' => $formData['sale_price_start_date_value'],
                 'class' => 'M2ePro-input-datetime',
-                'date_format' => 'y-MM-dd',
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
             ]
         );
 
@@ -606,7 +606,15 @@ class Form extends AbstractForm
                 'name' => 'sale_price_end_date_value',
                 'value' => $formData['sale_price_end_date_value'],
                 'class' => 'M2ePro-input-datetime',
-                'date_format' => 'y-MM-dd',
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
+            ]
+        );
+
+        $fieldset->addField('sale_price_end_date_value_validation',
+            'text',
+            [
+                'name' => 'sale_price_end_date_value_validation',
+                'class' => 'M2ePro-date-range-to'
             ]
         );
 
@@ -672,6 +680,7 @@ class Form extends AbstractForm
 
         $this->jsTranslator->addTranslations([
             'QTY' => $this->__('QTY'),
+            'Wrong date range.' => $this->__('Wrong date range.'),
 
             'Product Price for Amazon Listing(s).' => $this->__('Product Price for Amazon Listing(s).'),
             'The Price of Products in Amazon Listing(s).<br/><b>Note:</b>

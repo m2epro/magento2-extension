@@ -53,7 +53,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
     public function getListingProduct()
     {
         if (is_null($this->listingProductModel)) {
-            $this->listingProductModel = $this->parentFactory->getCachedObjectLoaded(
+            $this->listingProductModel = $this->parentFactory->getObjectLoaded(
                 $this->getComponentMode(),'Listing\Product',$this->getData('listing_product_id')
             );
         }

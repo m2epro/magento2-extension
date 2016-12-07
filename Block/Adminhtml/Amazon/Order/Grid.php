@@ -296,75 +296,22 @@ HTML;
             ->addFieldToFilter('order_id', $orderId)
             ->setOrder('id', 'DESC');
         $orderLogsCollection->getSelect()
-            ->limit(3);
-        // ---------------------------------------
+            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
 
-        // Prepare logs data
-        // ---------------------------------------
-        if ($orderLogsCollection->count() <= 0) {
+        if (!$orderLogsCollection->count()) {
             return '';
         }
 
-        $format = \IntlDateFormatter::MEDIUM;
-
-        $logRows = array();
-        foreach ($orderLogsCollection as $log) {
-            $logRows[] = array(
-                'type' => $log->getData('type'),
-                'text' => $this->getHelper('View')->getModifiedLogMessage($log->getData('description')),
-                'initiator' => $this->getInitiatorForAction($log->getData('initiator')),
-                'date' => $this->_localeDate->formatDate($log->getData('create_date'), $format, true)
-            );
-        }
         // ---------------------------------------
 
-        $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__(
-                'Last order Action was completed successfully.'
-            ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__(
-                'Last order Action was completed with error(s).'
-            ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__(
-                'Last order Action was completed with warning(s).'
-            )
-        );
-
-        $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
-        );
-
-        $summary = $this->createBlock('Log\Grid\Summary')->setData(array(
+        $summary = $this->createBlock('Order\Log\Grid\LastActions')->setData(array(
             'entity_id' => $orderId,
-            'rows' => $logRows,
-            'tips' => $tips,
-            'icons' => $icons,
+            'logs'      => $orderLogsCollection->getItems(),
             'view_help_handler' => 'OrderObj.viewOrderHelp',
             'hide_help_handler' => 'OrderObj.hideOrderHelp',
         ));
 
         return $summary->toHtml();
-    }
-
-    public function getInitiatorForAction($initiator)
-    {
-        $string = '';
-
-        switch ((int)$initiator) {
-            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
-                $string = '';
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
-                $string = $this->__('Manual');
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
-                $string = $this->__('Automatic');
-                break;
-        }
-
-        return $string;
     }
 
     // ---------------------------------------
@@ -601,7 +548,7 @@ HTML;
             ),
         ]);
 
-        $this->jsTranslator->add('View All Order Logs', $this->__('View All Order Logs'));
+        $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
 
         $this->js->add(<<<JS
     require([

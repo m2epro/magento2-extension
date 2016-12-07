@@ -234,7 +234,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             } else {
                 $newData['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT;
             }
-            
+
             if ($existsId) {
                 $existObject->addData($newData);
                 $existObject->getChildObject()->addData($newData);

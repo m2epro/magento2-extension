@@ -56,6 +56,12 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     const REVISE_UPDATE_IMAGES_NONE = 0;
     const REVISE_UPDATE_IMAGES_YES  = 1;
 
+    const REVISE_UPDATE_SPECIFICS_NONE = 0;
+    const REVISE_UPDATE_SPECIFICS_YES  = 1;
+
+    const REVISE_UPDATE_SHIPPING_SERVICES_NONE = 0;
+    const REVISE_UPDATE_SHIPPING_SERVICES_YES  = 1;
+
     const REVISE_CHANGE_PAYMENT_TEMPLATE_NONE = 0;
     const REVISE_CHANGE_PAYMENT_TEMPLATE_YES  = 1;
 
@@ -101,6 +107,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     const STOP_QTY_LESS    = 1;
     const STOP_QTY_BETWEEN = 2;
     const STOP_QTY_MORE    = 3;
+
+    const ADVANCED_RULES_MODE_NONE = 0;
+    const ADVANCED_RULES_MODE_YES  = 1;
+
+    const LIST_ADVANCED_RULES_PREFIX   = 'ebay_template_synchronization_list_advanced_rules';
+    const RELIST_ADVANCED_RULES_PREFIX = 'ebay_template_synchronization_relist_advanced_rules';
+    const STOP_ADVANCED_RULES_PREFIX   = 'ebay_template_synchronization_stop_advanced_rules';
 
     //########################################
 
@@ -198,6 +211,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function isListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated') != self::LIST_QTY_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isListAdvancedRulesEnabled()
+    {
+        return $this->getData('list_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getListAdvancedRulesFilters());
     }
 
     // ---------------------------------------
@@ -323,6 +345,22 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('revise_update_images') != self::REVISE_UPDATE_IMAGES_NONE;
     }
 
+    /**
+     * @return bool
+     */
+    public function isReviseWhenChangeSpecifics()
+    {
+        return $this->getData('revise_update_specifics') != self::REVISE_UPDATE_SPECIFICS_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReviseWhenChangeShippingServices()
+    {
+        return $this->getData('revise_update_shipping_services') != self::REVISE_UPDATE_SHIPPING_SERVICES_NONE;
+    }
+
     // ---------------------------------------
 
     /**
@@ -428,6 +466,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('relist_qty_calculated') != self::RELIST_QTY_NONE;
     }
 
+    /**
+     * @return bool
+     */
+    public function isRelistAdvancedRulesEnabled()
+    {
+        return $this->getData('relist_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getRelistAdvancedRulesFilters());
+    }
+
     // ---------------------------------------
 
     /**
@@ -460,6 +507,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function isStopWhenQtyCalculatedHasValue()
     {
         return $this->getData('stop_qty_calculated') != self::STOP_QTY_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStopAdvancedRulesEnabled()
+    {
+        return $this->getData('stop_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getStopAdvancedRulesFilters());
     }
 
     //########################################
@@ -498,6 +554,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
     // ---------------------------------------
 
+    public function getListAdvancedRulesFilters()
+    {
+        return $this->getData('list_advanced_rules_filters');
+    }
+
+    // ---------------------------------------
+
     public function getRelistWhenQtyMagentoHasValueType()
     {
         return $this->getData('relist_qty_magento');
@@ -528,6 +591,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
     public function getRelistWhenQtyCalculatedHasValueMax()
     {
         return $this->getData('relist_qty_calculated_value_max');
+    }
+
+    // ---------------------------------------
+
+    public function getRelistAdvancedRulesFilters()
+    {
+        return $this->getData('relist_advanced_rules_filters');
     }
 
     // ---------------------------------------
@@ -564,6 +634,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
         return $this->getData('stop_qty_calculated_value_max');
     }
 
+    // ---------------------------------------
+
+    public function getStopAdvancedRulesFilters()
+    {
+        return $this->getData('stop_advanced_rules_filters');
+    }
+
     //########################################
 
     /**
@@ -598,6 +675,9 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
             'list_qty_calculated'           => self::LIST_QTY_NONE,
             'list_qty_calculated_value'     => '1',
             'list_qty_calculated_value_max' => '10',
+
+            'list_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
+            'list_advanced_rules_filters' => null
         );
     }
 
@@ -617,6 +697,8 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
             'revise_update_sub_title'                        => self::REVISE_UPDATE_SUB_TITLE_NONE,
             'revise_update_description'                      => self::REVISE_UPDATE_DESCRIPTION_NONE,
             'revise_update_images'                           => self::REVISE_UPDATE_IMAGES_NONE,
+            'revise_update_specifics'                        => self::REVISE_UPDATE_SPECIFICS_NONE,
+            'revise_update_shipping_services'                => self::REVISE_UPDATE_SHIPPING_SERVICES_NONE,
 
             'revise_change_selling_format_template'          =>
                    \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_SELLING_FORMAT_TEMPLATE_YES,
@@ -646,7 +728,10 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
             'relist_qty_calculated'           => self::RELIST_QTY_NONE,
             'relist_qty_calculated_value'     => '1',
-            'relist_qty_calculated_value_max' => '10'
+            'relist_qty_calculated_value_max' => '10',
+
+            'relist_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
+            'relist_advanced_rules_filters' => null
         );
     }
 
@@ -665,7 +750,10 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Eba
 
             'stop_qty_calculated'           => self::STOP_QTY_NONE,
             'stop_qty_calculated_value'     => '0',
-            'stop_qty_calculated_value_max' => '10'
+            'stop_qty_calculated_value_max' => '10',
+
+            'stop_advanced_rules_mode'    => self::ADVANCED_RULES_MODE_NONE,
+            'stop_advanced_rules_filters' => null
         );
     }
 

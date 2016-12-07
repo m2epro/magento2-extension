@@ -128,7 +128,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ItemsRespo
             $orderBuilder = $this->orderBuilderFactory->create();
             $orderBuilder->initialize($this->getAccount(), $orderData);
 
-            $order = $orderBuilder->process();
+            try {
+                $order = $orderBuilder->process();
+            } catch (\Exception $exception) {
+                continue;
+            }
 
             if (!$order) {
                 continue;

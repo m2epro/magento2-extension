@@ -10,6 +10,20 @@ namespace Ess\M2ePro\Observer\Product\Attribute\Update;
 
 class Before extends \Ess\M2ePro\Observer\AbstractModel
 {
+    protected $objectManager;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Framework\ObjectManagerInterface $objectManager
+    ){
+        parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
+        $this->objectManager = $objectManager;
+    }
+
     //########################################
 
     public function process()
@@ -22,10 +36,16 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\PublicServices\Product\SqlChange $changesModel */
-        $changesModel = $this->modelFactory->getObject('PublicServices\Product\SqlChange');
+        /** @var \Ess\M2ePro\PublicServices\Product\SqlChange $changesModel */
+        $changesModel = $this->objectManager->get('Ess\M2ePro\PublicServices\Product\SqlChange');
+        $affectedProductsIds = $this->getAffectedProducts($changedProductsIds);
 
         foreach ($changedProductsIds as $productId) {
+
+            if (!in_array((int)$productId, $affectedProductsIds)) {
+                continue;
+            }
+
             foreach ($attributesData as $attributeName => $attributeValue) {
 
                 $changesModel->markProductAttributeChanged(
@@ -36,6 +56,23 @@ class Before extends \Ess\M2ePro\Observer\AbstractModel
         }
 
         $changesModel->applyChanges();
+    }
+
+    //########################################
+
+    private function getAffectedProducts(array $changedProductsIds)
+    {
+        $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter('product_id', array('in' => $changedProductsIds));
+
+        $collection->getSelect()->distinct(true);
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(['product_id']);
+
+        $result = $collection->getColumnValues('product_id');
+        $result = array_map('intval', $result);
+
+        return $result;
     }
 
     //########################################

@@ -99,7 +99,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED)
             ->getSize();
     }
-    
+
     //########################################
 
     public function save($reloadOnCreate = false)
@@ -107,7 +107,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
         return parent::save($reloadOnCreate);
     }
-    
+
     //########################################
 
     public function delete()
@@ -144,7 +144,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
         $this->marketplaceModel = NULL;
 
         $this->deleteChildInstance();
-        
+
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('listing');
         return parent::delete();
     }

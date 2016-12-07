@@ -29,7 +29,7 @@ class GetCategoriesJson extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\
         $treeBlock->setSelectedIds($selectedProductsIds);
 
         $this->setAjaxContent($treeBlock->getCategoryChildrenJson($this->getRequest()->getParam('category')), false);
-        
+
         return $this->getResult();
     }
 

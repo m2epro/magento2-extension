@@ -11,7 +11,7 @@ define([
         initialize: function()
         {
             var self = this;
-            
+
             var cmdKeys = [67, 79, 78, 84, 82, 79, 76, 80, 65, 78, 69, 76];
             var cmdPressedKeys = [];
 

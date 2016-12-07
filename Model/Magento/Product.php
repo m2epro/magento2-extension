@@ -13,12 +13,12 @@ use \Magento\Catalog\Model\Product\Attribute\Source\Status;
 
 class Product extends \Ess\M2ePro\Model\AbstractModel
 {
-    const TYPE_SIMPLE       = 'simple';
-    const TYPE_CONFIGURABLE = 'configurable';
-    const TYPE_BUNDLE       = 'bundle';
-    const TYPE_GROUPED      = 'grouped';
-    const TYPE_DOWNLOADABLE = 'downloadable';
-    const TYPE_VIRTUAL      = 'virtual';
+    const TYPE_SIMPLE_ORIGIN       = 'simple';
+    const TYPE_CONFIGURABLE_ORIGIN = 'configurable';
+    const TYPE_BUNDLE_ORIGIN       = 'bundle';
+    const TYPE_GROUPED_ORIGIN      = 'grouped';
+    const TYPE_DOWNLOADABLE_ORIGIN = 'downloadable';
+    const TYPE_VIRTUAL_ORIGIN      = 'virtual';
 
     const BUNDLE_PRICE_TYPE_DYNAMIC = 0;
     const BUNDLE_PRICE_TYPE_FIXED   = 1;
@@ -518,7 +518,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isSimpleType()
     {
-        return $this->getTypeId() == self::TYPE_SIMPLE;
+        return $this->getHelper('Magento\Product')->isSimpleType($this->getTypeId());
     }
 
     /**
@@ -561,7 +561,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isConfigurableType()
     {
-        return $this->getTypeId() == self::TYPE_CONFIGURABLE;
+        return $this->getHelper('Magento\Product')->isConfigurableType($this->getTypeId());
     }
 
     /**
@@ -569,7 +569,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isBundleType()
     {
-        return $this->getTypeId() == self::TYPE_BUNDLE;
+        return $this->getHelper('Magento\Product')->isBundleType($this->getTypeId());
     }
 
     /**
@@ -577,23 +577,57 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isGroupedType()
     {
-        return $this->getTypeId() == self::TYPE_GROUPED;
+        return $this->getHelper('Magento\Product')->isGroupedType($this->getTypeId());
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isSimpleTypeOrigin()
+    {
+        return $this->getTypeId() == self::TYPE_SIMPLE_ORIGIN;
     }
 
     /**
      * @return bool
      */
-    public function isDownloadableType()
+    public function isConfigurableTypeOrigin()
     {
-        return $this->getTypeId() == self::TYPE_DOWNLOADABLE;
+        return $this->getTypeId() == self::TYPE_CONFIGURABLE_ORIGIN;
     }
 
     /**
      * @return bool
      */
-    public function isVirtualType()
+    public function isBundleTypeOrigin()
     {
-        return $this->getTypeId() == self::TYPE_VIRTUAL;
+        return $this->getTypeId() == self::TYPE_BUNDLE_ORIGIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isGroupedTypeOrigin()
+    {
+        return $this->getTypeId() == self::TYPE_GROUPED_ORIGIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDownloadableTypeOrigin()
+    {
+        return $this->getTypeId() == self::TYPE_DOWNLOADABLE_ORIGIN;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVirtualTypeOrigin()
+    {
+        return $this->getTypeId() == self::TYPE_VIRTUAL_ORIGIN;
     }
 
     //########################################
@@ -1436,10 +1470,6 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function hasRequiredOptions()
     {
-        if ($this->isDownloadableType() || $this->isVirtualType()) {
-            return false;
-        }
-
         if ($this->isGroupedType()) {
             return true;
         }

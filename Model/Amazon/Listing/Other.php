@@ -191,11 +191,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     }
 
     //########################################
-
-    public function isCacheEnabled()
-    {
-        return true;
-    }
-
-    //########################################
 }

@@ -4,6 +4,20 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
+    protected $dateTime;
+
+    //########################################
+
+    public function __construct(
+        \Magento\Framework\Stdlib\DateTime $dateTime,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    )
+    {
+        $this->dateTime = $dateTime;
+        parent::__construct($amazonFactory, $context);
+    }
+
     //########################################
 
     protected function _isAllowed()
@@ -109,15 +123,17 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         if ($templateData['restock_date_value'] === '') {
             $templateData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {
-            $templateData['restock_date_value'] = $this->getHelper('Data')
-                ->timezoneDateToGmt($templateData['restock_date_value']);
+            $templateData['restock_date_value'] = $data['sale_price_start_date_value'] = $this->dateTime->formatDate(
+                $templateData['restock_date_value'],
+                true
+            );
         }
         // ---------------------------------------
 
         $listing->addData($templateData);
         $listing->getChildObject()->addData($templateData);
         $listing->save();
-        
+
         $newData = array_merge($listing->getDataSnapshot(), $listing->getChildObject()->getDataSnapshot());
 
         $listing->getChildObject()->setSynchStatusNeed($newData,$oldData);

@@ -28,7 +28,7 @@ class GetCategoriesSummaryHtml extends \Ess\M2ePro\Controller\Adminhtml\Amazon\L
         $block->setProductsForEachCategory($treeBlock->getProductsCountForEachCategory());
 
         $this->setAjaxContent($block->toHtml());
-        
+
         return $this->getResult();
     }
 

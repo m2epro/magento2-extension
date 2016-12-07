@@ -27,8 +27,10 @@ class Tabs extends AbstractTabs
             ]
         );
 
-        if ($this->getHelper('Data\GlobalData')->getValue('edit_account') &&
-            $this->getHelper('Data\GlobalData')->getValue('edit_account')->getId()) {
+        /** @var \Ess\M2ePro\Model\Account $account */
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+
+        if ($account && $account->getId()) {
 
             $this->addTab('listingOther', array(
                 'label' => $this->__('3rd Party Listings'),
@@ -53,7 +55,7 @@ class Tabs extends AbstractTabs
                     'Ebay\Account\Edit\Tabs\Order'
                 )->toHtml()
             ));
-            
+
             $this->addTab('feedback', array(
                 'label' => $this->__('Feedback'),
                 'title' => $this->__('Feedback'),
@@ -61,11 +63,23 @@ class Tabs extends AbstractTabs
                     'Ebay\Account\Edit\Tabs\Feedback'
                 )->toHtml()
             ));
+
+            if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+
+                $this->addTab('my_stores', array(
+                    'label' => $this->__('In-Store Pickup'),
+                    'title' => $this->__('In-Store Pickup'),
+                    'content' => $this->createBlock(
+                        'Ebay\Account\Edit\Tabs\PickupStore'
+                    )->toHtml()
+                ));
+            }
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Account\Feedback\Template', [
             'account_id' => $this->getRequest()->getParam('id')
         ]));

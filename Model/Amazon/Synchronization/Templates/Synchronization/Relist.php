@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
+use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
+
 final class Relist extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
@@ -26,12 +28,12 @@ final class Relist extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
 
     protected function getPercentsStart()
     {
-        return 40;
+        return 15;
     }
 
     protected function getPercentsEnd()
     {
-        return 65;
+        return 40;
     }
 
     //########################################
@@ -52,23 +54,16 @@ final class Relist extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
             array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
         );
 
+        $lpForAdvancedRules = [];
+
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
 
-                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-                $amazonListingProduct = $listingProduct->getChildObject();
-
-                $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
-
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $this->prepareConfigurator($listingProduct, $configurator);
 
-                if (!$amazonSynchronizationTemplate->isRelistSendData()) {
-                    $configurator->setPartialMode();
-                    $configurator->allowQty();
-                }
-
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
                 );
 
@@ -80,18 +75,95 @@ final class Relist extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                     continue;
                 }
 
+                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+                $amazonListingProduct = $listingProduct->getChildObject();
+                $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+                if ($amazonTemplate->isRelistAdvancedRulesEnabled()) {
+
+                    $templateId = $amazonTemplate->getId();
+                    $storeId    = $listingProduct->getListing()->getStoreId();
+                    $magentoProductId = $listingProduct->getProductId();
+
+                    $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+
+                } else {
+
+                    $this->getRunner()->addProduct(
+                        $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
+                    );
+                }
+
+            } catch (\Exception $exception) {
+
+                $this->logError($listingProduct, $exception, false);
+                continue;
+            }
+        }
+
+        $this->processAdvancedConditions($lpForAdvancedRules);
+
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    }
+
+    //########################################
+
+    private function processAdvancedConditions($lpForAdvancedRules)
+    {
+        $affectedListingProducts = [];
+
+        try {
+
+            $affectedListingProducts = $this->getInspector()->getMeetAdvancedRequirementsProducts(
+                $lpForAdvancedRules, SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX, 'relist'
+            );
+
+        } catch (\Exception $exception) {
+
+            foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
+                foreach ($productsByTemplate as $storeId => $productsByStore) {
+                    foreach ($productsByStore as $magentoProductId => $productsByMagentoProduct) {
+                        foreach ($productsByMagentoProduct as $lProduct) {
+                            $this->logError($lProduct, $exception, false);
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($affectedListingProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            try {
+
+                /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
+                $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+                $this->prepareConfigurator($listingProduct, $configurator);
+
                 $this->getRunner()->addProduct(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
                 );
 
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
+    }
 
-        $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    //########################################
+
+    private function prepareConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct,
+                                         \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+
+        if (!$amazonListingProduct->getAmazonSynchronizationTemplate()->isRelistSendData()) {
+            $configurator->setPartialMode();
+            $configurator->allowQty();
+        }
     }
 
     //########################################

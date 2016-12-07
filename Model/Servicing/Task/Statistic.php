@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Servicing\Task;
 class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 {
     const RUN_INTERVAL = 604800; // 1 week
-    
+
     protected $transactionCollectionFactory;
 
     protected $creditmemoCollectionFactory;
@@ -33,7 +33,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     protected $synchronizationConfig;
 
     //########################################
-    
+
     public function __construct(
         \Magento\Sales\Model\ResourceModel\Order\Payment\Transaction\CollectionFactory $transactionCollectionFactory,
         \Magento\Sales\Model\ResourceModel\Order\Creditmemo\CollectionFactory $creditmemoCollectionFactory,
@@ -67,11 +67,11 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->synchronizationConfig = $synchronizationConfig;
         parent::__construct(
             $config,
-            $cacheConfig, 
-            $storeManager, 
+            $cacheConfig,
+            $storeManager,
             $modelFactory,
             $helperFactory,
-            $resource, 
+            $resource,
             $activeRecordFactory,
             $parentFactory
         );

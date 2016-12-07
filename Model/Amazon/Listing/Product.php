@@ -16,6 +16,9 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const IS_AFN_CHANNEL_NO  = 0;
     const IS_AFN_CHANNEL_YES = 1;
 
+    const IS_REPRICING_NO  = 0;
+    const IS_REPRICING_YES = 1;
+
     const IS_ISBN_GENERAL_ID_NO  = 0;
     const IS_ISBN_GENERAL_ID_YES = 1;
 

@@ -2,13 +2,13 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Order\View\Log;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
+use Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid;
 
 class Grid extends AbstractGrid
 {
     /** @var $order \Ess\M2ePro\Model\Order */
     private $order;
-    
+
     //########################################
 
     public function _construct()
@@ -26,6 +26,7 @@ class Grid extends AbstractGrid
         $this->setDefaultDir('DESC');
         $this->setFilterVisibility(false);
         $this->setUseAjax(true);
+        $this->setCustomPageSize(false);
         // ---------------------------------------
 
         $this->order = $this->getHelper('Data\GlobalData')->getValue('order');
@@ -43,41 +44,6 @@ class Grid extends AbstractGrid
 
     protected function _prepareColumns()
     {
-        $this->addColumn('message', array(
-            'header'    => $this->__('Message'),
-            'align'     => 'left',
-            'width'     => '*',
-            'type'      => 'text',
-            'sortable'  => false,
-            'filter_index' => 'id',
-            'index'     => 'description',
-            'frame_callback' => array($this, 'callbackColumnDescription')
-        ));
-
-        $this->addColumn('type', array(
-            'header'    => $this->__('Type'),
-            'align'     => 'left',
-            'width'     => '65px',
-            'index'     => 'type',
-            'sortable'  => false,
-            'frame_callback' => array($this, 'callbackColumnType')
-        ));
-
-        $this->addColumn('initiator', array(
-            'header'    => $this->__('Run Mode'),
-            'align'     => 'left',
-            'width'     => '65px',
-            'index'     => 'initiator',
-            'sortable'  => false,
-            'type'      => 'options',
-            'options'   => array(
-                \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN   => $this->__('Unknown'),
-                \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION => $this->__('Automatic'),
-                \Ess\M2ePro\Helper\Data::INITIATOR_USER      => $this->__('Manual'),
-            ),
-            'frame_callback' => array($this, 'callbackColumnInitiator')
-        ));
-
         $this->addColumn('create_date', array(
             'header'    => $this->__('Create Date'),
             'align'     => 'left',
@@ -88,55 +54,40 @@ class Grid extends AbstractGrid
             'index'     => 'create_date'
         ));
 
+        $this->addColumn('message', array(
+            'header'    => $this->__('Message'),
+            'align'     => 'left',
+            'width'     => '*',
+            'type'      => 'text',
+            'sortable'  => false,
+            'filter_index' => 'id',
+            'index'     => 'description',
+            'frame_callback' => array($this, 'callbackDescription')
+        ));
+
+        $this->addColumn('initiator', array(
+            'header'    => $this->__('Run Mode'),
+            'align'     => 'right',
+            'width'     => '65px',
+            'index'     => 'initiator',
+            'sortable'  => false,
+            'type'      => 'options',
+            'options'   => $this->_getLogInitiatorList(),
+            'frame_callback' => array($this, 'callbackColumnInitiator')
+        ));
+
+        $this->addColumn('type', array(
+            'header'    => $this->__('Type'),
+            'align'     => 'right',
+            'width'     => '65px',
+            'index'     => 'type',
+            'sortable'  => false,
+            'type'      => 'options',
+            'options'   => $this->_getLogTypeList(),
+            'frame_callback' => array($this, 'callbackColumnType')
+        ));
+
         return parent::_prepareColumns();
-    }
-
-    //########################################
-
-    public function callbackColumnDescription($value, $row, $column, $isExport)
-    {
-        return $this->getHelper('View')->getModifiedLogMessage($row->getData('description'));
-    }
-
-    public function callbackColumnType($value, $row, $column, $isExport)
-    {
-        switch ($value) {
-            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS:
-                $message = '<span style="color: green;">'.$this->__('Success').'</span>';
-                break;
-            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE:
-                $message = '<span style="color: blue;">'.$this->__('Notice').'</span>';
-                break;
-            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING:
-                $message = '<span style="color: orange;">'.$this->__('Warning').'</span>';
-                break;
-            case \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR:
-            default:
-                $message = '<span style="color: red;">'.$this->__('Error').'</span>';
-                break;
-        }
-
-        return $message;
-    }
-
-    public function callbackColumnInitiator($value, $row, $column, $isExport)
-    {
-        $initiator = $row->getData('initiator');
-
-        switch ($initiator) {
-            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
-                $message = "<span style=\"text-decoration: underline;\">{$value}</span>";
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
-                $message = "<span style=\"font-style: italic; color: gray;\">{$value}</span>";
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
-            default:
-                $message = "<span>{$value}</span>";
-                break;
-        }
-
-        return $message;
     }
 
     //########################################

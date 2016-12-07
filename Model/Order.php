@@ -46,6 +46,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     /** @var \Ess\M2ePro\Model\Order\Reserve */
     private $reserve = NULL;
 
+    private $statusUpdateRequired = false;
+
     //########################################
 
     /** @var \Ess\M2ePro\Model\Order\Log */
@@ -149,6 +151,19 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function getAdditionalData()
     {
         return $this->getSettings('additional_data');
+    }
+
+    //########################################
+
+    public function setStatusUpdateRequired($isRequired = true)
+    {
+        $this->statusUpdateRequired = $isRequired;
+        return $this;
+    }
+
+    public function getStatusUpdateRequired()
+    {
+        return $this->statusUpdateRequired;
     }
 
     //########################################

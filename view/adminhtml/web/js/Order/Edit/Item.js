@@ -3,20 +3,20 @@ define([
     'M2ePro/Common',
     'Magento_Ui/js/modal/modal'
 ], function (MessageObj) {
-    
+
     OrderEditItem = Class.create(Common, {
-    
+
         // ---------------------------------------
-    
+
         initialize: function()
         {
             this.popUp = null;
             this.gridId = null;
             this.orderItemId = null;
         },
-    
+
         // ---------------------------------------
-    
+
         openPopUpMappingProduct: function(title, content)
         {
             var self = this;
@@ -133,26 +133,26 @@ define([
                 this.mappingOptionsPopUp.modal('closeModal');
             }
         },
-    
+
         reloadGrid: function()
         {
             var grid = window[this.gridId + 'JsObject'];
-    
+
             if (grid) {
                 grid.doFilter();
             }
         },
-    
+
         edit: function(gridId, orderItemId)
         {
             var self = this;
-    
+
             self.gridId = gridId;
             self.orderItemId = orderItemId;
-    
+
             self.getItemEditHtml(orderItemId, function(transport) {
                 var response = transport.responseText.evalJSON();
-    
+
                 if (response.error) {
                     if (self.popUp) {
                         alert(response.error);
@@ -160,10 +160,10 @@ define([
                     } else {
                         MessageObj.addErrorMessage(response.error);
                     }
-    
+
                     return;
                 }
-    
+
                 var title = response.title;
                 var content = response.html;
 
@@ -174,7 +174,7 @@ define([
                 }
             });
         },
-    
+
         getItemEditHtml: function(itemId, callback)
         {
             new Ajax.Request(M2ePro.url.get('order/editItem'), {
@@ -189,58 +189,58 @@ define([
                 }
             });
         },
-    
+
         afterActionCallback: function(transport)
         {
             var self = this;
             var response = transport.responseText.evalJSON();
-    
+
             if (response.error) {
                 MessageObj.addErrorMessage(response.error);
                 return;
             }
-    
+
             if (response.continue) {
                 self.edit(self.gridId, self.orderItemId);
                 return;
             }
-    
+
             if (response.success) {
                 self.closePopUp();
                 self.scrollPageToTop();
                 MessageObj.addSuccessMessage(response.success);
             }
         },
-    
+
         // ---------------------------------------
-    
+
         assignProduct: function(id, productSku)
         {
             var self = this;
             var productId = +id || '';
             var sku = productSku || '';
             var orderItemId = self.orderItemId;
-    
+
             MessageObj.clear();
-    
+
             if (orderItemId == '' || (/^\s*(\d)*\s*$/i).test(orderItemId) == false) {
                 return;
             }
-    
+
             if (sku == '' && productId == '') {
                 alert(M2ePro.translator.translate('Please enter correct Product ID or SKU.'));
                 return;
             }
-    
+
             if (((/^\s*(\d)*\s*$/i).test(productId) == false)) {
                 alert(M2ePro.translator.translate('Please enter correct Product ID.'));
                 return;
             }
-    
+
             if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
                 return;
             }
-    
+
             new Ajax.Request(M2ePro.url.get('order/assignProduct'), {
                 method: 'post',
                 parameters: {
@@ -251,9 +251,9 @@ define([
                 onSuccess: self.afterActionCallback.bind(self)
             });
         },
-    
+
         // ---------------------------------------
-    
+
         assignProductDetails: function()
         {
             var self = this;
@@ -262,31 +262,31 @@ define([
             if (validationResult.indexOf(false) != -1) {
                 return;
             }
-    
+
             if ($('save_repair') && $('save_repair').checked && !confirm(M2ePro.translator.translate('Are you sure?'))) {
                 return;
             }
-    
+
             new Ajax.Request(M2ePro.url.get('order/assignProductDetails'), {
                 method: 'post',
                 parameters: Form.serialize('mapping_product_options'),
                 onSuccess: self.afterActionCallback.bind(self)
             });
         },
-    
+
         // ---------------------------------------
-    
+
         unassignProduct: function(gridId, orderItemId)
         {
             var self = this;
-    
+
             if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
                 return;
             }
-    
+
             self.gridId = gridId;
             self.orderItemId = orderItemId;
-    
+
             new Ajax.Request(M2ePro.url.get('order/unassignProduct'), {
                 method: 'post',
                 parameters: {
@@ -300,7 +300,7 @@ define([
                 }
             });
         },
-    
+
         // ---------------------------------------
 
         openEditShippingAddressPopup: function (orderId)
@@ -344,6 +344,7 @@ define([
                 onSuccess: function(transport) {
                     shippingAddressModal.insert(transport.responseText);
 
+                    self.initFormValidation('#edit_form');
                     self.editShippingAddressPopUp.modal('openModal');
                 }
             });

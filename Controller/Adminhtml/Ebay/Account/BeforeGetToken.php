@@ -32,7 +32,7 @@ class BeforeGetToken extends Account
             $response = $connectorObj->getResponseData();
 
         } catch (\Exception $exception) {
-            
+
             $this->getHelper('Module\Exception')->process($exception);
             // M2ePro_TRANSLATIONS
             // The eBay token obtaining is currently unavailable.<br/>Reason: %error_message%
@@ -44,7 +44,7 @@ class BeforeGetToken extends Account
             $this->_redirect($this->getUrl('*/*/index'));
             return;
         }
-        
+
         $this->getHelper('Data\Session')->setValue('get_token_account_id', $accountId);
         $this->getHelper('Data\Session')->setValue('get_token_account_title', $accountTitle);
         $this->getHelper('Data\Session')->setValue('get_token_account_mode', $accountMode);

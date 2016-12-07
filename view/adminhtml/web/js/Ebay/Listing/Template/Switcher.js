@@ -230,7 +230,6 @@ define([
             labelContainer.hide();
             templateLabel && templateLabel.hide();
 
-
             if (this.isSwitcherValueModeTemplate(templateNick)) {
                 labelContainer.show();
                 templateLabel && templateLabel.show();
@@ -286,7 +285,7 @@ define([
                     $$('.template-switcher').each(function(switcher) {
                         params[switcher.name] = switcher.value;
                     });
-                    
+
                     if ($('ebayListingTemplateEditTabs')) {
                         params['tab'] = jQuery('#ebayListingTemplateEditTabs').data().tabs.active.find('a')[0].id.split('_').pop();
                     }

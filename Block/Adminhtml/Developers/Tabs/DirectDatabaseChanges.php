@@ -45,7 +45,7 @@ class DirectDatabaseChanges extends AbstractForm
                 'no_hide' => true,
                 'content' => $this->__(
                     <<<HTML
-                    <p>M2E Pro is developed to work based on standard Magento functionality. 
+                    <p>M2E Pro is developed to work based on standard Magento functionality.
                     One of the main aspects of its work is a dynamic event catching of the Product Data
                     changes - Price, Quantity, Images, Attributes, etc.</p><br>
                     <p>However, if Product Data is changed via Magmi Import Tool,
@@ -55,13 +55,13 @@ class DirectDatabaseChanges extends AbstractForm
                     change leads to inability to deliver these changes to the channels (eBay, Amazon, etc.).</p><br>
                     <p>If you are using Magmi Import Tool to update the Product Data,
                     which implements changes directly into the Magento Database, please, use a
-                    <a href="%url1%" target="_blank" class="external-link">Magmi Plugin</a> 
-                    However, if you are a developer and 
-                    change the Product Data directly in the Database, you can use a predefined 
+                    <a href="%url1%" target="_blank" class="external-link">Magmi Plugin</a>
+                    However, if you are a developer and
+                    change the Product Data directly in the Database, you can use a predefined
                     <a href="%url2%" target="_blank" class="external-link">M2E Pro Models</a></p><br>
-                    <p>Only in case you cannot use these features, we would recommend you to enable <br> an 
+                    <p>Only in case you cannot use these features, we would recommend you to enable <br> an
                     additional option - <strong>Track Direct Database Changes</strong>.</p><br>
-                    <p><strong>Warning:</strong> Track Direct Database changes feature is resource-intensive and may 
+                    <p><strong>Warning:</strong> Track Direct Database changes feature is resource-intensive and may
                     affect Performance of your Magento Site and Synchronization with Channels. Choose 'Yes' only if you
                     cannot use other predefined M2E Pro Models and you are absolutely confident that you need to
                     use this functionality.</p>

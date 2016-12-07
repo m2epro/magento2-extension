@@ -121,7 +121,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
         $templateDescriptionEditUrl = $this->getUrl('*/amazon_template_shippingOverride/edit', array(
-            'id' => $row->getData('id')
+            'id' => $row->getData('id'),
+            'close_on_save' => true
         ));
 
         $title = $this->getHelper('Data')->escapeHtml($value);

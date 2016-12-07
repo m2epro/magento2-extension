@@ -11,12 +11,20 @@ class Index extends \Magento\Framework\App\Action\Action
     /** @var Service $serviceCronRunner */
     private $serviceCronRunner = NULL;
 
+    /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
+    private $config;
+
     //########################################
 
-    public function __construct(Context $context, Service $serviceCronRunner)
+    public function __construct(
+        Context $context,
+        Service $serviceCronRunner,
+        \Magento\PageCache\Model\Config $config
+    )
     {
         parent::__construct($context);
         $this->serviceCronRunner = $serviceCronRunner;
+        $this->config = $config;
     }
 
     //########################################
@@ -32,6 +40,12 @@ class Index extends \Magento\Framework\App\Action\Action
         $connectionId && $this->serviceCronRunner->setRequestConnectionId($connectionId);
 
         $this->serviceCronRunner->process();
+
+        // Magento is going to set a special cookie for Varnish to prevent caching of POST requests.
+        // An error "Headers already sent" will be thrown as we've already closed connection with server.
+        if ($this->config->getType() == \Magento\PageCache\Model\Config::VARNISH && $this->config->isEnabled()) {
+            die;
+        }
     }
 
     //########################################

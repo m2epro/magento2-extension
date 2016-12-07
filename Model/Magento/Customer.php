@@ -24,10 +24,6 @@ class Customer extends AbstractModel
 
     protected $addressFactory;
 
-    protected $helperFactory;
-
-    protected $modelFabric;
-
     protected $resourceConnection;
 
     protected $customer;
@@ -51,13 +47,15 @@ class Customer extends AbstractModel
         $this->mathRandom = $mathRandom;
         $this->customerFactory = $customerFactory;
         $this->addressFactory = $addressFactory;
-        $this->helperFactory = $helperFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory, $data);
     }
 
     //########################################
 
+    /**
+     * @return \Magento\Customer\Model\Customer
+     */
     public function getCustomer()
     {
         return $this->customer;
@@ -77,21 +75,26 @@ class Customer extends AbstractModel
             ->setEmail($this->getData('email'))
             ->setConfirmation($password);
 
-        $this->customer = $this->customerFactory->create(['data' => $customerData]);
+        $this->customer = $this->customerFactory->create();
+        $this->customer->updateData($customerData);
         $this->customer->setPassword($password);
         $this->customer->save();
+
+        $street = $this->getData('street');
+        if (!is_array($street)) {
+            $street = explode('; ', $street);
+        }
 
         // Add customer address
         $customerAddress = $this->addressDataFactory->create()
             ->setFirstname($this->getData('firstname'))
             ->setLastname($this->getData('lastname'))
             ->setCountryId($this->getData('country_id'))
-            ->setRegion($this->getData('region'))
             ->setRegionId($this->getData('region_id'))
             ->setCity($this->getData('city'))
             ->setPostcode($this->getData('postcode'))
             ->setTelephone($this->getData('telephone'))
-            ->setStreet($this->getData('street'))
+            ->setStreet($street)
             ->setIsDefaultBilling(true)
             ->setIsDefaultShipping(true);
 
@@ -108,7 +111,7 @@ class Customer extends AbstractModel
     {
         try {
             /** @var \Ess\M2ePro\Model\Magento\Attribute\Builder $attributeBuilder */
-            $attributeBuilder = $this->modelFabric->getObject('Magento\Attribute\Builder');
+            $attributeBuilder = $this->modelFactory->getObject('Magento\Attribute\Builder');
             $attributeBuilder->setCode($code);
             $attributeBuilder->setLabel($label);
             $attributeBuilder->setInputType('text');

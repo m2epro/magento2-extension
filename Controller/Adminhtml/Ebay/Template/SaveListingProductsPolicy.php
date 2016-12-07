@@ -8,13 +8,12 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Template;
 
-
 class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Template
 {
     protected $transaction;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Framework\DB\Transaction $transaction,
         \Ess\M2ePro\Model\Ebay\Template\Manager $templateManager,
@@ -27,7 +26,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
     }
 
     //########################################
-    
+
     public function execute()
     {
         $ids = $this->getRequestIds();
@@ -72,7 +71,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
             $snapshots = false;
         }
         // ---------------------------------------
-        
+
         if ($snapshots) {
             foreach ($collection->getItems() as $listingProduct) {
                 $listingProduct->getChildObject()->setSynchStatusNeed(
@@ -149,6 +148,6 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
             $data[$column] = NULL;
         }
     }
-    
+
     //########################################
 }

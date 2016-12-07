@@ -24,31 +24,10 @@ table.order-info tr{
     width: 40px;
 }
 
-/* grid */
-
-.filter_block .m2epro-field-tooltip {
-    margin-top: 7px;
-}
-
-.filter_block p {
-    float: left;
-    margin-bottom: 0;
-}
-
-.filter_block p:not(:first-child) {
-    margin-left: 40px;
-}
-
-.filter_block select {
-    margin-left: 10px;
-}
-.page-main-actions._hidden .filter_block {
-    display: none;
-}
-
 /* order view */
 
 .m2epro-order-totals {
+    margin-top: 10px;
     padding: 30px;
     background: #fffbbb;
     text-align: right;

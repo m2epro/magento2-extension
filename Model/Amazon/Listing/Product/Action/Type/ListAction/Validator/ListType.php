@@ -760,11 +760,19 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         $dispatcherObject->process($connectorObj);
         $result = $connectorObj->getResponseData();
 
-        if ($searchMethod == 'byAsin') {
-            return $this->cachedData['amazon_data'][$identifier] = array($result['item']);
+        foreach ($connectorObj->getResponse()->getMessages()->getEntities() as $message) {
+            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
+
+            if ($message->isError()) {
+                $this->addMessage($message->getText());
+            }
         }
 
-        return $this->cachedData['amazon_data'][$identifier] = $result['items'];
+        if ($searchMethod == 'byAsin') {
+            return $this->cachedData['amazon_data'][$identifier] = isset($result['item']) ? [$result['item']] : [];
+        }
+
+        return $this->cachedData['amazon_data'][$identifier] = isset($result['items']) ? $result['items'] : [];
     }
 
     //########################################

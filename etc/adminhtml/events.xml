@@ -3,120 +3,32 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
 
-    <!-- products -->
-
-    <event name="catalog_product_save_before">
-        <observer name="m2epro_observer_product_addupdate_before"
-                  instance="Ess\M2ePro\Observer\Product\AddUpdate\Before" />
-    </event>
-    <event name="catalog_product_save_after">
-        <observer name="m2epro_observer_product_addupdate_after"
-                  instance="Ess\M2ePro\Observer\Product\AddUpdate\After" />
-    </event>
-    <event name="catalog_product_delete_before">
-        <observer name="m2epro_observer_product_delete"
-                  instance="Ess\M2ePro\Observer\Product\Delete" />
-    </event>
-
-    <!-- attributes -->
-
-    <event name="catalog_product_attribute_update_before">
-        <observer name="m2epro_observer_product_attribute_update_before"
-                  instance="Ess\M2ePro\Observer\Product\Attribute\Update\Before" />
-    </event>
-
-    <!-- categories -->
-
-    <event name="catalog_category_change_products">
-        <observer name="m2epro_observer_category"
-                  instance="Ess\M2ePro\Observer\Category" />
-    </event>
-
-    <!-- stock items -->
-
-    <event name="cataloginventory_stock_item_save_before">
-        <observer name="m2epro_observer_stockitem_save_before"
-                  instance="Ess\M2ePro\Observer\StockItem\Save\Before" />
-    </event>
-    <event name="cataloginventory_stock_item_save_after">
-        <observer name="m2epro_observer_stockitem_save_after"
-                  instance="Ess\M2ePro\Observer\StockItem\Save\After" />
-    </event>
-
-    <!-- synchronization -->
-
-    <event name="ess_synchronization_before_start">
-        <observer name="m2epro_observer_indexes_disable"
-                  instance="Ess\M2ePro\Observer\Indexes\Disable" />
-    </event>
-    <event name="ess_synchronization_after_end">
-        <observer name="m2epro_observer_indexes_enable"
-                  instance="Ess\M2ePro\Observer\Indexes\Enable" />
-    </event>
-
     <!-- external orders -->
 
-    <event name="sales_order_invoice_pay">
-        <observer name="m2epro_observer_invoice"
-                  instance="Ess\M2ePro\Observer\Invoice" />
-    </event>
-    <event name="sales_order_shipment_save_after">
-        <observer name="m2epro_observer_shipment"
-                  instance="Ess\M2ePro\Observer\Shipment" />
-    </event>
-    <event name="sales_order_shipment_track_save_after">
-        <observer name="m2epro_observer_shipment_track"
-                  instance="Ess\M2ePro\Observer\Shipment\Track" />
-    </event>
-    <event name="sales_order_creditmemo_refund">
-        <observer name="m2epro_observer_creditmemo"
-                  instance="Ess\M2ePro\Observer\CreditMemo" />
-    </event>
-    <event name="sales_order_save_after">
-        <observer name="m2epro_observer_ebay_order"
-                  instance="Ess\M2ePro\Observer\Ebay\Order" />
-    </event>
-    <event name="ess_sales_convert_quote_item_to_order_item">
-        <observer name="m2epro_observer_order_quote"
-                  instance="Ess\M2ePro\Observer\Order\Quote" />
-    </event>
     <event name="layout_render_before_sales_order_view">
         <observer name="m2epro_observer_order_view_before"
-                  instance="Ess\M2ePro\Observer\Order\View\Before" />
+                  instance="Ess\M2ePro\Observer\Order\View\Before"
+                  shared="false" />
     </event>
     <event name="layout_render_before_adminhtml_order_shipment_view">
         <observer name="m2epro_observer_shipment_view"
-                  instance="Ess\M2ePro\Observer\Shipment\View" />
+                  instance="Ess\M2ePro\Observer\Shipment\View"
+                  shared="false" />
     </event>
     <event name="layout_render_before_sales_order_invoice_view">
         <observer name="m2epro_observer_invoice_view"
-                  instance="Ess\M2ePro\Observer\Invoice\View" />
+                  instance="Ess\M2ePro\Observer\Invoice\View"
+                  shared="false" />
     </event>
     <event name="layout_render_before_sales_order_creditmemo_view">
         <observer name="m2epro_observer_creditmemo_view"
-                  instance="Ess\M2ePro\Observer\CreditMemo\View" />
+                  instance="Ess\M2ePro\Observer\CreditMemo\View"
+                  shared="false" />
     </event>
     <event name="core_layout_block_create_after">
         <observer name="m2epro_observer_order_view_after"
-                  instance="Ess\M2ePro\Observer\Order\View\After" />
-    </event>
-
-    <!-- internal orders -->
-
-    <event name="ess_associate_ebay_order_item_to_product">
-        <observer name="m2epro_observer_ebay_order_item"
-                  instance="Ess\M2ePro\Observer\Ebay\Order\Item" />
-    </event>
-    <event name="ess_associate_amazon_order_item_to_product">
-        <observer name="m2epro_observer_amazon_order_item"
-                  instance="Ess\M2ePro\Observer\Amazon\Order\Item" />
-    </event>
-
-     <!-- amazon orders -->
-
-    <event name="ess_amazon_fba_magento_order_place_after">
-        <observer name="m2epro_observer_amazon_order"
-                  instance="Ess\M2ePro\Observer\Amazon\Order" />
+                  instance="Ess\M2ePro\Observer\Order\View\After"
+                  shared="false" />
     </event>
 
 </config>

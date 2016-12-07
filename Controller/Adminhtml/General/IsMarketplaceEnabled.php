@@ -55,4 +55,4 @@ class IsMarketplaceEnabled extends Base
     }
 
     //########################################
-} 
+}

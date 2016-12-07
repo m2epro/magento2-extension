@@ -109,7 +109,7 @@ HTML;
             </div>
         </td>
     </tr>
-    
+
 </table>
 <div id="variation_manager_unused_product_variations_tree" style="display: none;">{$productVariationsTree}</div>
 
@@ -130,7 +130,7 @@ HTML;
         if ($this->isGeneralIdOwner() && $this->hasChannelTheme()) {
 
             $html .= <<<HTML
-        <td style="border-left: none; border-right: none; padding-left: 5px; 
+        <td style="border-left: none; border-right: none; padding-left: 5px;
                    width: 185px; text-align: center; vertical-align: middle;" rowspan="6">
 HTML;
 
@@ -152,7 +152,7 @@ HTML;
         </div>
 HTML;
             } else {
-            
+
                 $html .= <<<HTML
             <input type="hidden" name="create_new_asin" value="1">
 HTML;
@@ -226,12 +226,12 @@ HTML;
 #variation_manager_product_options_form .data-grid.data-grid-not-hovered td.label {
     border-left: none;
     border-right: none;
-}      
-              
+}
+
 #variation_manager_product_options_form .data-grid.data-grid-not-hovered td.value {
     border-left: none;
     border-right: none;
-}  
+}
 CSS
     );
 
@@ -244,7 +244,6 @@ CSS
                 'css_class' => 'variation_new_child_form-full-width'
             ]
         );
-
 
         $form->setUseContainer(true);
         $this->setForm($form);

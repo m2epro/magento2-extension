@@ -15,6 +15,13 @@ use Magento\Setup\Module\Setup as MagentoSetup;
 
 class MigrationFromMagento1
 {
+    const LOGS_TASK_DELETE            = 'delete';
+    const LOGS_TASK_ACTION_ID         = 'action_id';
+    const LOGS_TASK_MODIFY_ACTION_ID  = 'modify_action_id';
+    const LOGS_TASK_MODIFY_ENTITY_ID  = 'modify_entity_id';
+    const LOGS_TASK_INDEX             = 'index';
+    const LOGS_TASK_COLUMNS           = 'columns';
+
     const BACKUP_TABLE_SUFFIX = '_backup_mv1_';
 
     protected $helperFactory;
@@ -72,19 +79,30 @@ class MigrationFromMagento1
         $this->migrateServerLocation();
         $this->migrateModuleName();
         $this->migrateInfrastructureUrls();
+        $this->migrateInStorePickupGlobalKey();
+        $this->migrateProductCustomTypes();
 
         $this->migrateProcessing();
         $this->migrateLockItem();
-
+        $this->migrateLogs();
         $this->migrateWizards();
+        $this->migrateGridsPerformanceStructure();
+        $this->migrateSynchronizationTemplateAdvancedConditions();
+        $this->migrateOrderSynchronization();
 
         $this->migrateEbayReturnTemplate();
         $this->migrateEbaySynchronizationTemplate();
+        $this->migrateEbayCharity();
+        $this->migrateEbayItemDuplicateTool();
+        $this->migrateEbayMarketplaces();
 
+        $this->migrateAmazonShippingTemplate();
+        $this->migrateAmazonRepricingSynchronization();
         $this->migrateAmazonMarketplaces();
 
-        $this->createSetupTable();
         $this->removeAndBackupBuyData();
+
+        $this->createSetupTables();
 
         $this->migrateOther();
     }
@@ -152,21 +170,58 @@ class MigrationFromMagento1
         $moduleConfigModifier->insert('/support/', 'forum_url', 'https://community.m2epro.com/', NULL);
 
         $moduleConfigModifier->getEntity('/support/', 'main_website_url')->updateKey('website_url');
-        $moduleConfigModifier->getEntity('/support/', 'website_url')->updateValue('https://m2epro.com/');
-
         $moduleConfigModifier->getEntity('/support/', 'main_support_url')->updateKey('support_url');
-        $moduleConfigModifier->getEntity('/support/', 'support_url')->updateValue('https://support.m2epro.com/');
 
-        $moduleConfigModifier->getEntity('/support/', 'documentation_url')->updateValue('https://docs.m2epro.com/');
         $moduleConfigModifier->getEntity('/support/', 'knowledge_base_url')->delete();
         $moduleConfigModifier->getEntity('/support/', 'ideas')->delete();
 
         $moduleConfigModifier->getEntity('/support/', 'magento_connect_url')->updateKey('magento_marketplace_url');
-
         $marketplaceUrl = 'https://marketplace.magento.com/'
             . 'm2epro-ebay-amazon-rakuten-sears-magento-integration-order-import-and-stock-level-synchronization.html';
-
         $moduleConfigModifier->getEntity('/support/', 'magento_marketplace_url')->updateValue($marketplaceUrl);
+    }
+
+    private function migrateInStorePickupGlobalKey()
+    {
+        $select = $this->getConnection()->select()->from($this->getFullTableName('account'));
+        $select->where('`component_mode` = ?', 'ebay');
+        $select->where('`additional_data` like ?', '%"bopis":%');
+
+        $pickupStoreAccounts = $this->getConnection()->fetchAll($select, [], \PDO::FETCH_ASSOC);
+
+        $isPickupStoreEnabled = 0;
+        foreach ($pickupStoreAccounts as $account) {
+            $additionalData = json_decode($account['additional_data'], true);
+
+            if (!$additionalData) {
+                continue;
+            }
+
+            if (isset($additionalData['bopis']) && $additionalData['bopis']) {
+                $isPickupStoreEnabled = 1;
+                break;
+            }
+        }
+
+        $this->getConfigModifier('module')->insert(
+            '/ebay/in_store_pickup/', 'mode', $isPickupStoreEnabled, '0 - disable,\r\n1 - enable'
+        );
+    }
+
+    private function migrateProductCustomTypes()
+    {
+        $this->getConfigModifier('module')->insert(
+            '/magento/product/simple_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/magento/product/configurable_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/magento/product/bundle_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/magento/product/grouped_type/', 'custom_types', '', 'Magento product custom types'
+        );
     }
 
     private function migrateProcessing()
@@ -195,6 +250,121 @@ class MigrationFromMagento1
     private function migrateLockItem()
     {
         $this->getTableModifier('lock_item')->dropColumn('kill_now');
+    }
+
+    private function migrateLogs()
+    {
+        $subjects = [
+            [
+                'params' => [
+                    'table' => 'listing_log',
+                    'config' => '/logs/listings/',
+                    'entity_table' => 'listing',
+                    'entity_id_field' => 'listing_id'
+                ],
+                'tasks' => [
+                    self::LOGS_TASK_DELETE,
+                    self::LOGS_TASK_ACTION_ID,
+                    self::LOGS_TASK_MODIFY_ACTION_ID,
+                    self::LOGS_TASK_MODIFY_ENTITY_ID,
+                    self::LOGS_TASK_INDEX,
+                    self::LOGS_TASK_COLUMNS
+                ]
+            ],
+            [
+                'params' => [
+                    'table' => 'listing_other_log',
+                    'config' => '/logs/other_listings/',
+                    'entity_table' => 'listing_other',
+                    'entity_id_field' => 'listing_other_id'
+                ],
+                'tasks' => [
+                    self::LOGS_TASK_DELETE,
+                    self::LOGS_TASK_ACTION_ID,
+                    self::LOGS_TASK_MODIFY_ACTION_ID,
+                    self::LOGS_TASK_MODIFY_ENTITY_ID,
+                    self::LOGS_TASK_INDEX,
+                    self::LOGS_TASK_COLUMNS
+                ]
+            ],
+            [
+                'params' => [
+                    'table' => 'ebay_account_pickup_store_log',
+                    'config' => '/logs/ebay_pickup_store/',
+                ],
+                'tasks' => [
+                    self::LOGS_TASK_DELETE,
+                    self::LOGS_TASK_ACTION_ID,
+                    self::LOGS_TASK_MODIFY_ACTION_ID,
+                    self::LOGS_TASK_INDEX
+                ]
+            ],
+            [
+                'params' => [
+                    'table' => 'order_log',
+                    'entity_table' => 'order',
+                    'entity_id_field' => 'order_id'
+                ],
+                'tasks' => [
+                    self::LOGS_TASK_DELETE,
+                    self::LOGS_TASK_MODIFY_ENTITY_ID,
+                    self::LOGS_TASK_INDEX,
+                    self::LOGS_TASK_COLUMNS
+                ]
+            ],
+            [
+                'params' => [
+                    'table' => 'synchronization_log',
+                ],
+                'tasks' => [
+                    self::LOGS_TASK_DELETE,
+                    self::LOGS_TASK_INDEX
+                ]
+            ]
+        ];
+
+        foreach ($subjects as $subject) {
+            foreach ($subject['tasks'] as $task) {
+                switch ($task) {
+                    case self::LOGS_TASK_DELETE:
+                        $this->processLogsDeleteTask($subject['params']['table']);
+                        break;
+                    case self::LOGS_TASK_ACTION_ID:
+                        $this->processLogsActionIdTask($subject['params']['table'], $subject['params']['config']);
+                        break;
+                    case self::LOGS_TASK_MODIFY_ACTION_ID:
+                        $this->processLogsModifyActionIdTask($subject['params']['table']);
+                        break;
+                    case self::LOGS_TASK_MODIFY_ENTITY_ID:
+                        $this->processLogsModifyEntityIdTask(
+                            $subject['params']['table'], $subject['params']['entity_id_field']
+                        );
+                        break;
+                    case self::LOGS_TASK_INDEX:
+                        $this->processLogsIndexTask($subject['params']['table']);
+                        break;
+                    case self::LOGS_TASK_COLUMNS:
+                        $this->processLogsColumnsTask(
+                            $subject['params']['table'],
+                            $subject['params']['entity_table'],
+                            $subject['params']['entity_id_field']
+                        );
+                        break;
+                }
+            }
+        }
+
+        //----------------------------------------
+
+        $this->getConfigModifier('module')->insert(
+            '/logs/view/grouped/', 'max_last_handled_records_count', 100000
+        );
+
+        $this->getConnection()->update(
+            $this->getFullTableName('module_config'),
+            ['value' => 90],
+            new \Zend_Db_Expr('`group` LIKE "/logs/clearing/%" AND `key` = "days" AND `value` > 90')
+        );
     }
 
     private function migrateWizards()
@@ -230,6 +400,53 @@ class MigrationFromMagento1
 
         $this->getConnection()->truncateTable($this->getFullTableName('wizard'));
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), $wizardsData);
+    }
+
+    private function migrateGridsPerformanceStructure()
+    {
+        $this->getTableModifier('amazon_listing_product')->dropColumn('is_repricing');
+        $this->getConnection()->dropTable($this->getFullTableName('indexer_listing_product_parent'));
+    }
+
+    private function migrateSynchronizationTemplateAdvancedConditions()
+    {
+        $this->getTableModifier('amazon_template_synchronization')
+            ->addColumn('list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max')
+            ->addColumn('relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max')
+            ->addColumn('stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max')
+            ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
+            ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
+            ->addColumn('stop_advanced_rules_filters','TEXT',NULL,'stop_advanced_rules_mode');
+
+        $this->getTableModifier('ebay_template_synchronization')
+            ->addColumn('list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max')
+            ->addColumn('relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max')
+            ->addColumn('stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max')
+            ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
+            ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
+            ->addColumn('stop_advanced_rules_filters','TEXT',NULL,'stop_advanced_rules_mode');
+    }
+
+    private function migrateOrderSynchronization()
+    {
+        $this->getConfigModifier('synchronization')->getEntity('/amazon/orders/update/', 'interval')->delete();
+        $this->getTableModifier('ebay_account')->dropColumn('job_token');
+
+        $this->getTableModifier('amazon_account')->addColumn(
+            'orders_last_synchronization', 'DATETIME', 'NULL', 'other_listings_move_settings', false
+        );
+
+        $this->modifyTableRows($this->getFullTableName('amazon_account'), function ($account) {
+            $fromUpdateDate = $this->getConfigModifier('synchronization')
+                ->getEntity('/amazon/orders/receive/'.$account['merchant_id'].'/', 'from_update_date')
+                ->getValue();
+
+            if (!is_null($fromUpdateDate)) {
+                $account['orders_last_synchronization'] = $fromUpdateDate;
+            }
+
+            return $account;
+        });
     }
 
     private function migrateEbayReturnTemplate()
@@ -282,65 +499,211 @@ class MigrationFromMagento1
         $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_mode');
         $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_interval_settings');
         $this->getTableModifier('ebay_template_synchronization')->dropColumn('schedule_week_settings');
+
+        $this->getTableModifier('ebay_template_synchronization')
+            ->addColumn('revise_update_specifics', 'SMALLINT(4) UNSIGNED NOT NULL', NULL, 'revise_update_images');
+
+        $this->getTableModifier('ebay_template_synchronization')
+            ->addColumn('revise_update_shipping_services','SMALLINT(4) UNSIGNED NOT NULL',NULL,'revise_update_specifics');
+    }
+
+    private function migrateEbayCharity()
+    {
+        $this->getTableModifier('ebay_template_selling_format')
+            ->changeColumn(
+                'charity', 'TEXT', NULL, 'best_offer_reject_attribute', true
+            );
+
+        $this->getConnection()->update(
+            $this->getFullTableName('ebay_template_selling_format'),
+            ['charity' => NULL],
+            '`charity` = "" OR `charity` = "[]" OR `charity` = "{}"'
+        );
+
+        $select = $this->getConnection()->select()->from(
+            ['etsf' => $this->getFullTableName('ebay_template_selling_format')]
+        );
+        $select->where('`etsf`.`is_custom_template` = ?', 1);
+        $select->where('`etsf`.`charity` IS NOT NULL');
+        $select->group('template_selling_format_id');
+
+        // Joining Listings and Products with template mode Custom
+        $select->joinLeft(
+            ['el' => $this->getFullTableName('ebay_listing')],
+            '`etsf`.`template_selling_format_id`=`el`.`template_selling_format_custom_id` AND 
+                `el`.`template_selling_format_mode` = 1',
+            ['listing_id']
+        );
+
+        $select->joinLeft(
+            ['elp' => $this->getFullTableName('ebay_listing_product')],
+            '`etsf`.`template_selling_format_id`=`elp`.`template_selling_format_custom_id` AND 
+                `elp`.`template_selling_format_mode` = 1',
+            ['listing_product_id']
+        );
+
+        $select->where('`el`.`listing_id` IS NOT NULL OR `elp`.`listing_product_id` IS NOT NULL ');
+
+        $select->joinLeft(
+            ['l' => $this->getFullTableName('listing')],
+            '`el`.`listing_id`=`l`.`id`',
+            []
+        );
+
+        $select->joinLeft(
+            ['lp' => $this->getFullTableName('listing_product')],
+            '`elp`.`listing_product_id`=`lp`.`id`',
+            []
+        );
+
+        $select->joinLeft(
+            ['lpl' => $this->getFullTableName('listing')],
+            '`lp`.`listing_id`=`lpl`.`id`',
+            []
+        );
+
+        $select->columns([
+            'marketplace_id' => 'IF(
+                `el`.`listing_id` IS NOT NULL,
+                `l`.`marketplace_id`,
+                IF(
+                    `elp`.`listing_product_id` IS NOT NULL,
+                    `lpl`.`marketplace_id`,
+                    NULL
+                )
+            )'
+        ]);
+
+        $sellingFormatTemplates = $this->getConnection()->fetchAll($select, [], \PDO::FETCH_ASSOC);
+
+        $resetCharityConditions = [];
+        if (!empty($sellingFormatTemplates)) {
+            $resetCharityConditions[] = $this->getConnection()->quoteInto(
+                '`template_selling_format_id` NOT IN (?)',
+                array_column($sellingFormatTemplates, 'template_selling_format_id')
+            );
+        }
+
+        $resetCharityConditions[] = '`charity` IS NOT NULL';
+
+        $this->getConnection()->update(
+            $this->getFullTableName('ebay_template_selling_format'),
+            ['charity' => NULL],
+            $resetCharityConditions
+        );
+
+        if (empty($sellingFormatTemplates)) {
+            return;
+        }
+
+        foreach ($sellingFormatTemplates as $sellingFormatTemplate) {
+
+            $oldCharity = json_decode($sellingFormatTemplate['charity'], true);
+
+            if (!empty($oldCharity[$sellingFormatTemplate['marketplace_id']])) {
+                continue;
+            }
+
+            $newCharity = [];
+            $newCharity[$sellingFormatTemplate['marketplace_id']] = [
+                'marketplace_id' => $sellingFormatTemplate['marketplace_id'],
+                'organization_id' => $oldCharity['id'],
+                'organization_name' => $oldCharity['name'],
+                'organization_custom' => 1,
+                'percentage' => $oldCharity['percentage'],
+            ];
+
+            $this->getConnection()->update(
+                $this->getFullTableName('ebay_template_selling_format'),
+                ['charity' => json_encode($newCharity)],
+                $this->getConnection()->quoteInto(
+                    '`template_selling_format_id` = ?', $sellingFormatTemplate['template_selling_format_id']
+                )
+            );
+        }
+    }
+
+    private function migrateEbayItemDuplicateTool()
+    {
+        $this->getTableModifier('ebay_listing_product')->dropColumn('item_uuid');
+        $this->getTableModifier('ebay_listing_product')->dropColumn('is_duplicate');
+    }
+
+    private function migrateEbayMarketplaces()
+    {
+        $this->getConnection()->update(
+            $this->getFullTableName('marketplace'),
+            ['url' => 'motors.ebay.com'],
+            ['id = ?' => 9]
+        );
+    }
+
+    private function migrateAmazonShippingTemplate()
+    {
+        $this->getTableModifier('amazon_listing_product')->dropColumn('template_shipping_template_id');
+        $this->getTableModifier('amazon_account')->dropColumn('shipping_mode');
+        $this->getTableModifier('amazon_template_synchronization')->renameColumn(
+            'revise_change_shipping_template', 'revise_change_shipping_override_template'
+        );
+        $this->getTableModifier('amazon_template_synchronization')->dropIndex(
+            'revise_change_shipping_override_template'
+        );
+
+        $this->getConnection()->dropTable($this->getFullTableName('amazon_template_shipping_template'));
+
+        $select = $this->getConnection()->select()
+            ->from($this->getFullTableName('listing_product'))
+            ->where('synch_reasons LIKE ?', '%shippingTemplate%');
+
+        $updatedListingsProducts = [];
+
+        foreach ($this->getConnection()->fetchAll($select) as $listingProduct) {
+            $listingProduct['synch_reasons'] = str_replace(
+                'shippingTemplate', 'shippingOverrideTemplate', $listingProduct['synch_reasons']
+            );
+            $updatedListingsProducts[] = $listingProduct;
+        }
+
+        $updatedListingsProductsIds = [];
+        foreach ($updatedListingsProducts as $updatedListingProduct) {
+            $updatedListingsProductsIds[] = $updatedListingProduct['id'];
+        }
+
+        $this->getConnection()->delete(
+            $this->getFullTableName('listing_product'),
+            ['id IN (?)' => $updatedListingsProductsIds]
+        );
+        $this->getConnection()->insertMultiple($this->getFullTableName('listing_product'), $updatedListingsProducts);
+    }
+
+    private function migrateAmazonRepricingSynchronization()
+    {
+        $this->getConfigModifier('module')->updateGroup(
+            '/cron/task/repricing_synchronization/',
+            ['`group` = ?' => '/cron/task/repricing_synchronization_general/']
+        );
+
+        $this->getConfigModifier('module')->delete('/cron/task/repricing_synchronization_actual_price/');
     }
 
     private function migrateAmazonMarketplaces()
     {
-		$this->getTableModifier('amazon_marketplace')->renameColumn(
+        $this->getTableModifier('amazon_marketplace')->renameColumn(
             'is_new_asin_available', 'is_asin_available', true, true
         );
-		
+
         $this->getConnection()->delete($this->getFullTableName('marketplace'), [
             'id IN (?)' => [27, 32]
         ]);
         $this->getConnection()->delete($this->getFullTableName('amazon_marketplace'), [
             'marketplace_id IN (?)' => [27, 32]
         ]);
-    }
 
-    private function createSetupTable()
-    {
-        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
-            ->addColumn(
-                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'version_from', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'version_to', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'is_backuped', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'is_completed', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'profiler_data', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'update_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addIndex('version_from', 'version_from')
-            ->addIndex('version_to', 'version_to')
-            ->addIndex('is_backuped', 'is_backuped')
-            ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($setupTable);
+        $this->getConnection()->update(
+            $this->getFullTableName('amazon_marketplace'),
+            ['is_asin_available' => 0],
+            ['marketplace_id = ?' => 24]
+        );
     }
 
     private function removeAndBackupBuyData()
@@ -367,23 +730,23 @@ class MigrationFromMagento1
             'buy_order_item',
             'buy_template_selling_format',
             'buy_template_synchronization',
-            'buy_dictionary_category',
-            'buy_template_new_product',
-            'buy_template_new_product_attribute',
-            'buy_template_new_product_core',
         ];
 
         foreach ($wholeBackupTables as $tableName) {
-            if ($needBackup) {
-                $resultTableName = $this->getBackupTableName($tableName);
+            try {
+                if ($needBackup) {
+                    $resultTableName = $this->getBackupTableName($tableName);
 
-                $backupTable = $this->getConnection()->createTableByDdl(
-                    $this->getFullTableName($tableName), $resultTableName
-                );
-                $this->getConnection()->createTable($backupTable);
+                    $backupTable = $this->getConnection()->createTableByDdl(
+                        $this->getFullTableName($tableName), $resultTableName
+                    );
+                    $this->getConnection()->createTable($backupTable);
 
-                $select = $this->getConnection()->select()->from($this->getFullTableName($tableName));
-                $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
+                    $select = $this->getConnection()->select()->from($this->getFullTableName($tableName));
+                    $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
+                }
+            } catch (\Exception $exception) {
+                continue;
             }
 
             if (strpos($tableName, 'buy_') === 0) {
@@ -414,15 +777,19 @@ class MigrationFromMagento1
                 ->from($this->getFullTableName($tableName))
                 ->where('component_mode = ?', 'buy');
 
-            if ($needBackup) {
-                $resultTableName = $this->getBackupTableName($tableName);
+            try {
+                if ($needBackup) {
+                    $resultTableName = $this->getBackupTableName($tableName);
 
-                $backupTable = $this->getConnection()->createTableByDdl(
-                    $this->getFullTableName($tableName), $resultTableName
-                );
-                $this->getConnection()->createTable($backupTable);
+                    $backupTable = $this->getConnection()->createTableByDdl(
+                        $this->getFullTableName($tableName), $resultTableName
+                    );
+                    $this->getConnection()->createTable($backupTable);
 
-                $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
+                    $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
+                }
+            } catch (\Exception $exception) {
+                continue;
             }
 
             $this->getConnection()->query(
@@ -470,6 +837,77 @@ class MigrationFromMagento1
         }
     }
 
+    private function createSetupTables()
+    {
+        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
+            ->addColumn(
+                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'version_from', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'version_to', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'is_backuped', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_completed', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'profiler_data', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'update_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addIndex('version_from', 'version_from')
+            ->addIndex('version_to', 'version_to')
+            ->addIndex('is_backuped', 'is_backuped')
+            ->addIndex('is_completed', 'is_completed')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($setupTable);
+
+        $versionsHistoryTable = $this->getConnection()->newTable($this->getFullTableName('versions_history'))
+            ->addColumn(
+                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'version_from', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'version_to', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'update_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($versionsHistoryTable);
+    }
+
     private function migrateOther()
     {
         $this->getConnection()->delete(
@@ -490,6 +928,13 @@ class MigrationFromMagento1
         $this->getConfigModifier('module')->getEntity(NULL, 'is_disabled')->delete();
 
         $this->getConfigModifier('primary')->getEntity('/server/', 'messages')->delete();
+
+        $this->getConfigModifier('module')
+            ->getEntity('/cron/service/', 'hostname_1')->updateKey('hostname');
+        $this->getConfigModifier('module')
+            ->getEntity('/cron/service/', 'hostname_2')->delete();
+
+        $this->getConfigModifier('synchronization')->delete('/amazon/orders/receive_details/');
     }
 
     //########################################
@@ -525,6 +970,119 @@ class MigrationFromMagento1
     private function getBackupTableName($tableName)
     {
         return $this->getFullTableName(self::BACKUP_TABLE_SUFFIX.$tableName);
+    }
+
+    //########################################
+
+    private function processLogsDeleteTask($tableName)
+    {
+        $table = $this->getFullTableName($tableName);
+
+        $select = $this->getConnection()->select()->from(
+            $table,
+            [new \Zend_Db_Expr('COUNT(*)')]
+        );
+
+        $logsCount = $this->getConnection()->fetchOne($select);
+
+        $logsCountLimit = 100000;
+
+        if ($logsCount <= $logsCountLimit) {
+            return;
+        }
+
+        $this->getConnection()->exec(<<<SQL
+CREATE TABLE `{$table}_temp` LIKE `{$table}`;
+INSERT INTO `{$table}_temp` (SELECT * FROM `{$table}` ORDER BY `id` DESC LIMIT {$logsCountLimit});
+DROP TABLE `{$table}`;
+RENAME TABLE `{$table}_temp` TO `{$table}`;
+SQL
+        );
+    }
+
+    private function processLogsModifyActionIdTask($tableName)
+    {
+        $this->getTableModifier($tableName)->changeColumn('action_id', 'INT(10) UNSIGNED NOT NULL');
+    }
+
+    private function processLogsModifyEntityIdTask($tableName, $entityIdField)
+    {
+        $this->getTableModifier($tableName)->changeColumn($entityIdField, 'INT(10) UNSIGNED NOT NULL');
+    }
+
+    private function processLogsIndexTask($tableName)
+    {
+        $this->getTableModifier($tableName)->addIndex('create_date');
+    }
+
+    private function processLogsColumnsTask($tableName, $entityTableName, $entityIdField)
+    {
+        $this->getTableModifier($tableName)
+            ->addColumn('account_id', 'INT(10) UNSIGNED NOT NULL', NULL, 'id', true, false)
+            ->addColumn('marketplace_id', 'INT(10) UNSIGNED NOT NULL', NULL, 'account_id', true, false)
+            ->commit();
+
+        $table = $this->getFullTableName($tableName);
+        $entityTable = $this->getFullTableName($entityTableName);
+
+        $this->getConnection()->exec(<<<SQL
+UPDATE `{$table}` `log_table`
+  INNER JOIN `{$entityTable}` `entity_table` ON `log_table`.`{$entityIdField}` = `entity_table`.`id`
+SET 
+  `log_table`.`account_id` = `entity_table`.`account_id`,
+  `log_table`.`marketplace_id` = `entity_table`.`marketplace_id`;
+SQL
+        );
+
+        $this->getConnection()->delete($table, [
+            'account_id = ?' => 0,
+            'marketplace_id = ?' => 0
+        ]);
+    }
+
+    private function processLogsActionIdTask($tableName, $configName)
+    {
+        $noActionIdCondition = new \Zend_Db_Expr('(`action_id` IS NULL) OR (`action_id` = 0)');
+
+        $select = $this->getConnection()->select()
+            ->from(
+                $this->getFullTableName($tableName),
+                [new \Zend_Db_Expr('MIN(`id`)')]
+            )
+            ->where($noActionIdCondition);
+
+        $minLogIdWithNoActionId = $this->getConnection()->fetchOne($select);
+
+        if (is_null($minLogIdWithNoActionId)) {
+            return;
+        }
+
+        $config = $this->getConfigModifier('module')->getEntity(
+            $configName, 'last_action_id'
+        );
+
+        $nextActionId = $config->getValue() + 100;
+
+        $this->getConnection()->update(
+            $this->getFullTableName($tableName),
+            [
+                'action_id' => new \Zend_Db_Expr("`id` - {$minLogIdWithNoActionId} + {$nextActionId}")
+            ],
+            $noActionIdCondition
+        );
+
+        $select = $this->getConnection()->select()->from(
+            $this->getFullTableName($tableName),
+            [new \Zend_Db_Expr('MAX(`action_id`)')]
+        );
+
+        $maxActionId = (int)$this->getConnection()->fetchOne($select);
+
+        $config = $this->getConfigModifier('module')->getEntity(
+            $configName, 'last_action_id'
+        );
+
+        $config->updateValue($maxActionId + 100);
     }
 
     //########################################

@@ -110,7 +110,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
     public function addAttributeToServerStorage($productAttribute, $channelAttribute)
     {
         try {
-            
+
             /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
             $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector(

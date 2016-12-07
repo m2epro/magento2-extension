@@ -18,7 +18,7 @@ class SendResponse extends Account
             $this->setAjaxContent('You should provide correct parameters.', false);
             return $this->getResult();
         }
-        
+
         $feedbackText = strip_tags($feedbackText);
 
         $result = $feedback->sendResponse($feedbackText, \Ess\M2ePro\Model\Ebay\Feedback::TYPE_POSITIVE);

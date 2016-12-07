@@ -37,7 +37,7 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     {
         // ---------------------------------------
         $urls = array();
-        
+
         // initiate account param
         // ---------------------------------------
         $account = $this->getHelper('Data\GlobalData')->getValue('ebay_account');
@@ -109,13 +109,13 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         'M2ePro/TemplateHandler'
     ], function(){
         window.TemplateHandlerObj = new TemplateHandler();
-    
+
         window.EbayListingTemplateSwitcherObj = new EbayListingTemplateSwitcher();
         EbayListingTemplateSwitcherObj.storeId = {$store->getId()};
         EbayListingTemplateSwitcherObj.marketplaceId = {$marketplace->getId()};
         EbayListingTemplateSwitcherObj.listingProductIds = '{$this->getRequest()->getParam('ids')}';
-        
-    });        
+
+    });
 JS
     );
 

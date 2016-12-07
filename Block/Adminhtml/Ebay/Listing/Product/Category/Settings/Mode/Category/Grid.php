@@ -357,10 +357,10 @@ JS;
         'M2ePro/Ebay/Listing/Product/Category/Settings/Mode/Category/Grid'
     ], function(){
         {$disableContinue}
-        
-        EbayListingProductCategorySettingsModeCategoryGridObj = 
+
+        EbayListingProductCategorySettingsModeCategoryGridObj =
             new EbayListingProductCategorySettingsModeCategoryGrid('{$this->getId()}');
-            
+
         EbayListingProductCategorySettingsModeCategoryGridObj.afterInitPage();
     });
 JS

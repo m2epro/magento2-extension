@@ -675,6 +675,6 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazo
     {
         return true;
     }
-    
+
     //########################################
 }

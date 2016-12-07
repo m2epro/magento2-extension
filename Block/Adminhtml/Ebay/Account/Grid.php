@@ -51,17 +51,29 @@ class Grid extends AccountGrid
             'frame_callback' => array($this, 'callbackColumnTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));
-        
-        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
 
-            $this->addColumn('feedbacks', array(
-                'header'         => $this->__('Feedback'),
+        $header = $this->__('Management');
+        $pickupStoreAccounts = $this->getHelper('Component\Ebay\PickupStore')->getEnabledAccounts();
+        $isFeedbacksEnabled = $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown();
+        if (!empty($pickupStoreAccounts) && !$isFeedbacksEnabled) {
+            $header = $this->__('My Stores');
+        } elseif (empty($pickupStoreAccounts) && $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
+            $header = $this->__('Feedbacks');
+        }
+
+        $this->getHelper('Data\GlobalData')->setValue('pickup_store_accounts', $pickupStoreAccounts);
+        $this->getHelper('Data\GlobalData')->setValue('feedbacks_enabled', $isFeedbacksEnabled);
+
+        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown() || !empty($pickupStoreAccounts)) {
+
+            $this->addColumn('management', array(
+                'header'         => $header,
                 'align'          => 'center',
                 'width'          => '120px',
                 'type'           => 'text',
                 'sortable'       => false,
                 'filter'         => false,
-                'frame_callback' => array($this, 'callbackColumnFeedbacks')
+                'frame_callback' => array($this, 'callbackColumnManagement')
             ));
         }
 
@@ -102,19 +114,35 @@ HTML;
         return $value;
     }
 
-    public function callbackColumnFeedbacks($value, $row, $column, $isExport)
+    public function callbackColumnManagement($value, $row, $column, $isExport)
     {
+        $html = '';
+
         if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown($row->getData('id'))) {
-            $link = <<<HTML
-<a href="javascript:void(0)" 
-    onclick="EbayAccountGridObj.openAccountFeedbackPopup({$row->getData('id')})" 
-    target="_blank">{$this->__('Feedback')}</a>
+            $html = <<<HTML
+            <a href="javascript:void(0)"
+               onclick="EbayAccountGridObj.openAccountFeedbackPopup({$row->getData('id')})">
+               {$this->__('Feedback')}</a>
 HTML;
-        } else {
-            $link = '<strong style="color: gray;">' . $this->__("Disabled") . '</strong>';
         }
 
-        return $link;
+        $additionalData = json_decode($row->getData('additional_data'), true);
+
+        if (!empty($additionalData) && (int)$additionalData['bopis']) {
+            $url = $this->getUrl('*/ebay_account_pickupStore/index', ['account_id' => $row->getData('id')]);
+            $html .= <<<HTML
+            <a href="{$url}" style="display: block; padding-top: 5px;" target="_self">{$this->__('My Stores')}</a>
+HTML;
+        }
+
+        $pickupStoreAccounts = $this->getHelper('Data\GlobalData')->getValue('pickup_store_accounts');
+        $isFeedbacksEnabled = $this->getHelper('Data\GlobalData')->getValue('feedbacks_enabled');
+
+        if (empty($html) && (!$isFeedbacksEnabled || empty($pickupStoreAccounts))) {
+            $html = '<strong style="color: gray;">' . $this->__("Disabled") . '</strong>';
+        }
+
+        return $html;
     }
 
     //########################################

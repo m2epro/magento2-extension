@@ -107,7 +107,7 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $customSelectedSpecifics   = json_encode($this->getCustomSelectedSpecifics());
 
         $this->js->add(<<<JS
-            
+
 require([
     'jquery',
     'mage/backend/form',
@@ -130,7 +130,7 @@ require([
                 jQuery(element).trigger('highlight.validate');
             }
         });
-    
+
     EbayListingProductCategorySettingsSpecific{$uniqueId}Obj = new EbayListingProductCategorySettingsSpecific(
         '{$this->getMarketplaceId()}',
         '{$this->getCategoryMode()}',

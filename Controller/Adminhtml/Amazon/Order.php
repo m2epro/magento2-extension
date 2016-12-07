@@ -16,6 +16,7 @@ abstract class Order extends Main
     protected function init()
     {
         $this->addCss('order.css');
+        $this->addCss('switcher.css');
         $this->addCss('amazon/order/grid.css');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Sales'));

@@ -416,7 +416,7 @@ class Save extends Account
 
             $error = 'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%';
             $error = $this->__($error, $exception->getMessage());
-            
+
             $model->delete();
 
             if ($this->isAjax()) {

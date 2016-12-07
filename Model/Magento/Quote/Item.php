@@ -8,9 +8,6 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
-use \Magento\GroupedProduct\Model\Product\Type\Grouped as TypeGrouped;
-use \Magento\Downloadable\Model\Product\Type as TypeDownloadable;
-
 class Item extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
@@ -71,7 +68,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             $this->product = $this->getAssociatedGroupedProduct();
 
             if (is_null($this->product)) {
-                throw new \Ess\M2ePro\Model\Exception('There is no associated Products found for Grouped Product.');
+                throw new \Ess\M2ePro\Model\Exception('There are no associated Products found for Grouped Product.');
             }
         } else {
             $this->product = $this->proxyItem->getProduct();
@@ -167,8 +164,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $request->setQty($this->proxyItem->getQty());
 
         // grouped and downloadable products doesn't have options
-        if ($this->proxyItem->getProduct()->getTypeId() == TypeGrouped::TYPE_CODE ||
-            $this->proxyItem->getProduct()->getTypeId() == TypeDownloadable::TYPE_DOWNLOADABLE) {
+        if ($this->proxyItem->getMagentoProduct()->isGroupedType()) {
             return $request;
         }
 

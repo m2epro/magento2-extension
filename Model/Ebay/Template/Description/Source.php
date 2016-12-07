@@ -463,7 +463,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         if (!$imageObj->isSelfHosted()) {
             return;
         }
-        
+
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
 
         $fileExtension = pathinfo($imageObj->getPath(), PATHINFO_EXTENSION);

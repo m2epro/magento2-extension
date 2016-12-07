@@ -308,7 +308,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getInputType() == 'date' && !$this->getIsValueParsed()) {
             // date format intentionally hard-coded
             $this->setValue(
-                (new \DateTime($this->getData('value')))->format('Y-m-d H:i:s')
+                $this->_localeDate->formatDate(
+                    $this->getData('value'),
+                    \IntlDateFormatter::MEDIUM,
+                    true
+                )
             );
             $this->setIsValueParsed(true);
         }
@@ -490,8 +494,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         );
         if ($this->getInputType()=='date') {
             // date format intentionally hard-coded
-            $elementParams['input_format'] = \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT;
-            $elementParams['date_format'] = \Magento\Framework\Stdlib\DateTime::DATE_INTERNAL_FORMAT;
+            $elementParams['date_format'] = $this->_localeDate->getDateFormat(\IntlDateFormatter::MEDIUM);
+            $elementParams['time_format'] = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
         }
         return $this->getForm()->addField($this->getPrefix().'__'.$this->getId().'__value',
             $this->getValueElementType(),

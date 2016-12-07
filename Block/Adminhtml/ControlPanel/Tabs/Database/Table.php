@@ -6,7 +6,6 @@
  * @license    Commercial use is forbidden
  */
 
-
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
@@ -42,7 +41,7 @@ class Table extends AbstractContainer
         // ---------------------------------------
         $tableName = $this->getRequest()->getParam('table');
         $component = $this->getRequest()->getParam('component');
-        
+
         $title = $this->__('Manage Table "%table_name%"', $tableName);
         if ($this->isMergeModeEnabled() && $component &&
             $this->getHelper('Module\Database\Structure')->isTableHorizontalParent($tableName)) {

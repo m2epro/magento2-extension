@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
+
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
     private $parentListingsProductsForProcessing = array();
@@ -136,7 +138,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         if ($typeModel->isVariationProductMatched() && !$typeModel->isActualProductVariation()) {
 
             if ($variationManager->isRelationChildType()) {
-                /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation $typeModel */
+                /** @var ChildRelation $typeModel */
                 $this->parentListingsProductsForProcessing[$typeModel->getParentListingProduct()->getId()]
                     = $typeModel->getParentListingProduct();
                 return;

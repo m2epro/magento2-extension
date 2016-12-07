@@ -35,8 +35,67 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     public function getValue($index=null)
     {
-        return $this->getData('value', $index);
+        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            return $this->getData('value', $index);
+        }
+
+        if ($index) {
+            return $this->getData('value', $index);
+        }
+
+        $value = $this->getData('value');
+        if (isset($value['is_in_store_pickup']) && $value['is_in_store_pickup'] == 1) {
+            return $value;
+        }
+
+        return null;
     }
 
     //########################################
+
+    public function getHtml()
+    {
+        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            return parent::getHtml();
+        }
+
+        $html = '<input type="text" name="' .
+            $this->_getHtmlName() .
+            '" id="' .
+            $this->_getHtmlId() .
+            '" value="' .
+            $this->getEscapedValue('value') .
+            '" class="input-text admin__control-text no-changes"' .
+            $this->getUiId(
+                'filter',
+                $this->_getHtmlName()
+            ) . ' />';
+
+        return $html . $this->renderCheckboxHtml();
+    }
+
+    private function renderCheckboxHtml()
+    {
+        $isInStorePickup = ($this->getValue('is_in_store_pickup') == 1) ? 'checked="checked"' : '';
+
+        return <<<HTML
+        <div style="padding: 5px 0; text-align: right; font-weight: normal; position: relative;">
+            <label for="{$this->_getHtmlId()}_checkbox"
+                   style="width: 60%; text-align: right; display: inline-block; margin-right: 50%;">
+                {$this->getHelper('Module\Translation')->translate(['In-Store Pickup'])}
+            </label>
+            <div style="display: inline-block; position: absolute; top: 1em; right: 0;">
+                <input name="{$this->_getHtmlName()}[is_in_store_pickup]"
+                       id="{$this->_getHtmlId()}_checkbox"
+                       value="1" class="admin__control-checkbox"
+                       type="checkbox" {$isInStorePickup}>
+                <label style="margin: 0 0 -4px 2px;" class="addafter" for="{$this->_getHtmlId()}_checkbox">
+                    <label for="{$this->_getHtmlId()}_checkbox"></label>
+                </label>
+            </div>
+        </div>
+HTML;
+    }
+
+    // ########################################
 }

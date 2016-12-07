@@ -45,7 +45,7 @@ class Tabs extends AbstractTabs
         }
 
         $this->setActiveTab($this->getRequest()->getParam('tab', 'general'));
-        
+
         $this->js->addOnReadyJs(<<<JS
 
     var urlHash = location.hash.substr(1);

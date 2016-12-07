@@ -8,8 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Magento\Product\Rule\Custom;
 
-class AmazonIsAfnChanel
-    extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
+use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
+
+class AmazonIsAfnChanel extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
 {
     //########################################
 
@@ -62,11 +63,11 @@ class AmazonIsAfnChanel
         $helper = $this->helperFactory->getObject('Module\Translation');
         return array(
             array(
-                'value' => 0,
+                'value' => AmazonListingProduct::IS_AFN_CHANNEL_NO,
                 'label' => $helper->__('Merchant'),
             ),
             array(
-                'value' => 1,
+                'value' => AmazonListingProduct::IS_AFN_CHANNEL_YES,
                 'label' => $helper->__('Amazon'),
             ),
         );

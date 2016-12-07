@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
+use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 class Save extends Template
 {
@@ -35,6 +36,7 @@ class Save extends Template
             'list_qty_calculated',
             'list_qty_calculated_value',
             'list_qty_calculated_value_max',
+            'list_advanced_rules_mode'
         );
         foreach ($keys as $key) {
             if (isset($post[$key])) {
@@ -43,6 +45,10 @@ class Save extends Template
         }
 
         $data['title'] = strip_tags($data['title']);
+        $data['list_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX
+        );
+
         // ---------------------------------------
 
         // tab: revise
@@ -81,13 +87,18 @@ class Save extends Template
             'relist_qty_magento_value_max',
             'relist_qty_calculated',
             'relist_qty_calculated_value',
-            'relist_qty_calculated_value_max'
+            'relist_qty_calculated_value_max',
+            'relist_advanced_rules_mode'
         );
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
         }
+
+        $data['relist_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX
+        );
         // ---------------------------------------
 
         // tab: stop
@@ -100,13 +111,18 @@ class Save extends Template
             'stop_qty_magento_value_max',
             'stop_qty_calculated',
             'stop_qty_calculated_value',
-            'stop_qty_calculated_value_max'
+            'stop_qty_calculated_value_max',
+            'stop_advanced_rules_mode'
         );
         foreach ($keys as $key) {
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
         }
+
+        $data['stop_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX
+        );
         // ---------------------------------------
 
         // Add or update model
@@ -147,5 +163,20 @@ class Save extends Template
                 'close_on_save' => $this->getRequest()->getParam('close_on_save')
             ),
         )));
+    }
+
+    private function getRuleData($rulePrefix)
+    {
+        $postData = $this->getRequest()->getPost()->toArray();
+
+        if (empty($postData['rule'][$rulePrefix])) {
+            return null;
+        }
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            ['prefix' => $rulePrefix]
+        );
+
+        return $ruleModel->getSerializedFromPost($postData);
     }
 }

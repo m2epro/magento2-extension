@@ -25,6 +25,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\OperationHistory $operationHistory */
     private $operationHistory = NULL;
 
+    /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
+    private $publicVersionsChecker = NULL;
+
     //########################################
 
     abstract protected function getNick();
@@ -37,12 +40,14 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Config\Model\Config $magentoConfig,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     ) {
         $this->storeManager  = $storeManager;
         $this->magentoConfig = $magentoConfig;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->publicVersionsChecker = $publicVersionsChecker;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -100,6 +105,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function initialize()
     {
+        $this->publicVersionsChecker->doCheck();
+
         $this->previousStoreId = $this->storeManager->getStore()->getId();
 
         $this->storeManager->setCurrentStore(\Magento\Store\Model\Store::DEFAULT_STORE_ID);

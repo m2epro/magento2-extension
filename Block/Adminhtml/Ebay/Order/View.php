@@ -7,7 +7,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
 class View extends AbstractContainer
 {
     //########################################
-    
+
     public function _construct()
     {
         parent::_construct();

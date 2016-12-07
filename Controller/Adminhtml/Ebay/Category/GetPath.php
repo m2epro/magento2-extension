@@ -45,7 +45,7 @@ class GetPath extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
                 break;
         }
-        
+
         $this->setAjaxContent($path, false);
 
         return $this->getResult();

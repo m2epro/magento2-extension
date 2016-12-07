@@ -1,7 +1,7 @@
 define([
     'M2ePro/Common'
 ], function () {
-    
+
     window.AmazonListingSettings = Class.create(Common, {
 
         // ---------------------------------------

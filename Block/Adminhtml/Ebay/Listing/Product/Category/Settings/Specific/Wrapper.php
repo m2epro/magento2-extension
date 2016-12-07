@@ -51,7 +51,7 @@ class Wrapper extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
         $this->setTemplate('ebay/listing/product/category/settings/specific/wrapper.phtml');
     }
-    
+
     //########################################
 
     protected function _beforeToHtml()

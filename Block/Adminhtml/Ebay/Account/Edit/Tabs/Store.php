@@ -33,7 +33,7 @@ class Store extends AbstractForm
         if ($isEdit){
             $categoriesTreeArray = $account->getChildObject()->buildEbayStoreCategoriesTree();
         }
-        
+
         $form = $this->_formFactory->create();
 
         $form->addField(
@@ -76,7 +76,7 @@ HTML
                     'value' =>  $formData['ebay_store_url'],
                     'href' => $formData['ebay_store_url'],
                     'target' => '_blank',
-                    'class' => 'control-value',
+                    'class' => 'control-value external-link',
                 ]
             );
 
@@ -120,8 +120,8 @@ HTML
                     'legend' => $this->__('Categories'),
                     'collapsable' => true,
                     'tooltip' => $this->__(
-                        '<p>The list below shows your eBay Store Category tree. 
-                        This data will be of help when you are looking for a particular Category ID which 
+                        '<p>The list below shows your eBay Store Category tree.
+                        This data will be of help when you are looking for a particular Category ID which
                         then can be used for Category settings for your Products in M2E Pro Listings.</p>'
                     )
                 ]

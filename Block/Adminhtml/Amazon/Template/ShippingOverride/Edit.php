@@ -61,41 +61,55 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
         // ---------------------------------------
 
-        $saveButtonOptions = [];
-
         if ($isSaveAndClose) {
-            $saveButtonOptions['save'] = [
+            $saveButtons = [
+                'id' => 'save_and_close',
                 'label' => $this->__('Save And Close'),
-                'onclick' => "AmazonTemplateShippingOverrideObj.saveAndCloseClick()"
-            ];
-            $this->removeButton('back');
-        } else {
-            $saveButtonOptions['save'] = [
-                'label'     => $this->__('Save And Back'),
-                'onclick'   =>'AmazonTemplateShippingOverrideObj.saveClick('
-                    . '\'\','
+                'class' => 'add',
+                'button_class' => '',
+                'onclick' => 'AmazonTemplateShippingOverrideObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
                     . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE . '\''
                     . ')',
-                'class'     => 'save primary'
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Continue Edit'),
+                        'onclick' => 'AmazonTemplateShippingOverrideObj.saveAndEditClick('
+                            . '\'\','
+                            . 'undefined,'
+                            . '\'' . $this->getSaveConfirmationText() . '\','
+                            . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE . '\''
+                            . ')'
+                    ]
+                ],
+            ];
+            $this->removeButton('back');
+        } else {
+            $saveButtons = [
+                'id' => 'save_and_continue',
+                'label' => $this->__('Save And Continue Edit'),
+                'class' => 'add',
+                'onclick'   => 'AmazonTemplateShippingOverrideObj.saveAndEditClick('
+                    . '\'\','
+                    . 'undefined,'
+                    . '\'' . $this->getSaveConfirmationText() . '\','
+                    . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE . '\''
+                    . ')',
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label'     => $this->__('Save And Back'),
+                        'onclick'   =>'AmazonTemplateShippingOverrideObj.saveClick('
+                            . '\'\','
+                            . '\'' . $this->getSaveConfirmationText() . '\','
+                            . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE . '\''
+                            . ')',
+                    ]
+                ],
             ];
         }
         // ---------------------------------------
-
-        $saveButtons = [
-            'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
-            'class' => 'add',
-            'button_class' => '',
-            'onclick'   => 'AmazonTemplateShippingOverrideObj.saveAndEditClick('
-                . '\'\','
-                . 'undefined,'
-                . '\'' . $this->getSaveConfirmationText() . '\','
-                . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE . '\''
-                . ')',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
-            'options' => $saveButtonOptions,
-        ];
 
         $this->addButton('save_buttons', $saveButtons);
 

@@ -32,7 +32,7 @@ class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
     }
 
     // ---------------------------------------
-    
+
     protected function processConvert($interceptor, \Closure $callback, $arguments)
     {
         $orderItem = $callback($arguments[0]);

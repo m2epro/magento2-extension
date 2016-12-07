@@ -207,11 +207,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     }
 
     //########################################
-
-    public function isCacheEnabled()
-    {
-        return true;
-    }
-
-    //########################################
 }

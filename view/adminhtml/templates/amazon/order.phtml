@@ -24,7 +24,7 @@
             </strong>
             <div style="float: right;">
                 <?php $url = $block->getHelper('Component\Amazon')->getOrderUrl($block->order->getChildObject()->getAmazonOrderId(), $block->order->getMarketplaceId()); ?>
-                <a href="<?php echo $url ?>" target="_blank"><?php echo $block->__('View On Amazon') ?></a>
+                <a href="<?php echo $url ?>" class="external-link" target="_blank"><?php echo $block->__('View On Amazon') ?></a>
             </div>
         </div>
 

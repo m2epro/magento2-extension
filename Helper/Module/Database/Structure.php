@@ -86,6 +86,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_wizard',
 
             'm2epro_setup',
+            'm2epro_versions_history',
 
             'm2epro_account',
             'm2epro_marketplace',
@@ -450,7 +451,10 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
             $object = $this->activeRecordFactory->getObject($modelName);
 
-            $tablesModels[$object->getResource()->getMainTable()] = $modelName;
+            $tableName = $object->getResource()->getMainTable();
+            $tableName = str_replace($this->getHelper('Magento')->getDatabaseTablesPrefix(), '', $tableName);
+
+            $tablesModels[$tableName] = $modelName;
         }
 
         return $tablesModels;

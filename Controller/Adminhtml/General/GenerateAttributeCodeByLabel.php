@@ -13,7 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 class GenerateAttributeCodeByLabel extends General
 {
     //########################################
-    
+
     public function execute()
     {
         $label = $this->getRequest()->getParam('store_label');

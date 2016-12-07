@@ -51,7 +51,7 @@ class Editable extends AbstractBlock implements \Magento\Framework\Data\Form\Ele
             }
         }
 
-        if ($valueName === '') {
+        if (trim($valueName) === '') {
             $valueName = '...';
         }
 

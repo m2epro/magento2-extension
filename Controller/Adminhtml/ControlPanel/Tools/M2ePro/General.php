@@ -330,7 +330,7 @@ HTML;
                     $this->resourceConnection->getTableName($tableName),
                     $bind,
                     "`{$columnInfo['name']}` LIKE '%store_id\":\"{$replaceIdFrom}\"%' OR
-                     `{$columnInfo['name']}` LIKE '%store_id\":{$replaceIdFrom},%' OR 
+                     `{$columnInfo['name']}` LIKE '%store_id\":{$replaceIdFrom},%' OR
                      `{$columnInfo['name']}` LIKE '%store_id\":{$replaceIdFrom}}%'"
                 );
             }
@@ -571,7 +571,7 @@ HTML;
         $result .= '</pre>';
 
         $backUrl = $this->getHelper('View\ControlPanel')->getPageToolsTabUrl();
-        
+
         $result .= <<<HTML
 <br><span style="margin: 20px 0 0 0">
     <a href="{$backUrl}">[back]</a>

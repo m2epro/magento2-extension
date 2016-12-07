@@ -333,6 +333,13 @@ class Save extends Account
         }
         // ---------------------------------------
 
+        // tab: My Stores
+        // ---------------------------------------
+        if (isset($post['pickup_store_mode'])) {
+            $data['additional_data'] = json_encode(['bopis' => $post['pickup_store_mode']]);
+        }
+        // ---------------------------------------
+
         try {
             $data = $this->sendDataToServer($id, $data);
             $id = $this->updateAccount($id, $data);

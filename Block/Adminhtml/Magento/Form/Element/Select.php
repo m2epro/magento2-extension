@@ -99,7 +99,7 @@ class Select extends \Magento\Framework\Data\Form\Element\Select
     {
         if ($this->getData('create_magento_attribute') === true
             && !empty($attributeData['attrs']['is_magento_attribute'])) {
-            
+
             if (empty($attributeData['attrs']) || !is_array($attributeData['attrs'])) {
 
                 $attributeData['attrs'] = ['class' => 'M2ePro-custom-attribute-optgroup'];

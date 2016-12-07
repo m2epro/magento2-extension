@@ -59,7 +59,7 @@
 
 #synchronizationLogGrid_table th,
 #synchronizationLogGrid_table td{
-    word-break: break-all;
+    word-break: break-word;
 }
 
 #synchronizationLogGrid_table .grid-listing-column-task {

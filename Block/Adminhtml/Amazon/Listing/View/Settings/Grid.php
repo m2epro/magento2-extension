@@ -118,6 +118,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_sale_price_start_date'   => 'online_sale_price_start_date',
                 'online_sale_price_end_date'     => 'online_sale_price_end_date',
                 'is_afn_channel'                 => 'is_afn_channel',
+                // todo uncomment when alp table will have is_repricing field
+                //'is_repricing'                   => 'is_repricing',
                 'is_general_id_owner'            => 'is_general_id_owner',
                 'is_variation_parent'            => 'is_variation_parent',
                 'defected_messages'              => 'defected_messages',

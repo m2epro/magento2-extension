@@ -20,7 +20,7 @@ class Edit extends AbstractContainer
         $this->removeButton('add');
         $this->removeButton('save');
         $this->removeButton('edit');
-        
+
         if ((bool)$this->getRequest()->getParam('close_on_save',false)) {
 
             if ($this->getRequest()->getParam('id')) {

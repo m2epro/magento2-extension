@@ -29,7 +29,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     //########################################
 
     private $productBuilderFactory;
-    
+
     private $productFactory;
 
     /** @var $channelItem \Ess\M2ePro\Model\Ebay\Item */

@@ -168,7 +168,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         if (is_null($registryModel)) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         }
-        
+
         $allRecentCategories = $registryModel->getValueFromJson();
         $currentRecentCategories = $allRecentCategories[$marketplaceId];
 

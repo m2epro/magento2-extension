@@ -16,7 +16,7 @@ abstract class AbstractWizard extends AbstractContainer
     protected function _beforeToHtml()
     {
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Module\Wizard'));
-        
+
         $this->jsUrl->addUrls([
             'setStep' => $this->getUrl('*/wizard_'.$this->getNick().'/setStep'),
             'setStatus' => $this->getUrl('*/wizard_'.$this->getNick().'/setStatus')

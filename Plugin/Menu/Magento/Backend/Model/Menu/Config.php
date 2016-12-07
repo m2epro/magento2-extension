@@ -89,14 +89,12 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $this->processMenuCacheClearing();
 
         if ($this->helperFactory->getObject('Component\Ebay')->isEnabled()) {
-            $this->processOtherListingsMenuItem(Ebay::NICK);
             $this->processWizard($menuModel->get(Ebay::MENU_ROOT_NODE_NICK), Ebay::NICK);
         } else {
             $menuModel->remove(Ebay::MENU_ROOT_NODE_NICK);
         }
 
         if ($this->helperFactory->getObject('Component\Amazon')->isEnabled()) {
-            $this->processOtherListingsMenuItem(Amazon::NICK);
             $this->processWizard($menuModel->get(Amazon::MENU_ROOT_NODE_NICK), Amazon::NICK);
         } else {
             $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
@@ -126,13 +124,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $menuModel->add($maintenanceMenuItem, null, Maintenance::MENU_POSITION);
 
         return $menuModel;
-    }
-
-    private function processOtherListingsMenuItem($viewNick)
-    {
-        if (!$this->helperFactory->getObject('View\\'.ucfirst($viewNick))->is3rdPartyShouldBeShown()) {
-            $this->pageConfig->addPageAsset('Ess_M2ePro::css/menu/'.$viewNick.'_listing_other.css');
-        }
     }
 
     private function processWizard(\Magento\Backend\Model\Menu\Item $menu, $viewNick)
@@ -176,7 +167,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             }
 
             $registry->setValue(json_encode($currentMenuState))->save();
-            
+
             $this->helperFactory->getObject('Magento')->clearMenuCache();
         }
     }
@@ -186,12 +177,10 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         return [
             Ebay::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Ebay')->isEnabled(),
-                $this->helperFactory->getObject('View\Ebay')->is3rdPartyShouldBeShown(),
                 is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK))
             ],
             Amazon::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Amazon')->isEnabled(),
-                $this->helperFactory->getObject('View\Amazon')->is3rdPartyShouldBeShown(),
                 is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK))
             ]
         ];

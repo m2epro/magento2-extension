@@ -132,6 +132,18 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             $sequenceString .= 'Images,';
         }
 
+        if ($this->getConfigurator()->isSpecificsAllowed()) {
+            // M2ePro\TRANSLATIONS
+            // Specifics
+            $sequenceString .= 'Specifics,';
+        }
+
+        if ($this->getConfigurator()->isShippingServicesAllowed()) {
+            // M2ePro\TRANSLATIONS
+            // Shipping Services
+            $sequenceString .= 'Shipping Services,';
+        }
+
         if (empty($sequenceString)) {
             // M2ePro\TRANSLATIONS
             // Item was successfully Revised

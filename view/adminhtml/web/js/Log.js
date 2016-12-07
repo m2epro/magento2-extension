@@ -13,11 +13,11 @@ define([
 
         showFullText: function(element, title)
         {
-            var content = '<div style="padding: 0 10px; max-height: 300px;">' +
+            var content = '<div class="log-description-full">' +
                 element.next().innerHTML +
                 '</div>';
 
-            title = title || M2ePro.translator.translate('Description');
+            title = title || M2ePro.translator.translate('Message');
 
             modal({
                 title: title,
@@ -25,6 +25,7 @@ define([
                 modalClass: 'width-800',
                 buttons: [{
                     text: M2ePro.translator.translate('Close'),
+                    class: 'action-secondary',
                     click: function () {
                         this.closeModal();
                     }

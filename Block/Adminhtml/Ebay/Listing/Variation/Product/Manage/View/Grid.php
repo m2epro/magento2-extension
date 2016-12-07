@@ -18,15 +18,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $resourceConnection;
 
     protected $customCollection;
-    
+
     protected $ebayFactory;
-    
+
     protected $variationAttributes;
 
     protected $listingProductId;
 
     //########################################
-    
+
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,

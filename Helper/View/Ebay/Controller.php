@@ -62,14 +62,16 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function addCronNotificationMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $url = $this->getHelper('Module\Support')->getKnowledgeBaseUrl('42054-how-to-set-up-cron-job-for-m2e-pro');
+        $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl(
+            '692955-why-cron-service-is-not-working-in-my-magento'
+        );
 
         // M2ePro_TRANSLATIONS
         // Attention! Last eBay AUTOMATIC Synchronization was performed by Cron more than 1 hour ago. You should set up Cron Job, otherwise no Automatic Synchronization will be performed.<br/>You can check this <a href="%url%" target="_blank">Article</a> to get how to set Cron Job.
         $message = 'Attention! Last eBay AUTOMATIC Synchronization was performed by Cron ';
         $message .= 'more than 1 hour ago. You should set up Cron Job, otherwise no Automatic Synchronization ';
-        $message .= 'will be performed.<br/>You can check this 
-                     <a href="%url%" target="_blank" class="external-link">Article</a> to get how to set Cron Job.';
+        $message .= 'will be performed.<br/>You can check this ';
+        $message .= '<a href="%url%" target="_blank" class="external-link">Article</a> to get how to set Cron Job.';
 
         $controller->getMessageManager()->addNotice(
             $this->getHelper('Module\Translation')->__($message, $url),
@@ -79,7 +81,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function addFeedbackNotificationMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $url = $controller->getUrl('*/ebay_feedback/index');
+        $url = $controller->getUrl('*/ebay_account/index');
 
         // M2ePro_TRANSLATIONS
         // New Buyer negative Feedback was received. Go to the <a href="%url%" target="blank">feedback Page</a>.
@@ -125,7 +127,8 @@ Do not forget to press Save button after returning back to Magento
                 $textToTranslate =
                     'The token for "%account_title%" eBay Account has been expired.<br/>'.
                     'Please, go to %menu_label% > Configuration > eBay Account >'.
-                    '<a href="%url%" target="_blank" class="external-link">General TAB</a>, click on the Get Token Button.'.
+                    '<a href="%url%" target="_blank" class="external-link">General TAB</a>'.
+                    ', click on the Get Token Button.'.
                     '(You will be redirected to the eBay website.) Sign-in and press I Agree on eBay Page.'.
                     'Do not forget to press Save Button after returning back to Magento';
 
@@ -235,8 +238,9 @@ Do not forget to press Save Button after returning back to Magento
             return;
         }
 
-        $message = '%marketplace_title% data was changed. You need to resynchronize it for the proper Extension work. '.
-                   'Please, go to <a href="%url%" target="_blank">Marketplaces</a> and press an Update All Now button.';
+        $message = '%marketplace_title% data was changed on eBay. ' .
+            'You need to resynchronize it for the proper Extension work. '.
+            'Please, go to <a href="%url%" target="_blank">Marketplaces</a> and press an <b>Update All Now</b> button.';
 
         $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
             $message,

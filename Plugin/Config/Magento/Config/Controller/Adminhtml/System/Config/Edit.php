@@ -17,13 +17,13 @@ class Edit extends \Ess\M2ePro\Plugin\AbstractPlugin
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
             return false;
         }
-        
+
         if ($this->helperFactory->getObject('Module\Maintenance\Debug')->isEnabled() &&
             !$this->helperFactory->getObject('Module\Maintenance\Debug')->isOwner()) {
-            
+
             return false;
         }
-        
+
         return true;
     }
 
@@ -37,7 +37,7 @@ class Edit extends \Ess\M2ePro\Plugin\AbstractPlugin
     protected function processExecute($interceptor, \Closure $callback)
     {
         $result = $callback();
-        
+
         if ($result instanceof \Magento\Backend\Model\View\Result\Redirect) {
             return $result;
         }

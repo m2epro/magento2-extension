@@ -12,9 +12,9 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
 {
     protected $resourceConnection;
     protected $cacheConfig;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
@@ -26,7 +26,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         $this->cacheConfig = $cacheConfig;
         parent::__construct($helperFactory, $context);
     }
-    
+
     //########################################
 
     public function getBrokenTablesInfo()
@@ -89,7 +89,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                         ->joinLeft(array('child' => $childTablePrefix),
                                    '`parent`.`'.$parentIdColumn.'` = `child`.`'.$childIdColumn.'`',
                                    array())
-                        ->where('`parent`.`component_mode` = \''.$component.'\' OR 
+                        ->where('`parent`.`component_mode` = \''.$component.'\' OR
                                 (`parent`.`component_mode` NOT IN (?) OR `parent`.`component_mode` IS NULL)',
                                 $this->getHelper('Component')->getComponents())
                         ->where('`child`.`'.$childIdColumn.'` IS NULL')
@@ -102,7 +102,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                                $returnOnlyCount ? new \Zend_Db_Expr('count(*) as `count_total`')
                                                 : array('id' => $childIdColumn))
                         ->joinLeft(array('parent' => $parentTablePrefix),
-                                   "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND 
+                                   "`child`.`{$childIdColumn}` = `parent`.`{$parentIdColumn}` AND
                                    `parent`.`component_mode` = '{$component}'",
                                    array())
                         ->where('`parent`.`'.$parentIdColumn.'` IS NULL')

@@ -16,7 +16,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
     const TYPE_STORE_SECONDARY = 3;
 
     const RECENT_MAX_COUNT = 20;
-    
+
     protected $activeRecordFactory;
     protected $resourceConnection;
 
@@ -33,7 +33,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
     }
-    
+
     //########################################
 
     public function getEbayCategoryTypes()

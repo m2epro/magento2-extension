@@ -8,9 +8,9 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Main;
 abstract class Table extends Main
 {
     private $databaseTableFactory;
-    
+
     //########################################
-    
+
     public function __construct(
         Context $context,
         \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory
@@ -21,23 +21,23 @@ abstract class Table extends Main
     }
 
     //########################################
-    
+
     protected function getTableModel()
     {
         $tableName = $this->getRequest()->getParam('table');
         $component = $this->getRequest()->getParam('component');
         $mergeMode = (bool)$this->getRequest()->getParam('merge');
-        
+
         /** @var \Ess\M2ePro\Model\ControlPanel\Database\TableModel $model */
         $model = $this->databaseTableFactory->create(['data' => [
             'table_name' => $tableName,
             'merge_mode' => $mergeMode,
             'merge_mode_component' => $component
         ]]);
-        
+
         return $model;
     }
-    
+
     protected function isMergeModeEnabled($table)
     {
         return (bool)$this->getRequest()->getParam('merge') &&
@@ -70,7 +70,7 @@ abstract class Table extends Main
     }
 
     //########################################
-    
+
     protected function redirectToTablePage($tableName)
     {
         $this->_redirect('*/*/manageTable', ['table' => $tableName]);
@@ -82,6 +82,6 @@ abstract class Table extends Main
             $this->getHelper('Module')->clearCache();
         }
     }
-    
+
     //########################################
 }

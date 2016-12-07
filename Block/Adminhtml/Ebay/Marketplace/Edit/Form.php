@@ -84,7 +84,7 @@ class Form extends AbstractForm
                     'after_element_html' => $afterElementHtml
                 ];
 
-                if ($marketplace['params']['locked']) {
+                if ($marketplace['params']['locked'] || $marketplace['params']['lockedByPickupStore']) {
                     $lockedText = '';
                     if ($marketplace['params']['locked']) {
                         $lockedText = $this->__('Used in Listing(s)');
@@ -165,6 +165,15 @@ class Form extends AbstractForm
                     ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
                     ->getSize();
 
+                $isLockedByPickupStore = false;
+
+                if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+                    $isLockedByPickupStore = (bool)$this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+                        ->getCollection()
+                        ->addFieldToFilter('marketplace_id', $tempMarketplace->getId())
+                        ->getSize();
+                }
+
                 $storedStatuses[] = array(
                     'marketplace_id' => $tempMarketplace->getId(),
                     'status'         => $tempMarketplace->getStatus()
@@ -175,7 +184,7 @@ class Form extends AbstractForm
                     'instance' => $tempMarketplace,
                     'params'   => array(
                         'locked' => $isLocked,
-//                        'lockedByPickupStore' => $isLockedByPickupStore
+                        'lockedByPickupStore' => $isLockedByPickupStore
                     )
                 );
 

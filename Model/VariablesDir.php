@@ -150,8 +150,8 @@ class VariablesDir extends AbstractModel
         $iterator = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 
         foreach ($iterator as $path) {
-            $path->isFile() 
-                ? $this->_fileDriver->deleteFile($path->getPathname()) 
+            $path->isFile()
+                ? $this->_fileDriver->deleteFile($path->getPathname())
                 : $this->_fileDriver->deleteDirectory($path->getPathname());
         }
 

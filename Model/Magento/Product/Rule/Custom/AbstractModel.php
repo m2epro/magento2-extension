@@ -10,16 +10,19 @@ namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
+    protected $localeDate;
     protected $stockItemFactory;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
         \Magento\CatalogInventory\Model\Stock\ItemFactory $stockItemFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->localeDate = $localeDate;
         $this->stockItemFactory = $stockItemFactory;
         parent::__construct($helperFactory, $modelFactory);
     }

@@ -293,10 +293,10 @@ HTML;
                                        id="magento_product_attribute_'.$attributeId.'_'.$id.'">';
                     $magentoProductAttributesHtml .=
 <<<HTML
-<select 
+<select
     class="select admin__control-select amazon_product_attribute_{$id}"
     onchange="ListingGridHandlerObj.productSearchHandler.attributesChange(this)"
-    style="width: 250px; margin-left: 10px; margin-bottom: 7px; font-size: 11px; 
+    style="width: 250px; margin-left: 10px; margin-bottom: 7px; font-size: 11px;
         background-position: calc(100% - 12px) -38px, 100%, calc(100% - 3.2rem) 0;"
     id="amazon_product_attribute_{$attributeId}_{$id}">
 HTML;
@@ -456,10 +456,10 @@ HTML;
                                 '" class="specifics_name_'.$id.'">';
             $attributeValues .=
 <<<HTML
-<select 
+<select
     class="select admin__control-select specifics_{$id}"
     onchange="ListingGridHandlerObj.productSearchHandler.specificsChange(this)"
-    style="width: 250px; margin-bottom: 5px; font-size: 11px; 
+    style="width: 250px; margin-bottom: 5px; font-size: 11px;
         background-position: calc(100% - 12px) -38px, 100%, calc(100% - 3.2rem) 0;"
     id="specific_{$specificName}_{$id}">
 HTML;

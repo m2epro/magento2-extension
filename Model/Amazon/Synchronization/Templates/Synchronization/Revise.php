@@ -26,12 +26,12 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
 
     protected function getPercentsStart()
     {
-        return 15;
+        return 65;
     }
 
     protected function getPercentsEnd()
     {
-        return 40;
+        return 100;
     }
 
     //########################################
@@ -62,12 +62,21 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
                 $configurator->setPartialMode();
                 $configurator->allowQty();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -84,7 +93,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -104,12 +113,21 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
                 $configurator->setPartialMode();
                 $configurator->allowPrice();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -126,7 +144,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -141,38 +159,58 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update details');
 
         $attributesForProductChange = array();
-        $amazonDescriptionTemplateCollection = $this->activeRecordFactory
-                                                    ->getObject('Amazon\Template\Description')
-                                                    ->getCollection();
-        foreach ($amazonDescriptionTemplateCollection as $template) {
+        $descriptionTemplateCollection = $this->amazonFactory
+                                              ->getObject('Template\Description')
+                                              ->getCollection();
 
-            /** @var \Ess\M2ePro\Model\Amazon\Template\Description $template */
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
 
-            $attributes = $template->getDefinitionTemplate()->getUsedDetailsAttributes();
+        foreach ($descriptionTemplates as $descriptionTemplate) {
 
-            $specifics = $template->getSpecifics(true);
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
+            $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
+
+            $attributes = $amazonDescriptionTemplate->getDefinitionTemplate()->getUsedDetailsAttributes();
+
+            $specifics = $amazonDescriptionTemplate->getSpecifics(true);
             foreach ($specifics as $specific) {
-                $attributes = array_merge($attributes,$specific->getUsedAttributes());
+                $attributes = array_merge($attributes, $specific->getUsedAttributes());
             }
 
             $attributesForProductChange = array_merge($attributesForProductChange,$attributes);
         }
 
-        foreach ($this->activeRecordFactory->getObject('Amazon\Listing')->getCollection() as $listing) {
+        $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing $listing */
+        /** @var \Ess\M2ePro\Model\Listing[] $listings */
+        $listings = $listingCollection->getItems();
+
+        foreach ($listings as $listing) {
+
+            /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
+            $amazonListing = $listing->getChildObject();
 
             $attributesForProductChange = array_merge(
                 $attributesForProductChange,
-                $listing->getConditionNoteAttributes(),
-                $listing->getGiftWrapAttributes(),
-                $listing->getGiftMessageAttributes()
+                $amazonListing->getConditionNoteAttributes(),
+                $amazonListing->getGiftWrapAttributes(),
+                $amazonListing->getGiftMessageAttributes()
             );
         }
 
         foreach ($this->getChangedListingsProducts($attributesForProductChange) as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
                 $amazonListingProduct = $listingProduct->getChildObject();
 
@@ -209,7 +247,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 $configurator->setPartialMode();
                 $configurator->allowDetails();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -226,7 +264,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -239,33 +277,53 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update images');
 
         $attributesForProductChange = array();
-        $amazonDescriptionTemplateCollection = $this->activeRecordFactory
-                                                    ->getObject('Amazon\Template\Description')
-                                                    ->getCollection();
-        foreach ($amazonDescriptionTemplateCollection as $template) {
+        $descriptionTemplateCollection = $this->amazonFactory
+                                              ->getObject('Template\Description')
+                                              ->getCollection();
 
-            /** @var \Ess\M2ePro\Model\Amazon\Template\Description $template */
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
+
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+
+            /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
+            $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
 
             $attributesForProductChange = array_merge(
                 $attributesForProductChange,
-                $template->getDefinitionTemplate()->getUsedImagesAttributes()
+                $amazonDescriptionTemplate->getDefinitionTemplate()->getUsedImagesAttributes()
             );
         }
 
-        foreach ($this->activeRecordFactory->getObject('Amazon\Listing')->getCollection() as $listing) {
+        $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing $listing */
+        /** @var \Ess\M2ePro\Model\Listing[] $listings */
+        $listings = $listingCollection->getItems();
+
+        foreach ($listings as $listing) {
+
+            /** @var \Ess\M2ePro\Model\Amazon\Listing $amazonListing */
+            $amazonListing = $listing->getChildObject();
 
             $attributesForProductChange = array_merge(
                 $attributesForProductChange,
-                $listing->getImageMainAttributes(),
-                $listing->getGalleryImagesAttributes()
+                $amazonListing->getImageMainAttributes(),
+                $amazonListing->getGalleryImagesAttributes()
             );
         }
 
         foreach ($this->getChangedListingsProducts($attributesForProductChange) as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
                 $amazonListingProduct = $listingProduct->getChildObject();
 
@@ -293,7 +351,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 $configurator->setPartialMode();
                 $configurator->allowImages();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -310,7 +368,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -355,10 +413,18 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
             try {
                 $listingProduct->setData('synch_status',\Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP)->save();
 
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -375,7 +441,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -410,10 +476,19 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         foreach ($collection->getItems() as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -430,7 +505,7 @@ final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }

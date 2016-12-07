@@ -34,14 +34,14 @@
 <div id="block_notice_control_panel_tab_development_mode" class="debug-mode-switcher">
 
     <?php if ($this->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('M2ePro Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
+        <b><?php echo $this->__('M2E Pro Development Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
             <?php echo $this->getChildHtml('disable_development_mode'); ?>
         </div>
     <?php endif; ?>
 
     <?php if (!$this->isDevelopmentModeEnabled) : ?>
-        <b><?php echo $this->__('M2ePro Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
+        <b><?php echo $this->__('M2E Pro Development Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
             <?php echo $this->getChildHtml('enable_development_mode'); ?>
         </div>
@@ -52,14 +52,14 @@
 <div id="block_notice_control_panel_tab_debug_maintenance" class="debug-mode-switcher">
 
     <?php if ($this->isMaintenanceEnabled) : ?>
-        <b><?php echo $this->__('Maintenance Mode is <span style="color:red;">Enabled</span> now.'); ?></b>
+        <b><?php echo $this->__('Debug Maintenance is <span style="color:red;">Enabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
             <?php echo $this->getChildHtml('disable_maintenance'); ?>
         </div>
     <?php endif; ?>
 
     <?php if (!$this->isMaintenanceEnabled) : ?>
-        <b><?php echo $this->__('Maintenance Mode is <span style="color:green;">Disabled</span> now.'); ?></b>
+        <b><?php echo $this->__('Debug Maintenance is <span style="color:green;">Disabled</span> now.'); ?></b>
         <div style="float: right; margin-top: -9px;">
             <?php echo $this->getChildHtml('enable_maintenance'); ?>
         </div>

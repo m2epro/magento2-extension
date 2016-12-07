@@ -126,36 +126,5 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         return $accountCollection->getSize() || $feedbackCollection->getSize();
     }
 
-    public function is3rdPartyShouldBeShown()
-    {
-        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
-
-        if (!is_null($runtimeCache->getValue(__METHOD__))) {
-            return $runtimeCache->getValue(__METHOD__);
-        }
-
-        $accountCollection = $this->modelFactory->getObject('Ebay\Account')->getCollection();
-        $accountCollection->addFieldToFilter(
-            'other_listings_synchronization', \Ess\M2ePro\Model\Ebay\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
-        );
-
-        if ((bool)$accountCollection->getSize()) {
-            $result = true;
-        } else {
-            $collection = $this->modelFactory->getObject('Ebay\Listing\Other')->getCollection();
-
-            $logCollection = $this->modelFactory->getObject('Listing\Other\Log')->getCollection();
-            $logCollection->addFieldToFilter(
-                'component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK
-            );
-
-            $result = $collection->getSize() || $logCollection->getSize();
-        }
-
-        $runtimeCache->setValue(__METHOD__, $result);
-
-        return $result;
-    }
-
     //########################################
 }

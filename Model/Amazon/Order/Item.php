@@ -19,7 +19,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     // Product for Amazon Item "%title%" was Created in Magento Catalog.
 
     private $productBuilderFactory;
-    
+
     private $productFactory;
 
     /** @var $channelItem \Ess\M2ePro\Model\Amazon\Item */

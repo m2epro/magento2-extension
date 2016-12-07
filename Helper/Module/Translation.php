@@ -78,6 +78,10 @@ class Translation extends \Ess\M2ePro\Helper\AbstractHelper
             $this->values = array_shift($input);
         }
 
+        array_walk($input, function(&$el) {
+            is_null($el) && $el = (string)$el;
+        });
+
         $this->args = $input;
     }
 

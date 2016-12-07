@@ -278,7 +278,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'id' => $row->getData('id'),
             'wizard' => $this->getHelper('Module\Wizard')->isActive(
                 \Ess\M2ePro\Helper\View\Amazon::WIZARD_INSTALLATION_NICK
-            )
+            ),
+            'close_on_save' => true
         ));
 
         $title = $this->getHelper('Data')->escapeHtml($row->getData('title'));

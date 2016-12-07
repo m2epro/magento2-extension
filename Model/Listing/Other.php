@@ -375,11 +375,4 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
     }
 
     //########################################
-
-    public function isCacheEnabled()
-    {
-        return true;
-    }
-
-    //########################################
 }

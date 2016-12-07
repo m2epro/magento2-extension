@@ -9,7 +9,6 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         session_write_close();
 
         // ---------------------------------------
-        $listingId = $this->getRequest()->getParam('listing_id');
         $listingProductId = $this->getRequest()->getParam('listing_product_id');
         // ---------------------------------------
 
@@ -19,64 +18,30 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         }
 
         // ---------------------------------------
-        $listingProductCollection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('listing_id', $listingId);
-        $listingProductCollection->addFieldToFilter('status', array('in' => array(
-            \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
-            \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED,
-        )));
-        $listingProductCollection->setPageSize(3);
-        $listingProductCollection->addFieldToFilter('id', $listingProductId);
-
-        $listingProductCollection->load();
+        /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
         // ---------------------------------------
 
-        // ---------------------------------------
-        if ($listingProductCollection->count() == 0) {
-            $this->setJsonContent(['error' => true]);
-            return $this->getResult();
+        $params = array(
+            'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
+            'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId()
+        );
+
+        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Verify\SingleRequester $connector */
+        $connector = $dispatcher->getCustomConnector('Ebay\Connector\Item\Verify\SingleRequester', $params);
+        $connector->setListingProduct($listingProduct);
+
+        $fees = [];
+        try {
+            $connector->process();
+            $fees = $connector->getPreparedResponseData();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
         }
-        // ---------------------------------------
 
-        $fees = $errors = array();
-        $sourceProduct = NULL;
-
-        foreach ($listingProductCollection as $product) {
-
-            $fees = array();
-
-            $params = array(
-                'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
-                'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId()
-            );
-
-            $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-
-            /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Verify\SingleRequester $connector */
-            $connector = $dispatcher->getCustomConnector('Ebay\Connector\Item\Verify\SingleRequester', $params);
-            $connector->setListingProduct($product);
-
-            try {
-                $connector->process();
-                $fees = $connector->getPreparedResponseData();
-            } catch (\Exception $exception) {
-                $this->getHelper('Module\Exception')->process($exception);
-            }
-
-            if (!empty($fees)) {
-                $sourceProduct = $product;
-                break;
-            }
-
-            $currentErrors = $connector->getLogger()->getStoredMessages();
-
-            if (count($currentErrors) > 0) {
-                $errors = $currentErrors;
-            }
-        }
+        $errors = $connector->getLogger()->getStoredMessages();
 
         // ---------------------------------------
         if (empty($fees)) {
@@ -88,7 +53,7 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
                 $this->setJsonContent([
                     'title' => $this->__(
-                        'Estimated Fee Details For Product: "%title%"', $sourceProduct->getMagentoProduct()->getName()
+                        'Estimated Fee Details For Product: "%title%"', $listingProduct->getMagentoProduct()->getName()
                     ),
                     'html' => $errorsBlock->toHtml()
                 ]);
@@ -99,11 +64,11 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         $details = $this->createBlock('Ebay\Listing\View\Ebay\Fee\Details');
         $details->setData('fees', $fees);
-        $details->setData('product_name', $sourceProduct->getMagentoProduct()->getName());
+        $details->setData('product_name', $listingProduct->getMagentoProduct()->getName());
 
         $this->setJsonContent([
             'title' => $this->__(
-                'Estimated Fee Details For Product: "%title%"', $sourceProduct->getMagentoProduct()->getName()
+                'Estimated Fee Details For Product: "%title%"', $listingProduct->getMagentoProduct()->getName()
             ),
             'html' => $details->toHtml()
         ]);

@@ -1,7 +1,5 @@
 .page-main-actions .m2epro-field-tooltip.admin__field-tooltip {
-    position: absolute;
-    left: 23.5%;
-    padding-top: 5px;
+    padding-top: 1px;
 }
 
 .page-main-actions .admin__field-tooltip-content {

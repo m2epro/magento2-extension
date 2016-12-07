@@ -125,7 +125,7 @@ define([
                 _.extend({
                     id: 'magento-attribute-select-'+this._id,
                     class: 'select admin__control-select M2ePro-custom-attribute-can-be-created',
-                    
+
                 }, this.getSelectCustomAttributes())
             );
 

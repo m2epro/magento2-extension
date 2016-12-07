@@ -7,17 +7,17 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 class General extends AbstractForm
 {
     protected $amazonFactory;
-    
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context, 
-        \Magento\Framework\Registry $registry, 
-        \Magento\Framework\Data\FormFactory $formFactory, 
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Framework\Registry $registry,
+        \Magento\Framework\Data\FormFactory $formFactory,
         array $data = []
     )
     {
         $this->amazonFactory = $amazonFactory;
-        
+
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -68,8 +68,8 @@ class General extends AbstractForm
 <p>Fill in the Title, choose the Marketplace you want to work with and click on the Get Access Data link.
 You will be redirected to Amazon Website.</p><br>
 <p><strong>Note:</strong> To be eligible to sell on Amazon, Sellers must have at least one of the following:
-a non-individual <i>Selling on Amazon Account</i>, an <i>Amazon WebStore Account</i>, a 
-<i>Checkout by Amazon Account</i>, or an <i>Amazon Product Ads Account</i>. If you are an individual Seller you 
+a non-individual <i>Selling on Amazon Account</i>, an <i>Amazon WebStore Account</i>, a
+<i>Checkout by Amazon Account</i>, or an <i>Amazon Product Ads Account</i>. If you are an individual Seller you
 have to upgrade to a Pro Merchant Seller Account from the Amazon Services Selling on Amazon Page.</p><br>
 <p>Sign-in and complete the steps to obtain access to a specific Marketplace:</p>
 <ul>
@@ -77,7 +77,7 @@ have to upgrade to a Pro Merchant Seller Account from the Amazon Services Sellin
 <li><p>Accept the Amazon MWS License Agreement.</p></li>
 <li><p>The Merchant ID and MWS Auth Token will be automatically filled in.</p></li>
 </ul><br>
-<p>More detailed information about how to work with this 
+<p>More detailed information about how to work with this
 Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MgItAQ'))
@@ -194,7 +194,7 @@ HTML
                     'onclick' => 'return AmazonAccountObj.getToken('.$marketplace['id'].')',
                     'target' => '_blank',
                     'value' => $this->__('Get Access Data'),
-                    'style' => 'text-decoration: underline;'
+                    'class' => 'external-link',
                 ]
             )->setFieldExtraAttributes('style="display: none"');
         }
@@ -283,7 +283,7 @@ HTML
     });
 JS
         );
-        
+
         $this->jsTranslator->addTranslations([
             'The specified Title is already used for other Account. Account Title must be unique.' => $this->__(
                 'The specified Title is already used for other Account. Account Title must be unique.'

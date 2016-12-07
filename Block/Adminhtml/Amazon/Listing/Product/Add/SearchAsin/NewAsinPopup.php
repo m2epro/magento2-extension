@@ -59,7 +59,7 @@ HTML
     {
         $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
             'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                '/x/NQctAQ'
+                'x/SwctAQ'
             )
         ]);
 

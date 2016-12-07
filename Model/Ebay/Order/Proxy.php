@@ -20,7 +20,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
 
     private $customerFactory;
 
-    private $customerDataFactory;
+    private $customerRepository;
 
     //########################################
 
@@ -29,7 +29,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         \Ess\M2ePro\Model\Magento\Payment $payment,
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
         \Magento\Customer\Model\CustomerFactory $customerFactory,
-        \Magento\Customer\Model\Data\CustomerFactory $customerDataFactory,
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Ess\M2ePro\Model\Currency $currency,
         \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -40,7 +40,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         $this->payment = $payment;
         $this->attributeFactory = $attributeFactory;
         $this->customerFactory = $customerFactory;
-        $this->customerDataFactory = $customerDataFactory;
+        $this->customerRepository = $customerRepository;
         parent::__construct($currency, $order, $helperFactory, $modelFactory);
     }
 
@@ -102,59 +102,47 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
     //########################################
 
     /**
-     * @return \Magento\Customer\Model\Data\Customer
+     * @return \Magento\Customer\Api\Data\CustomerInterface
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function getCustomer()
     {
-        $customer = $this->customerFactory->create();
-
         if ($this->order->getEbayAccount()->isMagentoOrdersCustomerPredefined()) {
-            $customer->load($this->order->getEbayAccount()->getMagentoOrdersCustomerId());
+            $customerDataObject = $this->customerRepository->getById(
+                $this->order->getEbayAccount()->getMagentoOrdersCustomerId()
+            );
 
-            if (is_null($customer->getId())) {
+            if (is_null($customerDataObject->getId())) {
                 throw new \Ess\M2ePro\Model\Exception('Customer with ID specified in eBay Account
                     Settings does not exist.');
             }
+
+            return $customerDataObject;
         }
 
         if ($this->order->getEbayAccount()->isMagentoOrdersCustomerNew()) {
-            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
-            $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
-
-            $userIdAttribute = $this->attributeFactory->create()->loadByCode(
-                $this->customerFactory->create()->getEntityTypeId(), self::USER_ID_ATTRIBUTE_CODE
-            );
-
-            if (!$userIdAttribute->getId()) {
-                $customerBuilder->buildAttribute(self::USER_ID_ATTRIBUTE_CODE, 'eBay User ID');
-            }
-
             $customerInfo = $this->getAddressData();
 
-            $customer->setWebsiteId($this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId());
-            $customer->loadByEmail($customerInfo['email']);
+            $customerObject = $this->customerFactory->create();
+            $customerObject->setWebsiteId($this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId());
+            $customerObject->loadByEmail($customerInfo['email']);
 
-            if (!is_null($customer->getId())) {
-                $customer->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
-                $customer->save();
-
-                return $this->customerDataFactory->create(['data' => $customer->getData()]);
+            if (!is_null($customerObject->getId())) {
+                return $customerObject->getDataModel();
             }
 
             $customerInfo['website_id'] = $this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId();
             $customerInfo['group_id'] = $this->order->getEbayAccount()->getMagentoOrdersCustomerNewGroupId();
 
+            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
+            $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
             $customerBuilder->setData($customerInfo);
             $customerBuilder->buildCustomer();
 
-            $customer = $customerBuilder->getCustomer();
-
-            $customer->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
-            $customer->save();
+            return $customerBuilder->getCustomer()->getDataModel();
         }
 
-        return $this->customerDataFactory->create(['data' => $customer->getData()]);
+        return NULL;
     }
 
     //########################################

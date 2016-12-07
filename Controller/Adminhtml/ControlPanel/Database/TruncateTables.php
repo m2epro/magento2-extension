@@ -22,7 +22,7 @@ class TruncateTables extends Table
         if (count($tables) == 1) {
             return $this->redirectToTablePage($tables[0]);
         }
-        
+
         return $this->_redirect($this->getHelper('View\ControlPanel')->getPageDatabaseTabUrl());
     }
 }

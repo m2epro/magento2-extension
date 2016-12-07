@@ -11,7 +11,7 @@ class EditListing extends Template
     public function execute()
     {
         $this->addCss('ebay/listing/templates.css');
-        
+
         $id = $this->getRequest()->getParam('id');
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$id);
 

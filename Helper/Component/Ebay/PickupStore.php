@@ -34,34 +34,28 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isFeatureEnabled()
     {
-        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
-
-        if (!is_null($runtimeCache->getValue(__METHOD__))) {
-            return $runtimeCache->getValue(__METHOD__);
-        }
-
-        $isEnabled = (bool)$this->getEnabledAccount();
-
-        $runtimeCache->setValue(__METHOD__, $isEnabled);
-        return $isEnabled;
+        return (int)$this->modelFactory->getObject('Config\Manager\Module')
+                                       ->getGroupValue('/ebay/in_store_pickup/', 'mode');
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Account
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function getEnabledAccount()
+    public function getEnabledAccounts()
     {
         /** @var \Ess\M2ePro\Model\Account[] $accounts */
         $accounts = $this->activeRecordFactory->getObject('Account')->getCollection()
             ->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
 
+        $enabledAccounts = [];
         foreach ($accounts as $account) {
             if ($account->getChildObject()->isPickupStoreEnabled()) {
-                return $account;
+                $enabledAccounts[] = $account;
             }
         }
 
-        return false;
+        return $enabledAccounts;
     }
 
     //########################################
@@ -71,8 +65,8 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
         $countries = $this->getHelper('Magento')->getCountries();
 
         foreach ($countries as $country) {
-            if (!empty($country['country_id']) &&
-                $country['country_id'] == strtoupper($marketplace['origin_country'])
+            if (!empty($country['value']) &&
+                $country['value'] == strtoupper($marketplace['origin_country'])
             ) {
                 return $country;
             }
@@ -86,7 +80,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
     public function createPickupStore($data, $accountId)
     {
         if (!$this->validateRequiredFields($data)) {
-            $this->messageManager->addError(
+            $this->messageManager->addErrorMessage(
                 $this->getHelper('Module\Translation')->__('Validation error. You must fill all required fields.')
             );
             return false;
@@ -108,7 +102,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
             $error = 'The New Store has not been created. <br/>Reason: %error_message%';
             $error = $this->getHelper('Module\Translation')->__($error, $exception->getMessage());
 
-            $this->messageManager->addError($error);
+            $this->messageManager->addErrorMessage($error);
 
             return false;
         }
@@ -135,7 +129,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
             $error = 'The Store has not been deleted. <br/>Reason: %error_message%';
             $error = $this->getHelper('Module\Translation')->__($error, $exception->getMessage());
 
-            $this->messageManager->addError($error);
+            $this->messageManager->addErrorMessage($error);
 
             return false;
         }

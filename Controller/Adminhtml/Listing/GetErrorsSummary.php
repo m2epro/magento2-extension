@@ -13,10 +13,9 @@ class GetErrorsSummary extends Listing
             'table_name' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
             'type_log'   => 'listing'
         ];
-        $block = $this->createBlock('Log\ErrorsSummary','', ['data' => $blockParams]);
+        $block = $this->createBlock('Listing\Log\ErrorsSummary','', ['data' => $blockParams]);
         $this->setAjaxContent($block);
 
         return $this->getResult();
     }
 }
-

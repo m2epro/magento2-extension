@@ -32,25 +32,23 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
     public function send($component, $fromEmail, $fromName, $subject, $description, $severity)
     {
         $attachments = array();
-
         $uploadedFiles = $this->phpEnvironmentRequest->getFiles()->toArray();
 
-        foreach ($uploadedFiles['name'] as $key => $uploadFileName) {
-            if ('' == $uploadFileName) {
-                continue;
+        if (!empty($uploadedFiles['files'])) {
+            foreach ($uploadedFiles['files'] as $key => $uploadFileInfo) {
+
+                if ('' == $uploadFileInfo['name']) {
+                    continue;
+                }
+
+                $attachment = new \Zend_Mime_Part(file_get_contents($uploadFileInfo['tmp_name']));
+                $attachment->type        = $uploadFileInfo['type'];
+                $attachment->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
+                $attachment->encoding    = \Zend_Mime::ENCODING_BASE64;
+                $attachment->filename    = $uploadFileInfo['name'];
+
+                $attachments[] = $attachment;
             }
-
-            $realName = $uploadFileName;
-            $tempPath = $uploadedFiles['files']['tmp_name'][$key];
-            $mimeType = $uploadedFiles['files']['type'][$key];
-
-            $attachment = new \Zend_Mime_Part(file_get_contents($tempPath));
-            $attachment->type        = $mimeType;
-            $attachment->disposition = \Zend_Mime::DISPOSITION_ATTACHMENT;
-            $attachment->encoding    = \Zend_Mime::ENCODING_BASE64;
-            $attachment->filename    = $realName;
-
-            $attachments[] = $attachment;
         }
 
         $toEmail = $this->getHelper('Module\Support')->getContactEmail();

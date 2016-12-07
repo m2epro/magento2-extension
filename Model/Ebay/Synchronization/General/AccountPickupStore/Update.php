@@ -40,37 +40,62 @@ final class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Abstra
 
     public function performActions()
     {
-        $account = $this->getHelper('Component\Ebay\PickupStore')->getEnabledAccount();
-        if (!$account) {
+        $accounts = $this->getHelper('Component\Ebay\PickupStore')->getEnabledAccounts();
+
+        if (count($accounts) <= 0) {
             return;
         }
 
-        $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-        // M2ePro\TRANSLATIONS
-        // The "Synchronize Data" Action for eBay Account: "%account_title%" is started. Please wait...
-        $status = 'The "Synchronize Data" Action for eBay Account: "%account_title%" is started. ';
-        $status .= 'Please wait...';
-        $this->getActualLockItem()->setStatus(
-            $this->getHelper('Module\Translation')->__($status, $account->getTitle())
-        );
+        $iteration = 1;
+        $percentsForOneStep = $this->getPercentsInterval() / count($accounts);
 
-        $this->getActualOperationHistory()->addTimePoint(
-            __METHOD__.'process'.$account->getId(),
-            'Process Account '.$account->getTitle()
-        );
+        foreach ($accounts as $account) {
 
-        $this->processAccount($account);
+            /** @var \Ess\M2ePro\Model\Account $account */
 
-        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+            $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+            // M2ePro\TRANSLATIONS
+            // The "Synchronize Data" Action for eBay Account: "%account_title%" is started. Please wait...
+            $status = 'The "Synchronize Data" Action for eBay Account: "%account_title%" is started. ';
+            $status .= 'Please wait...';
+            $this->getActualLockItem()->setStatus(
+                $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+            );
 
-        // M2ePro\TRANSLATIONS
-        // The "Synchronize Data" Action for eBay Account: "%account_title%" is finished. Please wait...
-        $status = 'The "Synchronize Data" Action for eBay Account: "%account_title%" is finished.'.
-            ' Please wait...';
-        $this->getActualLockItem()->setStatus(
-            $this->getHelper('Module\Translation')->__($status, $account->getTitle())
-        );
-        $this->getActualLockItem()->activate();
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__.'process'.$account->getId(),
+                'Process Account '.$account->getTitle()
+            );
+
+            try {
+
+                $this->processAccount($account);
+
+            } catch (\Exception $exception) {
+
+                $message = $this->getHelper('Module\Translation')->__(
+                    'The "Synchronize Data" Action for eBay Account: "%account%" was completed with error.',
+                    $account->getTitle()
+                );
+
+                $this->processTaskAccountException($message, __FILE__, __LINE__);
+                $this->processTaskException($exception);
+            }
+
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
+
+            // M2ePro\TRANSLATIONS
+            // The "Synchronize Data" Action for eBay Account: "%account_title%" is finished. Please wait...
+            $status = 'The "Synchronize Data" Action for eBay Account: "%account_title%" is finished.'.
+                ' Please wait...';
+            $this->getActualLockItem()->setStatus(
+                $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+            );
+            $this->getActualLockItem()->setPercents($this->getPercentsStart() + $iteration * $percentsForOneStep);
+            $this->getActualLockItem()->activate();
+
+            $iteration++;
+        }
     }
 
     //########################################
@@ -105,7 +130,7 @@ final class Update extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Abstra
 
         /** @var \Ess\M2ePro\Model\Ebay\Connector\AccountPickupStore\Synchronize\ProductsRequester $connector */
         $connector = $dispatcher->getConnector(
-            'accountPickupStore', 'synchronize', 'productsRequester', array(), NULL, $account
+            'accountPickupStore', 'synchronize', 'productsRequester', array(), NULL, $account->getId()
         );
         $connector->setPickupStoreStateItems($pickupStoreStateItems);
         $dispatcher->process($connector);

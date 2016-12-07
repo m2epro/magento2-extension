@@ -46,7 +46,7 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
     public function getListingProductVariation()
     {
         if (is_null($this->listingProductVariationModel)) {
-            $this->listingProductVariationModel = $this->parentFactory->getCachedObjectLoaded(
+            $this->listingProductVariationModel = $this->parentFactory->getObjectLoaded(
                 $this->getComponentMode(),'Listing\Product\Variation',$this->getData('listing_product_variation_id')
             );
         }

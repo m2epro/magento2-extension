@@ -25,7 +25,7 @@ class ViewSearchSettings extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         $settings = $this->createBlock('Amazon\Listing\Create\Search');
 
         $this->setAjaxContent($settings->toHtml());
-        
+
         return $this->getResult();
     }
 

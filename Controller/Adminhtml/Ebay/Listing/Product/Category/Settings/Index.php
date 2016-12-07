@@ -15,7 +15,7 @@ class Index extends Settings
         }
 
         $listing = $this->getListing();
-        
+
         if (count($listing->getChildObject()->getAddedListingProductsIds()) === 0) {
             return $this->_redirect('*/ebay_listing_product_add',array('id' => $listingId,
                 '_current' => true));
@@ -47,7 +47,7 @@ class Index extends Settings
 
         return $this->$action();
     }
-    
+
     //########################################
 
     private function stepOne()
@@ -161,7 +161,7 @@ class Index extends Settings
 
                 $data[$key] = $value;
             }
-            
+
             $listing = $this->getListing();
 
             $this->addCategoriesPath($data, $listing);
@@ -214,11 +214,11 @@ class Index extends Settings
         $internalData = array();
 
         $internalData = array_merge(
-            $internalData, 
+            $internalData,
             $listing->getChildObject()->getLastPrimaryCategory(array('ebay_primary_category','mode_same'))
         );
         $internalData = array_merge(
-            $internalData, 
+            $internalData,
             $listing->getChildObject()->getLastPrimaryCategory(array('ebay_store_primary_category','mode_same'))
         );
 
@@ -512,7 +512,7 @@ class Index extends Settings
         }
 
         $this->setSessionValue('specifics', $specificsData);
-    }    
+    }
 
     //########################################
 

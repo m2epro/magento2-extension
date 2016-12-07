@@ -271,7 +271,6 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         )->addCustomAttribute('allowed_attribute_types', 'text');
 
-
         // ---------------------------------------
 
         $this->setForm($form);

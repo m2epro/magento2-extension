@@ -240,7 +240,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      * @param bool $asObjects
      * @param array $filters
      * @param array $sort
-     * @return array|\Ess\M2ePro\Model\ActiveRecord\AbstractModel[]
+     * @return array|\Ess\M2ePro\Model\Ebay\Template\Shipping\Service[]
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getServices($asObjects = false, array $filters = array(),

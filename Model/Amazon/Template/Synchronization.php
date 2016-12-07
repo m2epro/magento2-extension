@@ -87,6 +87,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     const STOP_QTY_BETWEEN = 2;
     const STOP_QTY_MORE    = 3;
 
+    const ADVANCED_RULES_MODE_NONE = 0;
+    const ADVANCED_RULES_MODE_YES  = 1;
+
+    const LIST_ADVANCED_RULES_PREFIX   = 'amazon_template_synchronization_list_advanced_rules';
+    const RELIST_ADVANCED_RULES_PREFIX = 'amazon_template_synchronization_relist_advanced_rules';
+    const STOP_ADVANCED_RULES_PREFIX   = 'amazon_template_synchronization_stop_advanced_rules';
+
     //########################################
 
     public function _construct()
@@ -166,6 +173,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     public function isListWhenQtyCalculatedHasValue()
     {
         return $this->getData('list_qty_calculated') != self::LIST_QTY_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isListAdvancedRulesEnabled()
+    {
+        return $this->getData('list_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getListAdvancedRulesFilters());
     }
 
     // ---------------------------------------
@@ -354,6 +370,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
         return $this->getData('relist_qty_calculated') != self::RELIST_QTY_NONE;
     }
 
+    /**
+     * @return bool
+     */
+    public function isRelistAdvancedRulesEnabled()
+    {
+        return $this->getData('relist_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getRelistAdvancedRulesFilters());
+    }
+
     // ---------------------------------------
 
     /**
@@ -386,6 +411,15 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     public function isStopWhenQtyCalculatedHasValue()
     {
         return $this->getData('stop_qty_calculated') != self::STOP_QTY_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isStopAdvancedRulesEnabled()
+    {
+        return $this->getData('stop_advanced_rules_mode') != self::ADVANCED_RULES_MODE_NONE &&
+               !empty($this->getStopAdvancedRulesFilters());
     }
 
     //########################################
@@ -424,6 +458,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
 
     // ---------------------------------------
 
+    public function getListAdvancedRulesFilters()
+    {
+        return $this->getData('list_advanced_rules_filters');
+    }
+
+    // ---------------------------------------
+
     public function getRelistWhenQtyMagentoHasValueType()
     {
         return $this->getData('relist_qty_magento');
@@ -458,6 +499,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
 
     // ---------------------------------------
 
+    public function getRelistAdvancedRulesFilters()
+    {
+        return $this->getData('relist_advanced_rules_filters');
+    }
+
+    // ---------------------------------------
+
     public function getStopWhenQtyMagentoHasValueType()
     {
         return $this->getData('stop_qty_magento');
@@ -488,6 +536,13 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     public function getStopWhenQtyCalculatedHasValueMax()
     {
         return $this->getData('stop_qty_calculated_value_max');
+    }
+
+    // ---------------------------------------
+
+    public function getStopAdvancedRulesFilters()
+    {
+        return $this->getData('stop_advanced_rules_filters');
     }
 
     //########################################
@@ -542,6 +597,6 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     {
         return true;
     }
-    
+
     //########################################
 }

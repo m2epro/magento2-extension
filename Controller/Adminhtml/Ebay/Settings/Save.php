@@ -16,11 +16,10 @@ class Save extends Settings
 
     public function execute()
     {
-//       TODO NOT SUPPORTED FEATURES
-//        $this->getHelper('Module')->getConfig()->setGroupValue(
-//            '/view/ebay/feedbacks/notification/', 'mode',
-//            (int)$this->getRequest()->getParam('view_ebay_feedbacks_notification_mode')
-//        );
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/view/ebay/feedbacks/notification/', 'mode',
+            (int)$this->getRequest()->getParam('view_ebay_feedbacks_notification_mode')
+        );
 
         $this->getHelper('Module')->getConfig()->setGroupValue(
             '/view/ebay/template/category/', 'use_last_specifics',

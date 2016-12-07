@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\Parent;
 
-abstract class AbstractModel 
+abstract class AbstractModel
     extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\Component\AbstractModel
 {
     protected $childMode = NULL;

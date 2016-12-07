@@ -132,22 +132,27 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         $result = parent::_afterSave($object);
 
-        if (is_null($this->childMode)) {
-            return $result;
-        }
-
         if (!$object->isCreateMode()) {
             return $result;
         }
 
         $object->setCreateMode(false);
 
+        if (is_null($this->childMode)) {
+
+            if ($object->getData('reload_on_create')) {
+                $object->load($object->getId());
+            }
+
+            return $result;
+        }
+
         $data = $object->getData();
         $data[$this->getChildPrimary()] = (int)$object->getData('id');
         $dataColumns = array_keys($data);
 
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel $object */
         $object->unsetData();
-
         $parentColumnsInfo = $this->getConnection()->describeTable($this->getMainTable());
 
         foreach($parentColumnsInfo as $columnInfo) {
@@ -155,12 +160,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
                 $object->setData($columnInfo['COLUMN_NAME'], $data[$columnInfo['COLUMN_NAME']]);
             }
         }
+
         $object->setOrigData();
 
         /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $childObject */
         $childObject = $this->activeRecordFactory->getObject($this->getChildModel());
-
         $childColumnsInfo = $this->getConnection()->describeTable($this->getChildTable());
+
         foreach($childColumnsInfo as $columnInfo) {
             if (in_array($columnInfo['COLUMN_NAME'], $dataColumns)) {
                 $childObject->setData($columnInfo['COLUMN_NAME'], $data[$columnInfo['COLUMN_NAME']]);
@@ -174,6 +180,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
 
         if ($object->getData('reload_on_create')) {
             $object->load($object->getId());
+            $childObject->load($object->getId());
         }
 
         return $result;

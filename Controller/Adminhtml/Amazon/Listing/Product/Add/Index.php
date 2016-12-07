@@ -386,6 +386,6 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
 
         $this->getHelper('Data\GlobalData')->setValue('rule_model', $ruleModel);
     }
-    
+
     //########################################
 }

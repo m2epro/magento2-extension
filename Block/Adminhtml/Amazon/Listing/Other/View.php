@@ -45,6 +45,19 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
+
+        $accountId = $this->getRequest()->getParam('account');
+        $marketplaceId = $this->getRequest()->getParam('marketplace');
+
+        $this->addButton('view_logs', array(
+            'label'   => $this->__('View Log'),
+            'onclick' => 'window.open(\''.$this->getUrl('*/amazon_log_listing_other/index', [
+                'amazonAccount' => $accountId,
+                'amazonMarketplace' => $marketplaceId,
+                'listings' => true
+            ]) . '\');',
+        ));
+
         if (!is_null($this->getRequest()->getParam('back'))) {
             $url = $this->getHelper('Data')->getBackUrl();
             $this->buttonList->add('back', array(
@@ -63,8 +76,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'content' => $this->__(
                 <<<HTML
                 <p>The list below shows the 3rd Party Listings imported from a particular Account and Marketplace.
-                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported 
-                Items are Mapped to Magento Products, they can be Moved into an M2E Pro 
+                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported
+                Items are Mapped to Magento Products, they can be Moved into an M2E Pro
                 Listing for further management.</p><br>
 
                 <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
@@ -106,9 +119,7 @@ HTML
         $componentMode = \Ess\M2ePro\Helper\Component\Amazon::NICK;
 
         $this->jsUrl->addUrls([
-            'amazon_listing_other_log/index' => $this->getUrl('*/amazon_listing_other_log/index',array(
-                'back' => $this->getHelper('Data')->makeBackUrlParam('*/amazon_listing_other/index')
-            )),
+            'amazon_log_listing_other/index' => $this->getUrl('*/amazon_log_listing_other/index'),
 
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
 
@@ -235,6 +246,10 @@ HTML
         });
 JS
 );
+
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
+            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'
+        ));
 
         return '<div id="listing_other_progress_bar"></div>' .
                '<div id="listing_container_errors_summary" class="errors_summary" style="display: none;"></div>' .

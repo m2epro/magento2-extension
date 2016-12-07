@@ -149,7 +149,7 @@ function(jQuery) {
 
         // ---------------------------------------
 
-        saveAndCloseClick: function(url)
+        saveAndCloseClick: function(url, confirmText)
         {
             if (!this.isValidForm()) {
                 return;
@@ -157,13 +157,25 @@ function(jQuery) {
 
             var self = this;
 
+            if (confirmText && this.showConfirmMsg) {
+                this.confirm(this.templateNick, confirmText, function () {
+                    self.saveFormUsingAjax(url, self.templateNick);
+                });
+                return;
+            }
+
+            self.saveFormUsingAjax(url, self.templateNick);
+        },
+
+        saveFormUsingAjax: function (url, templateNick)
+        {
             new Ajax.Request(url, {
                 method: 'post',
                 parameters: Form.serialize($('edit_form')),
                 onSuccess: function(transport) {
                     var templates = transport.responseText.evalJSON();
 
-                    if (templates.length && templates[0].nick == self.templateNick) {
+                    if (templates.length && templates[0].nick == templateNick) {
                         window.close();
                     } else {
                         console.error('Policy Saving Error');

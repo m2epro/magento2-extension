@@ -68,7 +68,7 @@ define([
                 if (typeof onComplete == 'function') {
                     onComplete(this.searchResult);
                 }
-                
+
                 $$('.loading-mask').invoke('setStyle', {visibility: 'visible'});
 
                 this.resetSearchResult();
@@ -109,7 +109,7 @@ define([
                     }.bind(this), 500);
                 }.bind(this)
             });
-            
+
             $$('.loading-mask').invoke('setStyle', {visibility: 'hidden'});
         }
 

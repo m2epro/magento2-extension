@@ -67,7 +67,7 @@ abstract class AbstractForm extends Generic
         \Magento\Framework\Data\Form::setFieldsetRenderer(
             $this->createBlock('Magento\Form\Renderer\Fieldset')
         );
-        
+
         return $this;
     }
 }

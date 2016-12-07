@@ -16,6 +16,7 @@ abstract class Order extends Main
     protected function init()
     {
         $this->addCss('order.css');
+        $this->addCss('switcher.css');
         $this->addCss('ebay/order/grid.css');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Sales'));
@@ -30,7 +31,7 @@ abstract class Order extends Main
             $this->messageManager->addError($this->__('Please select Order(s).'));
             return false;
         }
-        
+
         return $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher')->process(
             $action, $ids, $params
         );
@@ -65,7 +66,7 @@ abstract class Order extends Main
             /** @var \Ess\M2ePro\Model\Ebay\Order $ebayOrder */
             $ebayOrder = $order->getChildObject();
 
-            $dispatcher = $this->ebayFactory->getObject('Connector\Order\Dispatcher');
+            $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
             $connector = $dispatcher->getVirtualConnector(
                 'store', 'update', 'order',
                 array('order_id' => $ebayOrder->getEbayOrderId(), 'type' => $type),

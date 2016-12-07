@@ -28,13 +28,13 @@ class Order extends AbstractForm
 
         parent::__construct($context, $registry, $formFactory, $data);
     }
-    
+
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $magentoOrdersSettings = !is_null($account) ? $account->getData('magento_orders_settings') : [];
-        $magentoOrdersSettings = !empty($magentoOrdersSettings) ? json_decode($magentoOrdersSettings, true) : array();
-        
+        $ordersSettings = !is_null($account) ? $account->getChildObject()->getData('magento_orders_settings') : [];
+        $ordersSettings = !empty($ordersSettings) ? json_decode($ordersSettings, true) : array();
+
         // ---------------------------------------
         $websites = $this->getHelper('Magento\Store\Website')->getWebsites(true);
         // ---------------------------------------
@@ -45,8 +45,8 @@ class Order extends AbstractForm
         // ---------------------------------------
 
         // ---------------------------------------
-//        $selectedStore = !empty($magentoOrdersSettings['listing_other']['store_id'])
-//            ? $magentoOrdersSettings['listing_other']['store_id'] : '';
+//        $selectedStore = !empty($ordersSettings['listing_other']['store_id'])
+//            ? $ordersSettings['listing_other']['store_id'] : '';
 //        $blockStoreSwitcher = $this->getLayout()->createBlock('M2ePro/adminhtml_storeSwitcher', '', array(
 //            'id' => 'magento_orders_listings_other_store_id',
 //            'name' => 'magento_orders_settings[listing_other][store_id]',
@@ -138,11 +138,11 @@ class Order extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>Specify how M2E Pro should manage the imported from Amazon Orders for the Items listed using 
+<p>Specify how M2E Pro should manage the imported from Amazon Orders for the Items listed using
 M2E Pro or other tools.</p><br>
-<p><strong>Note:</strong> If an Amazon Order is received, Magento Product QTY decreases only if a Magento 
+<p><strong>Note:</strong> If an Amazon Order is received, Magento Product QTY decreases only if a Magento
 Order is created.</p><br>
-<p>More detailed information about how to work with this Page you can find 
+<p>More detailed information about how to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
@@ -199,8 +199,9 @@ HTML
                 'name' => 'magento_orders_settings[listing][store_id]',
                 'label' => $this->__('Magento Store View'),
                 'required' => true,
-                'value' => !empty($magentoOrdersSettings['listing']['store_id'])
-                    ? $magentoOrdersSettings['listing']['store_id'] : '',
+                'value' => !empty($ordersSettings['listing']['store_id'])
+                    ? $ordersSettings['listing']['store_id'] : '',
+                'has_empty_option' => true,
                 'has_default_option' => false,
                 'tooltip' => $this->__('The Magento Store View that Orders will be placed in.')
             ]
@@ -236,9 +237,11 @@ HTML
                 'container_id' => 'magento_orders_listings_other_store_id_container',
                 'name' => 'magento_orders_settings[listing_other][store_id]',
                 'label' => $this->__('Magento Store View'),
-                'value' => !empty($magentoOrdersSettings['listing_other']['store_id'])
-                    ? $magentoOrdersSettings['listing_other']['store_id'] : '',
-                'hasDefaultOption' => false,
+                'value' => !empty($ordersSettings['listing_other']['store_id'])
+                    ? $ordersSettings['listing_other']['store_id'] : '',
+                'required' => true,
+                'has_empty_option' => true,
+                'has_default_option' => false,
                 'tooltip' => $this->__('The Magento Store View that Orders will be placed in.')
             ]
         );
@@ -533,7 +536,7 @@ HTML
                 'label' => $this->__('Associate to Website'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['website_id'],
-                'required' => false
+                'required' => true
             ]
         );
 
@@ -550,7 +553,7 @@ HTML
                 'label' => $this->__('Customer Group'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['group_id'],
-                'required' => false
+                'required' => true
             ]
         );
 
@@ -572,7 +575,7 @@ HTML
                 ],
                 'value' => $value,
                 'tooltip' => $this->__(
-                    '<p>Necessary emails will be sent according to Magento Settings in 
+                    '<p>Necessary emails will be sent according to Magento Settings in
                     Stores > Configuration > Sales > Sales Emails.</p>
                     <p>Hold Ctrl Button to choose more than one Option.</p>'
                 )
@@ -740,7 +743,7 @@ HTML
                 'Prefix length should not be greater than 5 characters.'
             )
         ]);
-        
+
         $formData['magento_orders_settings']['listing']['mode'] = $this->getHelper('Data')->escapeJs(
             $formData['magento_orders_settings']['listing']['mode']
         );
@@ -775,7 +778,7 @@ HTML
         );
 
         $this->js->add(<<<JS
-        
+
     M2ePro.formData.magento_orders_listings_mode = "{$formData['magento_orders_settings']['listing']['mode']}";
     M2ePro.formData.magento_orders_listings_store_mode
                              = "{$formData['magento_orders_settings']['listing']['store_mode']}";
@@ -797,7 +800,7 @@ HTML
 
 JS
 );
-        
+
         return parent::_prepareForm();
     }
 }

@@ -44,11 +44,11 @@ class Rule extends AbstractForm
     protected function _prepareLayout()
     {
         $this->css->add(<<<CSS
-        
+
         #rule_form .field-advanced_filter .admin__field-control:first-child {
             width: calc( 100% - 30px );
         }
-        
+
         .advanced-filter-fieldset {
             border-top: 1px solid #ccc;
             border-bottom: 1px solid #ccc;
@@ -57,31 +57,36 @@ class Rule extends AbstractForm
             margin-bottom: 1em;
             display: none;
         }
-        
+
         .advanced-filter-fieldset-active {
             margin-top: 1em;
         }
-        
+
         .advanced-filter-fieldset {
             clear: both;
         }
-        
+
         .advanced-filter-fieldset > legend.legend {
             border-bottom: none !important;
             margin-bottom: 5px !important;
         }
-        
+
         .advanced-filter-fieldset .field-advanced_filter {
             margin-bottom: 1.5em !important;
             float: left;
             min-width: 50%;
         }
-        
+
         .advanced-filter-fieldset .rule-param .label {
             font-size: 14px;
             font-weight: 600;
         }
-        
+
+        .advanced-filter-fieldset .rule-param {
+            vertical-align: top;
+            display: inline-block;
+        }
+
         .advanced-filter-fieldset ul.rule-param-children {
             margin-top: 1em;
         }
@@ -112,7 +117,7 @@ CSS
                 'class' => 'advanced-filter-fieldset'
             ]
         );
-        
+
         $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
         $ruleBlock = $this->createBlock('Magento\Product\Rule')
             ->setData(['rule_model' => $ruleModel]);

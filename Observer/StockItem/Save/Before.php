@@ -49,7 +49,7 @@ class Before extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         if ($this->isAddingStockItemProcess()) {
             return;
         }
-        
+
         $key = $this->getStockItemId().'_'.$this->getStoreId();
         $this->registry->unregister($key);
     }
@@ -59,7 +59,7 @@ class Before extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
         if ($this->isAddingStockItemProcess()) {
             return;
         }
-        
+
         $key = $this->getStockItemId().'_'.$this->getStoreId();
         $this->getRegistry()->register($key, $this->getStockItem());
     }

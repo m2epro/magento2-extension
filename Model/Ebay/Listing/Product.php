@@ -100,7 +100,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         $this->returnTemplateModel = NULL;
         $this->shippingTemplateModel = NULL;
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
             $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')
                 ->getResource()->processDeletedProduct($this->getParentObject());
         }
@@ -1149,8 +1149,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             }
         }
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-            $listingProductPickupStoreCollection = $this->modelFactory->getObject('Ebay\Listing\Product\PickupStore')
+        if ($this->isSetCategoryTemplate()) {
+            $attributes = array_merge($attributes,$this->getCategoryTemplate()->getTrackingAttributes());
+        }
+
+        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
+            $listingProductPickupStoreCollection = $this->activeRecordFactory
+                ->getObject('Ebay\Listing\Product\PickupStore')
                 ->getCollection()
                 ->addFieldToFilter('listing_product_id', $this->getId());
 

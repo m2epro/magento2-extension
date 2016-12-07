@@ -151,7 +151,7 @@ class CreditMemo extends AbstractModel
     private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
     {
         $url = $this->urlBuilder->getUrl(
-            'M2ePro/adminhtml_amazon_order_log/index', array('order_id' => $order->getId())
+            '*/amazon_log_order/index', array('order_id' => $order->getId())
         );
 
         // M2ePro\TRANSLATIONS

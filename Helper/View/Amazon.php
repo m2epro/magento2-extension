@@ -67,37 +67,4 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     }
 
     //########################################
-
-    public function is3rdPartyShouldBeShown()
-    {
-        $runtimeCache = $this->getHelper('Data\Cache\Runtime');
-
-        if (!is_null($runtimeCache->getValue(__METHOD__))) {
-            return $runtimeCache->getValue(__METHOD__);
-        }
-
-        $accountCollection = $this->activeRecordFactory->getObject('Amazon\Account')->getCollection();
-        $accountCollection->addFieldToFilter(
-            'other_listings_synchronization', \Ess\M2ePro\Model\Amazon\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES
-        );
-
-        if ((bool)$accountCollection->getSize()) {
-            $result = true;
-        } else {
-            $collection = $this->activeRecordFactory->getObject('Amazon\Listing\Other')->getCollection();
-
-            $logCollection = $this->activeRecordFactory->getObject('Listing\Other\Log')->getCollection();
-            $logCollection->addFieldToFilter(
-                'component_mode', \Ess\M2ePro\Helper\Component\Amazon::NICK
-            );
-
-            $result = $collection->getSize() || $logCollection->getSize();
-        }
-
-        $runtimeCache->setValue(__METHOD__, $result);
-
-        return $result;
-    }
-
-    //########################################
 }

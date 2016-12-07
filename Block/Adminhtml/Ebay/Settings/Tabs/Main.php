@@ -43,6 +43,10 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             '/ebay/description/','upload_images_mode'
         );
 
+        $viewEbayFeedbacksNotificationMode = (int)$configModel->getGroupValue(
+            '/view/ebay/feedbacks/notification/','mode'
+        );
+
         $form = $this->_formFactory->create([
             'data' => [
                 'method' => 'post',
@@ -119,12 +123,12 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 ],
                 'value' => $checkTheSameProductAlreadyListedMode,
                 'tooltip' => $this->__(
-                    '<p>Choose \'Yes\' to prevent M2E Pro from adding a Product 
+                    '<p>Choose \'Yes\' to prevent M2E Pro from adding a Product
                      if it has already been presented in the Listing</p>
                      <p>Essentially, this option is useful if you have Automatic Add/Remove Rules set up.
-                     It will ensure that each Product is listed only once, when Products are added 
+                     It will ensure that each Product is listed only once, when Products are added
                      to the Listing automatically.</p><br/>
-                     <p><strong>Note:</strong> Applies only to Products Listed automatically on live Marketplaces 
+                     <p><strong>Note:</strong> Applies only to Products Listed automatically on live Marketplaces
                      (i.e. not using a Sandbox Account).</p>'
                 )
             ]
@@ -156,6 +160,22 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
+        if ($this->getHelper('View\Ebay')->isFeedbacksShouldBeShown()) {
+            $fieldset->addField('view_ebay_feedbacks_notification_mode',
+                'select',
+                [
+                    'name' => 'view_ebay_feedbacks_notification_mode',
+                    'label' => $this->__('Negative Feedback'),
+                    'values' => [
+                        0 => $this->__('No'),
+                        1 => $this->__('Yes')
+                    ],
+                    'value' => $viewEbayFeedbacksNotificationMode,
+                    'tooltip' => $this->__('Show a notification in Magento when you receive negative Feedback on eBay.')
+                ]
+            );
+        }
+
         $form->setUseContainer(true);
         $this->setForm($form);
 
@@ -164,13 +184,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 
     protected function _prepareLayout()
     {
-        // TODO NOT SUPPORTED FEATURES
-        /*        $this->view_ebay_feedbacks_notification_mode = (bool)(int)$this->cacheConfig->getGroupValue(
-                    '/view/ebay/feedbacks/notification/','mode'
-                );
-
-                $this->is_ebay_feedbacks_enabled = $this->getHelper('View\Ebay')->isFeedbacksShouldBeShown();*/
-
         // TODO NOT SUPPORTED FEATURES
         /** @var \Ess\M2ePro\Helper\Component\Ebay\Motors $motorsHelper */
         /*      $motorsHelper = $this->getHelper('Component\Ebay\Motors');

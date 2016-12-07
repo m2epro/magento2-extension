@@ -61,7 +61,7 @@ class NewAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     {
         $this->appendHelpBlock([
             'content' => $this->__(
-                '<p>Description Policy is required for New ASIN/ISBN creation. 
+                '<p>Description Policy is required for New ASIN/ISBN creation.
                 It should be properly configured to allow creation of New Amazon Products.</p><br>
 
                 <p>More detailed information about creation of New Amazon Products and Description Policies

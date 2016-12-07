@@ -52,7 +52,7 @@ class EditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         foreach ($response['offers'] as $offer) {
             $skus[] = $offer['sku'];
         }
-        
+
         /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
         $repricingSynchronization->setAccount($account);

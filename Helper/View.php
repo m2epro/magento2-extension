@@ -151,7 +151,7 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $description = $this->getHelper('Module\Log')->decodeDescription($logMessage);
 
-        preg_match_all('/[^(href=")](http|https)\:\/\/[a-z0-9\-\._\/+\?\&\%=;\(\)]+/i', $description, $matches);
+        preg_match_all('/[^(href=")]?(http|https)\:\/\/[a-z0-9\-\._\/+\?\&\%=;\(\)]+/i', $description, $matches);
         $matches = array_unique($matches[0]);
 
         foreach ($matches as &$url) {

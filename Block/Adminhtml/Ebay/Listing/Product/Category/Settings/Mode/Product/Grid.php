@@ -668,20 +668,18 @@ require([
 
     window.WrapperObj = new AreaWrapper('products_container');
     window.ProgressBarObj = new ProgressBar('products_progress_bar');
-    
+
     window.EbayListingProductCategorySettingsModeProductGridObj
             = new EbayListingProductCategorySettingsModeProductGrid('{$this->getId()}');
     EbayListingProductCategorySettingsModeProductSuggestedSearchObj
             = new EbayListingProductCategorySettingsModeProductSuggestedSearch();
-    
+
     EbayListingProductCategorySettingsModeProductGridObj.afterInitPage();
     EbayListingProductCategorySettingsModeProductGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
-    
+
     if ({$getSuggested}) {
         EbayListingProductCategorySettingsModeProductGridObj.getSuggestedCategoriesForAll();
     }
-    
-
 })
 JS
         );

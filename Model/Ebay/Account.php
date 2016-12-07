@@ -139,12 +139,12 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $item->delete();
         }
 
-//        $pickupStoreCollection = $this->parentFactory->getObject($this->getComponentMode(), 'Account\PickupStore')
-//            ->getCollection()->addFieldToFilter('account_id', $this->getId());
-//        foreach ($pickupStoreCollection as $pickupStore) {
-//            /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore $pickupStore */
-//            $pickupStore->delete();
-//        }
+        $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')
+            ->getCollection()->addFieldToFilter('account_id', $this->getId());
+        foreach ($pickupStoreCollection as $pickupStore) {
+            /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore $pickupStore */
+            $pickupStore->delete();
+        }
 
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('account');
         return parent::delete();
@@ -203,7 +203,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function hasFeedbackTemplate()
     {
-        return (bool)$this->parentFactory->getObject($this->getComponentMode(), 'Feedback\Template')->getCollection()
+        return (bool)$this->activeRecordFactory->getObject('Ebay\Feedback\Template')->getCollection()
             ->addFieldToFilter('account_id', $this->getId())
             ->getSize();
     }
@@ -990,7 +990,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isPickupStoreEnabled()
     {
         $additionalData = json_decode($this->getParentObject()->getData('additional_data'), true);
-        return !empty($additionalData['bopis']);
+        return $this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled() && !empty($additionalData['bopis']);
     }
 
     //########################################

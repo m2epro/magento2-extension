@@ -257,15 +257,27 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['best_offer_reject_attribute'] = $data['best_offer_reject_attribute'];
         }
 
-        if (isset($data['charity_id'], $data['charity_name'], $data['charity_percentage'])
-            && $prepared['is_custom_template'] == 1) {
-            $src = array(
-                'id'            => $data['charity_id'],
-                'name'          => $data['charity_name'],
-                'percentage'    => (int)$data['charity_percentage'],
-            );
+        $prepared['charity'] = NULL;
 
-            $prepared['charity'] = json_encode($src);
+        if (!empty($data['charity']) && !empty($data['charity']['marketplace_id'])) {
+            $charities = [];
+            foreach ($data['charity']['marketplace_id'] as $key => $marketplaceId) {
+                if (empty($data['charity']['organization_id'][$key])) {
+                    continue;
+                }
+
+                $charities[$marketplaceId] = [
+                    'marketplace_id' => (int)$marketplaceId,
+                    'organization_id' => (int)$data['charity']['organization_id'][$key],
+                    'organization_name' => $data['charity']['organization_name'][$key],
+                    'organization_custom' => (int)$data['charity']['organization_custom'][$key],
+                    'percentage' => (int)$data['charity']['percentage'][$key]
+                ];
+            }
+
+            if (!empty($charities)) {
+                $prepared['charity'] = json_encode($charities);
+            }
         }
 
         if (isset($data['ignore_variations'])) {

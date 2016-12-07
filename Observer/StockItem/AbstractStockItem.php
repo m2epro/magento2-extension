@@ -117,6 +117,6 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     {
         return $this->registry;
     }
-    
+
     //########################################
 }

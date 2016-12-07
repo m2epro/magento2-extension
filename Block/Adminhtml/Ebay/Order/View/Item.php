@@ -15,14 +15,14 @@ class Item extends AbstractGrid
     protected $taxCalculator;
 
     //########################################
-    
+
     public function __construct(
         \Magento\Catalog\Model\Product $productModel,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Tax\Model\Calculation $taxCalculator,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context, 
-        \Magento\Backend\Helper\Data $backendHelper, 
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
@@ -30,7 +30,7 @@ class Item extends AbstractGrid
         $this->resourceConnection = $resourceConnection;
         $this->ebayFactory = $ebayFactory;
         $this->taxCalculator = $taxCalculator;
-        
+
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -178,7 +178,7 @@ HTML;
             $this->order->getMarketplaceId()
         );
 
-        $itemLink = '<a href="'.$itemUrl.'" target="_blank">'.$this->__('View on eBay').'</a>';
+        $itemLink = '<a href="'.$itemUrl.'" class="external-link" target="_blank">'.$this->__('View on eBay').'</a>';
 
         $productLink = '';
 

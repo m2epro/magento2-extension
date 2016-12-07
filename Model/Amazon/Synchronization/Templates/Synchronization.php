@@ -95,9 +95,9 @@ final class Synchronization extends \Ess\M2ePro\Model\Amazon\Synchronization\Tem
         $result = true;
 
         $result = !$this->processTask('Synchronization\ListActions') ? false : $result;
-        $result = !$this->processTask('Synchronization\Revise') ? false : $result;
         $result = !$this->processTask('Synchronization\Relist') ? false : $result;
         $result = !$this->processTask('Synchronization\Stop') ? false : $result;
+        $result = !$this->processTask('Synchronization\Revise') ? false : $result;
 
         return $result;
     }

@@ -53,6 +53,14 @@ class Messages extends AbstractElement
             }
         }
 
-        return $block->toHtml();
+        if (!$containerId = $this->getData('container_id')) {
+            return $block->toHtml();
+        }
+
+        return <<<HTML
+<div id="{$containerId}">
+    {$block->toHtml()}
+</div>
+HTML;
     }
 }

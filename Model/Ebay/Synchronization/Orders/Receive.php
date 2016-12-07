@@ -11,9 +11,9 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 final class Receive extends AbstractModel
 {
     protected $orderBuilderFactory;
-    
+
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Model\Ebay\Order\BuilderFactory $orderBuilderFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -193,7 +193,11 @@ final class Receive extends AbstractModel
             $ebayOrder = $this->orderBuilderFactory->create();
             $ebayOrder->initialize($account, $ebayOrderData);
 
-            $orders[] = $ebayOrder->process();
+            try {
+                $orders[] = $ebayOrder->process();
+            } catch (\Exception $exception) {
+                continue;
+            }
         }
 
         $this->saveLastUpdateTime($account, $toTime);

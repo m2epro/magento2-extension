@@ -30,7 +30,10 @@ class Installation extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $this->setupData = $this->activeRecordFactory->getObject('Setup')->getCollection()->toArray()['items'];
+        $collection = $this->activeRecordFactory->getObject('Setup')->getCollection();
+        $collection->setOrder('create_date', $collection::SORT_ORDER_DESC);
+
+        $this->setupData = $collection->toArray()['items'];
 
         return parent::_beforeToHtml();
     }

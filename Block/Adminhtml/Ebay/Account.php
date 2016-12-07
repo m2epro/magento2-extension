@@ -35,6 +35,8 @@ HTML
             'Should be between 2 and 80 characters long.' => $this->__('Should be between 2 and 80 characters long.')
         ]);
 
+        $this->css->addFile('ebay/account/feedback.css');
+
         return parent::_prepareLayout();
     }
 

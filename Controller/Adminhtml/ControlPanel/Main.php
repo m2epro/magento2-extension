@@ -14,6 +14,11 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         return true;
     }
 
+    protected function _validateSecretKey()
+    {
+        return true;
+    }
+
     //########################################
 
     protected function init()
@@ -56,7 +61,10 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         $this->getHelper('Magento')->isDeveloper() && $enabledMods[] = 'Magento';
         $this->getHelper('Module')->isDevelopmentMode() && $enabledMods[] = 'M2ePro';
 
-        $this->getMessageManager()->addWarning(implode(', ', $enabledMods).' Development Mode is Enabled.');
+        $msg = $this->getMessageManager()->createMessage(\Magento\Framework\Message\MessageInterface::TYPE_WARNING);
+        $msg->setText(implode(', ', $enabledMods).' Development Mode is Enabled.');
+
+        $this->getMessageManager()->addUniqueMessages([$msg]);
 
         return true;
     }

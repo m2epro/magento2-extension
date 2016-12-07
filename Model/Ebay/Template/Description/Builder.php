@@ -252,7 +252,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 ]]);
 
                 $watermarkPath = $varDir->getPath().(int)$prepared['id'].'.png';
-                
+
                 $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
                 if ($fileDriver->isFile($watermarkPath)) {
                     $fileDriver->deleteFile($watermarkPath);

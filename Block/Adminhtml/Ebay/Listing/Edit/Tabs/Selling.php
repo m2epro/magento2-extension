@@ -34,7 +34,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             'content' => $this->__(
                 '<p>On this step you should specify main settings according to which your Items will be sold - Price-,
                 Quantity-related configurations, etc.</p><br>
-                <p>More detailed information you can find 
+                <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
 
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/9gItAQ')

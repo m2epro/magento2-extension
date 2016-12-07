@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Edit\Policy;
 
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
-    
+
     //########################################
 
     protected function _prepareLayout()
@@ -44,11 +44,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $this->setForm($form);
         parent::_prepareLayout();
     }
-    
+
     protected function _toHtml()
     {
         $templateNick = $this->getRequest()->getParam('templateNick');
-        
+
         return $this->getHelpLinkHtmlForTemplate($templateNick)
                . parent::_toHtml();
     }
@@ -70,7 +70,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 
         $helpLinkBlock = $this->createBlock('PageHelpLink')->setData([
-            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationUrl(
+            'page_help_link' => $this->getHelper('Module\Support')->getDocumentationArticleUrl(
                 $articles[$templateNick]
             )
         ]);

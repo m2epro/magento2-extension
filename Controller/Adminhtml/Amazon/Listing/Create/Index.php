@@ -90,7 +90,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         if ($this->getRequest()->isPost()) {
 
             $this->setSessionValue('marketplace_id', $this->getMarketplaceId());
-            
+
             $dataKeys = array_keys(
                 $this->createBlock('Amazon\Listing\Create\Selling\Form')->getDefaultFieldsValues()
             );

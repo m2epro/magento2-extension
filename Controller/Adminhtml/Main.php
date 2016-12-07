@@ -16,10 +16,6 @@ abstract class Main extends Base
     {
         $result = parent::preDispatch($request);
 
-        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
-            return $this->_redirect('*/maintenance');
-        }
-
         if (empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
             return $this->_redirect('admin/dashboard');
         }
@@ -129,7 +125,7 @@ abstract class Main extends Base
         if ($this->getRequest()->isGet() &&
             !$this->getRequest()->isPost() &&
             !$this->getRequest()->isXmlHttpRequest()) {
-            
+
             $staticNotification = $this->addStaticContentNotification();
             $browserNotification = $this->addBrowserNotifications();
             $maintenanceNotification = $this->addMaintenanceNotifications();
@@ -143,7 +139,7 @@ abstract class Main extends Base
             if (!$muteMessages) {
                 $this->addStaticContentWarningNotification();
             }
-            
+
             $this->addServerNotifications();
 
             if (!$muteMessages) {
@@ -192,22 +188,28 @@ abstract class Main extends Base
 
         return true;
     }
-    
+
     protected function addStaticContentNotification()
     {
         if (!$this->getHelper('Magento')->isProduction()) {
             return false;
         }
-        
+
         if (!$this->getHelper('Module')->isStaticContentDeployed()) {
-            $this->getMessageManager()->addErrorMessage(
-                $this->__('Run "setup:static-content:deploy" TODO TEXT'),
+            $this->addExtendedErrorMessage(
+                $this->__(
+                    '<p>M2E Pro interface cannot work properly and there is no way to work with it correctly,
+                    as your Magento is set to the Production Mode and the static content data was not deployed.</p>
+                    <p>Thus, to solve this issue you should follow the recommendations provided in this
+                    <a href="%url%" target="_blank">article</a> and update the static content data.</p>',
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZgM0AQ')
+                ),
                 self::GLOBAL_MESSAGES_GROUP
             );
 
             return true;
         }
-        
+
         return false;
     }
 
@@ -349,13 +351,13 @@ abstract class Main extends Base
 
         return false;
     }
-    
+
     protected function addStaticContentWarningNotification()
     {
         if (!$this->getHelper('Magento')->isProduction()) {
             return;
         }
-        
+
         $skipMessageForVersion = $this->modelFactory->getObject('Config\Manager\Cache')->getGroupValue(
             '/global/notification/message/', 'skip_static_content_validation_message'
         );
@@ -368,35 +370,37 @@ abstract class Main extends Base
         if (!$deployDate) {
             return;
         }
-        
-        $lastDbModificationDate = $this->getHelper('Module')->getLastUpgradeDate();
-        if (empty($lastDbModificationDate)) {
-            $lastDbModificationDate = $this->getHelper('Module')->getInstallationDate();
-        }
 
-        if (empty($lastDbModificationDate)) {
+        $lastModificationDate = $this->getHelper('Module')->getPublicVersionLastModificationDate();
+        if (empty($lastModificationDate)) {
             return;
         }
 
-        $lastDbModificationDate = new \DateTime($lastDbModificationDate, new \DateTimeZone('UTC'));
+        $lastModificationDate = new \DateTime($lastModificationDate, new \DateTimeZone('UTC'));
         $deployDate = new \DateTime($deployDate, new \DateTimeZone('UTC'));
 
-        /*
-         * We check only database version because we can't retrieve date of update our module from composer
-         * TODO fix this when last composer update date available
-         */
-        if ($deployDate > $lastDbModificationDate) {
+        // we are reducing some safe interval
+        if ($deployDate > $lastModificationDate->modify('- 30 minutes')) {
             return;
         }
 
         $url = $this->getUrl('*/general/skipStaticContentValidationMessage',
-            ['skip_message' => true, 'back' => base64_encode($this->getUrl('*/*/*'))]
+            [
+                'skip_message' => true,
+                'back' => base64_encode($this->getUrl('*/*/*', ['_current' => true]))
+            ]
         );
 
         $this->addExtendedWarningMessage(
             $this->__(
-                'Run "setup:static-content:deploy" TODO TEXT 
-                    <a href="'.$url.'" class="skippable-global-message">Don\'t Show Again</a>'
+                '<p>The static content data was not deployed from the latest upgrade of M2E Pro Extension.
+                 It causes the incorrect working of all or some part of the Interface.</p>
+                 <p>Thus, to solve this issue you should follow the recommendations provided in this
+                 <a href="%url_1%" target="_blank">article</a> and update the static content data.</p>
+
+                 <a href="%url_2%">Don\'t Show Again</a><br>',
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZgM0AQ'),
+                $url
             ),
             self::GLOBAL_MESSAGES_GROUP
         );

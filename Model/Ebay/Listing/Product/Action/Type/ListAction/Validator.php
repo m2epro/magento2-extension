@@ -46,13 +46,13 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         if ($this->getListingProduct()->isHidden()) {
 
             $this->addMessage(
-                'The List action cannot be executed for this Item as it has a Listed (Hidden) status. 
+                'The List action cannot be executed for this Item as it has a Listed (Hidden) status.
                 You have to stop Item manually first to run the List action for it.'
             );
 
             return false;
         }
-        
+
         if (!$this->validateCategory()) {
             return false;
         }

@@ -93,7 +93,8 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception('Product type was not set.');
         }
 
-        if ($this->productType ==\Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED) {
+        if ($this->getHelper('Magento\Product')->isGroupedType($this->productType)) {
+
             $associatedProduct = $this->getGroupedAssociatedProduct();
 
             if (is_null($associatedProduct)) {
@@ -119,13 +120,13 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
      */
     public function prepareAssociatedProducts(array $associatedProducts)
     {
-        if ($this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE
-            || $this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_DOWNLOADABLE) {
+        $magentoProductHelper = $this->getHelper('Magento\Product');
 
+        if ($magentoProductHelper->isSimpleType($this->productType)) {
             return array($this->productId);
         }
 
-        if ($this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE) {
+        if ($magentoProductHelper->isBundleType($this->productType)) {
             $bundleAssociatedProducts = array();
 
             foreach ($associatedProducts as $key => $productIds) {
@@ -135,7 +136,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             return $bundleAssociatedProducts;
         }
 
-        if ($this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE) {
+        if ($magentoProductHelper->isConfigurableType($this->productType)) {
             $configurableAssociatedProducts = array();
 
             foreach ($associatedProducts as $productIds) {
@@ -154,7 +155,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
             return $configurableAssociatedProducts;
         }
 
-        if ($this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED) {
+        if ($magentoProductHelper->isGroupedType($this->productType)) {
             return array_values($associatedProducts);
         }
 
@@ -238,7 +239,9 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
         // ---------------------------------------
 
-        if ($this->productType == \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE && $this->hasFailedOptions()) {
+        if ($this->getHelper('Magento\Product')->isConfigurableType($this->productType) &&
+            $this->hasFailedOptions()) {
+
             throw new \Ess\M2ePro\Model\Exception('There is no associated Product found for Configurable Product.');
         }
 
@@ -333,13 +336,7 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
 
     private function getAllowedProductTypes()
     {
-        return array(
-           \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE,
-           \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE,
-           \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE,
-           \Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED,
-           \Ess\M2ePro\Model\Magento\Product::TYPE_DOWNLOADABLE,
-        );
+        return $this->getHelper('Magento\Product')->getOriginKnownTypes();
     }
 
     //########################################

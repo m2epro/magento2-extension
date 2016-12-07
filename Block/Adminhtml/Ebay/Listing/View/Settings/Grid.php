@@ -46,7 +46,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
 
         $this->css->addFile('ebay/template.css');
-        
+
         $this->showAdvancedFilterProductsOption = false;
     }
 
@@ -220,7 +220,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareColumns()
     {
-        
+
         $this->addColumn('product_id', array(
             'header'    => $this->__('Product ID'),
             'align'     => 'right',
@@ -472,7 +472,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                                     <span style='padding: 0 10px 0 5px'>{$templateLink}</span>
                                    </div>";
         }
-        
+
         if (!empty($productTemplatesHtml)) {
             $value .= "<div class='product_templates' style='text-decoration: underline;'>
                         {$this->__('Listing Policies Overrides')}
@@ -892,15 +892,17 @@ JS
         $this->jsUrl->add($this->getUrl('*/ebay_listing/view'), 'ebay_listing/getTransferringUrl');
 
         $this->jsUrl->add(
-            $this->getUrl('*/ebay_listing_log/index', array(
-                'id' => $this->listing->getId()
+            $this->getUrl('*/ebay_log_listing_product/index', array(
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                    $this->listing->getId()
             )),
-            'ebay_listing_log/index'
+            'ebay_log_listing_product/index'
         );
         $this->jsUrl->add(
-            $this->getUrl('*/ebay_listing_log/index', array(
-                'id'=> $this->listing->getId(),
-                'back'=> $helper->makeBackUrlParam(
+            $this->getUrl('*/ebay_log_listing_product/index', array(
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                    $this->listing->getId(),
+                'back' => $helper->makeBackUrlParam(
                     '*/ebay_listing/view',array('id' => $this->listing->getId())
                 )
             )),
@@ -1038,9 +1040,9 @@ JS
             '{$this->listing->getId()}'
         );
         EbayListingViewSettingsGridObj.afterInitPage();
-        EbayListingViewSettingsGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');  
+        EbayListingViewSettingsGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
         EbayListingViewSettingsGridObj.movingHandler.setOptions(M2ePro);
-        
+
         // TODO NOT SUPPORTED FEATURES
         // EbayListingTransferringHandlerObj = new EbayListingTransferringHandler();
 

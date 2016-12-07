@@ -61,12 +61,12 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     In case you create New Amazon Parent-Child Product using M2E Pro you will be considered as a
                     Creator of this Product. <br/><br/>
-    
+
                     In case ASIN/ISBN was found using M2E Pro Search Tool, you can specify that you created this
                     Amazon Parent Product earlier by clicking <i class="underline">"I am the Creator"</i> Button.
                     You should enter SKU of the Amazon Parent Product from your Amazon Inventory at the next step.
                     <br/><br/>
-    
+
                     What you should know if you are the Creator of the Parent Product:
                     <ul class="list">
                         <li>Only you have an ability to add new Options of Attributes (for example,
@@ -74,7 +74,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                         <li>New Amazon Child Product will be created using a Description Policy assigned to the
                         Amazon Parent Product.</li>
                     </ul>
-    
+
                     If you are not the Creator of this Product, you can only sell existing Child Products of the
                     Parent Product.'
                 )
@@ -234,7 +234,7 @@ HTML;
 
                 if (!empty($channelThemeNote)) {
                     $html .= <<<HTML
-<div id="channel_variation_theme_note" 
+<div id="channel_variation_theme_note"
      class="m2epro-field-tooltip m2epro-field-tooltip-right admin__field-tooltip">
     <a class="admin__field-tooltip-action" href="javascript://"></a>
     <div class="admin__field-tooltip-content">
@@ -329,8 +329,6 @@ JS
                 'change_option' => $this->__('Change option')
             ]);
 
-
-
             $fieldset = $form->addFieldset(
                 'attributes_fieldset',
                 [
@@ -359,7 +357,7 @@ JS
             <span class="tool-tip-message-text"></span>
          </div>
     </div>
-</div>  
+</div>
 <form id="variation_manager_attributes_form" action="javascript:void(0);">
 HTML;
 
@@ -414,11 +412,11 @@ JS
 <<<JS
     ListingGridHandlerObj.variationProductManageHandler.matchingType = ListingGridHandlerObj
         .variationProductManageHandler.MATCHING_TYPE_VIRTUAL_MAGENTO;
-    
+
     ListingGridHandlerObj.variationProductManageHandler.matchedAttributes = {$matchedAttriutes};
     ListingGridHandlerObj.variationProductManageHandler.destinationAttributes = {$destinationAttributes};
     ListingGridHandlerObj.variationProductManageHandler.amazonVariationSet = {$amazonVariationSet};
-    
+
     ListingGridHandlerObj.variationProductManageHandler.renderMatchedAttributesNotSetView();
 JS
                     );
@@ -582,11 +580,11 @@ HTML;
 <<<CSS
 .data-grid.data-grid-not-hovered td.label {
     border-left: none;
-}      
-              
+}
+
 .data-grid.data-grid-not-hovered td.value {
     border-right: none;
-}  
+}
 CSS
 );
         }
@@ -659,7 +657,7 @@ CSS
                 ]
             );
         }
-        
+
         $form->setUseContainer(false);
         $this->setForm($form);
 

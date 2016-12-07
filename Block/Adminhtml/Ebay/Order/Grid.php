@@ -222,6 +222,10 @@ class Grid extends AbstractGrid
             'general' => $this->__('General'),
         );
 
+        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            $groups['in_store_pickup'] = $this->__('In-Store Pickup');
+        }
+
         $this->getMassactionBlock()->setGroups($groups);
 
         // Set mass-action
@@ -256,6 +260,28 @@ class Grid extends AbstractGrid
             'confirm'  => $this->__('Are you sure?')
         ), 'general');
         // ---------------------------------------
+
+        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            return parent::_prepareMassaction();
+        }
+
+        $this->getMassactionBlock()->addItem('mark_as_ready_for_pickup', array(
+            'label'    => $this->__('Mark as Ready For Pickup'),
+            'url'      => $this->getUrl('*/ebay_order/markAsReadyForPickup'),
+            'confirm'  => $this->__('Are you sure?')
+        ), 'in_store_pickup');
+
+        $this->getMassactionBlock()->addItem('mark_as_picked_up', array(
+            'label'    => $this->__('Mark as Picked Up'),
+            'url'      => $this->getUrl('*/ebay_order/markAsPickedUp'),
+            'confirm'  => $this->__('Are you sure?')
+        ), 'in_store_pickup');
+
+        $this->getMassactionBlock()->addItem('mark_as_cancelled', array(
+            'label'    => $this->__('Mark as Cancelled'),
+            'url'      => $this->getUrl('*/ebay_order/markAsCancelled'),
+            'confirm'  => $this->__('Are you sure?')
+        ), 'in_store_pickup');
 
         return parent::_prepareMassaction();
     }
@@ -297,76 +323,21 @@ class Grid extends AbstractGrid
             ->addFieldToFilter('order_id', $orderId)
             ->setOrder('id', 'DESC');
         $orderLogsCollection->getSelect()
-            ->limit(3);
-        // ---------------------------------------
+            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
 
-        // Prepare logs data
-        // ---------------------------------------
-        if ($orderLogsCollection->getSize() <= 0) {
+        if (!$orderLogsCollection->count()) {
             return '';
         }
-
-        $format = \IntlDateFormatter::MEDIUM;
-
-        $logRows = array();
-        foreach ($orderLogsCollection as $log) {
-            $logRows[] = array(
-                'type' => $log->getData('type'),
-                'text' => $this->getHelper('View')->getModifiedLogMessage($log->getData('description')),
-                'initiator' => $this->getInitiatorForAction($log->getData('initiator')),
-                'date' => $this->_localeDate->formatDate($log->getData('create_date'), $format, true)
-            );
-        }
-
         // ---------------------------------------
 
-        $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => $this->__(
-                'Last order Action was completed successfully.'
-            ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => $this->__(
-                'Last order Action was completed with error(s).'
-            ),
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => $this->__(
-                'Last order Action was completed with warning(s).'
-            )
-        );
-
-        $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
-        );
-
-        $summary = $this->createBlock('Log\Grid\Summary')->setData(array(
+        $summary = $this->createBlock('Order\Log\Grid\LastActions')->setData(array(
             'entity_id' => $orderId,
-            'rows' => $logRows,
-            'tips' => $tips,
-            'icons' => $icons,
+            'logs'      => $orderLogsCollection->getItems(),
             'view_help_handler' => 'OrderObj.viewOrderHelp',
             'hide_help_handler' => 'OrderObj.hideOrderHelp',
         ));
 
         return $summary->toHtml();
-    }
-
-    public function getInitiatorForAction($initiator)
-    {
-        $string = '';
-
-        switch ((int)$initiator) {
-            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
-                $string = '';
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
-                $string = $this->__('Manual');
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
-                $string = $this->__('Automatic');
-                break;
-        }
-
-        return $string;
     }
 
     // ---------------------------------------
@@ -383,6 +354,21 @@ class Grid extends AbstractGrid
         if ($row->getChildObject()->getData('selling_manager_id') > 0) {
             $returnString .= '<br/> [ <b>SM: </b> # ' . $row->getChildObject()->getData('selling_manager_id') . ' ]';
         }
+
+        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+            return $returnString;
+        }
+
+        if (empty($row->getChildObject()->getData('shipping_details'))) {
+            return $returnString;
+        }
+
+        $shippingDetails = json_decode($row->getChildObject()->getData('shipping_details'), true);
+        if (empty($shippingDetails['in_store_pickup_details'])) {
+            return $returnString;
+        }
+
+        $returnString = '<img src="/images/in_store_pickup.png" />&nbsp;'.$returnString;
 
         return $returnString;
     }
@@ -670,7 +656,7 @@ HTML;
             ),
         ]);
 
-        $this->jsTranslator->add('View All Order Logs', $this->__('View All Order Logs'));
+        $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));
 
         $this->js->add(<<<JS
     require([

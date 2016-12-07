@@ -12,7 +12,7 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 class GetRuleConditionChooserHtml extends General
 {
     //########################################
-    
+
     public function execute()
     {
         $request = $this->getRequest();
@@ -67,7 +67,7 @@ class GetRuleConditionChooserHtml extends General
         } else {
             $this->setAjaxContent('', false);
         }
-        
+
         return $this->getResult();
     }
 

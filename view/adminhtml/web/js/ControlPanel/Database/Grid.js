@@ -9,7 +9,7 @@ define([
         mergeModeCookieKey: null,
 
         // ---------------------------------------
-        
+
         setMergeModeCookieKey: function (key)
         {
             this.mergeModeCookieKey = key;
@@ -167,7 +167,7 @@ define([
         mouseOverCell: function()
         {
             var cellId = this.id;
-            
+
             if ($(cellId + '_save_link').getStyle('display') != 'none') {
                 return;
             }
@@ -180,7 +180,7 @@ define([
         mouseOutCell: function()
         {
             var cellId = this.id;
-            
+
             if ($(cellId + '_save_link').getStyle('display') != 'none') {
                 return;
             }
@@ -271,7 +271,7 @@ define([
 
             return result;
         }
-        
+
         // ---------------------------------------
     });
 });

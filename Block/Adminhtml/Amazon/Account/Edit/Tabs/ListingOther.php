@@ -51,9 +51,9 @@ class ListingOther extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management. 
-You can set preferences whether you would like to import 3rd Party Listings 
-(Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool), 
+<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management.
+You can set preferences whether you would like to import 3rd Party Listings
+(Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
 automatically map them to Magento Product, etc..</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
@@ -114,7 +114,7 @@ HTML
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Choose whether imported Amazon Listings should automatically map to a 
+                    'Choose whether imported Amazon Listings should automatically map to a
                     Product in your Magento Inventory.'
                 )
             ]
@@ -126,9 +126,9 @@ HTML
                 'legend' => $this->__('Magento Product Mapping Settings'),
                 'collapsable' => false,
                 'tooltip' => $this->__(
-                    '<p>In this section you can provide settings for automatic Mapping of the newly imported 
+                    '<p>In this section you can provide settings for automatic Mapping of the newly imported
                     3rd Party Listings to the appropriate Magento Products. </p><br>
-                    <p>The imported Items are mapped based on the correspondence between Amazon Item values and 
+                    <p>The imported Items are mapped based on the correspondence between Amazon Item values and
                     Magento Product Attribute values. </p>')
             ]
         );
@@ -345,11 +345,11 @@ HTML
                 ],
                 'value' => $formData['other_listings_move_mode'],
                 'tooltip' => $this->__(
-                    '<p>Enable this option if you would like Amazon Items which have already been Mapped to 
-                    Magento Products to be automatically Moved from the 3rd Party Listings to M2E Pro 
+                    '<p>Enable this option if you would like Amazon Items which have already been Mapped to
+                    Magento Products to be automatically Moved from the 3rd Party Listings to M2E Pro
                     Listings for further management.</p><br>
-                    <p><strong>Note:</strong> Auto Map and Move Actions are performed only during the 
-                    first 3rd Party Listing Synchronization. Afterwards, it can be performed manually on 
+                    <p><strong>Note:</strong> Auto Map and Move Actions are performed only during the
+                    first 3rd Party Listing Synchronization. Afterwards, it can be performed manually on
                     the 3rd Party Listings Page.</p>'
                 )
             ]

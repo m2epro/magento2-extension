@@ -76,7 +76,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 
                 You can provide settings for SKU formating, appropriate Condition,
                 Condition Note, Gift Wrap, Gift Message and also specify
-                Additional Settings - Handling Time and Restock Date.<br/><br/>
+                Additional Settings - Production Time and Restock Date.<br/><br/>
 
                 In addition to, in this Section you can select Selling Format Policy that contains
                 Settings connected with forming

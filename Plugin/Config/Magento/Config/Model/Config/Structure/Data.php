@@ -11,18 +11,18 @@ namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model\Config\Structure;
 class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################
-    
+
     protected function canExecute()
     {
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
             return true;
         }
-        
+
         if ($this->helperFactory->getObject('Module\Maintenance\Debug')->isEnabled() &&
             !$this->helperFactory->getObject('Module\Maintenance\Debug')->isOwner()) {
             return true;
         }
-        
+
         return false;
     }
 

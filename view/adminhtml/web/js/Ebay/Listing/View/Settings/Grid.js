@@ -96,9 +96,9 @@ define([
                     templateNick: templateNick
                 },
                 onSuccess: function(transport) {
-                    
+
                     var result = transport.responseText;
-                    
+
                     if (+result === 0) {
                         return;
                     }
@@ -223,7 +223,7 @@ define([
         {
             var title = '',
                 templatesNames = {};
-            
+
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_RETURN_POLICY')
             ] = M2ePro.translator.translate('Edit Return Policy Setting');
@@ -242,7 +242,7 @@ define([
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SYNCHRONIZATION')
             ] = M2ePro.translator.translate('Edit Synchronization Policy Setting');
-            
+
             if (templatesNames[templateNick]) {
                 title = templatesNames[templateNick];
             }

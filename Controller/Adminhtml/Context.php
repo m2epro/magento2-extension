@@ -48,7 +48,11 @@ class Context extends ActionContext
     /** @var \Magento\Framework\App\ResourceConnection|null  */
     protected $resourceConnection = NULL;
 
+    /** @var \Magento\Config\Model\Config|null  */
     protected $magentoConfig = NULL;
+
+    /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
+    private $publicVersionsChecker = NULL;
 
     public function __construct(
         CssRenderer $cssRenderer,
@@ -78,6 +82,7 @@ class Context extends ActionContext
         \Magento\Framework\Data\Form\FormKey\Validator $formKeyValidator,
         \Magento\Framework\Locale\ResolverInterface $localeResolver,
         \Magento\Config\Model\Config $magentoConfig,
+        \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker,
         $canUseBaseUrl = false
     )
     {
@@ -95,6 +100,8 @@ class Context extends ActionContext
         $this->resourceConnection = $resourceConnection;
 
         $this->magentoConfig = $magentoConfig;
+
+        $this->publicVersionsChecker = $publicVersionsChecker;
 
         parent::__construct(
             $request,
@@ -197,5 +204,13 @@ class Context extends ActionContext
     public function getMagentoConfig()
     {
         return $this->magentoConfig;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Setup\PublicVersionsChecker
+     */
+    public function getPublicVersionsChecker()
+    {
+        return $this->publicVersionsChecker;
     }
 }

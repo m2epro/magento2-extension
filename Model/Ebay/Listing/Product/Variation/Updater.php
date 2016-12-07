@@ -200,7 +200,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 
                         $listingProductVariationOption['product_id'] = $magentoVariationOption['product_id'];
 
-                        $this->getHelper('Component\Ebay')->getModel('Listing\Product\Variation\Option')
+                        $this->ebayFactory->getObject('Listing\Product\Variation\Option')
                             ->setData($listingProductVariationOption)->save();
                     }
                 }

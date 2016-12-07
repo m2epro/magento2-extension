@@ -65,7 +65,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
     private function createProduct()
     {
         $this->product = $this->productFactory->create();
-        $this->product->setTypeId(\Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE);
+        $this->product->setTypeId(\Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN);
         $this->product->setAttributeSetId($this->productFactory->create()->getDefaultAttributeSetId());
 
         // ---------------------------------------
@@ -158,9 +158,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         $tempMediaPath = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
-        )->getAbsolutePath() 
+        )->getAbsolutePath()
         . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
-        
+
         $gallery = array();
         $imagePosition = 1;
 

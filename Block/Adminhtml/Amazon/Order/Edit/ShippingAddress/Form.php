@@ -20,7 +20,7 @@ class Form extends AbstractForm
         }
 
         $address = $order->getShippingAddress()->getData();
-        
+
         $form = $this->_formFactory->create([
             'data' => [
                 'id' => 'edit_form',

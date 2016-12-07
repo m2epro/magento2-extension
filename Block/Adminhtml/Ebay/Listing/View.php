@@ -12,13 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer;
 
 class View extends AbstractContainer
 {
-    const VIEW_MODE_EBAY        = 'ebay';
-    const VIEW_MODE_MAGENTO     = 'magento';
-    const VIEW_MODE_SETTINGS    = 'settings';
-    const VIEW_MODE_TRANSLATION = 'translation';
-
-    const DEFAULT_VIEW_MODE = self::VIEW_MODE_EBAY;
-
     /** @var \Ess\M2ePro\Model\Listing */
     private $listing = NULL;
 
@@ -30,10 +23,13 @@ class View extends AbstractContainer
 
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
+        /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher $viewModeSwitcher */
+        $viewModeSwitcher = $this->createBlock('Ebay\Listing\View\Switcher');
+
         // Initialization block
         // ---------------------------------------
         $this->setId('ebayListingView');
-        $this->_controller = 'adminhtml_ebay_listing_view_' . $this->getViewMode();
+        $this->_controller = 'adminhtml_ebay_listing_view_' . $viewModeSwitcher->getSelectedParam();
         // ---------------------------------------
 
         // Set buttons actions
@@ -50,14 +46,17 @@ class View extends AbstractContainer
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
         );
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
+            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
+        ));
 
         if (!$this->getRequest()->isXmlHttpRequest()) {
-            
+
             $this->appendHelpBlock([
                 'content' => $this->__(
-                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace 
-                    from a particular Account. M2E Pro has several options to display the content of 
-                    Listings referring to different data details. Each of the view options contains a 
+                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace
+                    from a particular Account. M2E Pro has several options to display the content of
+                    Listings referring to different data details. Each of the view options contains a
                     unique set of available Actions accessible in the Mass Actions drop-down.</p>'
                 )
             ]);
@@ -66,10 +65,6 @@ class View extends AbstractContainer
                 'Ebay\Listing\View\Switcher',
                 'ebay_listing_view_switcher'
             );
-
-            $this->getLayout()->getBlock('ebay_listing_view_switcher')->addData([
-                'current_view_mode' => $this->getViewMode()
-            ]);
         }
 
         // ---------------------------------------
@@ -80,16 +75,31 @@ class View extends AbstractContainer
         ));
         // ---------------------------------------
 
+        // ---------------------------------------
         $url = $this->getUrl(
-            '*/ebay_listing_log',
+            '*/ebay_log_listing_product',
             array(
-                'id' => $this->listing->getId()
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                    $this->listing->getId()
             )
         );
         $this->addButton('view_log', array(
             'label'   => $this->__('View Log'),
             'onclick' => 'window.open(\'' . $url . '\',\'_blank\')',
         ));
+        // ---------------------------------------
+
+        // ---------------------------------------
+        if ($this->listing->getAccount()->getChildObject()->isPickupStoreEnabled() &&
+            $this->listing->getMarketplace()->getChildObject()->isInStorePickupEnabled()) {
+            $pickupStoreUrl = $this->getUrl('*/ebay_listing_pickupStore/index', ['id' => $this->listing->getId()]);
+            $this->addButton('pickup_store_management', array(
+                'label' => $this->__('In-Store Pickup'),
+                'onclick' => 'window.open(\'' . $pickupStoreUrl . '\',\'_blank\')',
+                'class' => 'success primary'
+            ));
+        }
+        // ---------------------------------------
 
         // ---------------------------------------
         $this->addButton('edit_templates', array(
@@ -113,41 +123,6 @@ class View extends AbstractContainer
         // ---------------------------------------
 
         return parent::_prepareLayout();
-    }
-
-    //########################################
-
-    public function getViewMode()
-    {
-        $allowedModes = array(
-            self::VIEW_MODE_EBAY,
-            self::VIEW_MODE_MAGENTO,
-            self::VIEW_MODE_SETTINGS,
-            self::VIEW_MODE_TRANSLATION,
-        );
-        $mode = $this->getParam('view_mode', self::DEFAULT_VIEW_MODE);
-
-        if (in_array($mode, $allowedModes)) {
-            return $mode;
-        }
-
-        return self::DEFAULT_VIEW_MODE;
-    }
-
-    protected function getParam($paramName, $default = NULL)
-    {
-        $session = $this->getHelper('Data\Session');
-        $sessionParamName = $this->getId() . $this->listing->getId() . $paramName;
-
-        if ($this->getRequest()->has($paramName)) {
-            $param = $this->getRequest()->getParam($paramName);
-            $session->setValue($sessionParamName, $param);
-            return $param;
-        } elseif ($param = $session->getValue($sessionParamName)) {
-            return $param;
-        }
-
-        return $default;
     }
 
     //########################################

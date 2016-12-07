@@ -17,7 +17,7 @@ class Form extends AbstractForm
 
     protected $allowedTypes = array();
     protected $applyToAllAttributeSets = true;
-    
+
     //########################################
 
     protected function _prepareForm()
@@ -37,10 +37,10 @@ class Form extends AbstractForm
                 This Tool allows you to quickly <strong>Create</strong> a new <strong>Magento Attribute</strong>
                 for the selected Option. In order to Create an Attribute, you have to fill in the Attribute Label,
                 Attribute Code, Catalog Input Type, Scope, Default Value and Attribute Sets fields.<br/><br/>
-        
+
                 <strong>Note:</strong> Some of the fields may not be available for selection. The availability
                 depends on the Option for which the Attribute is being created.<br/>
-                <strong>Note:</strong> This Option does not imply automatic Product Attribute Value set up. 
+                <strong>Note:</strong> This Option does not imply automatic Product Attribute Value set up.
                 After the Attribute
                 becomes available in Magento, you should Manually provide the Value for the Product.'
                 )
@@ -60,13 +60,15 @@ class Form extends AbstractForm
             ]
         );
 
+        $classes  = 'validate-length maximum-length-30 M2ePro-validate-attribute-code ';
+        $classes .= 'M2ePro-validate-attribute-code-to-be-unique';
+
         $fieldset->addField('code',
             'text',
             [
                 'name' => 'code',
                 'label' => $this->__('Attribute Code'),
-                'class' => 'validate-length maximum-length-30 M2ePro-validate-attribute-code 
-                            M2ePro-validate-attribute-code-to-be-unique',
+                'class' => $classes,
                 'required' => true
             ]
         );
@@ -78,7 +80,7 @@ class Form extends AbstractForm
                 'label' => $this->getTitleByType($type)
             ];
         }
-        
+
         $fieldset->addField('input_type_select',
             self::SELECT,
             [
@@ -89,7 +91,7 @@ class Form extends AbstractForm
                 'disabled' => $this->isOneOnlyTypeAllowed()
             ]
         );
-        
+
         if ($this->isOneOnlyTypeAllowed()) {
             $fieldset->addField('input_type',
                 'hidden',
@@ -112,7 +114,7 @@ class Form extends AbstractForm
                      'label' => $this->__('Website')],
                     ['value' => AttributeBuilder::SCOPE_GLOBAL,
                      'label' => $this->__('Global')],
-                    
+
                 ],
                 'value' => ''
             ]
@@ -165,33 +167,33 @@ class Form extends AbstractForm
     }
 
     //########################################
-    
+
     protected function _toHtml()
     {
         $this->jsTranslator->addTranslations([
             'Invalid attribute code'                      => $this->__(
-                'Please use only letters (a-z), 
+                'Please use only letters (a-z),
                 numbers (0-9) or underscore(_) in this field, first character should be a letter.'
             ),
             'Attribute with the same code already exists' => $this->__('Attribute with the same code already exists.'),
             'Attribute has been created.'                 => $this->__('Attribute has been created.'),
             'Please enter a valid date.'                  => $this->__('Please enter a valid date.'),
         ]);
-        
+
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Magento\Attribute\Builder')
         );
-        
+
         $this->jsUrl->addUrls([
             'general/generateAttributeCodeByLabel' => $this->getUrl('general/generateAttributeCodeByLabel'),
             'general/isAttributeCodeUnique' => $this->getUrl('general/isAttributeCodeUnique'),
             'general/createAttribute' => $this->getUrl('general/createAttribute'),
         ]);
-        
+
         $this->js->addRequireJs(['jQuery' => 'jquery'], <<<JS
-        
+
         var handler = window['{$this->handlerId()}'];
-        
+
         jQuery.validator.addMethod('M2ePro-validate-attribute-code', function(value, element) {
             return handler.validateAttributeCode(value, element);
         }, M2ePro.translator.translate('Invalid attribute code'));
@@ -201,12 +203,12 @@ class Form extends AbstractForm
         }, M2ePro.translator.translate('Attribute with the same code already exists'));
 JS
 );
-        
+
         return parent::_toHtml();
     }
 
     //########################################
-    
+
     public function handlerId($value = null)
     {
         if (is_null($value)) {

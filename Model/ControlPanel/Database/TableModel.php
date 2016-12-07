@@ -119,7 +119,7 @@ class TableModel extends \Magento\Framework\DataObject
 
             $resultColumns = array_merge($resultColumns, $columns);
         }
-        
+
         return $resultColumns;
     }
 
@@ -133,7 +133,7 @@ class TableModel extends \Magento\Framework\DataObject
     }
 
     //########################################
-    
+
     public function createEntry(array $data)
     {
         $helper = $this->helperFactory->getObject('Module\Database\Structure');
@@ -156,7 +156,7 @@ class TableModel extends \Magento\Framework\DataObject
         $collection->addFieldToFilter($modelInstance->getIdFieldName(), array('in' => $ids));
 
         foreach ($collection as $item) {
-            
+
             $item->getResource()->delete($item);
 
             if ($this->getIsMergeModeEnabled() && $item instanceof ParentAbstractModel) {
@@ -164,7 +164,7 @@ class TableModel extends \Magento\Framework\DataObject
             }
         }
     }
-    
+
     public function updateEntries(array $ids,  array $data)
     {
         $helper = $this->helperFactory->getObject('Module\Database\Structure');
@@ -217,7 +217,7 @@ class TableModel extends \Magento\Framework\DataObject
     }
 
     //########################################
-    
+
     public function getTableName()
     {
         return $this->tableName;
@@ -227,7 +227,7 @@ class TableModel extends \Magento\Framework\DataObject
     {
         return $this->modelName;
     }
-    
+
     public function getMergeModelName()
     {
         if (!$this->getIsMergeModeEnabled()) {
@@ -235,7 +235,7 @@ class TableModel extends \Magento\Framework\DataObject
         }
         return ucfirst($this->mergeModeComponent).'\\'.$this->modelName;
     }
-    
+
     public function getIsMergeModeEnabled()
     {
         return $this->isMergeModeEnabled;
@@ -245,6 +245,6 @@ class TableModel extends \Magento\Framework\DataObject
     {
         return $this->mergeModeComponent;
     }
-    
+
     //########################################
 }

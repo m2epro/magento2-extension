@@ -21,6 +21,7 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
             'amazon_online_price'      => 'AmazonOnlinePrice',
             'amazon_online_sale_price' => 'AmazonOnlineSalePrice',
             'amazon_is_afn_chanel'     => 'AmazonIsAfnChanel',
+            'amazon_is_repricing'      => 'AmazonIsRepricing',
             'amazon_status'            => 'AmazonStatus',
             'amazon_general_id_state'  => 'AmazonGeneralIdState'
         );

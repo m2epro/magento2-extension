@@ -256,13 +256,13 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        if ($this->magentoOrder->getState() == \Magento\Sales\Model\Order::STATE_COMPLETE
-            || $this->magentoOrder->getState() == \Magento\Sales\Model\Order::STATE_CLOSED
+        if ($this->magentoOrder->getState() != \Magento\Sales\Model\Order::STATE_COMPLETE
+            && $this->magentoOrder->getState() != \Magento\Sales\Model\Order::STATE_CLOSED
         ) {
-            $this->magentoOrder->setStatus($status);
-        } else {
-            $this->magentoOrder->setState(\Magento\Sales\Model\Order::STATE_PROCESSING, $status);
+            $this->magentoOrder->setState(\Magento\Sales\Model\Order::STATE_PROCESSING);
         }
+
+        $this->magentoOrder->setStatus($status);
 
         $this->needSave = true;
     }

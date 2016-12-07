@@ -81,20 +81,16 @@ class SearchAsin extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
                 <<<HTML
                 <p>Since most of the Products already exist in Amazon Catalog, M2E Pro makes it possible
                 to find them and to make a link between your Magento Products and existing Amazon Products.</p><br>
-                <p>You can use a Manual Search for each added Product by clicking on the icon in the 
+                <p>You can use a Manual Search for each added Product by clicking on the icon in the
                 "ASIN/ISBN" Column of the Grid. Also you can use Automatic Search for added
-                Product(s) by choosing <strong>"Search ASIN/ISBN Automatically"</strong> 
+                Product(s) by choosing <strong>"Search ASIN/ISBN Automatically"</strong>
                 Option in a mass Actions bulk. The Search will be performed according to the values which set in
                 Search Settings.</p><br>
-                <p>You can always set or change Settings of the source for ASIN/ISBN and UPC/EAN by clicking 
+                <p>You can always set or change Settings of the source for ASIN/ISBN and UPC/EAN by clicking
                 <strong>Edit Search Settings</strong> button in the right top corner.</p><br>
                 <p><strong>Note:</strong> The process of Automatic Search might be time-consuming, depending on
-                the number of added Products the Search is applied to.</p><br>
-                <p>More detailed information about how to work with this Page you can find 
-                <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+                the number of added Products the Search is applied to.</p>
 HTML
-                ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/mAYtAQ')
             )
         ]);
 
@@ -178,7 +174,7 @@ HTML
             'task_completed_success_message' => $taskCompletedSuccessMessage,
             'task_completed_warning_message' => $taskCompletedWarningMessage,
             'task_completed_error_message' => $taskCompletedErrorMessage,
-    
+
             'assign' => $assignString,
             'confirm' => $textConfirm,
 
@@ -190,7 +186,7 @@ HTML
                 $variationManageMatchedAttributesErrorDuplicateSelection,
             'Clear Search Results' => $this->__('Clear Search Results')
         ]);
-        
+
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Add', [
@@ -214,7 +210,7 @@ HTML
     });
 JS
         );
-        
+
         return
             '<div id="search_asin_progress_bar"></div>' .
                 '<div id="search_asin_products_container">' .

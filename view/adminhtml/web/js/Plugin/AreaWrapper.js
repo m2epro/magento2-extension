@@ -1,5 +1,5 @@
 define([], function () {
-    
+
     window.AreaWrapper = Class.create();
     AreaWrapper.prototype = {
 

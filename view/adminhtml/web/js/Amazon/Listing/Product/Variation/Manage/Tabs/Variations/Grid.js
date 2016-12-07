@@ -21,9 +21,12 @@ define([
         // ---------------------------------------
 
         getLogViewUrl: function (rowId) {
-            return M2ePro.url.get('amazon_listing_product_log/index', {
-                listing_product_id: rowId
-            });
+            var idField = M2ePro.php.constant('\\Ess\\M2ePro\\Block\\Adminhtml\\Log\\Listing\\Product\\AbstractGrid::LISTING_PRODUCT_ID_FIELD');
+
+            var params = {};
+            params[idField] = rowId;
+
+            return M2ePro.url.get('amazon_log_listing_product/index', params);
         },
 
         // ---------------------------------------

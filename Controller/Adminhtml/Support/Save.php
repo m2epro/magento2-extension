@@ -50,7 +50,12 @@ class Save extends Support
             $severity);
 
         $this->messageManager->addSuccess($this->__('Your message has been successfully sent.'));
-        return $this->_redirect('*/*/index');
+
+        $referrer = $this->getRequest()->getParam('referrer', false);
+        $params = [];
+        $referrer && $params['referrer'] = $referrer;
+
+        return $this->_redirect('*/*/index', $params);
     }
 
     //########################################

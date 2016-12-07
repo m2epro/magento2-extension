@@ -20,7 +20,7 @@ define([
         prepareActions: function()
         {
             jQuery.validator.addMethod('M2ePro-validate-feedback-response-max-length', function(value, el) {
-                
+
                 if (jQuery.validator.methods['M2ePro-required-when-visible'](null, el)) {
                     return true;
                 }
@@ -124,8 +124,8 @@ define([
                                     parameters: {
                                         feedback_id: data.feedback_id,
                                         feedback_text: (data.feedback_template_type == 'custom') ?
-                                            data.feedback_template :
-                                            data.feedback_text
+                                            data.feedback_text :
+                                            data.feedback_template
                                     },
                                     onSuccess: function(transport) {
                                         var response = transport.responseText.evalJSON();

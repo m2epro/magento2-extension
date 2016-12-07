@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SynchronizationLog;
 
-class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\AbstractGrid
+class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $actionsTitles;
 
@@ -107,7 +107,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\AbstractGrid
         ));
 
         $this->addColumn('description', array(
-            'header'    => $this->__('Description'),
+            'header'    => $this->__('Message'),
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'description',
@@ -135,33 +135,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\AbstractGrid
         $this->setMassactionIdField('id');
         $this->getMassactionBlock()->setFormFieldName('ids');
         // ---------------------------------------
-    }
-
-    //########################################
-
-    public function callbackDescription($value, $row, $column, $isExport)
-    {
-        $fullDescription = $this->getHelper('View')->getModifiedLogMessage($row->getData('description'));
-
-        $row->setData('description', $fullDescription);
-        $renderedText = $column->getRenderer()->render($row);
-
-        $fullDescription = $this->escapeHtml($fullDescription);
-
-        if (strlen($fullDescription) == strlen($renderedText)) {
-            return $renderedText;
-        }
-
-        $row->setData('description', strip_tags($fullDescription));
-        $renderedText = $column->getRenderer()->render($row);
-
-        $title = $this->actionsTitles[$row->getData('task')] . ' on ' . $row->getData('create_date');
-
-        $renderedText .= '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                          (<a href="javascript:void(0)" onclick="LogObj.showFullText(this,\''.$title.'\');">more</a>)
-                          <div style="display: none;"><br/>'.$fullDescription.'<br/><br/></div>';
-
-        return $renderedText;
     }
 
     //########################################

@@ -104,10 +104,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 
     private function getItemsToShip(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
-        $productTypesNotAllowedByDefault = array(
-            \Magento\Catalog\Model\Product\Type::TYPE_BUNDLE,
-            \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE,
-        );
+        $magentoProductHelper = $this->getHelper('Magento\Product');
 
         $items = array();
         $allowedItems = array();
@@ -122,7 +119,9 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                 continue;
             }
 
-            if (!in_array($orderItem->getProductType(), $productTypesNotAllowedByDefault)) {
+            if (!$magentoProductHelper->isBundleType($orderItem->getProductType()) &&
+                !$magentoProductHelper->isGroupedType($orderItem->getProductType())) {
+
                 $allowedItems[] = $orderItem->getId();
             }
 

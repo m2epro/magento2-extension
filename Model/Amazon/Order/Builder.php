@@ -127,7 +127,7 @@ class Builder extends AbstractModel
             foreach ($existOrders as $key => $order) {
                 /** @var \Ess\M2ePro\Model\Order $order */
 
-                $magentoOrderId = $order->getData('magento_order_id');
+                $magentoOrderId = $order->getMagentoOrderId();
                 if (!empty($magentoOrderId)) {
                     continue;
                 }
@@ -406,7 +406,7 @@ class Builder extends AbstractModel
                     continue;
                 }
 
-                $currentOnlineQty = $listingProduct->getData('online_qty');
+                $currentOnlineQty = $amazonListingProduct->getOnlineQty();
 
                 // if product was linked by sku during list action
                 if ($listingProduct->isStopped() && is_null($currentOnlineQty)) {
@@ -460,7 +460,8 @@ class Builder extends AbstractModel
 
                 $tempLogMessages = array($this->helperFactory->getObject('Module\Translation')->__(
                     'Item QTY was successfully changed from %from% to %to% .',
-                    $currentOnlineQty, 0
+                    empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
+                    0
                 ));
 
                 if (!$listingProduct->isStopped()) {
@@ -549,7 +550,7 @@ class Builder extends AbstractModel
                     continue;
                 }
 
-                $currentOnlineQty = $amazonOtherListing->getData('online_qty');
+                $currentOnlineQty = $amazonOtherListing->getOnlineQty();
 
                 if ($currentOnlineQty > $orderItem['qty_purchased']) {
                     $otherListing->setData('online_qty', $currentOnlineQty - $orderItem['qty_purchased']);
@@ -581,7 +582,8 @@ class Builder extends AbstractModel
 
                 $tempLogMessages = array($this->helperFactory->getObject('Module\Translation')->__(
                     'Item qty was successfully changed from %from% to %to% .',
-                    $currentOnlineQty, 0
+                    empty($currentOnlineQty) ? '"empty"' : $currentOnlineQty,
+                    0
                 ));
 
                 if (!$otherListing->isStopped()) {

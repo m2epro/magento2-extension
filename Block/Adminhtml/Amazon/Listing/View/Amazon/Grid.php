@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Amazon;
 
 use Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+use Ess\M2ePro\Model\Listing\Log;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
@@ -175,7 +176,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'is_repricing_disabled' => 'is_online_disabled',
             )
         );
-        
+
         $collection->getSelect()->joinLeft(
             new \Zend_Db_Expr('(
                 SELECT
@@ -216,7 +217,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'variation_max_price' => 'variation_max_price',
             )
         );
-        
+
         $collection->getSelect()->joinLeft(
             new \Zend_Db_Expr('(
                 SELECT
@@ -345,7 +346,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnPrice'),
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         );
-        
+
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
             $this->listing->getAccount()->getChildObject()->isRepricing()) {
             $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
@@ -994,7 +995,7 @@ HTML;
         <span style="color:gray;">
             <strong>From:</strong> {$fromDate}<br/>
             <strong>To:</strong> {$toDate}
-        </span>    
+        </span>
     </div>
 </div>
 HTML;
@@ -1039,7 +1040,7 @@ HTML;
 
             if (empty($html)) {
                 $html = <<<HTML
-<span class="fix-magento-tooltip" style="float:right;">
+<span class="fix-magento-tooltip m2e-tooltip-grid-warning" style="float:right;">
     {$this->getTooltipHtml($synchNote, 'map_link_error_icon_'.$row->getId())}
 </span>
 HTML;
@@ -1245,11 +1246,11 @@ HTML;
             $where .= 'online_qty <= ' . $value['to'];
         }
 
-        if (!empty($value['afn'])) {
+        if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_afn_channel = ' . \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
+            $where .= 'is_afn_channel = ' . (int)$value['afn'];
         }
 
         $collection->getSelect()->where($where);
@@ -1292,15 +1293,23 @@ HTML;
             $condition .= ')';
 
         }
-        
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
+
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            (isset($value['is_repricing']) && $value['is_repricing'] !== ''))
+        {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
 
-            $condition .= 'is_repricing > 0 OR
-                           variation_repricing_enabled_count IS NOT NULL OR
-                           variation_repricing_disabled_count IS NOT NULL';
+            if ($value['is_repricing'] === '0') {
+                $condition .= '(is_variation_parent = 0 AND is_repricing IS NULL) OR
+                               (is_variation_parent = 1 AND variation_repricing_enabled_count IS NULL AND
+                                                            variation_repricing_disabled_count IS NULL)';
+            } else {
+                $condition .= 'is_repricing > 0 OR
+                               variation_repricing_enabled_count > 0 OR
+                               variation_repricing_disabled_count > 0';
+            }
         }
 
         $collection->getSelect()->having($condition);
@@ -1323,6 +1332,7 @@ HTML;
     public function getViewLogIconHtml($listingProductId, $isVariationParent)
     {
         $listingProductId = (int)$listingProductId;
+        $availableActionsId = array_keys($this->getAvailableActions());
 
         $connection = $this->resourceConnection->getConnection();
 
@@ -1333,219 +1343,51 @@ HTML;
                 $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getMainTable(),
                 array('action_id','action','type','description','create_date','initiator','listing_product_id')
             )
-            ->where('`action_id` IS NOT NULL')
+            ->where('`action` IN (?)', $availableActionsId)
             ->order(array('id DESC'))
-            ->limit(30);
+            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
         if ($isVariationParent) {
-            $dbSelect->where('listing_product_id = ? OR parent_listing_product_id = ?', $listingProductId);
+            $dbSelect->where('`listing_product_id` = ? OR `parent_listing_product_id` = ?', $listingProductId);
         } else {
-            $dbSelect->where('listing_product_id = ?', $listingProductId);
+            $dbSelect->where('`listing_product_id` = ?', $listingProductId);
         }
 
-        $logRows = $connection->fetchAll($dbSelect);
-        // ---------------------------------------
+        $logs = $connection->fetchAll($dbSelect);
 
-        // Get grouped messages by action_id
-        // ---------------------------------------
-        $actionsRows = array();
-        $tempActionRows = array();
-        $lastActionId = false;
-
-        foreach ($logRows as $row) {
-
-            $row['description'] = $this->getHelper('View')->getModifiedLogMessage($row['description']);
-
-            if ($row['action_id'] !== $lastActionId) {
-                if (count($tempActionRows) > 0) {
-                    $actionsRows[] = array(
-                        'action_id' => $lastActionId,
-                        'type' => $this->getMainTypeForActionId($tempActionRows),
-                        'date' => $this->getMainDateForActionId($tempActionRows),
-                        'action' => $this->getActionForAction($tempActionRows[0]),
-                        'initiator' => $this->getInitiatorForAction($tempActionRows[0]),
-                        'items' => $tempActionRows
-                    );
-                    $tempActionRows = array();
-                }
-                $lastActionId = $row['action_id'];
-            }
-            $tempActionRows[] = $row;
-        }
-
-        if (count($tempActionRows) > 0) {
-            $actionsRows[] = array(
-                'action_id' => $lastActionId,
-                'type' => $this->getMainTypeForActionId($tempActionRows),
-                'date' => $this->getMainDateForActionId($tempActionRows),
-                'action' => $this->getActionForAction($tempActionRows[0]),
-                'initiator' => $this->getInitiatorForAction($tempActionRows[0]),
-                'items' => $tempActionRows
-            );
-        }
-
-        if (count($actionsRows) <= 0) {
+        if (empty($logs)) {
             return '';
         }
 
-        if ($isVariationParent) {
-            foreach ($actionsRows as &$actionsRow) {
-                if (!empty($actionsRow['items']) && $actionsRow['items'][0]['listing_product_id']==$listingProductId) {
-                    continue;
-                }
-                // todo need use this property to show certain child in action now
-                $actionsRow['action_in_progress'] = $this->isActionInProgress($actionsRow['action_id']);
+        // ---------------------------------------
 
-                $descArr = array();
-                foreach ($actionsRow['items'] as $key => &$item) {
-                    if (array_key_exists($item['description'], $descArr)) {
-                        $descArr[$item['description']]['count']++;
-                        unset($actionsRow['items'][$key]);
-                        continue;
-                    }
-                    $item['count'] = 1;
-                    $descArr[$item['description']] = $item;
-                }
-                $actionsRow['items'] = array_values($descArr);
-            }
-        }
-
-        foreach ($actionsRows as &$actionsRow) {
-            usort($actionsRow['items'], function($a, $b)
-            {
-                $sortOrder = array(
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 1,
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 2,
-                    \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 3,
-                );
-
-                return $sortOrder[$a["type"]] > $sortOrder[$b["type"]];
-            });
-        }
-
-        $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
-        );
-
-        $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
-        );
-
-        $summary = $this->createBlock('Log\Grid\Summary', '', ['data' => [
+        $summary = $this->createBlock('Amazon\Listing\Log\Grid\LastActions')->setData([
             'entity_id' => $listingProductId,
-            'rows' => $actionsRows,
-            'tips' => $tips,
-            'icons' => $icons,
+            'logs'      => $logs,
+            'available_actions' => $this->getAvailableActions(),
+            'is_variation_parent' => $isVariationParent,
             'view_help_handler' => 'ListingGridHandlerObj.viewItemHelp',
             'hide_help_handler' => 'ListingGridHandlerObj.hideItemHelp',
-        ]]);
+        ]);
 
         return $summary->toHtml();
     }
 
-    public function getActionForAction($actionRows)
+    private function getAvailableActions()
     {
-        $string = '';
-
-        switch ($actionRows['action']) {
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_LIST_PRODUCT_ON_COMPONENT:
-                $string = $this->__('List');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_RELIST_PRODUCT_ON_COMPONENT:
-                $string = $this->__('Relist');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_REVISE_PRODUCT_ON_COMPONENT:
-                $string = $this->__('Revise');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_STOP_PRODUCT_ON_COMPONENT:
-                $string = $this->__('Stop');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT:
-                $string = $this->__('Remove from Channel');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_STOP_AND_REMOVE_PRODUCT:
-                $string = $this->__('Stop on Channel / Remove from Listing');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_AND_REMOVE_PRODUCT:
-                $string = $this->__('Remove from Channel & Listing');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_LISTING:
-                $string = $this->__('Remove from Listing');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE:
-                $string = $this->__('Channel Change');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT:
-                $string = $this->__('Switch to AFN');
-                break;
-            case \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT:
-                $string = $this->__('Switch to MFN');
-                break;
-        }
-
-        return $string;
-    }
-
-    public function getInitiatorForAction($actionRows)
-    {
-        $string = '';
-
-        switch ((int)$actionRows['initiator']) {
-            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
-                $string = '';
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
-                $string = $this->__('Manual');
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
-                $string = $this->__('Automatic');
-                break;
-        }
-
-        return $string;
-    }
-
-    public function getMainTypeForActionId($actionRows)
-    {
-        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
-
-        foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
-                break;
-            }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
-            }
-        }
-
-        return $type;
-    }
-
-    public function getMainDateForActionId($actionRows)
-    {
-        return $this->_localeDate->formatDate($actionRows[0]['create_date'], \IntlDateFormatter::MEDIUM, true);
-    }
-
-    public function isActionInProgress($actionId)
-    {
-        $connection = $this->resourceConnection->getConnection();
-
-        // Get last messages
-        // ---------------------------------------
-        $dbSelect = $connection->select()
-            ->from(
-                $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable()
-            )
-            ->where('params REGEXP \'"logs_action_id":'.$actionId.'\'')
-            ->limit(1);
-
-        $result = $connection->query($dbSelect)->fetch();
-        return  $result !== false;
+        return [
+            Log::ACTION_LIST_PRODUCT_ON_COMPONENT       => $this->__('List'),
+            Log::ACTION_RELIST_PRODUCT_ON_COMPONENT     => $this->__('Relist'),
+            Log::ACTION_REVISE_PRODUCT_ON_COMPONENT     => $this->__('Revise'),
+            Log::ACTION_STOP_PRODUCT_ON_COMPONENT       => $this->__('Stop'),
+            Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT   => $this->__('Remove from Channel'),
+            Log::ACTION_STOP_AND_REMOVE_PRODUCT         => $this->__('Stop on Channel / Remove from Listing'),
+            Log::ACTION_DELETE_AND_REMOVE_PRODUCT       => $this->__('Remove from Channel & Listing'),
+            Log::ACTION_DELETE_PRODUCT_FROM_LISTING     => $this->__('Remove from Listing'),
+            Log::ACTION_CHANNEL_CHANGE                  => $this->__('Channel Change'),
+            Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT      => $this->__('Switch to AFN'),
+            Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT      => $this->__('Switch to MFN'),
+        ];
     }
 
     //########################################

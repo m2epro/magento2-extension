@@ -16,7 +16,7 @@ class Review extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         if (empty($ids) && !$this->getRequest()->getParam('disable_list')) {
             return $this->_redirect('*/*/view', array('id' => $listingId));
         }
-        
+
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Congratulations'));
         $this->addContent($this->createBlock('Ebay\Listing\Product\Review', '', [
             'data' => [

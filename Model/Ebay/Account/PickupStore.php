@@ -273,4 +273,11 @@ class PickupStore extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     }
 
     //########################################
+
+    public function isCacheEnabled()
+    {
+        return true;
+    }
+
+    //########################################
 }

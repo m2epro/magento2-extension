@@ -8,8 +8,26 @@
 
 namespace Ess\M2ePro\Model\Ebay\Template\Synchronization;
 
+use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
+
 class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 {
+    /** @var \Magento\Framework\App\RequestInterface */
+    protected $request;
+
+    //########################################
+
+    public function __construct(
+        \Magento\Framework\App\RequestInterface $request,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ){
+        parent::__construct($activeRecordFactory, $ebayFactory, $helperFactory, $modelFactory);
+        $this->request = $request;
+    }
+
     //########################################
 
     public function build(array $data)
@@ -100,6 +118,16 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['list_qty_calculated_value_max'] = (int)$data['list_qty_calculated_value_max'];
         }
 
+        // ---------------------------------------
+
+        if (isset($data['list_advanced_rules_mode'])) {
+            $prepared['list_advanced_rules_mode'] = (int)$data['list_advanced_rules_mode'];
+        }
+
+        $prepared['list_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX
+        );
+
         return $prepared;
     }
 
@@ -148,6 +176,14 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         if (isset($data['revise_update_images'])) {
             $prepared['revise_update_images'] = (int)$data['revise_update_images'];
+        }
+
+        if (isset($data['revise_update_specifics'])) {
+            $prepared['revise_update_specifics'] = (int)$data['revise_update_specifics'];
+        }
+
+        if (isset($data['revise_update_shipping_services'])) {
+            $prepared['revise_update_shipping_services'] = (int)$data['revise_update_shipping_services'];
         }
 
         // ---------------------------------------
@@ -227,6 +263,16 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['relist_qty_calculated_value_max'] = (int)$data['relist_qty_calculated_value_max'];
         }
 
+        // ---------------------------------------
+
+        if (isset($data['relist_advanced_rules_mode'])) {
+            $prepared['relist_advanced_rules_mode'] = (int)$data['relist_advanced_rules_mode'];
+        }
+
+        $prepared['relist_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX
+        );
+
         return $prepared;
     }
 
@@ -266,7 +312,34 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['stop_qty_calculated_value_max'] = (int)$data['stop_qty_calculated_value_max'];
         }
 
+        // ---------------------------------------
+
+        if (isset($data['stop_advanced_rules_mode'])) {
+            $prepared['stop_advanced_rules_mode'] = (int)$data['stop_advanced_rules_mode'];
+        }
+
+        $prepared['stop_advanced_rules_filters'] = $this->getRuleData(
+            SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX
+        );
+
         return $prepared;
+    }
+
+    //########################################
+
+    private function getRuleData($rulePrefix)
+    {
+        $postData = $this->request->getPost()->toArray();
+
+        if (empty($postData['rule'][$rulePrefix])) {
+            return null;
+        }
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            ['prefix' => $rulePrefix]
+        );
+
+        return $ruleModel->getSerializedFromPost($postData);
     }
 
     //########################################

@@ -10,14 +10,10 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
 
     public function getLabel()
     {
-        if ($this->getData('component_mode') == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-            return $this->__('Account');
-        }
-
-        return $this->__($this->getComponentLabel('%component% Account'));
+        return $this->__('Account');
     }
 
-    public function getItems()
+    protected function loadItems()
     {
         $collection = $this->activeRecordFactory->getObject('Account')->getCollection()
             ->setOrder('component_mode', 'ASC')
@@ -27,38 +23,32 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
         }
 
-        if ($collection->getSize() < 2) {
-            return array();
+        if (!$collection->count()) {
+            $this->items = array();
+            return;
+        }
+
+        if ($collection->count() < 2) {
+            $this->hasDefaultOption = false;
+            $this->setIsDisabled(true);
         }
 
         $items = array();
 
         foreach ($collection as $account) {
+
+            $accountTitle = $this->filterManager->truncate(
+                $account->getTitle(), ['length' => 15]
+            );
+
             /** @var $account \Ess\M2ePro\Model\Account */
-
-            if (!isset($items[$account->getComponentMode()]['label'])) {
-                $label = '';
-                if (isset($componentTitles[$account->getComponentMode()])) {
-                    $label = $componentTitles[$account->getComponentMode()];
-                }
-
-                $items[$account->getComponentMode()]['label'] = $label;
-            }
-
             $items[$account->getComponentMode()]['value'][] = array(
                 'value' => $account->getId(),
-                'label' => $account->getTitle()
+                'label' => $accountTitle
             );
         }
 
-        return $items;
-    }
-
-    //########################################
-
-    public function getDefaultOptionName()
-    {
-        return $this->__('All Accounts');
+        $this->items = $items;
     }
 
     //########################################

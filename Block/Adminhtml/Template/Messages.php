@@ -89,7 +89,7 @@ HTML;
         if (!$this->canDisplayAttributesAvailabilityMessage()) {
             return NULL;
         }
-        
+
         $productIds = $this->activeRecordFactory->getObject('Listing\Product')->getResource()
             ->getProductIds($this->getListingProductIds());
         $attributeSets = $this->getHelper('Magento\Attribute')

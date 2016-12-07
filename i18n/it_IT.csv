@@ -2467,7 +2467,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "The Product ID is not set.","ID prodotto non impostato."
 "Load instance first","Carica prima l'istanza"
 "Attribute does not exist.","L'attributo non esiste."
-"There is no associated products found for grouped product.","Nessun prodotto associato trovato per prodotto raggruppato."
+"There are no associated products found for grouped product.","Nessun prodotto associato trovato per prodotto raggruppato."
 "Payment Status for eBay Order was updated to Paid.","Stato del pagamento per l'ordine eBay aggiornato in Pagato."
 "Payment Status for %s Order was not updated. View %sorder log%s for more details.","Stato del pagamento per l'ordine ""%s"" non aggiornato. Per ulteriori dettagli, mostra  il %sregistro ordini%s."
 "From [%from%] to [%to%]","Da [%from%] a [%to%]"
@@ -4179,7 +4179,7 @@ will be automatically fully or partially updated.<br/>
 "Date","Data"
 "Order ID","ID ordine"
 "Store Debug Information","Archivia informazioni di debug"
-"View All Order Logs.","Visualizza tutti i registri degli ordini."
+"View Full Order Log.","Visualizza tutti i registri degli ordini."
 "Please enter correct product ID or SKU.","Immetti l'ID prodotto o il codice prodotto corretto."
 "Order Item Mapping","Associazione oggetto ordine"
 "As M2E Pro was not able to find appropriate product in Magento Catalog, you are supposed to find and map it manualy.

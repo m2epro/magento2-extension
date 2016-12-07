@@ -13,7 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 class SkipStaticContentValidationMessage extends General
 {
     //########################################
-    
+
     public function execute()
     {
         if ($this->getRequest()->getParam('skip_message', false)) {
@@ -23,9 +23,9 @@ class SkipStaticContentValidationMessage extends General
                 $this->getHelper('Module')->getPublicVersion()
             );
         }
-        
+
         $backUrl = base64_decode($this->getRequest()->getParam('back'));
-        
+
         return $this->_redirect($backUrl);
     }
 

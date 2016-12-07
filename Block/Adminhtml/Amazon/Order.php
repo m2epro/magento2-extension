@@ -23,7 +23,7 @@ class Order extends AbstractContainer
         $this->removeButton('save');
         $this->removeButton('edit');
         // ---------------------------------------
-        
+
     }
 
     //########################################
@@ -51,14 +51,14 @@ HTML;
             'content' => $this->__(
                 <<<HTML
                 <p>In this section, you can find the list of the Orders imported from Amazon.</p><br>
-                
-                <p>An Amazon Order, for which Magento Order is created, contains a value in 
-                <strong>Magento Order </strong>column of the grid. You can find the corresponding Magento Order 
+
+                <p>An Amazon Order, for which Magento Order is created, contains a value in
+                <strong>Magento Order </strong>column of the grid. You can find the corresponding Magento Order
                 in Sales > Orders section of your Magento.</p><br>
-                <p>To manage the imported Amazon Orders, you can use Mass Action options available in the 
-                Actions bulk: Reserve QTY, Cancel QTY Reserve, Mark Order(s) as Shipped 
+                <p>To manage the imported Amazon Orders, you can use Mass Action options available in the
+                Actions bulk: Reserve QTY, Cancel QTY Reserve, Mark Order(s) as Shipped
                 and Resend Shipping Information.</p><br>
-                <p>Also, you can view the detailed Order information by clicking on the appropriate 
+                <p>Also, you can view the detailed Order information by clicking on the appropriate
                 row of the grid.</p>
                 <p><strong>Note:</strong> Automatic creation of Magento Orders, Invoices, and Shipments is
                 performed in accordance with the Order settings specified in <br>

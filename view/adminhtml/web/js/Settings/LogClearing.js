@@ -9,6 +9,10 @@ define([
         {
             jQuery.validator.addMethod('M2ePro-logs-clearing-interval', function(value, el) {
 
+                if (jQuery.validator.methods['M2ePro-required-when-visible'](null, el)) {
+                    return true;
+                }
+
                 if (isNaN(parseInt(value))) {
                     return false;
                 }
@@ -17,8 +21,12 @@ define([
                     return false;
                 }
 
+                if (parseInt(value) > 90) {
+                    return false;
+                }
+
                 return true;
-            }, M2ePro.translator.translate('Please enter a valid value greater than 14 days.'));
+            }, M2ePro.translator.translate('logs_clearing_keep_for_days_validation_message'));
         },
 
         // ---------------------------------------

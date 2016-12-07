@@ -134,7 +134,7 @@
 }
 
 #search_results_table td {
-    padding: 1em 2.5em !important;
+    padding: 1em 1.8rem !important;
     border-bottom: 1px solid #e3e3e3;
     background-color: #f8f8f8;
 }
@@ -348,6 +348,28 @@ label.mage-error[for='sale_price_coefficient'] {
     display: block !important;
     width: 150px;
     margin-left: 7px;
+}
+
+#sale_price_start_date_value + .ui-datepicker-trigger,
+#sale_price_end_date_value + .ui-datepicker-trigger {
+    margin-left: -3em;
+}
+
+.field-sale_price_end_date_value_validation {
+    margin: 0 !important;
+}
+.field-sale_price_end_date_value_validation > .admin__field-control {
+    margin-left: 35.8% !important;
+}
+#sale_price_end_date_value_validation {
+    visibility: hidden;
+    width: 100% !important;
+    margin-top: -40px !important;
+    display: block;
+    height: 1px;
+}
+#sale_price_end_date_value_validation + label {
+    width: 150px !important;
 }
 
 .specifics_list_grid_template tr:hover {

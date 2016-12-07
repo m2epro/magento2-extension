@@ -5,9 +5,9 @@ namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 use Ess\M2ePro\Setup\MigrationFromMagento1;
 use Ess\M2ePro\Controller\Adminhtml\Context;
 
-class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
+class Complete extends Base
 {
-    const SUPPORTED_SOURCE_VERSION = '6.5.0.6';
+    const SUPPORTED_SOURCE_VERSION = '6.5.0.7';
 
     protected $dbModifier;
 
@@ -17,7 +17,7 @@ class Complete extends \Ess\M2ePro\Controller\Adminhtml\Base
         Context $context,
         MigrationFromMagento1 $dbModifier
     ) {
-        $this->dbModifier    = $dbModifier;
+        $this->dbModifier = $dbModifier;
         parent::__construct($context);
     }
 

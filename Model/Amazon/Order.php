@@ -32,6 +32,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
 
     private $carrierFactory;
 
+    private $orderSender;
+
+    private $invoiceSender;
+
     private $subTotalPrice = NULL;
 
     private $grandTotalPrice = NULL;
@@ -41,6 +45,8 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function __construct(
         \Ess\M2ePro\Model\Amazon\Order\ShippingAddressFactory $shippingAddressFactory,
         \Magento\Shipping\Model\CarrierFactory $carrierFactory,
+        \Magento\Sales\Model\Order\Email\Sender\OrderSender $orderSender,
+        \Magento\Sales\Model\Order\Email\Sender\InvoiceSender $invoiceSender,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -54,6 +60,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     {
         $this->shippingAddressFactory = $shippingAddressFactory;
         $this->carrierFactory = $carrierFactory;
+        $this->orderSender = $orderSender;
+        $this->invoiceSender = $invoiceSender;
+
         parent::__construct(
             $parentFactory,
             $modelFactory,
@@ -528,11 +537,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function afterCreateMagentoOrder()
     {
         if ($this->getAmazonAccount()->isMagentoOrdersCustomerNewNotifyWhenOrderCreated()) {
-            if (method_exists($this->getParentObject()->getMagentoOrder(), 'queueNewOrderEmail')) {
-                $this->getParentObject()->getMagentoOrder()->queueNewOrderEmail(false);
-            } else {
-                $this->getParentObject()->getMagentoOrder()->sendNewOrderEmail();
-            }
+            $this->orderSender->send($this->getParentObject()->getMagentoOrder());
         }
 
         if ($this->isFulfilledByAmazon() && !$this->getAmazonAccount()->isMagentoOrdersFbaStockEnabled()) {
@@ -594,7 +599,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $invoice = $invoiceBuilder->getInvoice();
 
         if ($this->getAmazonAccount()->isMagentoOrdersCustomerNewNotifyWhenInvoiceCreated()) {
-            $invoice->sendEmail();
+            $this->invoiceSender->send($invoice);
         }
 
         return $invoice;

@@ -7,7 +7,7 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer;
 class Mapping extends AbstractContainer
 {
     protected $_template = 'order/item/product/options/mapping.phtml';
-    
+
     /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
     private $magentoProduct = null;
 
@@ -23,21 +23,16 @@ class Mapping extends AbstractContainer
 
     public function getProductTypeHeader()
     {
-        switch ($this->magentoProduct->getTypeId()) {
-            case \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE:
-                $title = $this->__('Bundle Items');
-                break;
-            case \Ess\M2ePro\Model\Magento\Product::TYPE_DOWNLOADABLE:
-                $title = $this->__('Links');
-                break;
-            case \Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED:
-            case \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE:
-                $title = $this->__('Associated Products');
-                break;
-            case \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE:
-            default:
-                $title = $this->__('Custom Options');
-                break;
+        $title = $this->__('Custom Options');
+
+        if ($this->magentoProduct->isBundleType()) {
+
+            $title = $this->__('Bundle Items');
+
+        } elseif ($this->magentoProduct->isGroupedType() ||
+                  $this->magentoProduct->isConfigurableType()) {
+
+            $title = $this->__('Associated Products');
         }
 
         return $title;

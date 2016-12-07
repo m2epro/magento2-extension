@@ -48,7 +48,7 @@ class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
         $registryModel = $this->activeRecordFactory->getObjectLoaded(
             'Registry', '/exceptions_filters/', 'key', false
         );
-        
+
         if (is_null($registryModel)) {
             $registryModel = $this->activeRecordFactory->getObject('Registry');
         }

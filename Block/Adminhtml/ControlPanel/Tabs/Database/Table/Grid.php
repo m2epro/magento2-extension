@@ -107,7 +107,7 @@ class Grid extends AbstractGrid
                 'header'         => $header,
                 'align'          => 'left',
                 'type'           => $this->getColumnType($column),
-                'string_limit'   => 10000,
+                'string_limit'   => 15000,
                 'index'          => strtolower($column['name']),
                 'filter_index'   => $filterIndex,
                 'frame_callback' => array($this, 'callbackColumnData'),
@@ -171,7 +171,7 @@ class Grid extends AbstractGrid
             window.ControlPanelDatabaseGridObj = new ControlPanelDatabaseGrid('{$this->getId()}');
             window.ControlPanelDatabaseGridObj.afterInitPage();
             window.ControlPanelDatabaseGridObj.setMergeModeCookieKey('{$key}');
-            
+
             $$('div.main_cell_container.edit-allowed-class').each(function(el){
                 el.observe('mouseover', ControlPanelDatabaseGridObj.mouseOverCell.bind(el));
                 el.observe('mouseout', ControlPanelDatabaseGridObj.mouseOutCell.bind(el));
@@ -271,7 +271,7 @@ HTML;
 HTML;
         $helper = $this->getHelper('Module\Database\Structure');
         $componentMode = $row->getData('component_mode');
-        
+
         if (!$this->tableModel->getIsMergeModeEnabled() && $componentMode &&
             $helper->isTableHorizontalParent($this->tableModel->getTableName())) {
 

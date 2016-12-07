@@ -37,16 +37,16 @@ class Preview extends Description
         if (!$description) {
             $this->messageManager->addWarning(
                 $this->__(
-                    'The Product Description attribute is selected as a source of the eBay Item Description, 
+                    'The Product Description attribute is selected as a source of the eBay Item Description,
                     but this Product has empty description.'
                 )
             );
         } elseif (is_null($productsEntities['listing_product'])) {
             $this->messageManager->addWarning(
                 $this->__(
-                    'The Product you selected is not presented in any M2E Pro Listing. 
-                    Thus, the values of the M2E Pro Attribute(s), which are used in the Item Description, 
-                    will be ignored and displayed like #attribute label#. 
+                    'The Product you selected is not presented in any M2E Pro Listing.
+                    Thus, the values of the M2E Pro Attribute(s), which are used in the Item Description,
+                    will be ignored and displayed like #attribute label#.
                     Please, change the Product ID to preview the data.'
                 )
             );

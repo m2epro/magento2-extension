@@ -6,6 +6,22 @@ use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
 
 class Save extends Template
 {
+    protected $dateTime;
+
+    //########################################
+
+    public function __construct(
+        \Magento\Framework\Stdlib\DateTime $dateTime,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Ess\M2ePro\Controller\Adminhtml\Context $context
+    )
+    {
+        $this->dateTime = $dateTime;
+        parent::__construct($amazonFactory, $context);
+    }
+
+    //########################################
+
     public function execute()
     {
         $post = $this->getRequest()->getPost();
@@ -68,8 +84,9 @@ class Save extends Template
                 false, 'Y-m-d 00:00:00'
             );
         } else {
-            $data['sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_price_start_date_value'], false, 'Y-m-d 00:00:00'
+            $data['sale_price_start_date_value'] = $this->dateTime->formatDate(
+                $data['sale_price_start_date_value'],
+                true
             );
         }
         if ($data['sale_price_end_date_value'] === '') {
@@ -77,8 +94,9 @@ class Save extends Template
                 false, 'Y-m-d 00:00:00'
             );
         } else {
-            $data['sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
-                $data['sale_price_end_date_value'], false, 'Y-m-d 00:00:00'
+            $data['sale_price_end_date_value'] = $this->dateTime->formatDate(
+                $data['sale_price_end_date_value'],
+                true
             );
         }
 
@@ -99,7 +117,7 @@ class Save extends Template
                 $model->getChildObject()->getDataSnapshot()
             );
         }
-        
+
         $model->addData($data)->save();
         $model->getChildObject()->addData(array_merge(
             [$model->getResource()->getChildPrimary() => $model->getId()],
@@ -128,4 +146,6 @@ class Save extends Template
             ),
         )));
     }
+
+    //########################################
 }

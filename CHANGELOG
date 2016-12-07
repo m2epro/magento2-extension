@@ -1,3 +1,31 @@
+* 1.1.3 (07/12/2016)
+
+* Added: Ability to Migrate from Magento1 module v6.5.0.7
+* Added: Advanced conditions in Synchronization Policy based on Magento Product Attribute
+* Added: Ability to show Logs records in Grouped mode (records are grouped by action)
+* Added: Ability to filter Logs and Products in Search Products section by Account and Marketplace
+* Added: [eBay] Ability to use In-Store Pickup Shipping feature
+* Added: [eBay] Automatically Revise Shipping Cost if associated Magento Product Attribute value was changed
+* Added: [eBay] Automatically Revise Item Specifics if associated Magento Product Attribute value was changed
+* Added: [eBay] Ability to use Donation feature in Price, Quantity and Format Policy
+* Added: [eBay] Ability to use extended Magento Product Types [for developers]
+* Added: [Amazon] Ability to use Repricing Service without the need to contact support of M2E Pro
+* Improvement: Setup / Upgrade processes become more Stable
+* Improvement: Now you can filter records in grids not only by Date but Time as well
+* Fix: Unable to save Min\Max Quantity in a Synchronization Policy
+* Fix: Many major/minor improvements of UI
+* Fix: Many fixes of Magento Order creation process
+* Fix: Advanced filter in Grids didn't work correctly
+* Fix: Magento Product Change Events were not triggered if they were executed out of Admin Panel
+* Fix: Notice: Undefined index: name in app/code/Ess/M2ePro/Helper/Module/Support/Form.php
+* Fix: "Uncaught Error: Call to a member function getOrigData() on null" in app/code/Ess/M2ePro/Observer/StockItem/Save/After.php (Singleton issue)
+* Fix: Custom "Order Status Mapping" did not work
+* Fix: error "Headers are already sent" if Varnish is configured and Controller\Cron\Index.php executed
+* Fix: [eBay] Unable to save Package Size in a Shipping Policy
+* Fix: [eBay] Many fixes related to downloading Buyer's Feedback and respond on them
+* Fix: [eBay] PHP Fatal Error: Call to a member function format() on null [vendor/magento/framework/Stdlib/DateTime/Timezone.php]
+* Fix: [Amazon] "Auto Add/Remove Rules" in Listings did not work correctly
+
 * 1.1.2 (21/09/2016)
 
 * Added: Ability to Migrate from Magento1 module v6.5.0.6 version

@@ -3,7 +3,7 @@ define([
     'M2ePro/Plugin/Storage',
     'M2ePro/Common'
 ], function (jQuery, localStorage) {
-    
+
     window.BlockNotice = Class.create(Common, {
 
         // ---------------------------------------

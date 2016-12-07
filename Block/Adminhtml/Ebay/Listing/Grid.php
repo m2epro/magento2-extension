@@ -15,7 +15,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
     protected $ebayFactory;
 
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -133,10 +133,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             'viewLogs' => array(
                 'caption' => $this->__('View Log'),
                 'group'   => 'other',
-                'field'   => 'id',
+                'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
                 'url'     => array(
-                    'base'   => '*/ebay_listing_log/index',
-                    'params' => array('id' => $this->getId())
+                    'base'   => '*/ebay_log_listing_product/index'
                 )
             ),
 
@@ -294,9 +293,7 @@ HTML;
         $this->jsUrl->addUrls(array_merge(
             $this->getHelper('Data')->getControllerActions('Ebay\Listing'),
             $this->getHelper('Data')->getControllerActions('Ebay\Listing\Product\Add'),
-            //$this->getHelper('Data')->getControllerActions('Ebay\Listing\Product\Add'),
-            $this->getHelper('Data')->getControllerActions('Ebay\Listing\Log'),
-            $this->getHelper('Data')->getControllerActions('Ebay\Listing\Product\Log'),
+            $this->getHelper('Data')->getControllerActions('Ebay\Log\Listing\Product'),
             $this->getHelper('Data')->getControllerActions('Ebay\Template')
 //            array(
 //                'common_listing/editTitle' => $this->getUrl('*/common_listing/editTitle')

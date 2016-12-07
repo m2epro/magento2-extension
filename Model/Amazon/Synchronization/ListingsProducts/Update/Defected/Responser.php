@@ -138,12 +138,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        
+
         $skus = array_keys($receivedItems);
 
         //ZF-5063: Segmentaion fault on preg_replace in Zend_Db_Statement
         if (count($skus) >= 250) {
-            
+
             foreach ($skus as &$sku) {
                 if (strpos($sku, '"') === false) {
                     continue;
@@ -152,7 +152,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
                 $sku = str_replace('"', '', $sku);
             }
         }
-        
+
         $listingProductCollection->addFieldToFilter('sku', array('in' => $skus));
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $defectedListingsProducts */

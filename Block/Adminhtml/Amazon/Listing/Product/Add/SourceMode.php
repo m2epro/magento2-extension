@@ -25,7 +25,7 @@ class SourceMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContai
         $this->_controller = 'adminhtml_amazon_listing_product_add';
         $this->_mode = 'sourceMode';
         // ---------------------------------------
-        
+
         // Set buttons actions
         // ---------------------------------------
         $this->removeButton('back');

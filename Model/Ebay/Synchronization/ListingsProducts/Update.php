@@ -237,7 +237,7 @@ final class Update extends AbstractModel
                     $ebayVariationObj->getOnlineQty() != $updateData['online_qty'] ||
                     $ebayVariationObj->getOnlineQtySold() != $updateData['online_qty_sold']) {
 
-                    $variationSnapshot['variation']->addData($updateData)->save();
+                    $variationSnapshot['variation']->getChildObject()->addData($updateData)->save();
                     $variationSnapshot['variation']->getChildObject()->setStatus($listingProduct->getStatus());
                 }
 

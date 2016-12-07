@@ -11,7 +11,7 @@ define([
         marketplaceSynchProgressObj: null,
         accounts: null,
         selectedAccountId: null,
-        
+
         // ---------------------------------------
 
         initialize: function () {
@@ -34,7 +34,7 @@ define([
 
         initAccount: function () {
             var self = this;
-            
+
             $('account_id').observe('change', function() {
                 self.selectedAccountId = this.value;
 
@@ -210,7 +210,7 @@ define([
                 return _.where(newAccounts, account).length > 0;
             });
         }
-        
+
         // ---------------------------------------
     };
 });

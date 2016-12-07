@@ -40,26 +40,6 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function addGlobalMessage($initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
-                                     $actionId = NULL,
-                                     $action = NULL,
-                                     $description = NULL,
-                                     $type = NULL,
-                                     $priority = NULL,
-                                     array $additionalData = array())
-    {
-        $dataForAdd = $this->makeDataForAdd(NULL,
-                                            $initiator,
-                                            $actionId,
-                                            $action,
-                                            $description,
-                                            $type,
-                                            $priority,
-                                            $additionalData);
-
-        $this->createMessage($dataForAdd);
-    }
-
     public function addProductMessage($listingOtherId,
                                       $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
                                       $actionId = NULL,
@@ -108,24 +88,24 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     protected function createMessage($dataForAdd)
     {
-        if (!is_null($dataForAdd['listing_other_id'])) {
+        /** @var \Ess\M2ePro\Model\Listing\Other $listingOther */
+        $listingOther = $this->parentFactory->getObjectLoaded(
+            $this->getComponentMode(), 'Listing\Other', $dataForAdd['listing_other_id']
+        );
 
-            $listingOther = $this->parentFactory->getObjectLoaded(
-                $this->componentMode,'Listing\Other',$dataForAdd['listing_other_id']
-            );
+        $dataForAdd['account_id']     = $listingOther->getAccountId();
+        $dataForAdd['marketplace_id'] = $listingOther->getMarketplaceId();
+        $dataForAdd['title']          = $listingOther->getChildObject()->getTitle();
 
-            $dataForAdd['title'] = $listingOther->getChildObject()->getTitle();
-
-            if ($this->componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
-                $dataForAdd['identifier'] = $listingOther->getChildObject()->getItemId();
-            }
-
-            if ($this->componentMode == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
-                $dataForAdd['identifier'] = $listingOther->getChildObject()->getGeneralId();
-            }
+        if ($this->componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
+            $dataForAdd['identifier'] = $listingOther->getChildObject()->getItemId();
         }
 
-        $dataForAdd['component_mode'] = $this->componentMode;
+        if ($this->componentMode == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
+            $dataForAdd['identifier'] = $listingOther->getChildObject()->getGeneralId();
+        }
+
+        $dataForAdd['component_mode'] = $this->getComponentMode();
 
         $this->activeRecordFactory->getObject('Listing\Other\Log')
             ->setData($dataForAdd)
@@ -155,7 +135,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         if (!is_null($actionId)) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
-            $dataForAdd['action_id'] = NULL;
+            $dataForAdd['action_id'] = $this->getNextActionId();
         }
 
         if (!is_null($action)) {

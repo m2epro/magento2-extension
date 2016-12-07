@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Setup;
 
 use Ess\M2ePro\Helper\Factory;
+use Ess\M2ePro\Helper\Module;
 use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\DB\Ddl\Table;
 use Magento\Framework\Module\ModuleListInterface;
@@ -23,14 +24,20 @@ class InstallSchema implements InstallSchemaInterface
     /** @var SchemaSetupInterface $installer */
     private $installer;
 
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     //########################################
 
     public function __construct(
         Factory $helperFactory,
-        ModuleListInterface $moduleList
+        ModuleListInterface $moduleList,
+        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
     ) {
         $this->helperFactory = $helperFactory;
         $this->moduleList = $moduleList;
+
+        $this->logger = $loggerFactory->create();
     }
 
     //########################################
@@ -65,16 +72,113 @@ class InstallSchema implements InstallSchemaInterface
         $this->installer->startSetup();
 
         try {
+            $this->initVersionHistory();
+            $this->initSetupRow();
+
             $this->installGeneral();
             $this->installEbay();
             $this->installAmazon();
         } catch (\Exception $exception) {
+
+            $this->logger->error($exception, ['source' => 'InstallSchema']);
+
             $this->installer->endSetup();
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
         }
 
         $this->installer->endSetup();
+    }
+
+    //########################################
+
+    private function initVersionHistory()
+    {
+        $versionHistoryTable = $this->getConnection()->newTable($this->getFullTableName('versions_history'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'version_from', Table::TYPE_TEXT, 32,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'version_to', Table::TYPE_TEXT, 32,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($versionHistoryTable);
+
+        $this->getConnection()->insert($this->getFullTableName('versions_history'), [
+            'version_from' => NULL,
+            'version_to'   => $this->helperFactory->getObject('Module')->getPublicVersion(),
+            'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+            'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+        ]);
+    }
+
+    private function initSetupRow()
+    {
+        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'version_from', Table::TYPE_TEXT, 32,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'version_to', Table::TYPE_TEXT, 32,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'is_backuped', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_completed', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'profiler_data', Table::TYPE_TEXT, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addIndex('version_from', 'version_from')
+            ->addIndex('version_to', 'version_to')
+            ->addIndex('is_backuped', 'is_backuped')
+            ->addIndex('is_completed', 'is_completed')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($setupTable);
+
+        $this->getConnection()->insert($this->getFullTableName('setup'), [
+            'version_from' => NULL,
+            'version_to'   => $this->getConfigVersion(),
+            'is_completed' => 0,
+            'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+            'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+        ]);
     }
 
     //########################################
@@ -365,8 +469,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
+                'account_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
                 'listing_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'product_id', Table::TYPE_INTEGER, NULL,
@@ -390,7 +502,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'action_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'action', Table::TYPE_SMALLINT, NULL,
@@ -428,6 +540,8 @@ class InstallSchema implements InstallSchemaInterface
                 'create_date', Table::TYPE_DATETIME, NULL,
                 ['default' => NULL]
             )
+            ->addIndex('account_id', 'account_id')
+            ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('action', 'action')
             ->addIndex('action_id', 'action_id')
             ->addIndex('component_mode', 'component_mode')
@@ -440,6 +554,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('product_id', 'product_id')
             ->addIndex('product_title', 'product_title')
             ->addIndex('type', 'type')
+            ->addIndex('create_date', 'create_date')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -496,15 +611,23 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($listingOtherTable);
-        
+
         $listingOtherLogTable = $this->getConnection()->newTable($this->getFullTableName('listing_other_log'))
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
+                'account_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
                 'listing_other_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'identifier', Table::TYPE_TEXT, 32,
@@ -516,7 +639,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'action_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'action', Table::TYPE_SMALLINT, NULL,
@@ -554,6 +677,8 @@ class InstallSchema implements InstallSchemaInterface
                 'create_date', Table::TYPE_DATETIME, NULL,
                 ['default' => NULL]
             )
+            ->addIndex('account_id', 'account_id')
+            ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('action', 'action')
             ->addIndex('action_id', 'action_id')
             ->addIndex('component_mode', 'component_mode')
@@ -563,6 +688,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('priority', 'priority')
             ->addIndex('title', 'title')
             ->addIndex('type', 'type')
+            ->addIndex('create_date', 'create_date')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -953,8 +1079,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
+                'account_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
                 'order_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULl]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'type', Table::TYPE_SMALLINT, NULL,
@@ -984,10 +1118,13 @@ class InstallSchema implements InstallSchemaInterface
                 'create_date', Table::TYPE_DATETIME, NULL,
                 ['default' => NULL]
             )
+            ->addIndex('account_id', 'account_id')
+            ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('initiator', 'initiator')
             ->addIndex('order_id', 'order_id')
             ->addIndex('type', 'type')
+            ->addIndex('create_date', 'create_date')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -1033,7 +1170,7 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($orderMatchingTable);
-        
+
         $primaryConfigTable = $this->getConnection()->newTable($this->getFullTableName('primary_config'))
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
@@ -1518,6 +1655,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('task', 'task')
             ->addIndex('operation_history_id', 'operation_history_id')
             ->addIndex('type', 'type')
+            ->addIndex('create_date', 'create_date')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -1732,7 +1870,7 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($wizardTable);
-        
+
         $registryTable = $this->getConnection()->newTable($this->getFullTableName('registry'))
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
@@ -1759,48 +1897,6 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($registryTable);
-
-        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
-            ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'version_from', Table::TYPE_TEXT, 32,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'version_to', Table::TYPE_TEXT, 32,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'is_backuped', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'is_completed', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'profiler_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addIndex('version_from', 'version_from')
-            ->addIndex('version_to', 'version_to')
-            ->addIndex('is_backuped', 'is_backuped')
-            ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($setupTable);
     }
 
     private function installEbay()
@@ -2155,7 +2251,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'action_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'action', Table::TYPE_SMALLINT, NULL,
@@ -2188,6 +2284,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('action_id', 'action_id')
             ->addIndex('priority', 'priority')
             ->addIndex('type', 'type')
+            ->addIndex('create_date', 'create_date')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -3369,7 +3466,7 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($ebayMotorFilterTable);
-        
+
         $ebayMotorGroup = $this->getConnection()->newTable($this->getFullTableName('ebay_motor_group'))
             ->addColumn(
                 'id', Table::TYPE_INTEGER, NULL,
@@ -4253,7 +4350,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'charity', Table::TYPE_TEXT, 255,
+                'charity', Table::TYPE_TEXT, NULL,
                 ['default' => NULL]
             )
             ->addColumn(
@@ -4569,6 +4666,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 'revise_update_qty', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
@@ -4606,6 +4711,14 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'revise_update_images', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_specifics', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_shipping_services', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4673,6 +4786,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 'stop_status_disabled', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
@@ -4703,6 +4824,14 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'stop_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->setOption('type', 'INNODB')
@@ -5468,7 +5597,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'is_afn_channel', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'is_isbn_general_id', Table::TYPE_SMALLINT, NULL,
@@ -6471,6 +6600,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 'list_qty_calculated', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
@@ -6567,6 +6704,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
+                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
+            )
+            ->addColumn(
                 'stop_status_disabled', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
@@ -6598,6 +6743,14 @@ class InstallSchema implements InstallSchemaInterface
                 'stop_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
+            ->addColumn(
+                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
+            )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -6624,6 +6777,11 @@ class InstallSchema implements InstallSchemaInterface
     private function getFullTableName($tableName)
     {
         return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($tableName);
+    }
+
+    private function getConfigVersion()
+    {
+        return $this->moduleList->getOne(Module::IDENTIFIER)['setup_version'];
     }
 
     //########################################

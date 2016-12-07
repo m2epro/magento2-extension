@@ -196,7 +196,7 @@ HTML;
             );
 
             $amazonLink = <<<HTML
-<a href="{$itemUrl}" target="_blank">{$itemLinkText}</a>
+<a href="{$itemUrl}" class="external-link" target="_blank">{$itemLinkText}</a>
 HTML;
         }
 

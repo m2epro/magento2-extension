@@ -181,7 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     }
 
     //########################################
-    
+
     protected function getHelpBlockHtml()
     {
         $helpBlockHtml = '';
@@ -192,7 +192,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 $helpBlockHtml = $this->createBlock('HelpBlock')->setData([
                     'content' => <<<HTML
                 <p>You can move Items from one Listing to another one providing that both Listings are created for
-                 the same Account and Marketplace. This option is helpful if you would like to change some 
+                 the same Account and Marketplace. This option is helpful if you would like to change some
                  settings for the Items (e.g. to have listed using another Policy) or  change the Listing structure
                  to affect the number of products placed in one Listing, etc.</p><br>
 
@@ -200,7 +200,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 If you try to move an Item into the Listing where it has already been placed, the action will be
                 ignored.</p><br>
 
-                <p>In case you move Items to the Listing with a different Magento Store View, the values will be 
+                <p>In case you move Items to the Listing with a different Magento Store View, the values will be
                 updated in accordance with the new Policy configurations and the Store View Scope. In view of this,
                 more values might be updated on Channel.</p>
 HTML
@@ -208,15 +208,15 @@ HTML
             } else {
                 $helpBlockHtml = $this->createBlock('HelpBlock')->setData([
                     'content' => <<<HTML
-                <p>Below you can find the list of M2E Pro Listings which were created for the given 
+                <p>Below you can find the list of M2E Pro Listings which were created for the given
                 Account and Marketplace.</p><br>
 
-                <p>After you choose an M2E Pro Listing where you would like the 3rd Party Product to be moved, 
-                click on Move to This Listing link. In case, there is no suitable M2E Pro Listing available, 
+                <p>After you choose an M2E Pro Listing where you would like the 3rd Party Product to be moved,
+                click on Move to This Listing link. In case, there is no suitable M2E Pro Listing available,
                 press Add New Listing button to create a new one.</p><br>
 
-                <p>Please note that once an Item is Moved into an M2E Pro Listing, the Policy settings used for 
-                the selected Listing will be applied to it. Thus, the values (Price, Quantity, etc.) of the 
+                <p>Please note that once an Item is Moved into an M2E Pro Listing, the Policy settings used for
+                the selected Listing will be applied to it. Thus, the values (Price, Quantity, etc.) of the
                 Item on the channel will be synchronized in accordance with the Magento Product values.</p>
 HTML
                 ])->toHtml();

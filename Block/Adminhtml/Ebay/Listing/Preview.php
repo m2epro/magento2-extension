@@ -724,7 +724,7 @@ JS
         if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
             return $this->__('Calculated - cost varies by Buyer Location');
         }
-        
+
         return '';
     }
 

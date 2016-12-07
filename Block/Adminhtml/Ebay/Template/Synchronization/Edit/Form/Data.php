@@ -45,9 +45,24 @@ class Data extends AbstractBlock
             'Min Quantity' => $this->__('Min Quantity'),
         ]);
 
+        $this->css->add(<<<CSS
+.field-advanced_filter ul.rule-param-children {
+    margin-top: 1em;
+}
+.field-advanced_filter .rule-param {
+    vertical-align: top;
+    display: inline-block;
+}
+.field-advanced_filter .rule-param .label {
+    font-size: 14px;
+    font-weight: 600;
+}
+CSS
+        );
+
         $this->js->add(<<<JS
     require([
-        'M2ePro/Ebay/Template/Synchronization',
+        'M2ePro/Ebay/Template/Synchronization'
     ], function(){
         window.EbayTemplateSynchronizationObj = new EbayTemplateSynchronization();
         EbayTemplateSynchronizationObj.initObservers();

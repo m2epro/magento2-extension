@@ -132,7 +132,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         foreach ($items as $item) {
             $item->delete();
         }
-        
+
         if ($this->isRepricing()) {
             $this->getRepricing()->delete();
             $this->repricingModel = NULL;

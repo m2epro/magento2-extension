@@ -28,10 +28,6 @@ class License extends AbstractTab
             ]
         ]);
 
-        $urlComponents = $this->getHelper('Component')->getEnabledComponents();
-        $componentForUrl = count($urlComponents) == 1
-            ? array_shift($urlComponents) : \Ess\M2ePro\Helper\Component\Ebay::NICK;
-
         $email = '<a href="mailto:support@m2epro.com">support@m2epro.com</a>';
 
         $form->addField('block_notice_configuration_license', self::HELP_BLOCK,
@@ -84,8 +80,8 @@ class License extends AbstractTab
                     'label' => $this->__('Associated Email'),
                     'text' => $this->licenseData['info']['email'],
                     'tooltip' => $this->__(
-                        'That is an e-mail address associated to your License. 
-                        Also, you can use this e-mail to access a 
+                        'That is an e-mail address associated to your License.
+                        Also, you can use this e-mail to access a
                         <a href="%url%" target="_blank" class="external-link">clients portal</a>',
                         $this->getHelper('Module\Support')->getClientsPortalUrl())
                 ]
@@ -94,11 +90,13 @@ class License extends AbstractTab
 
         if ($this->key != '') {
             $fieldSet->addField('manage_license',
-                'note',
+                'link',
                 [
                     'label' => '',
-                    'text' => '<a href="'.$this->getHelper('Module\Support')->getClientsPortalUrl()
-                              .'" target="_blank">'.$this->__('Manage License').'</a>'
+                    'value' => $this->__('Manage License'),
+                    'href' => $this->getHelper('Module\Support')->getClientsPortalUrl(),
+                    'class' => 'external-link',
+                    'target' => '_blank'
                 ]
             );
         }

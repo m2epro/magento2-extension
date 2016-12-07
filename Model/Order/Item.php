@@ -23,14 +23,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 
     private $proxy = NULL;
 
-    private static $supportedProductTypes = array(
-        \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE,
-        \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE,
-        \Magento\GroupedProduct\Model\Product\Type\Grouped::TYPE_CODE,
-        \Magento\Catalog\Model\Product\Type::TYPE_BUNDLE,
-        \Magento\Downloadable\Model\Product\Type::TYPE_DOWNLOADABLE
-    );
-
     //########################################
 
     public function _construct()
@@ -244,7 +236,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             $this->assignProduct($this->getChildObject()->getAssociatedProductId());
         }
 
-        if (!in_array($this->getMagentoProduct()->getTypeId(), self::$supportedProductTypes)) {
+        $supportedProductTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
+        if (!in_array($this->getMagentoProduct()->getTypeId(), $supportedProductTypes)) {
             $message = $this->getHelper('Module\Log')->encodeDescription(
                 'Order Import does not support Product type: %type%.', array(
                     'type' => $this->getMagentoProduct()->getTypeId()

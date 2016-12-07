@@ -3,7 +3,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Ebay/Listing/Product/Category/Settings/Grid'
 ], function (modal, MagentoMessageObj) {
-    
+
     window.EbayListingProductCategorySettingsModeCategoryGrid = Class.create(EbayListingProductCategorySettingsGrid, {
 
         // ---------------------------------------

@@ -187,7 +187,7 @@ HTML;
         $beforeHtml .= <<<HTML
 <div style="margin: 15px 0 10px 0">{$help->toHtml()}</div>
 HTML;
-        
+
         $path = 'amazon_listing_product_add/removeSessionProductsByCategory';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 

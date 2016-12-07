@@ -200,11 +200,14 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     protected function createMessage($dataForAdd)
     {
+        /** @var \Ess\M2ePro\Model\Listing $listing */
         $listing = $this->parentFactory->getCachedObjectLoaded(
-            $this->componentMode,'Listing',$dataForAdd['listing_id']
+            $this->getComponentMode(), 'Listing', $dataForAdd['listing_id']
         );
 
-        $dataForAdd['listing_title'] = $listing->getData('title');
+        $dataForAdd['account_id']     = $listing->getAccountId();
+        $dataForAdd['marketplace_id'] = $listing->getMarketplaceId();
+        $dataForAdd['listing_title']  = $listing->getTitle();
 
         if (isset($dataForAdd['product_id'])) {
             $dataForAdd['product_title'] = $this->modelFactory->getObject('Magento\Product')
@@ -213,7 +216,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             unset($dataForAdd['product_title']);
         }
 
-        $dataForAdd['component_mode'] = $this->componentMode;
+        $dataForAdd['component_mode'] = $this->getComponentMode();
 
         $this->activeRecordFactory->getObject('Listing\Log')
                  ->setData($dataForAdd)
@@ -252,7 +255,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         if (!is_null($actionId)) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
-            $dataForAdd['action_id'] = NULL;
+            $dataForAdd['action_id'] = $this->getNextActionId();
         }
 
         if (!is_null($action)) {

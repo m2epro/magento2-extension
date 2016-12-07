@@ -183,35 +183,35 @@ HTML
         $('mode1same').observe('change', function (e) {
             $('edit_description_template').show();
         });
-    
+
         $('edit_form').observe('change', function(e) {
             if (e.target.tagName != 'INPUT') {
                 return;
             }
-    
+
             if (e.target.value != 'same') {
                 $('edit_description_template').hide();
             } else {
                 $('edit_description_template').show();
             }
         });
-    
+
         createTemplateDescriptionInNewTab = function(stepWindowUrl) {
             var win = window.open(stepWindowUrl);
-    
+
             var intervalId = setInterval(function(){
                 if (!win.closed) {
                     return;
                 }
-    
+
                 clearInterval(intervalId);
-    
+
                 loadTemplateDescriptionGrid();
             }, 1000);
         };
-    
+
         loadTemplateDescriptionGrid = function() {
-    
+
             new Ajax.Request(
                 '{$this->getUrl('*/amazon_listing_product_template_description/viewGrid'
             )}', {
@@ -228,7 +228,7 @@ HTML
                 }
             })
         };
-    
+
         descriptionTemplateModeFormSubmit = function()
         {
             if ($('mode1same').checked && $('description_template_id').value == '') {
@@ -237,7 +237,7 @@ HTML
             }
             $('edit_form').submit();
         };
-    
+
         selectTemplateDescription = function(el, templateId)
         {
             $('description_template_id').value = templateId;
@@ -246,18 +246,18 @@ HTML
             $('same_description_template_error').hide();
             popup.modal('closeModal');
         };
-    
+
         var modeElement = $$('input[value="{$this->getDescriptionTemplateMode()}"]').shift();
-    
+
         modeElement.checked = true;
         if (modeElement.value != 'same') {
             $('edit_description_template').hide();
         } else {
             $('edit_description_template').show();
         }
-    
+
         $('edit_description_template').observe('click', function(event) {
-    
+
             var popupContent = '';
             new Ajax.Request('{$this->getUrl('*/amazon_listing_product/mapToNewAsin')}', {
                 method: 'post',
@@ -268,17 +268,17 @@ HTML
                     if (!transport.responseText.isJSON()) {
                         return;
                     }
-    
+
                     var response = transport.responseText.evalJSON();
-    
+
                     filteredProductsIds = response.products_ids;
-                    
+
                     if (!$('template_description_pop_up_content')) {
                         $('html-body').insert({bottom: response.html});
                     }
-        
+
                     popup = jQuery('#template_description_pop_up_content');
-        
+
                     modal({
                         title: '{$this->__(
                                    'Please select the Description Policy for the process of New ASIN/ISBN creation'
@@ -292,13 +292,13 @@ HTML
                             }
                         }]
                     }, popup);
-        
+
                     popup.modal('openModal');
-            
+
                     loadTemplateDescriptionGrid();
                 }
-            });                 
-    
+            });
+
         });
     });
 JS

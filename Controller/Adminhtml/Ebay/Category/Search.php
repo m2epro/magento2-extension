@@ -75,7 +75,7 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
                 'id' => $categoryId['category_id']
             );
         }
-        
+
         $this->setJsonContent($result);
 
         return $this->getResult();

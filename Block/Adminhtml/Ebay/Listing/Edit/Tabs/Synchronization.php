@@ -32,7 +32,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $helpBlock = $this->createBlock('HelpBlock');
         $helpBlock->setData([
             'content' => $this->__(
-                '<p>You should configure rules for the automatic data update between a Magento Product 
+                '<p>You should configure rules for the automatic data update between a Magento Product
                 and an eBay Item.</p>'
             )
         ]);
@@ -55,6 +55,13 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
     protected function _toHtml()
     {
+        $this->css->add(<<<CSS
+#template_synchronization_buttons_container {
+    margin-top: 15px;
+}
+CSS
+        );
+
         return parent::_toHtml()
             . $this->getChildHtml('help')
             . $this->getChildHtml('synchronization')

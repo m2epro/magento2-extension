@@ -66,6 +66,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                         '{{table}}.stock_id=1',
                         'left');
 
+        $collection->addFieldToFilter(
+            array(array(
+                'attribute' => 'type_id',
+                'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+            ))
+        );
+
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -94,11 +101,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));
 
-        $tempTypes = $this->type->getOptionArray();
-        if (isset($tempTypes['virtual'])) {
-            unset($tempTypes['virtual']);
-        }
-
         $this->addColumn('type', array(
             'header'    => $this->__('Type'),
             'align'     => 'left',
@@ -107,7 +109,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'sortable'  => false,
             'index'     => 'type_id',
             'filter_index' => 'type_id',
-            'options' => $tempTypes
+            'options' => $this->getProductTypes()
         ));
 
         $this->addColumn('stock_availability', array(
@@ -254,6 +256,24 @@ JS
     public function getRowUrl($row)
     {
         return false;
+    }
+
+    //########################################
+
+    protected function getProductTypes()
+    {
+        $magentoProductTypes = $this->type->getOptionArray();
+        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
+        foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
+            if (in_array($type, $knownTypes)) {
+                continue;
+            }
+
+            unset($magentoProductTypes[$type]);
+        }
+
+        return $magentoProductTypes;
     }
 
     //########################################

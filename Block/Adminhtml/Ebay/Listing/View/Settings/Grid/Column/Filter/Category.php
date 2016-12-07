@@ -58,14 +58,14 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Ab
             {$this->__('With Listing Policies Overrides')}
         </label>
         <div style="display: inline-block; line-height: 2;">
-            <input name="{$this->_getHtmlName()}[checkbox]" 
+            <input name="{$this->_getHtmlName()}[checkbox]"
                    id="{$this->_getHtmlId()}_checkbox"
-                   value="1" class="admin__control-checkbox" 
+                   value="1" class="admin__control-checkbox"
                    type="checkbox" {$checkbox}>
             <label style="margin: 0 0 -4px 2px;" class="addafter" for="{$this->_getHtmlId()}_checkbox">
                 <label for="{$this->_getHtmlId()}_checkbox"></label>
             </label>
-        </div> 
+        </div>
 </div>
 
 HTML;

@@ -18,7 +18,7 @@ class General extends AbstractForm
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
         }
-        
+
         $temp = $this->getHelper('Data\Session')->getValue('get_token_account_title', true);
         !is_null($temp) && $formData['title'] = $temp;
 
@@ -118,7 +118,7 @@ HTML
                         'href' => $this->getHelper('Component\Ebay')->getMemberUrl(
                             $formData['user_id'], $formData['mode']
                         ),
-                        'class' => 'control-value',
+                        'class' => 'control-value external-link',
                         'target' => '_blank',
                         'style' => 'text-decoration: underline;'
                     ]

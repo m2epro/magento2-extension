@@ -22,7 +22,7 @@ define([
         unselectCallback: null,
         doneCallback: null,
         cancelCallback: null,
-        
+
         isShowEditLinks: true,
         categoriesRequiringValidation: {},
 
@@ -75,7 +75,7 @@ define([
 
             return self.attributes;
         },
-        
+
         setSingleCategoryMode: function (mode) {
             var self = EbayListingProductCategorySettingsChooserObj;
 
@@ -258,9 +258,9 @@ define([
             if ($('chooser_container')) {
                 $('chooser_container').remove();
             }
-            
+
             $('html-body').insert({bottom: html});
-            
+
             var content = jQuery('#chooser_container');
 
             modal({

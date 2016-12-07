@@ -44,6 +44,13 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     protected function createMessage($dataForAdd)
     {
+        /** @var \Ess\M2ePro\Model\Order $order */
+        $order = $this->parentFactory->getObjectLoaded(
+            $this->getComponentMode(), 'Order', $dataForAdd['order_id']
+        );
+
+        $dataForAdd['account_id']     = $order->getAccountId();
+        $dataForAdd['marketplace_id'] = $order->getMarketplaceId();
         $dataForAdd['initiator'] = $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
         $dataForAdd['component_mode'] = $this->getComponentMode();
 

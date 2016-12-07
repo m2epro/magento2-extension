@@ -17,7 +17,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $this->getMessageManager()->addError($this->__('Account does not exist.'));
             return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
         }
-        
+
         /** @var $repricingAction \Ess\M2ePro\Model\Amazon\Repricing\Action\Product */
         $repricingAction = $this->modelFactory->getObject('Amazon\Repricing\Action\Product');
         $repricingAction->setAccount($account);
@@ -52,7 +52,7 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         foreach ($response['offers'] as $offer) {
             $skus[] = $offer['sku'];
         }
-        
+
         /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
         $repricingSynchronization->setAccount($account);

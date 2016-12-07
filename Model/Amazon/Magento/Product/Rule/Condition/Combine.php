@@ -55,6 +55,7 @@ class Combine extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Combine
             'amazon_online_price' => $helper->__('Price'),
             'amazon_online_sale_price' => $helper->__('Sale Price'),
             'amazon_is_afn_chanel' => $helper->__('Fulfillment'),
+            'amazon_is_repricing' => $helper->__('On Repricing'),
             'amazon_status' => $helper->__('Status')
         );
     }

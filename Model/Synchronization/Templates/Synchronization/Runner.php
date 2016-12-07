@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Synchronization\Templates\Synchronization;
 
+use Ess\M2ePro\Model\Listing\Product\Action\Configurator;
+
 class Runner extends \Ess\M2ePro\Model\AbstractModel
 {
     private $items = array();
@@ -187,14 +189,23 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param $product
      * @param $action
+     * @return bool
+     */
+    public function isExistProductWithAction($product, $action)
+    {
+        return isset($this->items[$product->getId()]) &&
+               $this->items[$product->getId()]['action'] == $action;
+    }
+
+    /**
+     * @param $product
+     * @param $action
      * @param \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator
      * @return bool
      */
-    public function isExistProduct($product,
-                                   $action,
-                                   \Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
+    public function isExistProductWithCoveringConfigurator($product, $action, Configurator $configurator)
     {
-        if (!isset($this->items[$product->getId()]) || $this->items[$product->getId()]['action'] != $action) {
+        if (!$this->isExistProductWithAction($product, $action)) {
             return false;
         }
 

@@ -39,7 +39,7 @@ define([
                     }
 
                     if (!response['url']) {
-                        MessageObj.addErrorMessage(M2ePro.translator.translate('An error during of license creation occurred.'));
+                        MessageObj.addErrorMessage(M2ePro.translator.translate('An error during of account creation.'));
                         return CommonObj.scrollPageToTop();
                     }
 

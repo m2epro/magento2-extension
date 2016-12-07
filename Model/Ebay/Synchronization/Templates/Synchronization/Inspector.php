@@ -10,6 +10,25 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
 class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
 {
+    private $ebayFactory;
+    private $magentoProductCollectionFactory;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $magentoProductCollectionFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory
+    )
+    {
+        parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
+
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->ebayFactory = $ebayFactory;
+    }
+
     //########################################
 
     /**
@@ -443,12 +462,14 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         return true;
     }
 
+    // ---------------------------------------
+
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetStopRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetStopGeneralRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         if (!$listingProduct->isListed()) {
             return false;
@@ -461,8 +482,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $listingProduct->getChildObject();
 
-        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
-
         if (!$ebayListingProduct->isSetCategoryTemplate()) {
             return false;
         }
@@ -470,6 +489,20 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         if ($listingProduct->isSetProcessingLock('in_action')) {
             return false;
         }
+
+        return true;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetStopRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+        $ebaySynchronizationTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
         $variationResource = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource();
 
@@ -838,6 +871,48 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         return true;
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseSpecificsRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+            return false;
+        }
+
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isReviseWhenChangeSpecifics()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseShippingServicesRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+            return false;
+        }
+
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isReviseWhenChangeShippingServices()) {
+            return false;
+        }
+
+        return true;
+    }
+
     // ---------------------------------------
 
     /**
@@ -888,6 +963,61 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         return false;
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product[] $lpForAdvancedRules
+     * input format $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+     * @param string $ruleModelPrefix
+     * @param string $ruleFiltersDataKeyPrefix
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
+    public function getMeetAdvancedRequirementsProducts(array $lpForAdvancedRules,
+                                                        $ruleModelPrefix,
+                                                        $ruleFiltersDataKeyPrefix)
+    {
+        $resultProducts = [];
+
+        foreach ($lpForAdvancedRules as $templateId => $productsByTemplate) {
+
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Synchronization $ebayTemplate */
+            $template = $this->ebayFactory->getCachedObjectLoaded('Template\Synchronization', $templateId);
+            $ebayTemplate = $template->getChildObject();
+
+            foreach ($productsByTemplate as $storeId => $productsByStore) {
+
+                /* @var $tempCollection \Magento\Catalog\Model\ResourceModel\Product\Collection */
+                $tempCollection = $this->magentoProductCollectionFactory->create();
+                $tempCollection->addFieldToFilter('entity_id', ['in' => array_keys($productsByStore)]);
+                $tempCollection->setStoreId($storeId);
+
+                $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+                    [
+                        'store_id' => $storeId,
+                        'prefix'   => $ruleModelPrefix
+                    ]
+                );
+
+                $templateData = $ebayTemplate->getData($ruleFiltersDataKeyPrefix . '_advanced_rules_filters');
+                $templateData && $ruleModel->loadFromSerialized($templateData);
+
+                $ruleModel->setAttributesFilterToCollection($tempCollection);
+
+                foreach ($tempCollection->getItems() as $magentoProduct) {
+                    /**@var \Magento\Catalog\Model\Product $magentoProduct */
+
+                    if (isset($productsByStore[$magentoProduct->getId()])) {
+                        $resultProducts = array_merge($resultProducts, $productsByStore[$magentoProduct->getId()]);
+                    }
+                }
+            }
+        }
+
+        return $resultProducts;
     }
 
     //########################################

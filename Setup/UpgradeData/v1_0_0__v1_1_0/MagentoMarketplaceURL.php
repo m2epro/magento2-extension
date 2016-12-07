@@ -25,7 +25,7 @@ class MagentoMarketplaceURL extends AbstractFeature
 
         $this->getConfigModifier('module')->getEntity('/support/', 'magento_connect_url')
                                           ->updateKey('magento_marketplace_url');
-        
+
         $this->getConfigModifier('module')->getEntity('/support/', 'magento_marketplace_url')
                                           ->updateValue($marketplaceUrl);
     }

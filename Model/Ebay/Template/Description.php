@@ -96,7 +96,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     const WATERMARK_CACHE_TIME = 604800; // 7 days
     const GALLERY_IMAGES_COUNT_MAX = 11;
-    
+
     protected $driverPool;
 
     /**
@@ -105,7 +105,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     private $descriptionSourceModels = array();
 
     //########################################
-    
+
     public function __construct(
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Factory $parentFactory,
@@ -195,7 +195,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         ]]);
 
         $watermarkPath = $varDir->getPath().$this->getId().'.png';
-        
+
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         if ($fileDriver->isFile($watermarkPath)) {
             $fileDriver->deleteFile($watermarkPath);

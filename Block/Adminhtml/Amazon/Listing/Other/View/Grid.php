@@ -320,10 +320,9 @@ HTML;
         $html ='';
         $value = $row->getChildObject()->getData('online_price');
 
-
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
             (int)$row->getChildObject()->getData('is_repricing') == 1) {
-            
+
             $icon = 'repricing-enabled';
             $text = $this->__(
                 'This product is used by Amazon Repricing Tool.
@@ -344,7 +343,6 @@ HTML;
 </div>
 HTML;
         }
-
 
         if (is_null($value) || $value === '') {
             return $this->__('N/A') . $html;
@@ -434,11 +432,11 @@ HTML;
             $where .= 'online_qty <= ' . $value['to'];
         }
 
-        if (!empty($value['afn'])) {
+        if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_afn_channel = ' . \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;;
+            $where .= 'is_afn_channel = ' . (int)$value['afn'];
         }
 
         $collection->getSelect()->where($where);
@@ -465,11 +463,13 @@ HTML;
             $where .= 'online_price <= ' . $value['to'];
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            (isset($value['is_repricing']) && $value['is_repricing'] !== ''))
+        {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_repricing = ' . 1;
+            $where .= 'is_repricing = ' . (int)$value['is_repricing'];
         }
 
         $collection->getSelect()->where($where);
@@ -480,140 +480,46 @@ HTML;
     public function getViewLogIconHtml($listingOtherId)
     {
         $listingOtherId = (int)$listingOtherId;
+        $availableActionsId = array_keys($this->getAvailableActions());
 
         // Get last messages
         // ---------------------------------------
-        $dbSelect = $this->resourceConnection->getConnection()->select()
+        $connection = $this->resourceConnection->getConnection();
+
+        $dbSelect = $connection->select()
             ->from(
                 $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getMainTable(),
                 array('action_id','action','type','description','create_date','initiator')
             )
             ->where('`listing_other_id` = ?', $listingOtherId)
-            ->where('`action_id` IS NOT NULL')
+            ->where('`action` IN (?)', $availableActionsId)
             ->order(array('id DESC'))
-            ->limit(30);
+            ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::PRODUCTS_LIMIT);
 
-        $logRows = $this->resourceConnection->getConnection()->fetchAll($dbSelect);
-        // ---------------------------------------
+        $logs = $connection->fetchAll($dbSelect);
 
-        // Get grouped messages by action_id
-        // ---------------------------------------
-        $actionsRows = array();
-        $tempActionRows = array();
-        $lastActionId = false;
-
-        foreach ($logRows as $row) {
-
-            $row['description'] = $this->getHelper('View')->getModifiedLogMessage($row['description']);
-
-            if ($row['action_id'] !== $lastActionId) {
-                if (count($tempActionRows) > 0) {
-                    $actionsRows[] = array(
-                        'type' => $this->getMainTypeForActionId($tempActionRows),
-                        'date' => $this->getMainDateForActionId($tempActionRows),
-                        'action' => $this->getActionForAction($tempActionRows[0]),
-                        'initiator' => $this->getInitiatorForAction($tempActionRows[0]),
-                        'items' => $tempActionRows
-                    );
-                    $tempActionRows = array();
-                }
-                $lastActionId = $row['action_id'];
-            }
-            $tempActionRows[] = $row;
-        }
-
-        if (count($tempActionRows) > 0) {
-            $actionsRows[] = array(
-                'type' => $this->getMainTypeForActionId($tempActionRows),
-                'date' => $this->getMainDateForActionId($tempActionRows),
-                'action' => $this->getActionForAction($tempActionRows[0]),
-                'initiator' => $this->getInitiatorForAction($tempActionRows[0]),
-                'items' => $tempActionRows
-            );
-        }
-
-        if (count($actionsRows) <= 0) {
+        if (empty($logs)) {
             return '';
         }
 
-        $tips = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'Last Action was completed successfully.',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'Last Action was completed with error(s).',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'Last Action was completed with warning(s).'
-        );
+        // ---------------------------------------
 
-        $icons = array(
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS => 'normal',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR => 'error',
-            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING => 'warning'
-        );
-
-        $summary = $this->createBlock('Log\Grid\Summary', '', [
-            'data' => [
-                'entity_id' => $listingOtherId,
-                'rows' => $actionsRows,
-                'tips' => $tips,
-                'icons' => $icons,
-                'view_help_handler' => 'AmazonListingOtherGridObj.viewItemHelp',
-                'hide_help_handler' => 'AmazonListingOtherGridObj.hideItemHelp',
-            ]
+        $summary = $this->createBlock('Listing\Log\Grid\LastActions')->setData([
+            'entity_id' => $listingOtherId,
+            'logs'      => $logs,
+            'available_actions' => $this->getAvailableActions(),
+            'view_help_handler' => 'AmazonListingOtherGridObj.viewItemHelp',
+            'hide_help_handler' => 'AmazonListingOtherGridObj.hideItemHelp',
         ]);
 
         return $summary->toHtml();
     }
 
-    public function getActionForAction($actionRows)
+    private function getAvailableActions()
     {
-        $string = '';
-
-        switch ((int)$actionRows['action']) {
-            case \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE:
-                $string = $this->__('Channel Change');
-                break;
-        }
-
-        return $string;
-    }
-
-    public function getInitiatorForAction($actionRows)
-    {
-        $string = '';
-
-        switch ($actionRows['initiator']) {
-            case \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN:
-                $string = '';
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_USER:
-                $string = $this->__('Manual');
-                break;
-            case \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION:
-                $string = $this->__('Automatic');
-                break;
-        }
-
-        return $string;
-    }
-
-    public function getMainTypeForActionId($actionRows)
-    {
-        $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS;
-
-        foreach ($actionRows as $row) {
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
-                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR;
-                break;
-            }
-            if ($row['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
-                $type = \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING;
-            }
-        }
-
-        return $type;
-    }
-
-    public function getMainDateForActionId($actionRows)
-    {
-        return $this->_localeDate->formatDate($actionRows[0]['create_date'], \IntlDateFormatter::MEDIUM);
+        return [
+            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_CHANNEL_CHANGE => $this->__('Channel Change')
+        ];
     }
 
     //########################################

@@ -21,7 +21,9 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     public function beforeProcess()
     {
-        $productId = (int)$this->getEventObserver()->getData('object')->getData('product_id');
+        parent::beforeProcess();
+
+        $productId = (int)$this->getStockItem()->getData('product_id');
 
         if ($productId <= 0) {
             throw new \Ess\M2ePro\Model\Exception('Product ID should be greater than 0.');
@@ -29,7 +31,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
         $this->productId = $productId;
 
-        parent::beforeProcess();
+        $this->reloadStockItem();
     }
 
     public function process()
@@ -52,7 +54,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     private function processQty()
     {
         $oldValue = (int)$this->getStoredStockItem()->getOrigData('qty');
-        $newValue = (int)$this->getEventObserver()->getData('object')->getData('qty');
+        $newValue = (int)$this->getStockItem()->getData('qty');
 
         if (!$this->updateProductChangeRecord('qty',$oldValue,$newValue) || $oldValue == $newValue) {
             return;
@@ -71,7 +73,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     private function processStockAvailability()
     {
         $oldValue = (bool)$this->getStoredStockItem()->getOrigData('is_in_stock');
-        $newValue = (bool)$this->getEventObserver()->getData('object')->getData('is_in_stock');
+        $newValue = (bool)$this->getStockItem()->getData('is_in_stock');
 
         // M2ePro\TRANSLATIONS
         // IN Stock
@@ -162,12 +164,12 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     }
 
     //########################################
-    
+
     private function getStoredStockItem()
     {
         $key = $this->getStockItemId().'_'.$this->getStoreId();
         return $this->getRegistry()->registry($key);
     }
-    
+
     //########################################
 }

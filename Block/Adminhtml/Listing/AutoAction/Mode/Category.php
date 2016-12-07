@@ -56,10 +56,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
         );
@@ -79,6 +77,8 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         }
 JS
         );
+
+        return parent::_afterToHtml($html);
     }
 
     protected function _toHtml()

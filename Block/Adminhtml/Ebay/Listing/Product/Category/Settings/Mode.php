@@ -62,7 +62,7 @@ class Mode extends AbstractContainer
         ]);
 
         $listing = $this->getHelper('Data\GlobalData')->getValue('listing_for_products_category_settings');
-        
+
         $this->js->addOnReadyJs(<<<JS
 require([
     'M2ePro/Ebay/Listing/Product/Category/Settings/Mode'

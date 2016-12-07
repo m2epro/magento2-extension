@@ -12,7 +12,7 @@
         . $this->jsUrl->render()
         . $this->js->render();
     ?>
-    
+
     initializationCustomAttributeInputs();
     initCollapsable();
 
@@ -47,7 +47,7 @@
 
         <?php echo $this->js->render(); ?>
 
-        window.initializationCustomAttributeInputs = function() 
+        window.initializationCustomAttributeInputs = function()
         {
             $$('select.M2ePro-custom-attribute-can-be-created').each(function(selectObj){
 

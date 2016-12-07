@@ -3,7 +3,7 @@ define([
     'M2ePro/Plugin/Messages',
     'M2ePro/Action'
 ], function (modal, MessageObj) {
-    
+
     window.AmazonListingProductSearch = Class.create(Action, {
 
         MATCHING_TYPE_EQUAL: 1,
@@ -159,7 +159,7 @@ define([
                 $('productSearch_pop_up_content').show();
                 $('productSearch_form').hide();
                 $('suggested_asin_grid_help_block').show();
-                
+
                 new Ajax.Request(M2ePro.url.get('amazon_listing_product_search/suggestedAsinGrid'), {
                     method: 'post',
                     parameters: {

@@ -17,7 +17,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         parent::_construct();
         $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Marketplace');
     }
-    
+
     //########################################
 
     public function save()
@@ -27,7 +27,7 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     }
 
     //########################################
-    
+
     public function delete()
     {
         $this->getHelper('Data\Cache\Permanent')->removeTagValues('marketplace');
@@ -115,6 +115,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     {
         return true;
     }
-    
+
     //########################################
 }

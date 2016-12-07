@@ -7,7 +7,7 @@
 
     $block->jsUrl->add($this->getUrl('*/general/getChildCategories'), 'general/getChildCategories');
 
-    $block->js->add(<<<JS
+    $block->js->add("
 require([
     'M2ePro/Ebay/Listing/Product/Category/Settings/Chooser/Tabs/Browse'
 ], function(){
@@ -20,10 +20,10 @@ require([
         var leafId = selected[selected.length-1];
         EbayListingProductCategorySettingsChooserObj.selectCategory(M2ePro.php.constant('\\\\Ess\\\\M2ePro\\\\Model\\\\Ebay\\\\Template\\\\Category::CATEGORY_MODE_EBAY'), leafId);
     });
-      
+
 });
-JS
-);
+
+");
 
 ?>
 

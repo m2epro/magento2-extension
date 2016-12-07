@@ -105,7 +105,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         return <<<HTML
 {$value}
 <div style="text-align: right;">
-    <a href="javascript:void(0);" 
+    <a href="javascript:void(0);"
         onclick="EbayAccountObj.openFeedbackTemplatePopup('{$row->getData('id')}');"
         >{$this->__('Edit')}</a>
 </div>

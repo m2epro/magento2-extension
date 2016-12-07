@@ -14,9 +14,9 @@ class Rule extends AbstractForm
 {
     protected $conditions;
     protected $rendererFieldset;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Rule\Block\Conditions $conditions,
         \Magento\Backend\Block\Widget\Form\Renderer\Fieldset $rendererFieldset,

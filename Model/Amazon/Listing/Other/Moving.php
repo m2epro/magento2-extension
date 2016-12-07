@@ -251,8 +251,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'marketplace_id' => $this->getMarketplace()->getId(),
             'account_id' => $accountId,
 
-            'template_selling_format_id'  => $this->getDefaultSellingFormatTemplate($otherListing)->getId(),
-            'template_synchronization_id' => $this->getDefaultSynchronizationTemplate($otherListing)->getId(),
+            'template_selling_format_id'  => $this->getDefaultSellingFormatTemplate()->getId(),
+            'template_synchronization_id' => $this->getDefaultSynchronizationTemplate()->getId(),
 
             'source_products' => \Ess\M2ePro\Model\Listing::SOURCE_PRODUCTS_CUSTOM,
 
@@ -270,13 +270,13 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         );
 
         $tempModel->addData($dataForAdd)->save();
-        
+
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
             [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
             $dataForAdd
         ))->save();
-        
+
         $this->tempObjectsCache['listing_'.$accountId] = $tempModel;
 
         return $tempModel;
@@ -373,13 +373,13 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $tempModel->addData($dataForAdd)->save();
-        
+
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
             [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
             $dataForAdd
         ))->save();
-        
+
         $this->tempObjectsCache['synchronization_'.$marketplaceId] = $tempModel;
 
         return $tempModel;
@@ -427,13 +427,13 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
         );
 
         $tempModel->addData($dataForAdd)->save();
-        
+
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
             [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
             $dataForAdd
         ))->save();
-        
+
         $this->tempObjectsCache['selling_format_'.$marketplaceId] = $tempModel;
 
         return $tempModel;

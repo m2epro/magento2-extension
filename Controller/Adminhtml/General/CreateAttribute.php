@@ -13,9 +13,9 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 class CreateAttribute extends General
 {
     protected $entityAttributeSetFactory;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Eav\Model\Entity\Attribute\SetFactory $entityAttributeSetFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
@@ -73,6 +73,6 @@ class CreateAttribute extends General
         $this->setAjaxContent(json_encode($attributeResult), false);
         return $this->getResult();
     }
-    
+
     //########################################
 }

@@ -31,7 +31,7 @@ class General extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $helpBlock = $this->createBlock('HelpBlock');
         $helpBlock->setData([
             'content' => $this->__(
-                '<p>You should specify settings for Payment, Shipping and Return configurations for current 
+                '<p>You should specify settings for Payment, Shipping and Return configurations for current
                 Listing.</p><br>
                 More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.',
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/7QItAQ')

@@ -21,14 +21,14 @@ class RelistRules extends AbstractTab
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>If <strong>Relist Action</strong> is enabled, M2E Pro will relist Items that have been 
-                    stopped or finished on eBay if they meet the Conditions you set. (Relist Action will not 
+                    <p>If <strong>Relist Action</strong> is enabled, M2E Pro will relist Items that have been
+                    stopped or finished on eBay if they meet the Conditions you set. (Relist Action will not
                     list Items that have not been Listed yet)</p><br>
-                    
+
                     <p>If the automatic relisting doesn't work (usually because of the errors returned from eBay),
-                    M2E Pro will attempt to list the Item again only if there is a change of Product Status, 
+                    M2E Pro will attempt to list the Item again only if there is a change of Product Status,
                     Stock Availability or Quantity in Magento.</p><br>
-                    
+
                     <p>More detailed information about how to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
@@ -92,9 +92,9 @@ HTML
                     Synchronization::RELIST_SEND_DATA_YES => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>No:</strong> Items are Relisted on eBay as per previously Listed Information 
+                    '<p><strong>No:</strong> Items are Relisted on eBay as per previously Listed Information
                     and Settings, ignoring any changes that have been made in Magento. (Recommended)</p>
-                    <p><strong>Yes:</strong> Any changes made to Items in Magento will be Reflected 
+                    <p><strong>Yes:</strong> Any changes made to Items in Magento will be Reflected
                     on the eBay Listings after they are Relisted.</p>'
                 )
             ]
@@ -136,9 +136,9 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-product-status',
                 'tooltip' => $this->__(
-                    '<p><strong>Enabled:</strong> Relist Items on eBay automatically if they have status 
+                    '<p><strong>Enabled:</strong> Relist Items on eBay automatically if they have status
                     Enabled in Magento Product. (Recommended)</p>
-                    <p><strong>Any:</strong> Relist Items on eBay automatically with any 
+                    <p><strong>Any:</strong> Relist Items on eBay automatically with any
                     Magento Product status.</p>'
                 )
             ]
@@ -156,7 +156,7 @@ HTML
                 ],
                 'class' => 'M2ePro-validate-stop-relist-conditions-stock-availability',
                 'tooltip' => $this->__(
-                    '<p><strong>In Stock:</strong> Relist Items automatically if Products are in Stock. 
+                    '<p><strong>In Stock:</strong> Relist Items automatically if Products are in Stock.
                     (Recommended)</p>
                     <p><strong>Any:</strong> Relist Items automatically regardless of Stock availability.</p>'
                 )
@@ -177,9 +177,9 @@ HTML
                 'class' => 'M2ePro-validate-stop-relist-conditions-item-qty',
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
-                    <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity available 
+                    <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity available
                     in Magento is at least equal to the number you set. (Recommended)</p>
-                    <p><strong>Between:</strong> Relist Items automatically if the Quantity available in 
+                    <p><strong>Between:</strong> Relist Items automatically if the Quantity available in
                     Magento is between the minimum and maximum numbers you set.</p>'
                 )
             ]
@@ -225,7 +225,7 @@ HTML
                     '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity is at least equal
                     to the number you set, according to the Price, Quantity and Format Policy. (Recommended)</p>
-                    <p><strong>Between:</strong> Relist Items automatically if the Quantity is between the 
+                    <p><strong>Between:</strong> Relist Items automatically if the Quantity is between the
                     minimum and maximum numbers you set, according to the Price, Quantity and Format Policy.</p>'
                 )
             ]
@@ -252,6 +252,67 @@ HTML
                 'value' => $formData['relist_qty_calculated_value_max'],
                 'class' => 'validate-digits M2ePro-validate-conditions-between',
                 'required' => true
+            ]
+        );
+
+        $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_relist_advanced_filters',
+            [
+                'legend' => $this->__('Advanced Conditions'),
+                'collapsable' => false,
+                'tooltip' => $this->__(
+                    '<p>You can provide flexible Advanced Conditions to manage when the Relist action should
+                    be run basing on the Attributes’ values of the Magento Product.<br> So, when all the Conditions
+                    (both general List Conditions and Advanced Conditions) are met,
+                    the Product will be relisted on Channel.</p>'
+                )
+            ]
+        );
+
+        $fieldset->addField('relist_advanced_rules_filters_notice',
+            self::MESSAGES,
+            [
+                'container_id' => 'relist_advanced_rules_filters_warning',
+                'messages' => [[
+                    'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
+                    'content' => $this->__(
+                        'Please be very thoughtful before enabling this option as this functionality
+                        can have a negative impact on the Performance of your system.<br> It can decrease the
+                        speed of running in case you have a lot of Products with the high number
+                        of changes made to them.'
+                    )
+                ]]
+            ]
+        );
+
+        $fieldset->addField('relist_advanced_rules_mode',
+            self::SELECT,
+            [
+                'name' => 'synchronization[relist_advanced_rules_mode]',
+                'label' => $this->__('Mode'),
+                'value' => $formData['relist_advanced_rules_mode'],
+                'values' => [
+                    Synchronization::ADVANCED_RULES_MODE_NONE => $this->__('Disabled'),
+                    Synchronization::ADVANCED_RULES_MODE_YES  => $this->__('Enabled'),
+                ],
+            ]
+        );
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            ['prefix' => Synchronization::RELIST_ADVANCED_RULES_PREFIX]
+        );
+
+        if (!empty($formData['relist_advanced_rules_filters'])) {
+            $ruleModel->loadFromSerialized($formData['relist_advanced_rules_filters']);
+        }
+
+        $ruleBlock = $this->createBlock('Magento\Product\Rule')->setData(['rule_model' => $ruleModel]);
+
+        $fieldset->addField('advanced_filter',
+            self::CUSTOM_CONTAINER,
+            [
+                'container_id' => 'relist_advanced_rules_filters_container',
+                'label'        => $this->__('Conditions'),
+                'text'         => $ruleBlock->toHtml(),
             ]
         );
 

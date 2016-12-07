@@ -28,7 +28,7 @@ class Form extends AbstractForm
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-    
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(
@@ -221,7 +221,7 @@ class Form extends AbstractForm
         $templateSellingFormat->setForm($form);
 
         $editPolicyTooltip = $this->getTooltipHtml($this->__(
-            'You can edit the saved Policy any time you need. However, the changes you make will automatically 
+            'You can edit the saved Policy any time you need. However, the changes you make will automatically
             affect all of the Products which are listed using this Policy.'
         ));
 
@@ -248,9 +248,9 @@ HTML
             M2ePro.url.get('editSellingFormatTemplate', {id: $('template_selling_format_id').value, close_on_save: 1})
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
-        </a> 
-        <div style="width: 45px; 
-                    display: inline-block; 
+        </a>
+        <div style="width: 45px;
+                    display: inline-block;
                     margin-left: -10px;
                     margin-right: 5px;
                     position: relative;
@@ -260,8 +260,8 @@ HTML
     </span>
     <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
         M2ePro.url.get(
-                'addNewSellingFormatTemplate', 
-                {close_on_save: 1}), 
+                'addNewSellingFormatTemplate',
+                {close_on_save: 1}),
                 AmazonListingSettingsObj.newSellingFormatTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
@@ -309,26 +309,26 @@ HTML
     <span id="edit_synchronization_template_link" style="color:#41362f">
         <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.openWindow(
             M2ePro.url.get(
-                    'editSynchronizationTemplate', 
-                    {id: $('template_synchronization_id').value, 
+                    'editSynchronizationTemplate',
+                    {id: $('template_synchronization_id').value,
                     close_on_save: 1}
             )
         );">
             {$this->__('View')}&nbsp;/&nbsp;{$this->__('Edit')}
         </a>
-        <div style="width: 45px; 
-                    display: inline-block; 
-                    margin-left: -10px; 
-                    margin-right: 5px; 
-                    position: relative; 
+        <div style="width: 45px;
+                    display: inline-block;
+                    margin-left: -10px;
+                    margin-right: 5px;
+                    position: relative;
                     bottom: 5px;">
         {$editPolicyTooltip}</div>
         <span>{$this->__('or')}</span>
     </span>
     <a href="javascript: void(0);" onclick="AmazonListingSettingsObj.addNewTemplate(
         M2ePro.url.get(
-                'addNewSynchronizationTemplate', 
-                {close_on_save: 1}), 
+                'addNewSynchronizationTemplate',
+                {close_on_save: 1}),
                 AmazonListingSettingsObj.newSynchronizationTemplateCallback
     );">{$this->__('Add New')}</a>
 </span>
@@ -401,19 +401,19 @@ HTML
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
                     <<<HTML
-                    <p>The Condition settings will be used not only to create new Amazon Products, but 
-                    also during a Full Revise of the Product on the channel. However, it is not recommended 
-                    to change the Condition settings of the already existing Amazon Products as the ability to 
+                    <p>The Condition settings will be used not only to create new Amazon Products, but
+                    also during a Full Revise of the Product on the channel. However, it is not recommended
+                    to change the Condition settings of the already existing Amazon Products as the ability to
                     edit this kind of information in Seller Central is not available.</p><br>
-                    
-                    <p>On the other hand, Amazon MWS API allows changing the Condition of the existing Amazon 
-                    Product following the list of technical limitations. It is required to provide the Condition 
+
+                    <p>On the other hand, Amazon MWS API allows changing the Condition of the existing Amazon
+                    Product following the list of technical limitations. It is required to provide the Condition
                     value when the Condition Note should be updated.</p><br>
-                    
-                    <p><strong>For example</strong>, you are listing a New Product on Amazon with the Condition Note 
-                    ‘totally new’. 
-                    Then, you are changing the Condition to Used and Condition Note to ‘a bit used’. 
-                    The modified values will be updated during the next Revise action. As a result, the Condition 
+
+                    <p><strong>For example</strong>, you are listing a New Product on Amazon with the Condition Note
+                    ‘totally new’.
+                    Then, you are changing the Condition to Used and Condition Note to ‘a bit used’.
+                    The modified values will be updated during the next Revise action. As a result, the Condition
                     will be set to Used and the Condition Note will be ‘a bit used’ for the Product on Amazon.</p>
 HTML
                 )
@@ -464,7 +464,7 @@ HTML
                 'value' => $this->getHelper('Data')->escapeHtml($this->getData('condition_note_value'))
             ]
         );
-        
+
         // Listing Photos
         $fieldset = $form->addFieldset(
             'magento_block_amazon_listing_add_images',
@@ -521,7 +521,7 @@ HTML
                     ? $formData['image_main_mode'] : '',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
-                    'You have an ability to add Photos for your Items to be displayed on the More Buying Choices Page. 
+                    'You have an ability to add Photos for your Items to be displayed on the More Buying Choices Page.
                     <br/>It is available only for Items with Used or Collectible Condition.'
                 )
             ]
@@ -791,7 +791,7 @@ HTML
 
         $fieldConfig = [
             'name' => 'handling_time_mode',
-            'label' => $this->__('Handling Time'),
+            'label' => $this->__('Production Time'),
             'values' => [
                 \Ess\M2ePro\Model\Amazon\Listing::HANDLING_TIME_MODE_NONE => $this->__('None'),
                 [
@@ -879,9 +879,13 @@ HTML
                 'name' => 'restock_date_value',
                 'label' => $this->__('Restock Date'),
                 'required' => true,
-                'date_format' => 'y-MM-dd',
-                'time_format' => 'HH:mm',
-                'value' => $formData['restock_date_value']
+                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
+                'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
+                'value' => $this->_localeDate->formatDate(
+                    $formData['restock_date_value'],
+                    \IntlDateFormatter::SHORT,
+                    true
+                )
             ]
         );
 
@@ -1003,7 +1007,7 @@ require([
     'M2ePro/Amazon/Listing/Settings',
     'M2ePro/Amazon/Listing/Create/Selling',
     'M2ePro/Plugin/Magento/Attribute/Button',
-], function(){   
+], function(){
     window.AmazonListingSettingsObj = new AmazonListingSettings();
     window.AmazonListingCreateSellingObj = new AmazonListingCreateSelling();
     window.MagentoAttributeButtonObj = new MagentoAttributeButton();
@@ -1198,7 +1202,7 @@ JS
 
         return $this->listing;
     }
-    
+
     //########################################
 
     /**
@@ -1208,6 +1212,6 @@ JS
     {
         $this->useFormContainer = $useFormContainer;
     }
-    
+
     //########################################
 }

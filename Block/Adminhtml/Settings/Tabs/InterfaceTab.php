@@ -64,9 +64,9 @@ class InterfaceTab extends AbstractTab
                     '/view/', 'show_block_notices'
                 ),
                 'tooltip' => $this->__(
-                    '<p>Choose whether you want the help information to be available at the top of 
+                    '<p>Choose whether you want the help information to be available at the top of
                     each M2E Pro Page.</p><br>
-                    <p><strong>Please note</strong>, it does not disable the help-tips 
+                    <p><strong>Please note</strong>, it does not disable the help-tips
                     (the icons with the additional information next to the main options).</p>'
                 )
             ]

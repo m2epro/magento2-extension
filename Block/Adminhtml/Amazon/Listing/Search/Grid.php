@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search;
 
-use \Ess\M2ePro\Block\Adminhtml\Listing\Search\Switcher;
+use \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -380,7 +380,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $accountId = (int)$this->getRequest()->getParam('amazonAccount', false);
         $marketplaceId = (int)$this->getRequest()->getParam('amazonMarketplace', false);
-        $listingType = (int)$this->getRequest()->getParam('listing_type', false);
+        $listingType = $this->getRequest()->getParam('listing_type', false);
 
         if ($accountId) {
             $resultCollection->getSelect()->where('account_id = ?', $accountId);
@@ -392,11 +392,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($listingType) {
 
-            if ($listingType == Switcher::LISTING_TYPE_M2E_PRO) {
+            if ($listingType == TypeSwitcher::LISTING_TYPE_M2E_PRO) {
 
                 $resultCollection->getSelect()->where('is_m2epro_listing = ?', 1);
 
-            } elseif ($listingType == Switcher::LISTING_TYPE_LISTING_OTHER) {
+            } elseif ($listingType == TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
 
                 $resultCollection->getSelect()->where('is_m2epro_listing = ?', 0);
             }
@@ -565,13 +565,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $value = '<div style="margin-bottom: 5px">'.$this->getHelper('Data')->escapeHtml($value).'</div>';
 
+        $account = $this->amazonFactory->getCachedObjectLoaded('Account', $row->getData('account_id'));
+        $marketplace = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'));
+
+        $accountAndMarketplaceInfo =
+            '<strong>' . $this->__('Account') . ':</strong>'
+            . '&nbsp;' . $account->getTitle() . '<br/>'
+            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '&nbsp;' . $marketplace->getTitle() . '<br/>';
+
         if (is_null($row->getData('listing_id'))) {
-            $account = $this->amazonFactory->getCachedObjectLoaded('Account', $row->getData('account_id'));
-            $marketplace = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'));
-
-            $value .= '<strong>' . $this->__('3rd Party Listings') . ':</strong>'
-            . '&nbsp;' . $account->getTitle() . ', ' . $marketplace->getTitle() . '<br/>';
-
+            $value .= $accountAndMarketplaceInfo;
         } else {
             $urlParams = array();
             $urlParams['id'] = $row->getData('listing_id');
@@ -586,17 +590,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $value .= '<strong>'
                       .$this->__('M2E Pro Listing')
-                      .': </strong><a href="'
+                      .': </strong><a target="_blank" href="'
                       .$listingUrl
                       .'">'
                       .$listingTitle
-                      .'</a>';
+                      .'</a>'
+                      .'<br/>'
+                      .$accountAndMarketplaceInfo;
         }
+
+        $tempSku = '';
 
         if (!is_null($row->getData('magento_sku'))) {
             $tempSku = $row->getData('magento_sku');
+        } elseif (!is_null($row->getData('online_sku'))) {
+            $tempSku = $row->getData('online_sku');
+        }
 
-            $value .= '<br/><strong>'
+        if ($tempSku !== '') {
+            $value .= '<strong>'
                 . $this->__('SKU')
                 . ':</strong> '
                 . $this->getHelper('Data')->escapeHtml($tempSku);
@@ -782,7 +794,6 @@ HTML;
 
         $repricingHtml ='';
 
-
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
             ($row->getData('is_repricing') || $row->getData('is_variation_parent'))
         ) {
@@ -808,7 +819,7 @@ HTML;
 
                 $repricingHtml = <<<HTML
 <br />
-<div class="fix-magento-tooltip {$icon}" style="float:right;">
+<div class="fix-magento-tooltip {$icon}">
     {$this->getTooltipHtml($text)}
 </div>
     &nbsp;$countHtml&nbsp;
@@ -829,7 +840,7 @@ HTML;
                 }
 
                 $repricingHtml = <<<HTML
-&nbsp;<div class="fix-magento-tooltip {$icon}" style="float:right;">
+&nbsp;<div class="fix-magento-tooltip {$icon}">
     {$this->getTooltipHtml($text)}
 </div>
 HTML;
@@ -911,7 +922,7 @@ HTML;
         <span style="color:gray;">
             <strong>From:</strong> {$fromDate}<br/>
             <strong>To:</strong> {$toDate}
-        </span>    
+        </span>
     </div>
 </div>
 HTML;
@@ -1063,7 +1074,10 @@ HTML;
         }
 
         $collection->getSelect()
-            ->where('product_name LIKE ? OR magento_sku LIKE ? OR listing_title LIKE ?', '%'.$value.'%');
+            ->where(
+                'product_name LIKE ? OR magento_sku LIKE ? OR online_sku LIKE ? OR listing_title LIKE ?',
+                '%'.$value.'%'
+            );
     }
 
     protected function callbackFilterQty($collection, $column)
@@ -1087,11 +1101,11 @@ HTML;
             $where .= 'online_qty <= ' . $value['to'];
         }
 
-        if (!empty($value['afn'])) {
+        if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_afn_channel = ' . \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;;
+            $where .= 'is_afn_channel = ' . (int)$value['afn'];
         }
 
         $collection->getSelect()->where($where);
@@ -1135,14 +1149,24 @@ HTML;
 
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && !empty($value['is_repricing'])) {
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            (isset($value['is_repricing']) && $value['is_repricing'] !== ''))
+        {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
 
-            $condition .= 'is_repricing > 0 OR
-                           variation_repricing_enabled_count > 0 OR
-                           variation_repricing_disabled_count > 0';
+            if ($value['is_repricing'] === '0') {
+                $condition .= '(is_m2epro_listing = 0 AND is_repricing <> 1) OR
+                               (is_m2epro_listing = 1 AND is_variation_parent = 0 AND is_repricing IS NULL) OR
+                               (is_m2epro_listing = 1 AND is_variation_parent = 1 AND
+                                    variation_repricing_enabled_count IS NULL AND
+                                    variation_repricing_disabled_count IS NULL)';
+            } else {
+                $condition .= 'is_repricing > 0 OR
+                               variation_repricing_enabled_count > 0 OR
+                               variation_repricing_disabled_count > 0';
+            }
         }
 
         $collection->getSelect()->where($condition);
@@ -1162,10 +1186,14 @@ HTML;
 
     //########################################
 
-    protected function _toHtml() 
+    protected function _toHtml()
     {
-        $this->jsUrl->add($this->getUrl('*/amazon_listing/getAFNQtyBySku'), 'amazon_listing/getAFNQtyBySku');
-        $this->jsUrl->add($this->getUrl('*/amazon_listing_product_repricing/getUpdatedPriceBySkus'));
+        $this->jsUrl->addUrls([
+            'amazon_listing/getAFNQtyBySku' => $this->getUrl('*/amazon_listing/getAFNQtyBySku'),
+            'amazon_listing_product_repricing/getUpdatedPriceBySkus' => $this->getUrl(
+                '*/amazon_listing_product_repricing/getUpdatedPriceBySkus'
+            )
+        ]);
 
         $this->js->addRequireJs([
             'alq' => 'M2ePro/Amazon/Listing/AfnQty',

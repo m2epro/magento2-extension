@@ -10,13 +10,6 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing;
 
 class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 {
-    const VIEW_MODE_AMAZON   = 'amazon';
-    const VIEW_MODE_MAGENTO  = 'magento';
-    const VIEW_MODE_SELLERCENTRAL = 'sellercentral';
-    const VIEW_MODE_SETTINGS = 'settings';
-
-    const DEFAULT_VIEW_MODE = self::VIEW_MODE_AMAZON;
-    
     /** @var  \Ess\M2ePro\Model\Listing */
     protected $listing;
 
@@ -28,10 +21,13 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $this->listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
 
+        /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher $viewModeSwitcher */
+        $viewModeSwitcher = $this->createBlock('Amazon\Listing\View\Switcher');
+
         // Initialization block
         // ---------------------------------------
         $this->setId('amazonListingView');
-        $this->_controller = 'adminhtml_amazon_listing_view_' . $this->getViewMode();
+        $this->_controller = 'adminhtml_amazon_listing_view_' . $viewModeSwitcher->getSelectedParam();
         // ---------------------------------------
 
         // Set buttons actions
@@ -50,21 +46,17 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
             $this->appendHelpBlock([
                 'content' => $this->__(
-                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a 
-                    particular Account. M2E Pro has several options to display the content of Listings 
-                    referring to different data details. Each of the view options contains a unique set of 
+                    '<p>M2E Pro Listing is a group of Magento Products sold on a certain Marketplace from a
+                    particular Account. M2E Pro has several options to display the content of Listings
+                    referring to different data details. Each of the view options contains a unique set of
                     available Actions accessible in the Mass Actions drop-down.</p>'
                 )
             ]);
-            
+
             $this->setPageActionsBlock(
                 'Amazon\Listing\View\Switcher',
                 'amazon_listing_view_switcher'
             );
-
-            $this->getLayout()->getBlock('amazon_listing_view_switcher')->addData([
-                'current_view_mode' => $this->getViewMode()
-            ]);
         }
 
         // ---------------------------------------
@@ -78,8 +70,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
         $this->addButton('view_logs', array(
             'label'   => $this->__('View Log'),
-            'onclick' => 'window.open(\''.$this->getUrl('*/amazon_listing_log/index', [
-                'id' => $this->listing->getId()
+            'onclick' => 'window.open(\''.$this->getUrl('*/amazon_log_listing_product/index', [
+                \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD =>
+                    $this->listing->getId()
             ]) . '\');',
             'class'   => '',
         ));
@@ -111,41 +104,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
     //########################################
 
-    public function getViewMode()
-    {
-        $allowedModes = array(
-            self::VIEW_MODE_AMAZON,
-            self::VIEW_MODE_SETTINGS,
-            self::VIEW_MODE_MAGENTO,
-            self::VIEW_MODE_SELLERCENTRAL
-        );
-        $mode = $this->getParam('view_mode', self::DEFAULT_VIEW_MODE);
-
-        if (in_array($mode, $allowedModes)) {
-            return $mode;
-        }
-
-        return self::DEFAULT_VIEW_MODE;
-    }
-
-    protected function getParam($paramName, $default = NULL)
-    {
-        $session = $this->getHelper('Data\Session');
-        $sessionParamName = $this->getId() . $this->listing->getId() . $paramName;
-
-        if ($this->getRequest()->has($paramName)) {
-            $param = $this->getRequest()->getParam($paramName);
-            $session->setValue($sessionParamName, $param);
-            return $param;
-        } elseif ($param = $session->getValue($sessionParamName)) {
-            return $param;
-        }
-
-        return $default;
-    }
-
-    //########################################
-
     protected function _toHtml()
     {
         return '<div id="listing_view_progress_bar"></div>' .
@@ -166,6 +124,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
         );
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
+            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
+        ));
 
         $showAutoAction = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
 
@@ -174,19 +135,14 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'Amazon\Listing\AutoAction', array('id' => $this->getRequest()->getParam('id'))
         ));
 
-        $path = 'amazon_listing_product_log/index';
-        $this->jsUrl->add($this->getUrl('*/' . $path, array(
-            'back' => $this->getHelper('Data')->makeBackUrlParam('*/amazon_listing/view',array(
-                'id' => $this->listing['id']
-            ))
-        )), $path);
+        $path = 'amazon_log_listing_product/index';
+        $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
         $path = 'amazon_listing/duplicateProducts';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
 
-        $this->jsUrl->add($this->getUrl('*/amazon_listing_log/index', array(
-            'id' => $this->listing['id'],
-            'back' => $this->getHelper('Data')->makeBackUrlParam('*/amazon_listing/view', ['id' =>$this->listing['id']])
+        $this->jsUrl->add($this->getUrl('*/amazon_log_listing_product/index', array(
+            \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD => $this->listing['id'],
         )), 'logViewUrl');
 
         $this->jsUrl->add($this->getUrl('*/listing/getErrorsSummary'), 'getErrorsSummary');
@@ -424,37 +380,37 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     ], function(){
 
         M2ePro.productsIdsForList = '{$productsIdsForList}';
-    
+
         M2ePro.customData.componentMode = '{$component}';
         M2ePro.customData.gridId = '{$gridId}';
         M2ePro.customData.ignoreListings = '{$ignoreListings}';
-    
+
         M2ePro.customData.marketplace = {$marketplace};
         M2ePro.customData.isNewAsinAvailable = {$isNewAsinAvailable};
-        
+
         ListingGridHandlerObj = new AmazonListingViewGrid(
             '{$gridId}',
             {$this->listing['id']}
         );
         ListingGridHandlerObj.afterInitPage();
-        
+
         ListingGridHandlerObj.movingHandler.setOptions(M2ePro);
-           
+
         ListingGridHandlerObj.actionHandler.setProgressBar('listing_view_progress_bar');
         ListingGridHandlerObj.actionHandler.setGridWrapper('listing_view_content_container');
-            
+
         AmazonListingProductVariationObj = new AmazonListingProductVariation(ListingGridHandlerObj);
 
         if (M2ePro.productsIdsForList) {
             ListingGridHandlerObj.getGridMassActionObj().checkedString = M2ePro.productsIdsForList;
             ListingGridHandlerObj.actionHandler.listAction();
         }
-    
+
         window.ListingAutoActionObj = new AmazonListingAutoAction();
         if ({$showAutoAction}) {
             ListingAutoActionObj.loadAutoActionHtml();
         }
-    
+
         AmazonListingAfnQtyObj = new AmazonListingAfnQty();
 
         AmazonListingProductRepricingPriceObj = new AmazonListingProductRepricingPrice();

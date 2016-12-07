@@ -33,7 +33,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
             return false;
         }
 
-        if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+        if ($this->getEbayAccount()->isPickupStoreEnabled()) {
             $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getResource()
                 ->processDeletedVariation(
                     $this->getParentObject()

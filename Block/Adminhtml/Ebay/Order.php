@@ -37,17 +37,17 @@ class Order extends AbstractContainer
             'content' => $this->__(
                 <<<HTML
                 <p>In this section, you can find the list of the Orders imported from eBay. </p>
-                <p>An eBay Order, for which Magento Order is created, contains a value in 
-                <strong>Magento Order #</strong> column of the grid. You can find the corresponding 
+                <p>An eBay Order, for which Magento Order is created, contains a value in
+                <strong>Magento Order #</strong> column of the grid. You can find the corresponding
                 Magento Order in Sales > Orders section of your Magento</p><br>
-                
-                <p>To manage the imported eBay Orders, you can use Mass Action options available in the 
-                Actions bulk: Reserve QTY, Cancel QTY Reserve, Mark Order(s) as Shipped or Paid and Resend 
+
+                <p>To manage the imported eBay Orders, you can use Mass Action options available in the
+                Actions bulk: Reserve QTY, Cancel QTY Reserve, Mark Order(s) as Shipped or Paid and Resend
                 Shipping Information.</p><br>
-                
-                <p>Also, you can view the detailed Order information by clicking on the appropriate 
+
+                <p>Also, you can view the detailed Order information by clicking on the appropriate
                 row of the grid.</p><br>
-                
+
                 <p><strong>Note:</strong> Automatic creation of Magento Orders, Invoices, and Shipments is
                 performed in accordance with the Order settings specified in <br>
                 <strong>Account Settings (eBay Integration > Configuration > Accounts)</strong>. </p>

@@ -13,7 +13,7 @@ use Ess\M2ePro\Controller\Adminhtml\General;
 class GetCreateAttributeHtmlPopup extends General
 {
     //########################################
-    
+
     public function execute()
     {
         $post = $this->getRequest()->getPostValue();

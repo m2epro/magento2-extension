@@ -6,7 +6,7 @@ define([
 ], function (MagentoMessageObj) {
 
     window.ListingViewAction = Class.create(Action, {
-        
+
         // ---------------------------------------
 
         initialize: function($super, gridHandler)

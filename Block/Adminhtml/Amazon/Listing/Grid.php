@@ -142,12 +142,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
             'viewLog' => array(
                 'caption' => $this->__('View Log'),
                 'group'   => 'other',
-                'field'   => 'id',
+                'field'   => \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid::LISTING_ID_FIELD,
                 'url'     => array(
-                    'base'   => '*/amazon_listing_log/index',
-                    'params' => array(
-                        'back' => $backUrl
-                    )
+                    'base'   => '*/amazon_log_listing_product/index'
                 )
             ),
 

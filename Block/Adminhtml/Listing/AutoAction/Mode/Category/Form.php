@@ -201,10 +201,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing'));
 
         $magentoCategoryIdsFromOtherGroups = json_encode($this->getCategoriesFromOtherGroups());
@@ -215,6 +213,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 .off('click').on('click', ListingAutoActionObj.categoryStepTwo);
 JS
         );
+
+        return parent::_afterToHtml($html);
     }
 
     protected function _toHtml()

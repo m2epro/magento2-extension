@@ -33,8 +33,8 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     protected function _prepareLayout()
     {
         $content = $this->__(
-            '<p>This page displays the list of M2E Pro Listings. Generally, a Listing is a group of Magento Products 
-            sold on a certain Marketplace by a particular Seller and managed by the same Selling, Synchronization, 
+            '<p>This page displays the list of M2E Pro Listings. Generally, a Listing is a group of Magento Products
+            sold on a certain Marketplace by a particular Seller and managed by the same Selling, Synchronization,
             etc. Policy Settings.</p><br>
 
             <p><strong>Note:</strong> Products which are not listed via M2E Pro will be automatically added to the

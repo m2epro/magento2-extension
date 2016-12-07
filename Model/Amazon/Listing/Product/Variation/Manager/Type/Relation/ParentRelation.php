@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
+
 class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\LogicalUnit
 {
     private $processor = null;
@@ -702,7 +704,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         foreach ($this->getChildListingsProducts() as $childListingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation $childTypeModel */
+            /** @var ChildRelation $childTypeModel */
             $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
 
             if (!$childTypeModel->isVariationChannelMatched() ||

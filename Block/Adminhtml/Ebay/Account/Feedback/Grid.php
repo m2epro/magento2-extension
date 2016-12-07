@@ -178,7 +178,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $url = $this->getUrl('*/*/goToItem', array('feedback_id' => $row->getData('id')));
 
-        return '<a href="'.$url.'" target="_blank">'.$this->getHelper('Data')->escapeHtml($value).'</a>';
+        return '<a href="'.$url.'" target="_blank">'
+                . $this->getHelper('Data')->escapeHtml($value)
+                . '</a>';
     }
 
     public function callbackColumnTransactionId($value, $row, $column, $isExport)
@@ -223,7 +225,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return $value;
         } else {
             return <<<HTML
-<a href="javascript:void(0);" 
+<a href="javascript:void(0);"
     onclick="EbayAccountGridObj.openSendResponsePopup(this,
         '{$row->getData('id')}',
         '{$row->getData('ebay_transaction_id')}',

@@ -665,7 +665,6 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $fieldSet->addField('package_size', self::SELECT,
             [
-                'name' => 'shipping[measurement_system]',
                 'label' => $this->__('Package Size Source'),
                 'title' => $this->__('Package Size Source'),
                 'values' => $this->getPackageSizeSourceOptions(),

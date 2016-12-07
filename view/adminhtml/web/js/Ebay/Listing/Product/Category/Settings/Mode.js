@@ -7,7 +7,7 @@ define([
     EbayListingProductCategorySettingsMode.prototype = {
 
         // ---------------------------------------
-        
+
         initialize: function (lastModeValue) {
 
             $$('input[name="mode"]').each(function(element) {
@@ -25,11 +25,11 @@ define([
             modeElement.simulate('change');
 
             $('mode_same_remember_checkbox').observe('click', function(event) {
-            
+
                 if (!this.checked) {
                     return;
                 }
-            
+
                 event.preventDefault();
 
                 var content = jQuery('#mode_same_remember_pop_up_content');

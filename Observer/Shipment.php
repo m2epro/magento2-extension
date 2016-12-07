@@ -98,9 +98,9 @@ class Shipment extends AbstractModel
     private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
     {
         if ($order->isComponentModeEbay()) {
-            $url = $this->urlBuilder->getUrl('*/ebay_order_log/index', array('order_id' => $order->getId()));
+            $url = $this->urlBuilder->getUrl('*/ebay_log_order/index', array('id' => $order->getId()));
         } else {
-            $url = $this->urlBuilder->getUrl('*/amazon_order_log/index', array('order_id' => $order->getId()));
+            $url = $this->urlBuilder->getUrl('*/amazon_log_order/index', array('id' => $order->getId()));
         }
 
         $chanelTitle = $order->getComponentTitle();

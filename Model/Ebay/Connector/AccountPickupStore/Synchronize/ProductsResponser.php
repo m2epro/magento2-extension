@@ -12,7 +12,7 @@ class ProductsResponser
     extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending\Responser
 {
     protected $activeRecordFactory;
-    
+
     /** @var \Ess\M2ePro\Model\Ebay\Account\PickupStore\State[] $pickupStoreStateItems */
     private $pickupStoreStateItems = array();
 

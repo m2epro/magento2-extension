@@ -39,7 +39,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-
         $fieldset = $form->addFieldset(
             'edit_feedback_template',
             []

@@ -124,6 +124,8 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
                 ->setCustomerLastname($this->proxyOrder->getCustomerLastName())
                 ->setCustomerIsGuest(true)
                 ->setCustomerGroupId(\Magento\Customer\Model\Group::NOT_LOGGED_IN_ID);
+
+            return;
         }
 
         $this->quote->assignCustomer($this->proxyOrder->getCustomer());

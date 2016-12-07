@@ -47,11 +47,11 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
                     $this->getConfigurator()->disallowQty();
 
                     // M2ePro\TRANSLATIONS
-                    // This Product is an FBA Item, so it’s Quantity updating will change it to MFN. Thus QTY feed, Handling Time and Restock Date Values will not be updated. Inventory management for FBA Items is currently unavailable in M2E Pro. However, you can do that directly in your Amazon Seller Central.
+                    // This Product is an FBA Item, so it’s Quantity updating will change it to MFN. Thus QTY feed, Production Time and Restock Date Values will not be updated. Inventory management for FBA Items is currently unavailable in M2E Pro. However, you can do that directly in your Amazon Seller Central.
                     $this->addMessage(
                         'This Product is an FBA Item, so it’s Quantity updating will change it to MFN. Thus QTY feed,
-                        Handling Time and Restock Date Values will not be updated. Inventory management for FBA Items is
-                        currently unavailable in M2E Pro. However, you can do that directly in your Amazon
+                        Production Time and Restock Date Values will not be updated. Inventory management for FBA
+                        Items is currently unavailable in M2E Pro. However, you can do that directly in your Amazon
                         Seller Central.',
                         \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
                     );

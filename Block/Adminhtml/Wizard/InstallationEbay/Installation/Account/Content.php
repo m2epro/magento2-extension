@@ -94,5 +94,15 @@ HTML
         return parent::_prepareForm();
     }
 
+    protected function _beforeToHtml()
+    {
+        $this->jsTranslator->add(
+            'An error during of account creation.',
+            $this->__('The eBay token obtaining is currently unavailable. Please try again later.')
+        );
+
+        return parent::_beforeToHtml();
+    }
+
     //########################################
 }

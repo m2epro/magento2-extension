@@ -267,12 +267,14 @@ define([
             var self = this;
             var classContainer = 'hl_container';
 
-            if (action.type == 2) {
+            if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_SUCCESS')) {
                 classContainer += ' hl_container_success';
-            } else if (action.type == 3) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_WARNING')) {
                 classContainer += ' hl_container_warning';
-            } else if (action.type == 4) {
+            } else if (action.type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_ERROR')) {
                 classContainer += ' hl_container_error';
+            } else {
+                classContainer += ' hl_container_notice';
             }
 
             var html = '<div class="'+classContainer+'">';
@@ -295,9 +297,9 @@ define([
 
             for (var i=0;i<action.items.length;i++) {
 
-                var type = M2ePro.translator.translate('Notice');
+                var type;
 
-                if (action.items[i].type == 2) {
+                if (action.items[i].type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_SUCCESS')) {
                     if (action.items[i].count) {
                         type = '<span style="color: green;"> ' + action.items[i].count + ' ' +
                             M2ePro.translator.translate('Product(s)') +
@@ -307,7 +309,7 @@ define([
                             M2ePro.translator.translate('Success') +
                         '</span>';
                     }
-                } else if (action.items[i].type == 3) {
+                } else if (action.items[i].type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_WARNING')) {
                     if (action.items[i].count) {
                         type = '<span style="color: orange;"> ' + action.items[i].count + ' ' +
                             M2ePro.translator.translate('Product(s)') +
@@ -317,7 +319,7 @@ define([
                             M2ePro.translator.translate('Warning') +
                         '</span>';
                     }
-                } else if (action.items[i].type == 4) {
+                } else if (action.items[i].type == M2ePro.php.constant('Ess_M2ePro_Model_Log_AbstractModel::TYPE_ERROR')) {
                     if (action.items[i].count) {
                         type = '<span style="color: red;"> ' + action.items[i].count + ' ' +
                             M2ePro.translator.translate('Product(s)') +
@@ -326,6 +328,16 @@ define([
                         type = '<span style="color: red;">' +
                             M2ePro.translator.translate('Error') +
                         '</span>';
+                    }
+                } else {
+                    if (action.items[i].count) {
+                        type = '<span style="color: #444;"> ' + action.items[i].count + ' ' +
+                            M2ePro.translator.translate('Product(s)') +
+                            '</span>';
+                    } else {
+                        type = '<span style="color: #444;">' +
+                            M2ePro.translator.translate('Notice') +
+                            '</span>';
                     }
                 }
 

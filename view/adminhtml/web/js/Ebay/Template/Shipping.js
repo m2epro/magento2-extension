@@ -246,8 +246,15 @@ define([
             ) {
                 $$('.local-shipping-tr').invoke('show');
                 jQuery('#dispatch_time').trigger('change');
+
+                $('domestic_shipping_fieldset-wrapper').setStyle({
+                    borderBottom: null
+                });
             } else {
                 $$('.local-shipping-tr').invoke('hide');
+                $('domestic_shipping_fieldset-wrapper').setStyle({
+                    borderBottom: '0px'
+                });
 
                 if ($('click_and_collect_mode')) {
                     $('click_and_collect_mode').selectedIndex = 1;

@@ -35,48 +35,43 @@
 
     $js = '';
 
-    $js .= <<<JS
+    $js .= "
     window.EbayListingProductCategorySettingsChooserObj = new EbayListingProductCategorySettingsChooser('{$block->getDivId()}', '{$block->getMarketplaceId()}', '{$block->getAccountId()}');
     EbayListingProductCategorySettingsChooserObj.setCategoryTitles({$categoryTitlesJson});
     EbayListingProductCategorySettingsChooserObj.setSelectedCategories({$internalDataJson});
     EbayListingProductCategorySettingsChooserObj.setAttributes({$attributesJson});
     EbayListingProductCategorySettingsChooserObj.setIsWizardMode({$isWizardMode});
     EbayListingProductCategorySettingsChooserObj.setShowEditLinks({$isShowEditLinksJson});
-JS;
+";
 
     if ($isSingleCategoryMode) {
         $isSingleCategoryModeJson = json_encode($isSingleCategoryMode);
         $singleCategoryTypeJson = json_encode($singleCategoryType);
 
-        $js .= <<<JS
+        $js .= "
     EbayListingProductCategorySettingsChooserObj.setSingleCategoryMode({$isSingleCategoryModeJson});
     EbayListingProductCategorySettingsChooserObj.setSingleCategoryType({$singleCategoryTypeJson});
-JS;
+";
 
     }
 
     if (!empty($selectCallback)) {
-        $js .= <<<JS
-    EbayListingProductCategorySettingsChooserObj.setSelectCallback({$selectCallback});
-JS;
+        $js .= "EbayListingProductCategorySettingsChooserObj.setSelectCallback({$selectCallback});";
     }
 
     if (!empty($unselectCallback)) {
-        $js .= <<<JS
-    EbayListingProductCategorySettingsChooserObj.setUnselectCallback({$unselectCallback});
-JS;
+        $js .= "EbayListingProductCategorySettingsChooserObj.setUnselectCallback({$unselectCallback});";
     }
 
-    $block->js->add(<<<JS
+    $block->js->add("
 require([
     'M2ePro/Ebay/Listing/Product/Category/Settings/Chooser'
 ], function(){
 
     {$js}
-    
+
 });
-JS
-);
+");
 
 ?>
 

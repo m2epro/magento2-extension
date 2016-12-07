@@ -8,25 +8,41 @@
 
 namespace  Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter;
 
+use Ess\M2ePro\Model\Amazon\Listing\Product as AmazonListingProduct;
+
 class Price extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range
 {
     //########################################
 
     public function getHtml()
     {
-        $checked = ($this->getValue('is_repricing') == 1) ? 'checked="checked"' : '';
+        $anySelected = $noSelected = $yesSelected = '';
+        $filterValue = (string)$this->getValue('is_repricing');
+
+        $filterValue === ''  && $anySelected = ' selected="selected" ';
+        $filterValue === '0' && $noSelected  = ' selected="selected" ';
+        $filterValue === '1' && $yesSelected = ' selected="selected" ';
+
+        $isEnabled  = AmazonListingProduct::IS_REPRICING_YES;
+        $isDisabled = AmazonListingProduct::IS_REPRICING_NO;
 
         $html = <<<HTML
-<div class="range">
+<div class="range" style="width: 145px;">
     <div class="range-line" style="padding-top: 5px">
-        <label for="{$this->_getHtmlName()}" 
-               style="cursor: pointer;vertical-align: text-bottom;" 
+        <label for="{$this->_getHtmlName()}"
+               style="cursor: pointer;vertical-align: text-bottom;"
                class="admin__field-label">
-            {$this->__('Repricing')}
-        </label>&nbsp;
-        <input id="{$this->_getHtmlName()}" class="admin__control-checkbox" 
-            style="margin-left:6px;float:none;width:auto !important;" 
-            type="checkbox" value="1" name="{$this->_getHtmlName()}[is_repricing]" {$checked}>
+            {$this->__('On Repricing')}
+        </label>
+        <select id="{$this->_getHtmlName()}"
+                class="admin__control-select"
+                style="margin-left:6px; float:none; width:auto !important;"
+                name="{$this->_getHtmlName()}[is_repricing]"
+            >
+            <option {$anySelected} value="">{$this->__('Any')}</option>
+            <option {$yesSelected} value="{$isEnabled}">{$this->__('Yes')}</option>
+            <option {$noSelected}  value="{$isDisabled}">{$this->__('No')}</option>
+        </select>
         <label style="vertical-align: text-bottom;" class="admin__field-label"></label>
     </div>
 </div>
@@ -45,7 +61,7 @@ HTML;
         $value = $this->getData('value');
         if ((isset($value['from']) && strlen($value['from']) > 0) ||
             (isset($value['to']) && strlen($value['to']) > 0) ||
-            (isset($value['is_repricing']) && $value['is_repricing'] == 1)) {
+            (isset($value['is_repricing']) && $value['is_repricing'] !== '')) {
             return $value;
         }
         return null;

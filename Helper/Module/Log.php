@@ -131,6 +131,6 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
 
         return $resultString;
     }
-    
+
     //########################################
 }

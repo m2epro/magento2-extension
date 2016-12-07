@@ -35,7 +35,7 @@ abstract class AbstractPlugin
         }
 
         $processMethod = 'process' . ucfirst($name);
-        
+
         if (!method_exists($this, $processMethod)) {
             throw new Exception("Method {$processMethod} doesn't exists");
         }
@@ -44,12 +44,12 @@ abstract class AbstractPlugin
     }
 
     // ---------------------------------------
-    
+
     protected function canExecute()
     {
         return !$this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
                $this->helperFactory->getObject('Module')->isReadyToWork();
     }
-    
+
     //########################################
 }

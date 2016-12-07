@@ -168,7 +168,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $localeComponents = explode('_' , $this->localeResolver->getLocale());
         return strtolower(array_shift($localeComponents));
     }
-    
+
     public function getDefaultLocale()
     {
         return $this->localeResolver->getDefaultLocale();
@@ -183,12 +183,12 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     }
 
     // ---------------------------------------
-    
+
     public function getThemePath()
     {
         return $this->themeResolver->get()->getFullPath();
     }
-    
+
     // ---------------------------------------
 
     public function isSecretKeyToUrl()
@@ -232,17 +232,17 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         $directoryReader = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW
         );
-        
+
         $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR
                     . $this->getDefaultLocale() . DIRECTORY_SEPARATOR;
-        
+
         if (!is_null($path)) {
             $basePath .= $path;
         }
-        
+
         return $directoryReader->isExist($basePath);
     }
-    
+
     public function getLastStaticContentDeployDate()
     {
         try {
@@ -250,7 +250,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         } catch (\Exception $e) {
             return false;
         }
-        
+
         return $deployedTimeStamp ? $this->getHelper('Data')->getDate($deployedTimeStamp) : false;
     }
 

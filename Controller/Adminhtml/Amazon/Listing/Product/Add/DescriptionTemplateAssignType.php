@@ -46,7 +46,7 @@ class DescriptionTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Ama
             if (!$descriptionTemplate->isEmpty()) {
                 if (!empty($listingProductsIds)) {
                     $this->setDescriptionTemplate($listingProductsIds, $descriptionTemplateId);
-                    $this->_forward('mapToNewAsin', 'amazon_listing');
+                    $this->_forward('mapToNewAsin', 'amazon_listing_product');
                 }
 
                 return $this->_redirect('*/amazon_listing_product_add/index', array(

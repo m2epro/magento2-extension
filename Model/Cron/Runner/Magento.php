@@ -91,7 +91,7 @@ final class Magento extends AbstractModel
 
     private function distributeLoadIfNeed()
     {
-        if ($this->getHelper('Module')->isDevelopmentEnvironment()) {
+        if (!$this->getHelper('Module')->isProductionEnvironment()) {
             return;
         }
 

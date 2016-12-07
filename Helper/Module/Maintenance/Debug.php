@@ -60,6 +60,8 @@ class Debug extends \Ess\M2ePro\Helper\AbstractHelper
 
         $cookieMetadata = $this->cookieMetadataFactory->createPublicCookieMetadata()
             ->setHttpOnly(true)
+            ->setPath('/')
+            ->setSecure($this->_getRequest()->isSecure())
             ->setDuration(60*60*24);
 
         $this->cookieManager->setPublicCookie(self::MAINTENANCE_COOKIE_KEY, 'true', $cookieMetadata);
@@ -72,9 +74,10 @@ class Debug extends \Ess\M2ePro\Helper\AbstractHelper
 
         $cookieMetadata = $this->cookieMetadataFactory->createPublicCookieMetadata()
             ->setHttpOnly(true)
-            ->setDuration(0);
+            ->setPath('/')
+            ->setSecure($this->_getRequest()->isSecure());
 
-        $this->cookieManager->setPublicCookie(self::MAINTENANCE_COOKIE_KEY, '', $cookieMetadata);
+        $this->cookieManager->deleteCookie(self::MAINTENANCE_COOKIE_KEY, $cookieMetadata);
     }
 
     //########################################

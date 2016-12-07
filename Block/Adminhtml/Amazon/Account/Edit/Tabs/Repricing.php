@@ -28,28 +28,28 @@ class Repricing extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-    You can use a <strong>Repricing Tool</strong> developed by M2E Pro Team. This Tool allows to improve the position 
+    You can use a <strong>Repricing Tool</strong> developed by M2E Pro Team. This Tool allows to improve the position
     of your offer.
-    It will <strong>review</strong> your Competitors' pricing and <strong>change</strong> 
+    It will <strong>review</strong> your Competitors' pricing and <strong>change</strong>
     your Product prices accordingly.<br/><br/>
-    
-    To start working with the Tool you should Add the information about your M2E Pro Amazon Account to the Repricing 
+
+    To start working with the Tool you should Add the information about your M2E Pro Amazon Account to the Repricing
     Service and Link it
     by clicking on the Button <strong>Link Now</strong>. Futher, you will need to complete the Wizard which allows
     Setting Up all necessary data.<br/><br/>
-    
-    After your Account is successfully Linked, you will be able to review the information about the Products 
+
+    After your Account is successfully Linked, you will be able to review the information about the Products
     which are automatically
-    managed by the Repricer. Also, <strong>Additional Options</strong> of Automatic Product Adding and 
+    managed by the Repricer. Also, <strong>Additional Options</strong> of Automatic Product Adding and
     Editing become available.
-    To use them you should switch your Listing to the Seller Central View Mode and select the appropriate 
+    To use them you should switch your Listing to the Seller Central View Mode and select the appropriate
     Option in the Actions bulk
     at the top of the Grid.<br/><br/>
-    
-    In case you decide to <strong>Stop</strong> using the Repricing Tool for M2E Pro Listings, 
+
+    In case you decide to <strong>Stop</strong> using the Repricing Tool for M2E Pro Listings,
     you can click on <strong>Unlink</strong> Button.
     It will break the Connection between your M2E Pro Amazon Account and Repricing Service.<br/><br/>
-    More detailed information on how to work with the Repricing Service you can find 
+    More detailed information on how to work with the Repricing Service you can find
     <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
                 , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/bwAkAQ'))
@@ -122,7 +122,7 @@ HTML
 HTML
                     ,
                     'tooltip' => $this->__(
-                        'This is a total number of Products managed by the Repricing Tool Linked to your 
+                        'This is a total number of Products managed by the Repricing Tool Linked to your
                         M2E Pro Amazon Account.'
                     ),
                     'field_extra_attributes' => '',
@@ -221,20 +221,20 @@ HTML
     and plays the role of the roll-back Price in case the Rules cannot be applied or the Goals provided
                     in the Repricing Rules cannot be achieved. You can find more detailed information about it
     <a href="%url1%" target="_blank" class="external-link">here</a>.<br/><br/>
-    You can select the configurations for automatic updating of the Regular Price value 
+    You can select the configurations for automatic updating of the Regular Price value
     by selecting from these options:<br/>
     <strong>Manually</strong> - means that the according value will be manually provided for the Products;<br/>
     <strong>According to Selling Format Policy settings</strong> - means that the Price value will
     be taken based on the Selling Format Policy settings, which is used for this Item in the Listing;<br/>
     <strong>From Product Price</strong> - means that the Price value from Magento Product Price will be taken;<br/>
     <strong>From Special Price</strong> - means that the Price value from Magento Special Price will be taken;<br/>
-    <strong>From Magento Attribute</strong> - means that the Price value will 
+    <strong>From Magento Attribute</strong> - means that the Price value will
     be taken from the selected Attribute.<br/><br/>
 
-    Please note, only common (available in all Attribute sets in your Magento), 
+    Please note, only common (available in all Attribute sets in your Magento),
     Text or Price field Attributes are available for selection.<br/><br/>
 
-    More detailed information on how to work with this option you can find 
+    More detailed information on how to work with this option you can find
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/igAkAQ'),
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JQMkAQ'))
@@ -365,7 +365,7 @@ HTML
                     $this->getTooltipHtml(
                         $this->__('
     Min Price value is the lowest Price which you could sell your Item for.<br/>
-    You can find more detailed information about it 
+    You can find more detailed information about it
     <a href="%url1%" target="_blank" class="external-link">here</a>.<br/><br/>
 
     You can select the configurations for automatic updating of the Min Price value by selecting from these options:
@@ -374,15 +374,15 @@ HTML
     <strong>Less than Regular Price by Value</strong> - means that the Min Price value will be taken as a Regular Price
     decreased by the value you set.<br/>
     For example, you set the Value 5. Your Regular price is 17. So the Min Price will be 12.<br/>
-    <strong>Less than Regular Price by Percent</strong> - means that the Min Price value will be taken as a 
+    <strong>Less than Regular Price by Percent</strong> - means that the Min Price value will be taken as a
     Regular Price decreased by the percent you set.<br/>
     For example, you set 50 Percent. Your regular price is 10. So the Min Price will be 5.<br/>
     <strong>From Magento Attribute</strong> - means that the Min Price value will be taken from the selected Attribute.
     <br/><br/>
-    Please note, only common (available in all Attribute sets in your Magento), Text or Price field Attributes are 
+    Please note, only common (available in all Attribute sets in your Magento), Text or Price field Attributes are
     available for selection.<br/><br/>
 
-    More detailed information on how to work with this option you can find 
+    More detailed information on how to work with this option you can find
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/igAkAQ'),
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JQMkAQ')
@@ -566,7 +566,7 @@ HTML
                     $this->getTooltipHtml(
                         $this->__('
     Max Price value is the highest Price which you could sell your Item for.<br/>
-    You can find more detailed information about it 
+    You can find more detailed information about it
     <a href="%url1%" target="_blank" class="external-link">here</a>.<br/><br/>
 
     <strong>Manually</strong> - means that the according value will be manually provided for the Products;<br/>
@@ -582,7 +582,7 @@ HTML
     Please note, only common (available in all Attribute sets in your Magento), Text or Price field Attributes are
     available for selection.<br/><br/>
 
-    More detailed information on how to work with this option you can find 
+    More detailed information on how to work with this option you can find
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/igAkAQ'),
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JQMkAQ')
@@ -799,7 +799,7 @@ HTML
                         'value' => $value,
                         'tooltip' => $this->__('
     This feature allows you to set when you would like to disable dynamic price repricing for your items.<br/>
-    You can find more detailed information about it 
+    You can find more detailed information about it
     <a href="%url1%" target="_blank" class="external-link">here</a>.<br/><br/>
 
     <strong>Manually</strong> - means that the dynamic repricing can be disabled only manually;<br/>
@@ -810,7 +810,7 @@ HTML
     Please note, only common (available in all Attribute sets in your Magento), Text or Price field Attributes are
     available for selection.<br/><br/>
 
-    More detailed information on how to work with this option you can find 
+    More detailed information on how to work with this option you can find
     <a href="%url2%" target="_blank" class="external-link">here</a>.',
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/PAMkAQ'),
                             $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JQMkAQ')
@@ -825,15 +825,15 @@ HTML
         $('regular_price_mode')
             .observe('change', AmazonAccountObj.regular_price_mode_change)
             .simulate('change');
-    
+
         $('min_price_mode')
             .observe('change', AmazonAccountObj.min_price_mode_change)
             .simulate('change');
-    
+
         $('max_price_mode')
             .observe('change', AmazonAccountObj.max_price_mode_change)
             .simulate('change');
-    
+
         $('disable_mode')
             .observe('change', AmazonAccountObj.disable_mode_change)
             .simulate('change');
@@ -871,15 +871,15 @@ HTML
         margin-left: 17% !important;
         width: 78% !important;
     }
-     
+
     #additional_settings label.addafter input[type="text"].input-text {
-        width: 15% !important; 
+        width: 15% !important;
     }
-    
+
     #additional_settings .price_mode label.addafter {
         display: initial !important;
     }
-    
+
     #min_price_warning_tr .control {
         width: 100% !important;
         margin-left: 0 !important;

@@ -101,7 +101,7 @@ class Add extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller' => 'ebay_listing_product_add'
         ]);
-        
+
         return $viewHeaderBlock->toHtml()
                . '<div class="filter_block">'
                . $hideOthersListingsProductsFilterBlock->toHtml()

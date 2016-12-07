@@ -22,7 +22,7 @@ class Form extends AbstractForm
         $this->amazonFactory = $amazonFactory;
         parent::__construct($context, $registry, $formFactory, $data);
     }
-    
+
     protected function _prepareForm()
     {
         $form = $this->_formFactory->create(

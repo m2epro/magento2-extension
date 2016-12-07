@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add;
 
 abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
-{    
+{
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
@@ -134,13 +134,14 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute'=>'type_id','neq'=>'virtual'),
-            )
+            array(array(
+                'attribute' => 'type_id',
+                'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+            ))
         );
 
         $this->setCollection($collection);
-        
+
         $this->getCollection()->addWebsiteNamesToResult();
 
         return parent::_prepareCollection();
@@ -167,9 +168,6 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'frame_callback' => array($this, 'callbackColumnProductTitle')
         ));
 
-        $types = $this->type->getOptionArray();
-        unset($types['virtual']);
-
         $this->addColumn('type', array(
             'header'    => $this->__('Type'),
             'align'     => 'left',
@@ -178,7 +176,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'sortable'  => false,
             'index'     => 'type_id',
             'filter_index' => 'type_id',
-            'options'   => $types
+            'options'   => $this->getProductTypes()
         ));
 
         $this->addColumn('is_in_stock', array(
@@ -257,7 +255,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         }
         return parent::_addColumnFilterToCollection($column);
     }
-    
+
     /**
      * @return \Magento\Store\Model\Store
      */
@@ -287,7 +285,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             require([
                 'M2ePro/General/PhpFunctions',
             ], function(){
-                
+
                 wait(function() {
                     return typeof ProductGridObj != 'undefined';
                 }, function() {
@@ -296,7 +294,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             });
 JS
             );
-            
+
             return parent::_toHtml();
         }
 
@@ -362,7 +360,7 @@ JS
         });
 
         window.ListingAutoActionObj = new EbayListingAutoAction();
-        
+
         wait(function() {
             return typeof ProductGridObj != 'undefined';
         }, function() {
@@ -373,6 +371,24 @@ JS
         );
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function getProductTypes()
+    {
+        $magentoProductTypes = $this->type->getOptionArray();
+        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
+        foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
+            if (in_array($type, $knownTypes)) {
+                continue;
+            }
+
+            unset($magentoProductTypes[$type]);
+        }
+
+        return $magentoProductTypes;
     }
 
     //########################################

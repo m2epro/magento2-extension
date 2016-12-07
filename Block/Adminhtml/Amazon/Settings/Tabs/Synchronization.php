@@ -51,10 +51,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 ],
                 'value' => $listingsMode,
                 'tooltip' => $this->__(
-                    '<p>This synchronization includes import of changes made on Amazon channel as well 
-                    as the ability to enable/disable the data synchronization managed by the 
+                    '<p>This synchronization includes import of changes made on Amazon channel as well
+                    as the ability to enable/disable the data synchronization managed by the
                     Synchronization Policy Rules.</p><br>
-                    <p>However, it does not exclude the ability to manually manage Items in Listings using the 
+                    <p>However, it does not exclude the ability to manually manage Items in Listings using the
                     available List, Revise, Relist or Stop Action options.</p>'
                 )
             ]
@@ -124,9 +124,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 'disabled' => true,
                 'tooltip' => $this->__(
                     '<p>This Synchronization cannot be disabled as it is a critically important condition
-                    for the proper work of the automatic synchronization rules according to which data 
+                    for the proper work of the automatic synchronization rules according to which data
                     update between Magento and Amazon is performed.</p><br>
-                    <p>However, there is an ability to enable/disable the Magento Order creation for each Account in 
+                    <p>However, there is an ability to enable/disable the Magento Order creation for each Account in
                     <strong>Amazon Integration > Configuration > Accounts</strong> section.</p>'
                 )
             ]
@@ -152,7 +152,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 'disabled' => true,
                 'tooltip' => $this->__(
                     '<p>This Synchronization performs import and regular updates of the imported 3rd Party Listings.
-                    It can be enabled/disabled for each Account separately in 
+                    It can be enabled/disabled for each Account separately in
                     <strong>Amazon Integration > Configuration > Accounts</strong> section.</p>'
                 )
             ]

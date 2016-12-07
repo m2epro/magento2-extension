@@ -14,29 +14,29 @@ class Form extends AbstractForm
             'content' => $this->__(
                 <<<HTML
                 <p>We strongly recommend you to review the detailed documentation, specially created for
-                the M2E Pro Clients, to find answers to your questions as many solutions have already been 
+                the M2E Pro Clients, to find answers to your questions as many solutions have already been
                 described. You can use the following resources:</p>
-                
+
                 <ul>
-                <li><p><a href="%url_1%" target="_blank" class="external-link">Documentation</a> 
-                - structured documents containing detailed 
+                <li><p><a href="%url_1%" target="_blank" class="external-link">Documentation</a>
+                - structured documents containing detailed
                 instructions on how to use M2E Pro Extension;</p></li>
-                <li><p><a href="%url_2%" target="_blank" class="external-link">Knowledge Base</a> 
+                <li><p><a href="%url_2%" target="_blank" class="external-link">Knowledge Base</a>
                 - a collection of articles
-                describing the causes of the common errors as well as the solutions to the frequently 
+                describing the causes of the common errors as well as the solutions to the frequently
                 asked questions;</p></li>
-                <li><p><a href="%url_3%" target="_blank" class="external-link">Ideas Workshop</a> 
-                - a base of notices where you 
+                <li><p><a href="%url_3%" target="_blank" class="external-link">Ideas Workshop</a>
+                - a base of notices where you
                 can find other Users’ suggestions as well as offer your idea about a new feature which
                 could be useful in M2E Pro;</p></li>
-                <li><p><a href="%url_4%" target="_blank" class="external-link">Community Forum</a> 
-                - an open M2E Pro discussion forum 
+                <li><p><a href="%url_4%" target="_blank" class="external-link">Community Forum</a>
+                - an open M2E Pro discussion forum
                 where our Users discuss and search for solutions together.</p></li>
                 </ul>
-                
-                <p>Yet, if you still cannot find the answer to the issue you have faced, you can contact our 
+
+                <p>Yet, if you still cannot find the answer to the issue you have faced, you can contact our
                 Customer Support Team using the <strong>Contact Support</strong> form. In case your Subscription
-                Plan does not include a ticket technical support, an automatic email notification about the plan 
+                Plan does not include a ticket technical support, an automatic email notification about the plan
                 terms and conditions will be sent to your request.</p>
 HTML
                 ,
@@ -95,21 +95,6 @@ HTML
             ]
         );
 
-        if ($this->getHelper('Module\Support')->isTypePremium()) {
-            $fieldset->addField('severity',
-                'select',
-                [
-                    'name' => 'severity',
-                    'label' => $this->__('Severity'),
-                    'values' => [
-                        'minor' => $this->__('Minor'),
-                        'important' => $this->__('Important'),
-                        'critical' => $this->__('Critical'),
-                    ]
-                ]
-            );
-        }
-
         $values = [
             'none' => $this->__('General Issue')
         ];
@@ -159,7 +144,6 @@ What steps will reproduce the problem?
 
 What is the expected output? What do you see instead?
 
-
 Please provide any additional information below.
 TEXT
             ]
@@ -197,7 +181,10 @@ TEXT
             ]
         );
 
-        $this->jsUrl->add($this->getUrl('*/support/save'), 'formSubmit');
+        $params = [];
+        $referrer && $params['referrer'] = $referrer;
+
+        $this->jsUrl->add($this->getUrl('*/support/save', $params), 'formSubmit');
 
         $this->js->add(<<<JS
     require([
@@ -212,21 +199,5 @@ JS
         $this->setForm($form);
 
         return parent::_prepareForm();
-    }
-
-    protected function _beforeToHtml()
-    {
-        $controlPanelUrl = $this->getUrl('*/controlPanel');
-
-        $this->js->addRequireJs([
-            'l' => 'M2ePro/ControlPanel'
-        ], <<<JS
-
-            window.ControlPanelObj = new ControlPanel();
-            window.ControlPanelObj.setControlPanelUrl('{$controlPanelUrl}')
-JS
-        );
-
-        return parent::_beforeToHtml();
     }
 }

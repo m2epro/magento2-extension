@@ -271,7 +271,7 @@ define([
                 });
 
                 self[mode+'popup'] = jQuery(modalDialogMessage).modal({
-                    title: title + ' <span id="additional_autoaction_title"></span>',
+                    title: title + ' <span id="additional_autoaction_title" style="font-size: inherit;"></span>',
                     type: 'slide',
                     buttons: buttonsConfig,
                     closed: function() {
@@ -601,15 +601,9 @@ define([
         {
             var validationResult = true;
 
-            if ($('edit_form')) {
-                validationResult = jQuery('#edit_form').validation().valid();
-
-                if ($('auto_mode') && $('auto_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Listing::AUTO_MODE_CATEGORY')) {
-                    validationResult = validationResult && jQuery('#validate_category_selection_form').validation().valid();
-                }
-            } else if ($('category_specific_form')) {
-                validationResult = jQuery('#category_specific_form').validation().valid();
-            }
+            this.currentPopup.find('form').each(function () {
+                validationResult = validationResult && jQuery(this).validation().valid();
+            });
 
             return validationResult;
         },

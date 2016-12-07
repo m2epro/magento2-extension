@@ -109,7 +109,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             '{$this->getChildBlock('grid')->getId()}',
             {$this->getRequest()->getParam('id')}
         );
-        
+
         ListingGridHandlerObj.afterInitPage();
 
         ListingGridHandlerObj.actionHandler.setOptions(M2ePro);

@@ -11,19 +11,19 @@ class Debug extends AbstractContainer
     protected $taxCalculator;
     protected $taxModel;
     protected $storeModel;
-    
+
     public function __construct(
         \Magento\Tax\Model\Calculation $taxCalculator,
         \Magento\Tax\Model\ClassModel $taxModel,
         \Magento\Store\Model\Store $storeModel,
-        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context, 
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Widget $context,
         array $data = []
     )
     {
         $this->taxCalculator = $taxCalculator;
         $this->taxModel = $taxModel;
         $this->storeModel = $storeModel;
-        
+
         parent::__construct($context, $data);
     }
 
@@ -31,7 +31,7 @@ class Debug extends AbstractContainer
     {
         /** @var $order \Ess\M2ePro\Model\Order */
         $order = $this->getHelper('Data\GlobalData')->getValue('order');
-        
+
         $store = $this->storeModel->load($order->getStoreId());
 
         if (!is_null($store->getId())) {

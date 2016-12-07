@@ -176,7 +176,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     }
 
     // ---------------------------------------
-    
+
     public function setDefinitionTemplate(Definition $descriptionDefinitionModel)
     {
         $this->descriptionDefinitionModel = $descriptionDefinitionModel;
@@ -447,6 +447,6 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     {
         return true;
     }
-    
+
     //########################################
 }

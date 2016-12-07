@@ -313,10 +313,10 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
                 unset($data[$identifier]);
 
                 // M2ePro\TRANSLATIONS
-                // The value of %type% was no sent because it is not allowed in this Category
+                // The value of %type% was not sent because it is not allowed in this Category
                 $this->addWarningMessage(
                     $this->getHelper('Module\Translation')->__(
-                        'The value of %type% was no sent because it is not allowed in this Category',
+                        'The value of %type% was not sent because it is not allowed in this Category',
                         $this->getHelper('Module\Translation')->__(strtoupper($identifier))
                     )
                 );

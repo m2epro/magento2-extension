@@ -58,6 +58,9 @@ abstract class Base extends Action
     /** @var \Magento\Framework\View\Result\Page $resultPage  */
     protected $resultPage = NULL;
 
+    /** @var \Ess\M2ePro\Model\Setup\PublicVersionsChecker $publicVersionsChecker */
+    private $publicVersionsChecker = NULL;
+
     private $generalBlockWasAppended = false;
 
     //########################################
@@ -74,6 +77,7 @@ abstract class Base extends Action
         $this->cssRenderer = $context->getCssRenderer();
         $this->resourceConnection = $context->getResourceConnection();
         $this->magentoConfig = $context->getMagentoConfig();
+        $this->publicVersionsChecker = $context->getPublicVersionsChecker();
 
         parent::__construct($context);
     }
@@ -118,21 +122,21 @@ abstract class Base extends Action
             self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
         );
     }
-    
+
     protected function addExtendedWarningMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexWarningMessage(
             self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
         );
-    } 
-    
+    }
+
     protected function addExtendedNoticeMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexNoticeMessage(
             self::MESSAGE_IDENTIFIER, ['content' => (string)$message], $group
         );
-    }    
-    
+    }
+
     protected function addExtendedSuccessMessage($message, $group = null)
     {
         $this->getMessageManager()->addComplexSuccessMessage(
@@ -144,6 +148,12 @@ abstract class Base extends Action
 
     public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
+        $this->publicVersionsChecker->doCheck();
+
+        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
+            return $this->_redirect('*/maintenance');
+        }
+
         if (($preDispatchResult = $this->preDispatch($request)) !== true) {
             return $preDispatchResult;
         }

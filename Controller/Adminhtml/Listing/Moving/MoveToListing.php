@@ -5,7 +5,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Listing\Moving;
 class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
 {
     //########################################
-    
+
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');

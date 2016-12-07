@@ -128,7 +128,7 @@ final class Cancel extends AbstractModel
             $changeParams = $change->getParams();
 
             /** @var \Ess\M2ePro\Model\Order $order */
-            $order = $this->amazonFactory->getCachedObjectLoaded('Order', $change->getOrderId());
+            $order = $this->amazonFactory->getObjectLoaded('Order', $change->getOrderId());
 
             /** @var \Ess\M2ePro\Model\Amazon\Order $amazonOrder */
             $amazonOrder = $order->getChildObject();

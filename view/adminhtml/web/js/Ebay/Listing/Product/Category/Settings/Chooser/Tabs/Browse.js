@@ -1,6 +1,6 @@
 define([
     'M2ePro/Common'
-    
+
 ], function () {
     window.EbayListingProductCategorySettingsChooserTabsBrowse = Class.create();
     EbayListingProductCategorySettingsChooserTabsBrowse.prototype = Object.extend(new Common(), {

@@ -38,10 +38,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         if ($this->getHelper('View\Amazon')->isInstallationWizardFinished()) {
-
-            if ($this->getHelper('Component\Amazon')->isEnabled()) {
-                $this->addAmazonMarketplacesNotUpdatedNotificationMessage($controller);
-            }
+            $this->addMarketplacesNotUpdatedNotificationMessage($controller);
         }
     }
 
@@ -49,7 +46,10 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function addCronErrorMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        $url = 'https://support.m2epro.com/knowledgebase/162927-why-automatic-synchronization-is-required-for-amaz/';
+        $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl(
+            '692955-why-cron-service-is-not-working-in-my-magento'
+        );
+
         // M2ePro_TRANSLATIONS
         // Attention! AUTOMATIC Synchronization is not running at the moment.<br/>Please check this <a href="%url% target="_blank">article</a> to learn why it is required.
         $message = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
@@ -62,7 +62,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         );
     }
 
-    private function addAmazonMarketplacesNotUpdatedNotificationMessage(
+    private function addMarketplacesNotUpdatedNotificationMessage(
                                 \Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
         $outdatedMarketplaces = $this->getHelper('Data\Cache\Permanent')->getValue(__METHOD__);
@@ -70,7 +70,7 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
         if ($outdatedMarketplaces === NULL) {
 
             $readConn = $this->resourceConnection->getConnection();
-            
+
             $dictionaryTable = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_marketplace');
 
             $rows = $readConn->select()->from($dictionaryTable,'marketplace_id')
@@ -105,20 +105,14 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
             return;
         }
 
-// M2ePro_TRANSLATIONS
-// %marketplace_title% data was changed on Amazon. You need to synchronize it the Extension works properly. Please, go to %menu_label% > <a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.
-
-        $message = '%marketplace_title% data was changed on Amazon. You need to synchronize it '.
-                   'the Extension works properly. Please, go to '.
-                   '<a href="%url%" target="_blank">Marketplaces</a> and click the Update All Now Button.';
+        $message = '%marketplace_title% data was changed on Amazon. ' .
+            'You need to resynchronize it for the proper Extension work. '.
+            'Please, go to <a href="%url%" target="_blank">Marketplaces</a> and press an <b>Update All Now</b> button.';
 
         $controller->getMessageManager()->addNotice($this->getHelper('Module\Translation')->__(
             $message,
             implode(', ',$outdatedMarketplaces),
-            $controller->getUrl(
-                '*/amazon_marketplace',
-                array('tab' => \Ess\M2ePro\Helper\Component\Amazon::NICK)
-            )
+            $controller->getUrl('*/amazon_marketplace')
         ), \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP);
     }
 

@@ -38,6 +38,6 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         return parent::_prepareForm();
     }
-    
+
     //########################################
 }

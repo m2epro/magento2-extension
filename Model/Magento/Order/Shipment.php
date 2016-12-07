@@ -14,10 +14,10 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\DB\Transaction  */
     protected $transaction = NULL;
-    
+
     /** @var ShipmentFactory */
     protected $shipmentFactory = NULL;
-    
+
     /** @var $magentoOrder \Magento\Sales\Model\Order */
     private $magentoOrder = NULL;
 

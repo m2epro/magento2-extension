@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Config;
 class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 {
     // ########################################
-    
+
     /**
      * Define main table
      */

@@ -12,7 +12,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
 {
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
-    
+
     //########################################
 
     public function _construct()
@@ -149,7 +149,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
     require([
         'M2ePro/Amazon/Listing/AutoAction'
     ], function(){
-    
+
         window.ListingAutoActionObj = new AmazonListingAutoAction();
 
     });

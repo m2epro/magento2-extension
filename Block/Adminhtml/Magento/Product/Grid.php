@@ -88,7 +88,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
                 -webkit-flex-wrap: wrap;
                 flex-wrap: wrap;
             }
-            
+
             #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:first-child {
                 width: 38%;
                 margin-top: 1.1em;
@@ -111,13 +111,13 @@ CSS
         }
         parent::_prepareMassactionColumn();
     }
-    
+
     public function getMassactionBlockHtml()
     {
         if (!$this->useAdvancedFilter) {
             return $this->hideMassactionColumn ? '' :  parent::getMassactionBlockHtml();
         }
-        
+
         $advancedFilterBlock = $this->createBlock('Listing\Product\Rule');
         $advancedFilterBlock->setShowHideProductsOption($this->showAdvancedFilterProductsOption);
         $advancedFilterBlock->setGridJsObjectName($this->getJsObjectName());
@@ -257,11 +257,11 @@ HTML;
 
         if ($this->getFilterVisibility()) {
             $html .= $this->getSearchButtonHtml();
-            
+
             if ($this->useAdvancedFilter) {
                 $html .= $this->getAdvancedFilterButtonHtml();
             }
-            
+
             $html .= $this->getResetFilterButtonHtml();
         }
 
@@ -291,13 +291,13 @@ CSS
         $isShowRuleBlock = json_encode($this->isShowRuleBlock());
 
         $this->js->add(<<<JS
-        jQuery(function() 
+        jQuery(function()
         {
             if ({$isShowRuleBlock}) {
                 jQuery('#listing_product_rules').show();
                 jQuery('#{$this->getId()} .admin__data-grid-header-row:last-child')
                 .css('width', '100%');
-                                          
+
                 if ($('advanced_filter_button')) {
                     $('advanced_filter_button').simulate('click');
                 }
@@ -337,7 +337,7 @@ JS
         ProductGridObj.setGridId('{$this->getJsObjectName()}');
         ProductGridObj.isMassActionExists = {$isMassActionExists};
 
-        jQuery(function () 
+        jQuery(function ()
         {
             {$this->getJsObjectName()}.doFilter = ProductGridObj.setFilter;
             {$this->getJsObjectName()}.resetFilter = ProductGridObj.resetFilter;
@@ -356,7 +356,7 @@ JS
         if (!$this->useAdvancedFilter) {
             return false;
         }
-        
+
         $ruleData = $this->getHelper('Data\Session')->getValue(
             $this->getHelper('Data\GlobalData')->getValue('rule_prefix')
         );

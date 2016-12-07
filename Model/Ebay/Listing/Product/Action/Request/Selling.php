@@ -116,13 +116,13 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
     {
         $charity = $this->getEbaySellingFormatTemplate()->getCharity();
 
-        if (is_null($charity)) {
+        if (empty($charity[$this->getMarketplace()->getId()])) {
             return array();
         }
 
         return array(
-            'charity_id' => $charity['id'],
-            'charity_percent' => $charity['percentage']
+            'charity_id' => $charity[$this->getMarketplace()->getId()]['organization_id'],
+            'charity_percent' => $charity[$this->getMarketplace()->getId()]['percentage']
         );
     }
 

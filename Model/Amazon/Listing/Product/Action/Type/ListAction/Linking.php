@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation;
+use \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation;
+
 class Linking extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
@@ -197,10 +200,10 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
             'status'             => \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED
         ));
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation $typeModel */
+        /** @var ChildRelation $typeModel */
         $typeModel = $this->getVariationManager()->getTypeModel();
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $parentTypeModel */
+        /** @var ParentRelation $parentTypeModel */
         $parentTypeModel = $typeModel->getParentListingProduct()
             ->getChildObject()
             ->getVariationManager()
@@ -245,7 +248,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->addData($dataForUpdate);
 
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $typeModel */
+        /** @var ParentRelation $typeModel */
         $typeModel = $this->getVariationManager()->getTypeModel();
 
         $typeModel->setChannelAttributesSets($data['variations']['set'], false);

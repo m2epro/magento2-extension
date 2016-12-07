@@ -196,12 +196,12 @@ class Importer extends \Ess\M2ePro\Model\AbstractModel
 
         $destinationFolder = $this->filesystem->getDirectoryRead(
             \Magento\Framework\App\Filesystem\DirectoryList::MEDIA
-        )->getAbsolutePath() 
+        )->getAbsolutePath()
         . $this->productMediaConfig->getBaseTmpMediaPath() . DIRECTORY_SEPARATOR;
-        
+
         $destinationFolder .= $baseTmpImageName{0} . DIRECTORY_SEPARATOR . $baseTmpImageName{1};
 
-        if (!($this->fileDriver->isDirectory($destinationFolder) 
+        if (!($this->fileDriver->isDirectory($destinationFolder)
             || $this->fileDriver->createDirectory($destinationFolder, 0777))) {
             // M2ePro\TRANSLATIONS
             // Unable to create directory '%directory%'.

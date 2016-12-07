@@ -25,7 +25,7 @@ class Data extends AbstractForm
     {
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
         $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
-        
+
         $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
         $attributesConfigurable = $magentoAttributeHelper->getAllConfigurable();
 
@@ -265,7 +265,7 @@ class Data extends AbstractForm
                 'legend' => $this->__('Images'),
                 'collapsable' => true,
                 'tooltip' => $this->__(
-                    'The images that your potential Buyers will see on your eBay Listing. Using high-quality 
+                    'The images that your potential Buyers will see on your eBay Listing. Using high-quality
                     pictures ensures a better shopping experience and improves your chances of a sale.'
                 )
             ]
@@ -1261,7 +1261,7 @@ HTML
                 'value' => $formData['product_details']['include_description'],
                 'tooltip' => $this->__(
                     '<p>Specify if the Listing should include additional information about the Product,
-                    such as a publisher\'s Description or film credits from the prefilled information in 
+                    such as a publisher\'s Description or film credits from the prefilled information in
                     eBay Catalog.</p>'
                 )
             ]
@@ -1416,7 +1416,7 @@ HTML
     });
 JS
         );
-        
+
         $this->setForm($form);
 
         return parent::_prepareForm();
@@ -1506,7 +1506,7 @@ JS
 
         return $data;
     }
-    
+
     //########################################
 
     public function getDefault()
@@ -1790,13 +1790,13 @@ HTML;
             self::HELP_BLOCK,
             [
                 'content' => $this->__('
-                    If you would like to preview the Description data for the particular Magento Product, please, 
-                    provide its ID into the <strong>Magento Product ID</strong> input and select 
-                    a <strong>Magento Store View</strong> the values 
-                    should be taken from. As a result you will see the Item Description which will be sent to 
+                    If you would like to preview the Description data for the particular Magento Product, please,
+                    provide its ID into the <strong>Magento Product ID</strong> input and select
+                    a <strong>Magento Store View</strong> the values
+                    should be taken from. As a result you will see the Item Description which will be sent to
                     eBay basing on the settings you specified.<br />
-    
-                    Also, you can press a <strong>Select Randomly</strong> button to allow M2E Pro to automatically 
+
+                    Also, you can press a <strong>Select Randomly</strong> button to allow M2E Pro to automatically
                     select the most suitable Product for its previewing.'
                 )
             ]

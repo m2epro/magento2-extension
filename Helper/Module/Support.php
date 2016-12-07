@@ -10,10 +10,6 @@ namespace Ess\M2ePro\Helper\Module;
 
 class Support extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const TYPE_BRONZE  = 'bronze';
-    const TYPE_SILVER  = 'silver';
-    const TYPE_GOLD    = 'gold';
-
     protected $urlBuilder;
     protected $modelFactory;
     protected $moduleConfig;
@@ -173,64 +169,7 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getContactEmail()
     {
-        $email = $this->moduleConfig->getGroupValue('/support/', 'contact_email');
-
-        try {
-
-            /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('settings','get','supportEmail');
-            $dispatcherObject->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-
-            if (!empty($response['email'])) {
-                $email = $response['email'];
-            }
-
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-        }
-
-        return $email;
-    }
-
-    public function getType()
-    {
-        $type = $this->cacheConfig->getGroupValue('/support/premium/','type');
-        $lastUpdateDate = $this->cacheConfig->getGroupValue('/support/premium/','last_update_time');
-
-        if ($type && strtotime($lastUpdateDate) + 3600*24 > $this->getHelper('Data')->getCurrentGmtDate(true)) {
-            return $type;
-        }
-
-        $type = self::TYPE_BRONZE;
-
-        try {
-
-            /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('settings','get','supportType');
-            $dispatcherObject->process($connectorObj);
-            $response = $connectorObj->getResponseData();
-
-            !empty($response['type']) && $type = $response['type'];
-
-        } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
-        }
-
-        $this->cacheConfig->setGroupValue('/support/premium/','type',$type);
-        $this->cacheConfig->setGroupValue('/support/premium/','last_update_time',
-            $this->getHelper('Data')->getCurrentGmtDate());
-
-        return $type;
-    }
-
-    // ---------------------------------------
-
-    public function isTypePremium()
-    {
-        return $this->getType() == self::TYPE_GOLD || $this->getType() == self::TYPE_SILVER;
+        return $this->moduleConfig->getGroupValue('/support/', 'contact_email');
     }
 
     //########################################

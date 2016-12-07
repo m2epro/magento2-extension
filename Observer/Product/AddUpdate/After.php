@@ -545,7 +545,7 @@ class After extends AbstractAddUpdate
             }
 
             if (!empty($additionalData['variation_options']) &&
-                $collection->getFirstItem()->getProductType() == \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE) {
+                $this->getHelper('Magento\Product')->isBundleType($collection->getFirstItem()->getProductType())) {
 
                 foreach ($additionalData['variation_options'] as $attribute => $option) {
                     $log->addProductMessage(

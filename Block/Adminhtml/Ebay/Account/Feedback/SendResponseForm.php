@@ -19,6 +19,7 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
                 'id' => 'send_response_form',
                 'action' => 'javascript:void(0)',
                 'method' => 'post',
+                'class' => 'admin__scope-old'
             ]]
         );
 
@@ -31,7 +32,6 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
             ]
         );
 
-
         $fieldset = $form->addFieldset(
             'send_response_fieldset',
             []
@@ -43,12 +43,13 @@ class SendResponseForm extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\Abstract
 
         $fieldset->addField(
             'transaction_id',
-            self::CUSTOM_CONTAINER,
+            'link',
             [
                 'label' => $this->__('Transaction ID'),
-                'text' => <<<HTML
-<a href="{$url}">{$transaction}</a>
-HTML
+                'value' => $transaction,
+                'href' => $url,
+                'target' => '_blank',
+                'class' => 'control-value'
             ]
         );
 
@@ -56,23 +57,22 @@ HTML
 
         $fieldset->addField(
             'item_id',
-            self::CUSTOM_CONTAINER,
+            'link',
             [
                 'label' => $this->__('Item ID'),
-                'text' => <<<HTML
-<a href="{$url}">{$feedback->getEbayItemId()}</a>
-HTML
+                'value' => $feedback->getEbayItemId(),
+                'href' => $url,
+                'target' => '_blank',
+                'class' => 'control-value external-link'
             ]
         );
 
         $fieldset->addField(
             'buyer_text',
-            self::CUSTOM_CONTAINER,
+            'note',
             [
                 'label' => $this->__('Buyer\'s Feedback'),
-                'text' => <<<HTML
-{$feedback->getData('buyer_feedback_text')}
-HTML
+                'text' => $feedback->getData('buyer_feedback_text')
             ]
         );
 
@@ -157,10 +157,10 @@ HTML
 
         $this->js->add(<<<JS
     $('feedback_template_type').observe('change', function () {
-    
+
         $('feedback_text_container').hide();
         $('feedback_template_container').hide();
-    
+
         if ($('feedback_template_type').value == 'custom') {
             $('feedback_text_container').show();
             $('feedback_template_container').hide();

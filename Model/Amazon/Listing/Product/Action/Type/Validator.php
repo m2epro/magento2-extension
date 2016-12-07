@@ -282,7 +282,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             $this->addMessage(
                 'This product is used by Amazon Repricing Tool.
                  The Price cannot be updated through the M2E Pro.',
-                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING
+                \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
             );
 
             return true;

@@ -84,8 +84,8 @@ class ListingOther extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management. 
-You can set preferences whether you would like to import 3rd Party Listings 
+<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management.
+You can set preferences whether you would like to import 3rd Party Listings
 (Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
 automatically map them to Magento Product, etc.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
@@ -135,7 +135,7 @@ HTML
                 ],
                 'value' => $formData['other_listings_mapping_mode'],
                 'tooltip' => $this->__(
-                    'Choose whether imported eBay Listings should automatically map to a 
+                    'Choose whether imported eBay Listings should automatically map to a
                     Product in your Magento Inventory.'
                 )
             ]
@@ -147,9 +147,9 @@ HTML
                 'legend' => $this->__('Magento Product Mapping Settings'),
                 'collapsable' => true,
                 'tooltip' => $this->__(
-                    '<p>In this section you can provide settings for automatic Mapping of the newly 
+                    '<p>In this section you can provide settings for automatic Mapping of the newly
                     imported 3rd Party Listings to the appropriate Magento Products.</p><br>
-                    <p>The imported Items are mapped based on the correspondence between eBay Item 
+                    <p>The imported Items are mapped based on the correspondence between eBay Item
                     values and Magento Product Attribute values. </p>'
                 )
             ]

@@ -45,13 +45,13 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
         );
+
+        return parent::_afterToHtml($html);
     }
 
     protected function _toHtml()
@@ -59,15 +59,15 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Websit
         $helpBlock = $this->createBlock('HelpBlock')->setData(
             [
                 'content' => $this->__(
-                    '<p>These Rules of automatic product adding and removal come into action when a 
-                    Magento Product is added to the Website with regard to the Store View selected for 
-                    the M2E Pro Listing. In other words, after a Magento Product is added to the 
-                    selected Website, it can be automatically added to M2E Pro Listing if the settings 
+                    '<p>These Rules of automatic product adding and removal come into action when a
+                    Magento Product is added to the Website with regard to the Store View selected for
+                    the M2E Pro Listing. In other words, after a Magento Product is added to the
+                    selected Website, it can be automatically added to M2E Pro Listing if the settings
                     are enabled.</p><br>
-                    <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed from 
-                    the Website, the Item will be removed from the Listing and its sale will be 
+                    <p>Accordingly, if a Magento Product present in the M2E Pro Listing is removed from
+                    the Website, the Item will be removed from the Listing and its sale will be
                     stopped on Channel.</p><br>
-                    <p>More detailed information you can find 
+                    <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/_wItAQ')
                 )

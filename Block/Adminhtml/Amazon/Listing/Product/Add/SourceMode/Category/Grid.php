@@ -63,7 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Source
         $this->getRequest()->setPostValue($this->getMassactionBlock()->getFormFieldNameInternal(), implode(',',$ids));
 
         $this->css->add(<<<CSS
-            
+
             #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:first-child {
                 width: 100% !important;
                 margin-top: 1.1em;
@@ -71,13 +71,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\Source
             #{$this->getId()} > .admin__data-grid-header > .admin__data-grid-header-row:last-child {
                 width: 100% !important;
             }
-            
-            #{$this->getId()} > .admin__data-grid-header > 
+
+            #{$this->getId()} > .admin__data-grid-header >
             .admin__data-grid-header-row:last-child .admin__control-support-text {
                 margin-left: 0;
             }
-            
-            #{$this->getId()} > .admin__data-grid-header > 
+
+            #{$this->getId()} > .admin__data-grid-header >
             .admin__data-grid-header-row:last-child .mass-select-wrap {
                 margin-left: -1.3em !important;
             }

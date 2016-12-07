@@ -12,7 +12,7 @@ class SuggestedAsinGrid extends Main
 
         if (empty($productId)) {
             $this->setAjaxContent('ERROR: No Product ID!', false);
-            
+
             return $this->getResult();
         }
 

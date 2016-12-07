@@ -51,4 +51,4 @@ class ModelGetAll extends General
     }
 
     //########################################
-} 
+}

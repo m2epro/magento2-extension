@@ -10,7 +10,7 @@ class RemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $accountId     = $this->getRequest()->getParam('account_id');
         $responseToken = $this->getRequest()->getParam('response_token');
 
-        /** @var \Ess\M2ePro\Model\Account $account */         
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
 
         if (!$account->getId()) {
@@ -52,7 +52,7 @@ class RemoveProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         foreach ($response['offers'] as $offer) {
             $skus[] = $offer['sku'];
         }
-        
+
         /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
         $repricingSynchronization->setAccount($account);

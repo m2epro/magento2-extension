@@ -36,7 +36,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
         parent::__construct($helperFactory, $context);
     }
-    
+
     //########################################
 
     public function process(\Exception $exception, $sendToServer = true)

@@ -19,39 +19,64 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
     private $variablesDir = NULL;
     private $deploymentConfig = NULL;
 
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     //########################################
 
     public function __construct(
         VariablesDir $variablesDir,
-        DeploymentConfig $deploymentConfig
+        DeploymentConfig $deploymentConfig,
+        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
     ) {
         $this->variablesDir     = $variablesDir;
         $this->deploymentConfig = $deploymentConfig;
+
+        $this->logger = $loggerFactory->create();
     }
 
     //########################################
 
     public function uninstall(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
-        // Filesystem
-        // -----------------------
-        $this->variablesDir->removeBase();
-        // -----------------------
+        try {
 
-        // Database
-        // -----------------------
-        $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
-        $tables = $setup->getConnection()->getTables($tablesPrefix.'m2epro_%');
+            $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
 
-        foreach ($tables as $table) {
-            $setup->getConnection()->dropTable($table);
+            $canRemoveData = (bool)$setup->getConnection()->select()
+                ->from($tablesPrefix.'m2epro_module_config')
+                ->reset(\Zend_Db_Select::COLUMNS)
+                ->columns('value')
+                ->where('`group` = ?', '/uninstall/')
+                ->where('`key` = ?', 'can_remove_data')
+                ->query()->fetchColumn();
+
+            if (!$canRemoveData) {
+                return;
+            }
+
+            // Filesystem
+            // -----------------------
+            $this->variablesDir->removeBase();
+            // -----------------------
+
+            // Database
+            // -----------------------
+            $tables = $setup->getConnection()->getTables($tablesPrefix.'m2epro_%');
+
+            foreach ($tables as $table) {
+                $setup->getConnection()->dropTable($table);
+            }
+
+            $setup->getConnection()->delete(
+                $setup->getTable('core_config_data'),
+                ['path LIKE ?' => 'm2epro/%']
+            );
+            // -----------------------
+
+        } catch (\Exception $exception) {
+            $this->logger->error($exception, ['source' => 'Uninstall']);
         }
-
-        $setup->getConnection()->delete(
-            $setup->getTable('core_config_data'),
-            ['path LIKE ?' => 'm2epro/%']
-        );
-        // -----------------------
     }
 
     //########################################

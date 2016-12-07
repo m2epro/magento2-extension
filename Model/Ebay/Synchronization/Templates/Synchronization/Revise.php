@@ -35,7 +35,7 @@ final class Revise extends AbstractModel
      */
     protected function getPercentsStart()
     {
-        return 35;
+        return 80;
     }
 
     /**
@@ -43,7 +43,7 @@ final class Revise extends AbstractModel
      */
     protected function getPercentsEnd()
     {
-        return 55;
+        return 100;
     }
 
     //########################################
@@ -57,6 +57,8 @@ final class Revise extends AbstractModel
         $this->executeSubTitleChanged();
         $this->executeDescriptionChanged();
         $this->executeImagesChanged();
+        $this->executeSpecificsChanged();
+        $this->executeShippingServicesChanged();
 
         if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
             $this->executePickupStoreQtyChanged();
@@ -80,12 +82,22 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
                 $configurator->setPartialMode();
-                $configurator->allowQty()->allowVariations();
+                $configurator->allowQty();
+                $configurator->allowVariations();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -102,7 +114,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -122,12 +134,22 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
                 $configurator->setPartialMode();
-                $configurator->allowPrice()->allowVariations();
+                $configurator->allowPrice();
+                $configurator->allowVariations();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -144,7 +166,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -160,12 +182,18 @@ final class Revise extends AbstractModel
 
         $attributesForProductChange = array();
 
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $template */
-        $ebayTemplateDescriptionItems = $this->activeRecordFactory->getObject('Ebay\Template\Description')
-                                                                  ->getCollection()
-                                                                  ->getItems();
-        foreach ($ebayTemplateDescriptionItems as $template) {
-            $attributesForProductChange = array_merge($attributesForProductChange,$template->getTitleAttributes());
+        $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
+
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
+
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+            $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
+
+            $attributesForProductChange = array_merge(
+                $attributesForProductChange, $ebayDescriptionTemplate->getTitleAttributes()
+            );
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
@@ -176,6 +204,15 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
 
@@ -190,7 +227,7 @@ final class Revise extends AbstractModel
                 $configurator->setPartialMode();
                 $configurator->allowTitle();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -207,7 +244,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -219,12 +256,18 @@ final class Revise extends AbstractModel
 
         $attributesForProductChange = array();
 
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $template */
-        $ebayTemplateDescriptionItems = $this->activeRecordFactory->getObject('Ebay\Template\Description')
-                                                                  ->getCollection()
-                                                                  ->getItems();
-        foreach ($ebayTemplateDescriptionItems as $template) {
-            $attributesForProductChange = array_merge($attributesForProductChange, $template->getSubTitleAttributes());
+        $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
+
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
+
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+            $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
+
+            $attributesForProductChange = array_merge(
+                $attributesForProductChange, $ebayDescriptionTemplate->getSubTitleAttributes()
+            );
         }
 
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
@@ -235,6 +278,15 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
 
@@ -249,7 +301,7 @@ final class Revise extends AbstractModel
                 $configurator->setPartialMode();
                 $configurator->allowSubtitle();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -266,7 +318,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -280,14 +332,17 @@ final class Revise extends AbstractModel
 
         $attributesForProductChange = array();
 
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $template */
-        $ebayTemplateDescriptionItems = $this->activeRecordFactory->getObject('Ebay\Template\Description')
-                                                                 ->getCollection()
-                                                                 ->getItems();
-        foreach ($ebayTemplateDescriptionItems as $template) {
+        $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
+
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
+
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+            $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
+
             $attributesForProductChange = array_merge(
-                $attributesForProductChange,
-                $template->getDescriptionAttributes()
+                $attributesForProductChange, $ebayDescriptionTemplate->getDescriptionAttributes()
             );
         }
 
@@ -299,6 +354,15 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
 
@@ -313,7 +377,7 @@ final class Revise extends AbstractModel
                 $configurator->setPartialMode();
                 $configurator->allowDescription();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -330,7 +394,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -344,16 +408,20 @@ final class Revise extends AbstractModel
 
         $attributesForProductChange = array();
 
-        /** @var \Ess\M2ePro\Model\Ebay\Template\Description $template */
-        $ebayTemplateDescriptionItems = $this->activeRecordFactory->getObject('Ebay\Template\Description')
-                                                                  ->getCollection()
-                                                                  ->getItems();
-        foreach ($ebayTemplateDescriptionItems as $template) {
+        $descriptionTemplateCollection = $this->ebayFactory->getObject('Template\Description')->getCollection();
+
+        /** @var \Ess\M2ePro\Model\Template\Description[] $descriptionTemplates */
+        $descriptionTemplates = $descriptionTemplateCollection->getItems();
+
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+            $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
+
             $attributesForProductChange = array_merge(
                 $attributesForProductChange,
-                $template->getImageMainAttributes(),
-                $template->getGalleryImagesAttributes(),
-                $template->getVariationImagesAttributes()
+                $ebayDescriptionTemplate->getImageMainAttributes(),
+                $ebayDescriptionTemplate->getGalleryImagesAttributes(),
+                $ebayDescriptionTemplate->getVariationImagesAttributes()
             );
         }
 
@@ -367,6 +435,15 @@ final class Revise extends AbstractModel
         foreach ($changedListingsProducts as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
                 $ebayListingProduct = $listingProduct->getChildObject();
 
@@ -384,7 +461,7 @@ final class Revise extends AbstractModel
                 $configurator->setPartialMode();
                 $configurator->allowImages();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -401,7 +478,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -428,7 +505,7 @@ final class Revise extends AbstractModel
                 $configurator->setPartialMode();
                 $configurator->allowVariations();
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -445,7 +522,169 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
+                continue;
+            }
+        }
+
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    }
+
+    private function executeSpecificsChanged()
+    {
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update specifics');
+
+        /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
+        $changedListingsProducts = $this->getProductChangesManager()->getInstances(
+            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+        );
+
+        $attributesForProductChange = array();
+
+        foreach ($changedListingsProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+
+            if ($ebayListingProduct->isSetCategoryTemplate()) {
+                $attributesForProductChange = array_merge(
+                    $attributesForProductChange,
+                    $ebayListingProduct->getCategoryTemplate()->getTrackingAttributes()
+                );
+            }
+        }
+        $attributesForProductChange = array_unique($attributesForProductChange);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
+        $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
+            $attributesForProductChange, true
+        );
+
+        foreach ($changedListingsProducts as $listingProduct) {
+
+            try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+                $ebayListingProduct = $listingProduct->getChildObject();
+
+                if (!$ebayListingProduct->isSetCategoryTemplate()) {
+                    continue;
+                }
+
+                $specificsAttributes = $ebayListingProduct->getCategoryTemplate()->getTrackingAttributes();
+
+                if (!in_array($listingProduct->getData('changed_attribute'), $specificsAttributes)) {
+                    continue;
+                }
+
+                /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
+                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator->setPartialMode();
+                $configurator->allowSpecifics();
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                if (!$this->getInspector()->isMeetReviseSpecificsRequirements($listingProduct)) {
+                    continue;
+                }
+
+                $this->getRunner()->addProduct(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                );
+            } catch (\Exception $exception) {
+
+                $this->logError($listingProduct, $exception, false);
+                continue;
+            }
+        }
+
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__);
+    }
+
+    private function executeShippingServicesChanged()
+    {
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Update shipping services');
+
+        /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
+        $changedListingsProducts = $this->getProductChangesManager()->getInstances(
+            array(\Ess\M2ePro\Model\ProductChange::UPDATE_ATTRIBUTE_CODE)
+        );
+
+        $attributesForProductChange = array();
+
+        foreach ($changedListingsProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+
+            $attributesForProductChange = array_merge(
+                $attributesForProductChange,
+                $ebayListingProduct->getShippingTemplate()->getTrackingAttributes()
+            );
+        }
+        $attributesForProductChange = array_unique($attributesForProductChange);
+
+        /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProducts */
+        $changedListingsProducts = $this->getProductChangesManager()->getInstancesByListingProduct(
+            $attributesForProductChange, true
+        );
+
+        foreach ($changedListingsProducts as $listingProduct) {
+
+            try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+                $ebayListingProduct = $listingProduct->getChildObject();
+
+                $servicesAttributes = $ebayListingProduct->getShippingTemplate()->getTrackingAttributes();
+
+                if (!in_array($listingProduct->getData('changed_attribute'), $servicesAttributes)) {
+                    continue;
+                }
+
+                /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
+                $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+                $configurator->setPartialMode();
+                $configurator->allowShippingServices();
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
+                if (!$this->getInspector()->isMeetReviseShippingServicesRequirements($listingProduct)) {
+                    continue;
+                }
+
+                $this->getRunner()->addProduct(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+                );
+            } catch (\Exception $exception) {
+
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -493,7 +732,7 @@ final class Revise extends AbstractModel
                 $pickupStoreStateUpdater->process();
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -531,10 +770,18 @@ final class Revise extends AbstractModel
                 /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
                 $listingProduct->setData('synch_status', \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_SKIP)->save();
 
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -551,7 +798,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }
@@ -585,10 +832,19 @@ final class Revise extends AbstractModel
         foreach ($collection->getItems() as $listingProduct) {
 
             try {
+
+                $isExistInRunner = $this->getRunner()->isExistProductWithAction(
+                    $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+                );
+
+                if ($isExistInRunner) {
+                    continue;
+                }
+
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
 
-                $isExistInRunner = $this->getRunner()->isExistProduct(
+                $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
                     $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
                 );
 
@@ -605,7 +861,7 @@ final class Revise extends AbstractModel
                 );
             } catch (\Exception $exception) {
 
-                $this->logError($listingProduct, $exception);
+                $this->logError($listingProduct, $exception, false);
                 continue;
             }
         }

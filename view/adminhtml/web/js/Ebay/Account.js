@@ -62,7 +62,7 @@ define([
 
             var checkResult = false;
 
-            new Ajax.Request(M2ePro.url.get('ebay_account/feedbackTemplateCheck'), {
+            new Ajax.Request(M2ePro.url.get('ebay_account_feedback/templateCheck'), {
                 method: 'post',
                 asynchronous: false,
                 parameters: {
@@ -129,8 +129,8 @@ define([
         EbayAccountObj.renderOrderNumberExample();
 
         $('magento_orders_customer_mode').observe('change', this.magentoOrdersCustomerModeChange).simulate('change');
-        
-        $('magento_orders_status_mapping_mode').observe('change', this.magentoOrdersStatusMappingModeChange).simulate('change');
+
+        $('magento_orders_status_mapping_mode').observe('change', this.magentoOrdersStatusMappingModeChange);
 
         $('magento_orders_creation_mode').observe('change', this.magentoOrdersCreationModeChange).simulate('change');
 
@@ -243,7 +243,7 @@ define([
                 $('html-body').insert({
                     bottom: '<div id="edit_feedback_template_form_container">' + response.html + '</div>'
                 });
-                
+
                 self.initFormValidation('#edit_feedback_template_form');
 
                 self.feedbackTemplatePopup = jQuery('#edit_feedback_template_form_container');
@@ -298,6 +298,11 @@ define([
                 id: id
             },
             onSuccess: function() {
+                if ($('ebayAccountEditTabsFeedbackGrid').select('tbody tr').length == 1) {
+                    $('add_feedback_template_button_container').show();
+                    $('feedback_templates_grid').hide();
+                }
+
                 window['ebayAccountEditTabsFeedbackGridJsObject'].reload();
             }
         });
@@ -584,15 +589,21 @@ define([
 
     other_listings_synchronization_change: function()
     {
+        var relatedStoreViews = $('magento_block_ebay_accounts_other_listings_related_store_views-wrapper');
+
         if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES')) {
             $('other_listings_mapping_mode_tr').show();
             $('other_listings_mapping_mode').simulate('change');
-            $('magento_block_ebay_accounts_other_listings_related_store_views-wrapper').show();
+            if (relatedStoreViews) {
+                relatedStoreViews.show();
+            }
         } else {
             $('other_listings_mapping_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::OTHER_LISTINGS_MAPPING_MODE_NO');
             $('other_listings_mapping_mode').simulate('change');
             $('other_listings_mapping_mode_tr').hide();
-            $('magento_block_ebay_accounts_other_listings_related_store_views-wrapper').hide();
+            if (relatedStoreViews) {
+                relatedStoreViews.hide();
+            }
         }
     },
 

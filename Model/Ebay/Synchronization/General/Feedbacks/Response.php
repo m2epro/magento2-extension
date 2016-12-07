@@ -203,7 +203,7 @@ final class Response extends \Ess\M2ePro\Model\Ebay\Synchronization\General\Feed
                 return '';
             }
 
-            $account->setData('feedbacks_last_used_id', $feedbackTemplate->getId())->save();
+            $account->getChildObject()->setData('feedbacks_last_used_id', $feedbackTemplate->getId())->save();
 
             return $feedbackTemplate->getBody();
         }

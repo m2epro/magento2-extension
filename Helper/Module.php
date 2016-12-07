@@ -32,9 +32,9 @@ class Module extends AbstractHelper
     protected $cookieManager;
     protected $packageInfo;
     protected $moduleResource;
-    
+
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
@@ -83,7 +83,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.1.2';
+        return '1.1.3';
     }
 
     public function getSetupVersion()
@@ -118,7 +118,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '1200';
+        return '1627';
     }
 
     //########################################
@@ -130,7 +130,7 @@ class Module extends AbstractHelper
 
     //########################################
 
-    public function getInstallationDate()
+    public function getSetupInstallationDate()
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
         $setupCollection->addFieldToFilter('version_from', ['null' => true])
@@ -139,8 +139,8 @@ class Module extends AbstractHelper
                         ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
     }
-    
-    public function getLastUpgradeDate()
+
+    public function getSetupLastUpgradeDate()
     {
         $setupCollection = $this->activeRecordFactory->getObject('Setup')->getCollection();
         $setupCollection->addFieldToFilter('version_from', ['notnull' => true])
@@ -148,6 +148,34 @@ class Module extends AbstractHelper
                         ->addFieldToFilter('is_completed', 1)
                         ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_DESC);
         return $setupCollection->setPageSize(1)->getFirstItem()->getUpdateDate();
+    }
+
+    //########################################
+
+    public function getPublicVersionInstallationDate()
+    {
+        $collection = $this->activeRecordFactory->getObject('PublicVersions')->getCollection();
+        $collection->addFieldToFilter('version_from', ['null' => true])
+                   ->addFieldToFilter('version_to', ['notnull' => true])
+                   ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
+        return $collection->setPageSize(1)->getFirstItem()->getUpdateDate();
+    }
+
+    public function getPublicVersionLastUpgradeDate()
+    {
+        $collection = $this->activeRecordFactory->getObject('PublicVersions')->getCollection();
+        $collection->addFieldToFilter('version_from', ['notnull' => true])
+                   ->addFieldToFilter('version_to', ['notnull' => true])
+                   ->setOrder('id', \Magento\Framework\Data\Collection\AbstractDb::SORT_ORDER_ASC);
+        return $collection->setPageSize(1)->getFirstItem()->getUpdateDate();
+    }
+
+    // ---------------------------------------
+
+    public function getPublicVersionLastModificationDate()
+    {
+        $resource = $this->activeRecordFactory->getObject('VersionsHistory')->getResource();
+        return $resource->getLastItem()->getCreateDate();
     }
 
     //########################################
@@ -194,17 +222,18 @@ class Module extends AbstractHelper
     public function setDevelopmentMode($value)
     {
         $cookieMetadata = $this->cookieMetadataFactory->createPublicCookieMetadata()
-                                                      ->setHttpOnly(true)
-                                                      ->setDurationOneYear();
+                                                      ->setPath('/')
+                                                      ->setHttpOnly(true);
         if ($value) {
+            $cookieMetadata->setDurationOneYear();
             $this->cookieManager->setPublicCookie(self::DEVELOPMENT_MODE_COOKIE_KEY, 'true', $cookieMetadata);
         } else {
-            $this->cookieManager->deleteCookie(self::DEVELOPMENT_MODE_COOKIE_KEY);
+            $this->cookieManager->deleteCookie(self::DEVELOPMENT_MODE_COOKIE_KEY, $cookieMetadata);
         }
     }
 
     // ---------------------------------------
-    
+
     public function isStaticContentDeployed()
     {
         $staticContentValidationResult = $this->getHelper('Data\Cache\Runtime')->getValue(__METHOD__);
@@ -212,7 +241,7 @@ class Module extends AbstractHelper
         if (!is_null($staticContentValidationResult)) {
             return $staticContentValidationResult;
         }
-        
+
         $result = true;
 
         /** @var \Ess\M2ePro\Helper\Magento $magentoHelper */

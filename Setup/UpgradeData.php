@@ -33,6 +33,9 @@ class UpgradeData implements UpgradeDataInterface
     /** @var  ModuleDataSetupInterface $installer */
     private $installer;
 
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     /**
      * @format
      * [
@@ -47,7 +50,8 @@ class UpgradeData implements UpgradeDataInterface
      * @var array
      */
     private static $availableVersionUpgrades = [
-        '1.0.0' => ['1.1.0']
+        '1.0.0' => ['1.1.0'],
+        '1.1.0' => ['1.2.0']
     ];
 
     //########################################
@@ -58,7 +62,8 @@ class UpgradeData implements UpgradeDataInterface
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
     ) {
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($context);
         $this->moduleList = $moduleList;
@@ -66,6 +71,8 @@ class UpgradeData implements UpgradeDataInterface
         $this->moduleConfig = $moduleConfig;
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
+
+        $this->logger = $loggerFactory->create();
     }
 
     //########################################
@@ -139,6 +146,8 @@ class UpgradeData implements UpgradeDataInterface
             }
 
         } catch (\Exception $exception) {
+
+            $this->logger->error($exception, ['source' => 'UpgradeData']);
             $this->installer->endSetup();
 
             $this->helperFactory->getObject('Module\Exception')->process($exception);

@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\ResourceModel\Config\Primary;
 class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel
 {
     // ########################################
-    
+
     /**
      * Define model & resource model
      */

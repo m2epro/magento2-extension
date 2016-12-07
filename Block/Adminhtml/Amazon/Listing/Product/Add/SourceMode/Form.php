@@ -25,14 +25,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>After an M2E Pro listing is successfully configured and created, Magento Products 
+                    '<p>After an M2E Pro listing is successfully configured and created, Magento Products
                     should be added into it. The Products you add to the Listing will further be Listed on
                     Amazon.</p>
-                    <p>There are several different options of how Magento products can be found/selected 
-                    and added to the Listing</p><br>
-                    <p>More detailed information you can find 
-                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/jgYtAQ')
+                    <p>There are several different options of how Magento products can be found/selected
+                    and added to the Listing.</p>'
                 )
             ]
         );
@@ -45,7 +42,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $defaultSource = $this->getRequest()
             ->getParam('source',\Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Add\SourceMode::MODE_PRODUCT);
-        
+
         $fieldset->addField(
             'block-title',
             'label',

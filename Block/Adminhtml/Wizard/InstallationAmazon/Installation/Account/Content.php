@@ -78,7 +78,15 @@ HTML
 
     protected function _beforeToHtml()
     {
-        $this->jsTranslator->add('Please select Marketplace first.', $this->__('Please select Marketplace first.'));
+        $this->jsTranslator->add(
+            'Please select Marketplace first.',
+            $this->__('Please select Marketplace first.')
+        );
+
+        $this->jsTranslator->add(
+            'An error during of account creation.',
+            $this->__('The Amazon token obtaining is currently unavailable. Please try again later.')
+        );
 
         return parent::_beforeToHtml();
     }

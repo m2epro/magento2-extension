@@ -13,8 +13,8 @@ class OpenEditProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         if (!is_array($productsIds)) {
             $productsIds = explode(',', $productsIds);
         }
-        
-        /** @var \Ess\M2ePro\Model\Account $account */         
+
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
 
         if (!$account->getId()) {

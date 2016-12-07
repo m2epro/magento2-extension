@@ -237,7 +237,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 );
             }
 
-            $listingOtherObj = $this->amazonFactory->getCachedObjectLoaded(
+            $listingOtherObj = $this->amazonFactory->getObjectLoaded(
                 'Listing\Other',(int)$existingItem['listing_other_id']
             );
 

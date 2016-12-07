@@ -236,6 +236,20 @@ class Category extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     /**
      * @return array
      */
+    public function getTrackingAttributes()
+    {
+        $attributes = [];
+
+        foreach ($this->getSpecifics(true) as $specific) {
+            $attributes = array_merge($attributes, $specific->getTrackingAttributes());
+        }
+
+        return array_unique($attributes);
+    }
+
+    /**
+     * @return array
+     */
     public function getUsedAttributes()
     {
         $usedAttributes = array();

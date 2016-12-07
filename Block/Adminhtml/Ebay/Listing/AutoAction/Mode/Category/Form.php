@@ -39,7 +39,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Listing')
@@ -52,7 +52,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 JS
         );
 
-        parent::_beforeToHtml();
+        return parent::_afterToHtml($html);
     }
 
     //########################################

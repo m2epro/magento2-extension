@@ -1,8 +1,12 @@
 define([
+    'Magento_Ui/js/modal/modal',
     'M2ePro/Common'
-], function () {
+], function (modal) {
 
     window.EbayTemplateSellingFormat = Class.create(Common, {
+
+        charityIndex: 0,
+        charityTpl: '',
 
         // ---------------------------------------
 
@@ -86,6 +90,11 @@ define([
 
                 return true;
             }, M2ePro.translator.translate('Please select a percentage of donation'));
+
+            if ($('charity_row_template')) {
+                this.charityTpl = $('charity_row_template').down('tbody').innerHTML;
+                $('charity_row_template').remove();
+            }
         },
 
         initObservers: function()
@@ -144,16 +153,6 @@ define([
                 element.observe('change', EbayTemplateSellingFormatObj.price_coefficient_mode_change)
                     .simulate('change');
             });
-
-            if ($('charity_id')) {
-                $('charity_id')
-                    .observe('change', EbayTemplateSellingFormatObj.charity_id_change)
-                    .simulate('change');
-
-                $('charity_percent')
-                    .observe('change', EbayTemplateSellingFormatObj.charity_percent_change)
-                    .simulate('change');
-            }
 
             $('best_offer_mode')
                 .observe('change', EbayTemplateSellingFormatObj.best_offer_mode_change)
@@ -670,69 +669,6 @@ define([
 
         // ---------------------------------------
 
-        charity_id_change: function () {
-            var self = EbayTemplateSellingFormatObj;
-
-            if (this[this.selectedIndex].hasClassName('searchNewCharity')) {
-                EbayTemplateSellingFormatObj.openPopUpCharity(M2ePro.translator.translate('Search For Charities'));
-
-                if (typeof self.charitySelectedHistory != 'undefined') {
-                    this.selectedIndex = self.charitySelectedHistory;
-                }
-
-                return;
-            }
-
-            self.charitySelectedHistory = this.selectedIndex;
-
-            var charityPercent = $('charity_percent');
-            var charityPercentSelf = $('charity_percent_self');
-            var charityName = $('charity_name');
-
-            if (this.selectedIndex != 0) {
-                $$('.charity_percent_tr').invoke('show');
-                charityPercent.addClassName('M2ePro-validation-charity-percentage');
-
-                if (charityPercentSelf) {
-                    charityPercent.simulate('change');
-                }
-
-                $('charity_percent_none').show();
-                charityPercent.selectedIndex = 0;
-                self.prepareCharity();
-            } else {
-                charityPercent.removeClassName('M2ePro-validation-charity-percentage');
-
-                if (charityName) {
-                    charityName.remove();
-                }
-
-                $$('.charity_percent_tr').invoke('hide');
-            }
-        },
-
-        charity_percent_change: function () {
-            var charityPercent = $('charity_percent');
-            var charityPercentSelf = $('charity_percent_self');
-
-            if (charityPercentSelf) {
-                charityPercentSelf.remove();
-                charityPercent.select('option').each(function (el) {
-                    if (el.value == charityPercentSelf.value) {
-                        el.writeAttribute('selected', 'selected');
-                        el.focus();
-                        $('charity_percent_none').hide();
-
-                        return;
-                    }
-                });
-            }
-
-            $('charity_percent_none').hide();
-        },
-
-        // ---------------------------------------
-
         best_offer_mode_change: function () {
             var bestOfferRespondTable = $$('.best_offer_respond_table_container');
 
@@ -819,30 +755,305 @@ define([
             );
         },
 
+        // eBay Charity
         // ---------------------------------------
 
-        openPopUpCharity: function (title) {
-            var self = EbayTemplateSellingFormatObj;
+        renderCharities: function (data) {
+            var self = this;
+
+            $H(data).each(function (charity) {
+                self.addCharityRow(charity.value);
+            });
+        },
+
+        addCharityRow: function (charityData) {
+            var self = this;
+
+            $('charity_not_set_table').hide();
+            $('charity_table').show();
+
+            charityData = charityData || {};
+            this.charityIndex++;
+
+            var tpl = this.charityTpl;
+            tpl = tpl.replace(/%i%/g, this.charityIndex);
+            $('charity_table_tbody').insert(tpl);
+
+            var row = $('charity_row_' + this.charityIndex + '_tr');
+            row.show();
+
+            var marketplaceEl = row.down('.charity-marketplace_id');
+
+            if ($('charity_table_tbody').select('tr').length === (marketplaceEl.select('option').length - 1)) {
+                $$('.add_charity_button').each(function(el) {
+                    el.hide();
+                });
+            }
+
+            if (charityData.marketplace_id) {
+                marketplaceEl.value = charityData.marketplace_id;
+                self.charityMarketplaceChange.call(self, marketplaceEl, charityData);
+            } else {
+                self.hideSelectedMarketplaceOptions();
+            }
+        },
+
+        removeCharityRow: function (el) {
+            el.up('.charity-row').remove();
+
+            if ($('charity_table_tbody').select('tr').length == 0) {
+                $('charity_not_set_table').show();
+                $('charity_table').hide();
+            }
+
+            $$('.add_charity_button').each(function(el){
+                el.show();
+            });
+        },
+
+        // ---------------------------------------
+
+        charityMarketplaceChange: function(marketplaceEl, charityData) {
+            var self = this,
+                organizationEl = marketplaceEl.up('.charity-row').down('.charity-organization'),
+                percentageEl = organizationEl.up('.charity-row').down('.charity-percentage');
+
+            charityData = charityData || {};
+
+            self.hideSelectedMarketplaceOptions();
+
+            percentageEl.value = '';
+
+            if (marketplaceEl.value == '') {
+                organizationEl.value = '';
+                organizationEl.simulate('change');
+                organizationEl.disable().hide();
+
+                return;
+            }
+            organizationEl.update().enable().show();
+
+            var option = new Element('option', {
+                class: 'empty',
+                value: ''
+            });
+            organizationEl.insert({bottom: option});
+
+            option = new Element('option', {
+                class: 'searchNewCharity',
+                value: ''
+            });
+            option.innerHTML = M2ePro.translator.translate('Search for Charity Organization');
+            organizationEl.insert({bottom: option});
+
+            if (charityData.organization_id && charityData.organization_custom == 0) {
+
+                charityData.organization_custom = 1;
+
+                self.charityDictionary[marketplaceEl.value].charities.each(function (charity) {
+                    if (charityData.organization_id == charity.id) {
+                        charityData.organization_custom = 0;
+                    }
+                });
+            }
+
+            if (charityData.organization_custom) {
+                var customOptgroup = new Element('optgroup', {
+                    label: 'Custom',
+                    class: 'customCharity'
+                }).insert({
+                    bottom: new Element('option', {
+                        value: charityData.organization_id,
+                        class: 'newCharity'
+                    }).update(charityData.organization_name)
+                });
+
+                organizationEl.insert(customOptgroup);
+                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = charityData.organization_custom;
+            }
+
+            if (self.charityDictionary[marketplaceEl.value].charities.length > 0) {
+                var optgroup = new Element('optgroup', {
+                    label: 'Featured',
+                    class: 'featuredCharity'
+                });
+
+                self.charityDictionary[marketplaceEl.value].charities.each(function (charity) {
+                    var option = new Element('option', {
+                        value: charity.id
+                    });
+
+                    option.innerHTML = charity.name;
+                    optgroup.insert(option);
+                });
+                organizationEl.insert(optgroup);
+            }
+
+            if (charityData.organization_id) {
+                organizationEl.value = charityData.organization_id;
+                self.charityOrganizationChange.call(self, organizationEl, charityData);
+            }
+        },
+
+        charityOrganizationChange: function (organizationEl, charityData) {
+            var self = this,
+                percentageEl = organizationEl.up('.charity-row').down('.charity-percentage'),
+                marketplaceEl = organizationEl.up('.charity-row').down('.charity-marketplace_id');
+
+            if (organizationEl[organizationEl.selectedIndex].hasClassName('searchNewCharity')) {
+                self.openPopUpCharity(organizationEl, marketplaceEl.value);
+
+                if (typeof self.charitySelectedHistory != 'undefined') {
+                    organizationEl.selectedIndex = self.charitySelectedHistory;
+                }
+
+                return;
+            }
+
+            var optgroup = organizationEl[organizationEl.selectedIndex].up('optgroup')
+
+            if (optgroup && optgroup.hasClassName('customCharity')) {
+                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
+            } else {
+                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 0;
+            }
+
+            self.charitySelectedHistory = organizationEl.selectedIndex;
+
+            organizationEl.up('.charity-row').select('input.organization_name')[0].value = organizationEl[organizationEl.selectedIndex].innerHTML;
+
+            charityData = charityData || {};
+
+            if (organizationEl.value == '') {
+                percentageEl.value = '';
+                percentageEl.simulate('change');
+                percentageEl.disable().hide();
+
+                return;
+            }
+            percentageEl.update().enable().show();
+
+            var option = new Element('option', {
+                class: 'empty',
+                value: ''
+            });
+            percentageEl.insert({bottom: option});
+
+            if (marketplaceEl.value == M2ePro.php.constant('\\Ess\\M2ePro\\Helper\\Component\\Ebay::MARKETPLACE_MOTORS')) {
+                option = new Element('option', {
+                    value: 1
+                });
+                option.innerHTML = '1%';
+                percentageEl.insert({bottom: option});
+                option = new Element('option', {
+                    value: 5
+                });
+                option.innerHTML = '5%';
+                percentageEl.insert({bottom: option});
+            }
+
+            for (var i = 2; i < 21; i++) {
+                option = new Element('option', {
+                    value: i*5
+                });
+                option.innerHTML = i*5+'%';
+                percentageEl.insert({bottom: option});
+            }
+
+            if (charityData.percentage) {
+                percentageEl.value = charityData.percentage;
+            }
+        },
+
+        // ---------------------------------------
+
+        charityOrganizationCustomModeChange: function (organizationEl, charityData) {
+            var self = this,
+                percentageEl = organizationEl.up('.charity-row').down('.charity-percentage'),
+                marketplaceEl = organizationEl.up('.charity-row').down('.charity-marketplace_id');
+
+            if (organizationEl[organizationEl.selectedIndex].hasClassName('searchNewCharity')) {
+                self.openPopUpCharity(organizationEl, marketplaceEl.value);
+
+                if (typeof self.charitySelectedHistory != 'undefined') {
+                    organizationEl.selectedIndex = self.charitySelectedHistory;
+                }
+
+                return;
+            }
+
+            var optgroup = organizationEl[organizationEl.selectedIndex].up('optgroup')
+
+            if (optgroup && optgroup.hasClassName('customCharity')) {
+                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
+            } else {
+                organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 0;
+            }
+
+            self.charitySelectedHistory = organizationEl.selectedIndex;
+
+            organizationEl.up('.charity-row').select('input.organization_name')[0].value = organizationEl[organizationEl.selectedIndex].innerHTML;
+
+            if (organizationEl.value == '') {
+                $('charity_percentage').hide();
+            } else {
+                $('charity_percentage').show();
+            }
+            percentageEl.value = '';
+        },
+
+        // ---------------------------------------
+
+        hideSelectedMarketplaceOptions: function()
+        {
+            var charityTBody =  $('charity_table_tbody');
+
+            charityTBody.select('select.charity-marketplace_id option').each(function(option){
+                option.show();
+            });
+
+            charityTBody.select('select.charity-marketplace_id').each(function(select){
+                charityTBody.select('select.charity-marketplace_id option[value="' + select.value + '"]').each(function(option){
+                    option.hide();
+                });
+
+                select[select.selectedIndex].show();
+            });
+        },
+
+        // ---------------------------------------
+
+        openPopUpCharity: function (organizationEl, marketplaceId) {
+            var self = this;
 
             new Ajax.Request(M2ePro.url.get('ebay_template_sellingFormat/getSearchCharityPopUpHtml'), {
                 method: 'post',
-                parameters: {},
+                parameters: {
+                    marketplace_id: marketplaceId
+                },
                 onSuccess: function (transport) {
 
-                    self.popUp = Dialog.info(transport.responseText, {
-                        draggable: true,
-                        resizable: true,
-                        closable: true,
-                        className: "magento",
-                        windowClassName: "popup-window",
-                        title: title,
-                        top: 80,
-                        width: 750,
-                        height: 525,
-                        zIndex: 100,
-                        hideEffect: Element.hide,
-                        showEffect: Element.show
+                    var container = $('charitySearch_pop_up_content');
+
+                    if (container) {
+                        container.remove();
+                    }
+
+                    $('html-body').insert({
+                        bottom: transport.responseText
                     });
+
+                    self.charitySearchPopup = jQuery('#charitySearch_pop_up_content');
+
+                    modal({
+                        title: M2ePro.translator.translate('Search For Charities'),
+                        type: 'slide',
+                        buttons: []
+                    }, self.charitySearchPopup);
+
+                    self.charitySearchPopup.modal('openModal');
+
+                    self.charitySearchPopup.organizationEl = organizationEl;
 
                     $('query').observe('keypress', function (event) {
                         event.keyCode == Event.KEY_RETURN && self.searchCharity();
@@ -862,6 +1073,7 @@ define([
         searchCharity: function () {
             var query = $('query').value;
             var destination = $('selectCharitySearch').value;
+            var marketplaceId = $('charitySearch_marketplace_id').value;
 
             if (query == '') {
                 $('query').focus();
@@ -877,23 +1089,23 @@ define([
                 method: 'post',
                 parameters: {
                     query: query,
-                    destination: destination
+                    destination: destination,
+                    marketplace_id: marketplaceId
                 },
                 onSuccess: function (transport) {
                     transport = transport.responseText.evalJSON();
 
                     if (transport.result == 'success') {
                         $('searchCharity_grid')
-                            .update(transport.data)
+                            .update(transport.html)
                             .show();
 
                         if (transport.count) {
                             $('searchCharity_warning_block').show();
-                            $('searchCharity_warning_message').update(M2ePro.translator.translate('If you do not see the organization you were looking for, try to enter another keywords and run the Search again.'));
                         }
                     } else {
+                        $('searchCharity_error_block').update(transport.html);
                         $('searchCharity_error_block').show();
-                        $('searchCharity_error_message').update(transport.data);
                     }
                 }
             })
@@ -904,78 +1116,49 @@ define([
                 return;
             }
 
-            this.popUp.close();
+            var self = this;
 
-            var charityId = $('charity_id');
-            var optgroup = $('customCharity');
+            var customCharities = self.charitySearchPopup.organizationEl.select('option.newCharity');
 
-            charityId.select('option').each(function (el) {
-                el.writeAttribute('selected', false);
-            });
-
-            if ($('newCharity')) {
-                $('newCharity')
-                    .update(name)
-                    .writeAttribute('value', id)
-                    .writeAttribute('selected', 'selected')
-                    .focus();
+            if (customCharities.length > 0) {
+                customCharities[0].update(name);
+                customCharities[0].value = id;
             } else {
-                if (optgroup) {
-                    optgroup.insert({
+                var optgroups = self.charitySearchPopup.organizationEl.select('optgroup.customCharity');
+
+                if (optgroups.length > 0) {
+                    optgroups[0].insert({
                         bottom: new Element('option', {
                             value: id,
-                            selected: 'selected',
-                            id: 'newCharity'
+                            class: 'newCharity'
                         }).update(name)
                     });
                 } else {
-                    optgroup = new Element('optgroup', {
+                    var optgroup = new Element('optgroup', {
                         label: 'Custom',
-                        id: 'customCharity'
+                        class: 'customCharity'
                     }).insert({
                         bottom: new Element('option', {
                             value: id,
-                            selected: 'selected',
-                            id: 'newCharity'
+                            class: 'newCharity'
                         }).update(name)
                     });
+
+                    var featuresGroups = self.charitySearchPopup.organizationEl.select('optgroup.featuredCharity');
+                    if (featuresGroups.length > 0) {
+                        featuresGroups[0].insert({
+                            before: optgroup
+                        });
+                    } else {
+                        self.charitySearchPopup.organizationEl.insert(optgroup);
+                    }
                 }
-
-                var featuresGroup = charityId.select('optgroup')[0];
-                if (featuresGroup) {
-                    featuresGroup.insert({
-                        before: optgroup
-                    });
-                } else {
-                    charityId.insert(optgroup);
-                }
             }
 
-            charityId.simulate('change');
-        },
-
-        prepareCharity: function () {
-            var charityId = $('charity_id');
-
-            var charityName = charityId.selectedIndex > 0 ? charityId.options[charityId.selectedIndex].innerHTML : '';
-
-            if (charityName == '') {
-                return;
-            }
-
-            if ($('charity_name')) {
-                $('charity_name').value = charityName;
-                return;
-            }
-
-            $('charity_id').insert({
-                after: new Element('input', {
-                    type: 'hidden',
-                    value: charityName,
-                    id: 'charity_name',
-                    name: 'selling_format[charity_name]'
-                })
-            });
+            self.charitySearchPopup.organizationEl.value = id;
+            self.charitySearchPopup.organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
+            self.charitySearchPopup.organizationEl.simulate('change');
+            self.charitySearchPopup.modal('closeModal');
         }
 
         // ---------------------------------------

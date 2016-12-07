@@ -251,8 +251,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $$('#controlPanelDatabaseGrid_filter_component',
                '#controlPanelDatabaseGrid_filter_status',
                '#controlPanelDatabaseGrid_filter_group').each(function(el) {
-                    el.observe('change', function() { 
-                        {$gridJsObj}.doFilter(); 
+                    el.observe('change', function() {
+                        {$gridJsObj}.doFilter();
                     });
                 });
 JS

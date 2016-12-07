@@ -12,6 +12,10 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Product\ListAction;
 
+use Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Inspector;
+use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
+use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
+
 class MultipleResponser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Responser
 {
     // ########################################
@@ -25,6 +29,7 @@ class MultipleResponser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Respo
 
     // ########################################
 
+    // todo fire event ListingProduct is changed
     protected function inspectProducts()
     {
         parent::inspectProducts();
@@ -56,20 +61,57 @@ class MultipleResponser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Respo
 
         $inspector = $this->modelFactory->getObject('Amazon\Synchronization\Templates\Synchronization\Inspector');
 
-        foreach ($childListingProducts as $listingProduct) {
+        $this->inspectListRequirements($childListingProducts, $inspector, $runner);
+
+        $runner->execute();
+    }
+
+    protected function inspectListRequirements(array $products, Inspector $inspector, Runner $runner)
+    {
+        $lpForAdvancedRules = [];
+
+        foreach ($products as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             if (!$inspector->isMeetListRequirements($listingProduct)) {
                 continue;
             }
 
-            $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+            $amazonListingProduct = $listingProduct->getChildObject();
+            $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
 
-            $runner->addProduct(
-                $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_LIST, $configurator
-            );
+            if ($amazonTemplate->isListAdvancedRulesEnabled()) {
+
+                $templateId = $amazonTemplate->getId();
+                $storeId    = $listingProduct->getListing()->getStoreId();
+                $magentoProductId = $listingProduct->getProductId();
+
+                $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+
+            } else {
+
+                $runner->addProduct(
+                    $listingProduct,
+                    \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                    $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator')
+                );
+            }
         }
 
-        $runner->execute();
+        $affectedListingProducts = $inspector->getMeetAdvancedRequirementsProducts(
+            $lpForAdvancedRules, SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX, 'list'
+        );
+
+        foreach ($affectedListingProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            $runner->addProduct(
+                $listingProduct,
+                \Ess\M2ePro\Model\Listing\Product::ACTION_LIST,
+                $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator')
+            );
+        }
     }
 
     // ########################################

@@ -66,12 +66,6 @@ HTML
         $this->setData('isLicenseStepFinished', $earlierFormData && $this->getHelper('Module\License')->getKey());
         // ---------------------------------------
 
-        $this->jsTranslator->addTranslations([
-            'An error during of license creation occurred.' => $this->__(
-                'The eBay token obtaining is currently unavailable. Please try again later.'
-            ),
-        ]);
-
         return parent::_beforeToHtml();
     }
 

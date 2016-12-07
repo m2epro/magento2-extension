@@ -150,10 +150,8 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
         );
@@ -167,10 +165,11 @@ class GlobalMode extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ({$hasFormData}) {
             $('global_reset_button').show();
-            $('global_close_button').hide();
         }
 JS
         );
+
+        return parent::_afterToHtml($html);
     }
 
     protected function _toHtml()

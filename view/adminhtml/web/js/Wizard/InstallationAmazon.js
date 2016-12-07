@@ -45,7 +45,7 @@ define([
                     }
 
                     if (!response['url']) {
-                        MessagesObj.addErrorMessage(M2ePro.translator.translate('An error during of license creation occurred.'));
+                        MessagesObj.addErrorMessage(M2ePro.translator.translate('An error during of account creation.'));
                         return CommonObj.scrollPageToTop();
                     }
 
@@ -59,5 +59,5 @@ define([
             WizardObj.setStep(WizardObj.getNextStep(), setLocation.bind(window, location.href))
         }
     });
-    
+
 });

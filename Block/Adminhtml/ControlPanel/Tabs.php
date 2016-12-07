@@ -30,6 +30,7 @@ class Tabs extends AbstractHorizontalTabs
             HelperControlPanel::TAB_OVERVIEW,
             HelperControlPanel::TAB_INSPECTION,
             HelperControlPanel::TAB_DATABASE,
+            HelperControlPanel::TAB_VERSIONS_HISTORY,
             HelperControlPanel::TAB_TOOLS_GENERAL,
             HelperControlPanel::TAB_TOOLS_MODULE,
             HelperControlPanel::TAB_DEBUG,
@@ -54,9 +55,9 @@ class Tabs extends AbstractHorizontalTabs
             'content' => $this->createBlock('ControlPanel\Tabs\Inspection')->toHtml(),
         ));
 
-        $this->addTab(HelperControlPanel::TAB_SETUP, array(
-            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Setup'),
-            'content' => $this->createBlock('ControlPanel\Tabs\Setup')->toHtml(),
+        $this->addTab(HelperControlPanel::TAB_VERSIONS_HISTORY, array(
+            'label'   => $this->helperFactory->getObject('Module\Translation')->__('Versions History'),
+            'content' => $this->createBlock('ControlPanel\Tabs\VersionsHistory')->toHtml(),
         ));
 
         // ---------------------------------------

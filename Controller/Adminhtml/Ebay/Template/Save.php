@@ -49,7 +49,11 @@ class Save extends Template
         $this->messageManager->addSuccess($this->__('Policy was successfully saved.'));
 
         $extendedRoutersParams = [
-            'edit' => ['id' => $template['id'], 'nick' => $template['nick']]
+            'edit' => [
+                'id' => $template['id'],
+                'nick' => $template['nick'],
+                'close_on_save' => $this->getRequest()->getParam('close_on_save')
+            ]
         ];
 
         if ($this->getHelper('Module\Wizard')->isActive(\Ess\M2ePro\Helper\View\Ebay::WIZARD_INSTALLATION_NICK)) {

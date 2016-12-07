@@ -44,35 +44,6 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param \Closure $callback
      * @return string
      */
-    public function aroundGetUrl($interceptor, \Closure $callback)
-    {
-        return $this->execute('getUrl', $interceptor, $callback);
-    }
-
-    // ---------------------------------------
-
-    protected function processGetUrl($interceptor, \Closure $callback)
-    {
-        $id = $interceptor->getId();
-
-        if ($id == 'Ess_M2ePro::ebay_listings_other' && !$this->ebayView->is3rdPartyShouldBeShown()) {
-            return '#';
-        }
-
-        if ($id == 'Ess_M2ePro::amazon_listings_other' && !$this->amazonView->is3rdPartyShouldBeShown()) {
-            return '#';
-        }
-
-        return $callback();
-    }
-
-    //########################################
-
-    /**
-     * @param \Magento\Backend\Model\Menu\Item $interceptor
-     * @param \Closure $callback
-     * @return string
-     */
     public function aroundGetClickCallback($interceptor, \Closure $callback)
     {
         return $this->execute('getClickCallback', $interceptor, $callback);
@@ -84,14 +55,6 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         $id = $interceptor->getId();
         $urls = $this->getUrls();
-
-        if ($id == 'Ess_M2ePro::ebay_listings_other' && !$this->ebayView->is3rdPartyShouldBeShown()) {
-            return 'return false;';
-        }
-
-        if ($id == 'Ess_M2ePro::amazon_listings_other' && !$this->amazonView->is3rdPartyShouldBeShown()) {
-            return 'return false;';
-        }
 
         if (isset($urls[$id])) {
             return $this->renderOnClickCallback($urls[$id]);

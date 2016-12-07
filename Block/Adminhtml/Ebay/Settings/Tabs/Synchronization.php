@@ -81,9 +81,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 ],
                 'value' => $listingsMode,
                 'tooltip' => $this->__(
-                    '<p>This synchronization includes import of changes made on eBay channel as well as the ability 
+                    '<p>This synchronization includes import of changes made on eBay channel as well as the ability
                      to enable/disable the data synchronization managed by the Synchronization Policy Rules.</p><br>
-                     <p>However, it does not exclude the ability to manually manage 
+                     <p>However, it does not exclude the ability to manually manage
                      Items in Listings using the available List, Revise, Relist or Stop Action options.</p>'
                 )
             ]
@@ -151,10 +151,10 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 'value' => $ordersMode,
                 'disabled' => true,
                 'tooltip' => $this->__(
-                    '<p>This Synchronization cannot be disabled as it is a critically important 
-                    condition for the proper work of the automatic synchronization rules according 
+                    '<p>This Synchronization cannot be disabled as it is a critically important
+                    condition for the proper work of the automatic synchronization rules according
                     to which data update between Magento and eBay is performed.</p>
-                    <p>However, there is an ability to enable/disable Magento Order creation for each Account in 
+                    <p>However, there is an ability to enable/disable Magento Order creation for each Account in
                     <strong>eBay Integration > Configuration > Accounts</strong> section.</p>'
                 )
             ]
@@ -179,7 +179,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
                 'value' => $otherListingsMode,
                 'disabled' => true,
                 'tooltip' => $this->__(
-                    '<p>This Synchronization performs import and regular updates of the imported 
+                    '<p>This Synchronization performs import and regular updates of the imported
                     3rd Party Listings. It can be enabled/disabled for each Account separately in
                     <strong>eBay Integration > Configuration > Accounts</strong> section.</p>'
                 )

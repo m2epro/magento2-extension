@@ -81,4 +81,4 @@ class CheckMessages extends Base
     }
 
     //########################################
-} 
+}

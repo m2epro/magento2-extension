@@ -293,7 +293,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     }
 
     // ---------------------------------------
-    
+
     /**
      * @return \Ess\M2ePro\Helper\Data\Cache\AbstractHelper
      */

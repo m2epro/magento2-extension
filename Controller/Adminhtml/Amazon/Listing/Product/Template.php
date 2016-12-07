@@ -58,6 +58,6 @@ abstract class Template extends Main
             $listingProduct->getChildObject()->getVariationManager()->getTypeModel()->getProcessor()->process();
         }
     }
-    
+
     //########################################
 }

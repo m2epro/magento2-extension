@@ -28,7 +28,7 @@ define([
 
             var MIN_WIDTH = 110,
                 width = +currentElement.outerWidth();
-            
+
             width < MIN_WIDTH && (width = MIN_WIDTH);
 
             // create label

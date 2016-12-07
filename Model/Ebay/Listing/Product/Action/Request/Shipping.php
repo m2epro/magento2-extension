@@ -36,44 +36,52 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
      */
     public function getRequestData()
     {
-        $data = array(
-            'country' => $this->getShippingSource()->getCountry(),
-            'address' => $this->getShippingSource()->getAddress(),
-            'postal_code' => $this->getShippingSource()->getPostalCode()
-        );
+        $data = array();
 
-        if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() ||
-            $this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
+        if ($this->getConfigurator()->isGeneralAllowed()) {
 
-            $data['dispatch_time'] = $this->getEbayListingProduct()->getShippingTemplate()->getDispatchTime();
+            $data = array(
+                'country' => $this->getShippingSource()->getCountry(),
+                'address' => $this->getShippingSource()->getAddress(),
+                'postal_code' => $this->getShippingSource()->getPostalCode()
+            );
 
-            // there are permissions by marketplace (interface management)
-            $data['cash_on_delivery_cost'] = $this->getShippingTemplate()->getCashOnDeliveryCost();
+            if ($this->getShippingTemplate()->isLocalShippingFlatEnabled() ||
+                $this->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
 
-            // there are permissions by marketplace (interface management)
-            if ($this->getShippingTemplate()->isCrossBorderTradeNorthAmerica()) {
-                $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NORTH_AMERICA;
-            } else if ($this->getShippingTemplate()->isCrossBorderTradeUnitedKingdom()) {
-                $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_UNITED_KINGDOM;
-            } else {
-                $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NONE;
+                $data['dispatch_time'] = $this->getEbayListingProduct()->getShippingTemplate()->getDispatchTime();
+
+                // there are permissions by marketplace (interface management)
+                $data['cash_on_delivery_cost'] = $this->getShippingTemplate()->getCashOnDeliveryCost();
+
+                // there are permissions by marketplace (interface management)
+                if ($this->getShippingTemplate()->isCrossBorderTradeNorthAmerica()) {
+                    $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NORTH_AMERICA;
+                } else if ($this->getShippingTemplate()->isCrossBorderTradeUnitedKingdom()) {
+                    $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_UNITED_KINGDOM;
+                } else {
+                    $data['cross_border_trade'] = self::CROSS_BORDER_TRADE_NONE;
+                }
+
+                $data['excluded_locations'] = array();
+                foreach ($this->getShippingTemplate()->getExcludedLocations() as $location) {
+                    $data['excluded_locations'][] = $location['code'];
+                }
+
+                // there are permissions by marketplace (interface management)
+                $data['global_shipping_program'] = $this->getShippingTemplate()->isGlobalShippingProgramEnabled();
             }
-
-            $data['excluded_locations'] = array();
-            foreach ($this->getShippingTemplate()->getExcludedLocations() as $location) {
-                $data['excluded_locations'][] = $location['code'];
-            }
-
-            // there are permissions by marketplace (interface management)
-            $data['global_shipping_program'] = $this->getShippingTemplate()->isGlobalShippingProgramEnabled();
         }
 
-        return array(
-            'shipping' => array_merge(
+        if ($this->getConfigurator()->isShippingServicesAllowed()) {
+
+            $data = array_merge(
                 $data,
                 $this->getShippingData()
-            )
-        );
+            );
+        }
+
+        return empty($data) ? array() : array('shipping' => $data);
     }
 
     //########################################

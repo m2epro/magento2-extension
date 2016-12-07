@@ -97,11 +97,13 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resourceConnection->getConnection();
 
-        $connection->update(
-            $this->resourceConnection->getTableName('m2epro_ebay_listing_product_pickup_store'),
-            array('is_process_required' => 0),
-            array('listing_product_id = ?' => $this->getListingProduct()->getId())
-        );
+        if (!$this->isDeleted()) {
+            $connection->update(
+                $this->resourceConnection->getTableName('m2epro_ebay_listing_product_pickup_store'),
+                array('is_process_required' => 0),
+                array('listing_product_id = ?' => $this->getListingProduct()->getId())
+            );
+        }
 
         return $affectedItemsCount;
     }
@@ -255,6 +257,33 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $affectedItemsCount;
+    }
+
+    //########################################
+
+    private function isDeleted()
+    {
+        $skus = $this->getSkus();
+
+        if (empty($skus)) {
+            return false;
+        }
+
+        foreach ($skus as &$sku) {
+            $sku = $this->resourceConnection->getConnection()->quote($sku);
+        }
+
+        $collection = $this->activeRecordFactory->getObject('Ebay\Listing\Product\PickupStore')->getCollection();
+        $collection->addFieldToFilter('main_table.listing_product_id', $this->getListingProduct()->getId());
+        $collection->getSelect()->join(
+            ['eaps' => $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\State')
+                ->getResource()->getMainTable()],
+            'eaps.account_pickup_store_id=main_table.account_pickup_store_id
+            AND eaps.sku IN(' . implode(',', $skus) . ') AND eaps.is_deleted = 1',
+            ['state_id' => 'id']
+        );
+
+        return $collection->getSize();
     }
 
     //########################################

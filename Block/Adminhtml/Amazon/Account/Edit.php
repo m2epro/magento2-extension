@@ -68,7 +68,7 @@ class Edit extends AbstractContainer
                 }
                 return;
             }
-            
+
             // ---------------------------------------
             $url = $this->getHelper('Data')->getBackUrl('list');
             $this->addButton('back', array(

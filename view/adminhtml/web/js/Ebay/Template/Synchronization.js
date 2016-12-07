@@ -190,11 +190,13 @@ define([
             $('list_mode').observe('change', EbayTemplateSynchronizationObj.listMode_change).simulate('change');
             $('list_qty_magento').observe('change', EbayTemplateSynchronizationObj.listQty_change).simulate('change');
             $('list_qty_calculated').observe('change', EbayTemplateSynchronizationObj.listQty_change).simulate('change');
+            $('list_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.listAdvancedRules_change).simulate('change');
 
             //relist
             $('relist_mode').observe('change', EbayTemplateSynchronizationObj.relistMode_change).simulate('change');
             $('relist_qty_magento').observe('change', EbayTemplateSynchronizationObj.relistQty_change).simulate('change');
             $('relist_qty_calculated').observe('change', EbayTemplateSynchronizationObj.relistQty_change).simulate('change');
+            $('relist_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.relistAdvancedRules_change).simulate('change');
 
             //revise
             $('revise_update_qty').observe('change', EbayTemplateSynchronizationObj.reviseQty_change)
@@ -212,6 +214,7 @@ define([
             //stop
             $('stop_qty_magento').observe('change', EbayTemplateSynchronizationObj.stopQty_change).simulate('change');
             $('stop_qty_calculated').observe('change', EbayTemplateSynchronizationObj.stopQty_change).simulate('change');
+            $('stop_advanced_rules_mode').observe('change', EbayTemplateSynchronizationObj.stopAdvancedRules_change).simulate('change');
         },
 
         // ---------------------------------------
@@ -230,10 +233,15 @@ define([
 
         listMode_change: function()
         {
-            $('magento_block_ebay_template_synchronization_form_data_list_rules').hide();
+            var rulesContainer         = $('magento_block_ebay_template_synchronization_form_data_list_rules'),
+                advancedRulesContainer = $('magento_block_ebay_template_synchronization_list_advanced_filters');
+
+            rulesContainer.hide();
+            advancedRulesContainer.hide();
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Synchronization::LIST_MODE_YES')) {
-                $('magento_block_ebay_template_synchronization_form_data_list_rules').show();
+                rulesContainer.show();
+                advancedRulesContainer.show();
             }
         },
 
@@ -258,6 +266,20 @@ define([
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
+            }
+        },
+
+        listAdvancedRules_change: function()
+        {
+            var rulesContainer = $('list_advanced_rules_filters_container'),
+                warningContainer = $('list_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
             }
         },
 
@@ -404,14 +426,21 @@ define([
 
         relistMode_change: function()
         {
-            $('relist_filter_user_lock_tr_container').hide();
-            $('relist_send_data_tr_container').hide();
-            $('magento_block_ebay_template_synchronization_form_data_relist_rules').hide();
+            var rulesContainer         = $('magento_block_ebay_template_synchronization_form_data_relist_rules'),
+                advancedRulesContainer = $('magento_block_ebay_template_synchronization_relist_advanced_filters'),
+                userLockContainer      = $('relist_filter_user_lock_tr_container'),
+                sendDataContainer      = $('relist_send_data_tr_container');
+
+            userLockContainer.hide();
+            sendDataContainer.hide();
+            rulesContainer.hide();
+            advancedRulesContainer.hide();
 
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Synchronization::RELIST_MODE_YES')) {
-                $('relist_filter_user_lock_tr_container').show();
-                $('relist_send_data_tr_container').show();
-                $('magento_block_ebay_template_synchronization_form_data_relist_rules').show();
+                userLockContainer.show();
+                sendDataContainer.show();
+                rulesContainer.show();
+                advancedRulesContainer.show();
             }
         },
 
@@ -439,6 +468,20 @@ define([
             }
         },
 
+        relistAdvancedRules_change: function()
+        {
+            var rulesContainer = $('relist_advanced_rules_filters_container'),
+                warningContainer = $('relist_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
+            }
+        },
+
         // ---------------------------------------
 
         stopQty_change: function()
@@ -462,6 +505,20 @@ define([
                 item.innerHTML = M2ePro.translator.translate('Min Quantity');
                 valueContainer.show();
                 valueMaxContainer.show();
+            }
+        },
+
+        stopAdvancedRules_change: function()
+        {
+            var rulesContainer = $('stop_advanced_rules_filters_container'),
+                warningContainer = $('stop_advanced_rules_filters_warning');
+
+            rulesContainer.hide();
+            warningContainer.hide();
+
+            if (this.value == 1) {
+                rulesContainer.show();
+                warningContainer.show();
             }
         },
 
@@ -516,4 +573,3 @@ define([
         // ---------------------------------------
     });
 });
-

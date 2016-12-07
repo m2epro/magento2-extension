@@ -34,7 +34,7 @@ class Template extends AbstractContainer
     protected function _prepareLayout()
     {
         $content = $this->__(
-            '<p>This Page displays the list of the Policies you are currently using in your M2E Pro Listings. 
+            '<p>This Page displays the list of the Policies you are currently using in your M2E Pro Listings.
             Policy is a combination of settings that can be used in different M2E Pro Listings.</p><br>
             <p>You can <strong>Delete</strong> a Policy only if it\'s not being used for an M2E Pro Listing.</p>'
         );
@@ -100,6 +100,6 @@ class Template extends AbstractContainer
     {
         return $this->getUrl('*/ebay_template/new', ['nick' => $nick]);
     }
-    
+
     //########################################
 }

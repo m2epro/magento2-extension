@@ -36,7 +36,7 @@ class ReviseRules extends AbstractForm
         );
 
         $formData = array_merge($defaults, $formData);
-        
+
         $form = $this->_formFactory->create();
 
         $form->addField(
@@ -45,18 +45,18 @@ class ReviseRules extends AbstractForm
             [
                 'content' => $this->__(
                     <<<HTML
-                    <p>Revise Rules are the Conditions in accordance with which full and partial 
+                    <p>Revise Rules are the Conditions in accordance with which full and partial
                     automatic Revise of Listings is performed.</p><br>
-                    <p>If a certain Condition is enabled (set to Yes) and satisfied, then Amazon Listings will 
+                    <p>If a certain Condition is enabled (set to Yes) and satisfied, then Amazon Listings will
                     be automatically fully or partially updated providing that the current Synchronization Policy
                     is assigned to the Products in M2E Pro Listing.</p>
                     <ul>
                     <li><p><strong>Partial Revise</strong> - if any changes are made to the indicated parameters of
-                    Magento Products, automatic Revise will update only the changed details for the Items listed 
+                    Magento Products, automatic Revise will update only the changed details for the Items listed
                     on Amazon</p></li>
                     <li><p><strong>Full Revise</strong> - contains groups of M2E Pro Settings. If any data in
                     these groups (<i>Selling Format Policy, Listing Settings, Description Policy, etc</i>) is changed,
-                    then Listings, which use these Policies in their Settings, will be automatically 
+                    then Listings, which use these Policies in their Settings, will be automatically
                     fully Revised.</p></li>
                     </ul><br>
                     <p>More detailed information about how to work with this Page you can find
@@ -382,7 +382,7 @@ HTML
         foreach ($jsFormData as $item) {
             $this->js->add("M2ePro.formData.$item = '{$this->getHelper('Data')->escapeJs($formData[$item])}';");
         }
-        
+
         $this->setForm($form);
 
         return parent::_prepareForm();

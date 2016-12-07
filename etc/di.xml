@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+
+    <!-- stockitem -->
+
+    <type name="Magento\CatalogInventory\Model\Stock\Item">
+        <plugin name="m2epro_plugin_stockitem_magento_cataloginventory_model_stock_item"
+                type="Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Stock\Item" />
+    </type>
+
+    <!-- order -->
+
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="m2epro_plugin_order_magento_quote_model_quote_item_toorderitem"
+                type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem" />
+    </type>
+
+</config>

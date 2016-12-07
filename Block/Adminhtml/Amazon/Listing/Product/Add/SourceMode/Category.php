@@ -107,7 +107,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     require([
         'M2ePro/Amazon/Listing/AutoAction'
     ], function(){
-    
+
         window.ListingAutoActionObj = new AmazonListingAutoAction();
 
     });
@@ -120,7 +120,7 @@ JS
             'component_mode' => \Ess\M2ePro\Helper\Component\Amazon::NICK,
             'controller' => 'amazon_listing_product_add'
         ]);
-        
+
         return $viewHeaderBlock->toHtml()
                . '<div class="filter_block">'
                . $hideOthersListingsProductsFilterBlock->toHtml()

@@ -28,9 +28,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(
-                    '<p>Saving Policy under a distinctive title will let you easily and quickly search for 
+                    '<p>Saving Policy under a distinctive title will let you easily and quickly search for
                     it in case you need to use it in a different M2E Pro Listing in the future.</p><br>
-                    <p>More detailed information you can find 
+                    <p>More detailed information you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8wItAQ')
                 )

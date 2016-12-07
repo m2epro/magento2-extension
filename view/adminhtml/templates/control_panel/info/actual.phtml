@@ -11,10 +11,28 @@
 
     <tr>
         <td class="label">
-            <label><?php echo $this->__('Module'); ?>: </label>
+            <label><?php echo $this->__('Module [Public]'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->moduleVersion ?>
+            <?php echo $this->publicVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Module [Setup]'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->setupVersion ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Module [Files]'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php echo $this->filesVersion ?>
         </td>
     </tr>
 

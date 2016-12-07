@@ -223,10 +223,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Listing')
         );
@@ -250,7 +248,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Listing\AutoAction\Mode\Category\
 JS
         );
 
-        return $this;
+        return parent::_afterToHtml($html);
     }
 
     //########################################

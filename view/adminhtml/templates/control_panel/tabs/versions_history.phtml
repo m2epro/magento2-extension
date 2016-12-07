@@ -1,0 +1,52 @@
+<div class="col-m-6 controlPanel__block_container">
+
+    <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_public_versions_history">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $this->__('Public Versions History'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll" style="margin-top: 10px;">
+
+                <?php echo $this->getChildHtml('public_versions_history') ?>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_setup_history">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $this->__('Setup History'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll" style="margin-top: 10px;">
+
+                <?php echo $this->getChildHtml('setup_info') ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="col-m-6 controlPanel__block_container">
+    <div class="fieldset-wrapper" id="magento_block_control_panel_inspection_requirements">
+
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <h4><?php echo $this->__('Additional'); ?></h4>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <?php echo $this->getChildHtml('inspection') ?>
+
+            </div>
+        </div>
+
+    </div>
+</div>

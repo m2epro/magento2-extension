@@ -36,8 +36,8 @@ class ProductsRequester extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pending
         array $params
     )
     {
-        $params['logs_action_id'] = $this->getLog()->getNextActionId();
         $this->activeRecordFactory = $activeRecordFactory;
+        $params['logs_action_id'] = $this->getLog()->getNextActionId();
         parent::__construct($marketplace, $account, $helperFactory, $modelFactory, $params);
     }
 

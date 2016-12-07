@@ -204,7 +204,7 @@ abstract class Settings extends Listing
 
         $this->getHelper('Magento')->clearMenuCache();
     }
-    
+
     //########################################
 
     protected function save($sessionData)

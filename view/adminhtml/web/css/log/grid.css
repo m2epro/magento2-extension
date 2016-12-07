@@ -3,7 +3,7 @@
 }
 
 .grid-listing-column-create_date {
-    width: 200px;
+    width: 180px;
 }
 
 .grid-listing-column-action {
@@ -19,30 +19,34 @@
 }
 
 .grid-listing-column-initiator {
-    width: 150px;
+    width: 120px;
 }
 
 .grid-listing-column-type {
     width: 100px;
 }
 
-.filter_block .m2epro-field-tooltip {
-    margin-top: 7px;
+.grid-listing-column-identifier {
+    width: 220px;
 }
 
-.filter_block p {
-    float: left;
-    margin-bottom: 0;
+.grid-listing-column-description, .grid-listing-column-listing_title {
+    word-break: break-word;
 }
 
-.filter_block p:not(:first-child) {
-    margin-left: 40px;
+.log-type {
+    font-weight: 600;
 }
-
-.filter_block select {
-    margin-left: 10px;
+.log-description-group:not(:first-child) {
+    margin-top: 10px;
 }
-
-.page-main-actions._hidden .filter_block {
-    display: none;
+.log-description-group:not(:first-child) {
+    margin-top: 10px;
+}
+.log-description-full {
+    word-break: break-word;
+}
+.log-date {
+    font-size: 11px;
+    color: grey;
 }

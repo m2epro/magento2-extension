@@ -53,42 +53,58 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
 
         // ---------------------------------------
 
-        $saveButtonOptions = [];
-
         if ($isSaveAndClose) {
-            $saveButtonOptions['save'] = [
-                'label' => $this->__('Save And Close'),
-                'onclick' => "AmazonTemplateSellingFormatObj.saveAndCloseClick()"
-            ];
             $this->removeButton('back');
-        } else {
-            $saveButtonOptions['save'] = [
-                'label'     => $this->__('Save And Back'),
-                'onclick'   =>'AmazonTemplateSellingFormatObj.saveClick('
-                    . '\'\','
+
+            $saveButtons = [
+                'id' => 'save_and_close',
+                'label' => $this->__('Save And Close'),
+                'class' => 'add',
+                'onclick'   => 'AmazonTemplateSellingFormatObj.saveAndCloseClick('
                     . '\'' . $this->getSaveConfirmationText() . '\','
-                    . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
+                    . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
                     . ')',
-                'class'     => 'save primary'
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Continue Edit'),
+                        'onclick' => 'AmazonTemplateSellingFormatObj.saveAndEditClick('
+                            . '\'\','
+                            . 'undefined,'
+                            . '\'' . $this->getSaveConfirmationText() . '\','
+                            . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
+                            . ')'
+                    ]
+                ],
+            ];
+        } else {
+
+            $saveButtons = [
+                'id' => 'save_and_continue',
+                'label' => $this->__('Save And Continue Edit'),
+                'class' => 'add',
+                'onclick'   => 'AmazonTemplateSellingFormatObj.saveAndEditClick('
+                    . '\'\','
+                    . 'undefined,'
+                    . '\'' . $this->getSaveConfirmationText() . '\','
+                    . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
+                    . ')',
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label'     => $this->__('Save And Back'),
+                        'onclick'   =>'AmazonTemplateSellingFormatObj.saveClick('
+                            . '\'\','
+                            . '\'' . $this->getSaveConfirmationText() . '\','
+                            . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT . '\''
+                            . ')',
+                        'class'     => 'save primary'
+                    ]
+                ],
             ];
         }
 
         // ---------------------------------------
-
-        $saveButtons = [
-            'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
-            'class' => 'add',
-            'button_class' => '',
-            'onclick'   => 'AmazonTemplateSellingFormatObj.saveAndEditClick('
-                . '\'\','
-                . 'undefined,'
-                . '\'' . $this->getSaveConfirmationText() . '\','
-                . '\'' . \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION . '\''
-                . ')',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
-            'options' => $saveButtonOptions,
-        ];
 
         $this->addButton('save_buttons', $saveButtons);
 

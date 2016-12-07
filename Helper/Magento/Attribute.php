@@ -13,8 +13,11 @@ class Attribute extends AbstractHelper
     const PRICE_CODE = 'price';
     const SPECIAL_PRICE_CODE = 'special_price';
 
+    private $productResource;
     private $resourceConnection;
     private $attributeColFactory;
+    private $eavEntityAttributeColFactory;
+    private $eavConfig;
 
     //########################################
 
@@ -42,9 +45,8 @@ class Attribute extends AbstractHelper
     public function getAll()
     {
         /** @var \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection $attributeCollection */
-        $attributeCollection = $this->attributeColFactory->create();
-        $attributeCollection->addVisibleFilter()
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+        $attributeCollection = $this->getPreparedAttributeCollection();
+        $attributeCollection->addVisibleFilter();
 
         $resultAttributes = array();
         foreach ($attributeCollection->getItems() as $attribute) {
@@ -59,9 +61,8 @@ class Attribute extends AbstractHelper
 
     public function getAllAsObjects()
     {
-        $attributes = $this->attributeColFactory->create()
+        $attributes = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC)
             ->getItems();
 
         return $attributes;
@@ -71,10 +72,9 @@ class Attribute extends AbstractHelper
 
     public function getByCode($code, $returnType = self::RETURN_TYPE_ARRAYS)
     {
-        $attributeCollection = $this->attributeColFactory->create()
+        $attributeCollection = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
-            ->setCodeFilter($code)
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+            ->setCodeFilter($code);
 
         $attributes = $this->_convertCollectionToReturnType($attributeCollection, $returnType);
         if ($returnType != self::RETURN_TYPE_ARRAYS) {
@@ -111,10 +111,9 @@ class Attribute extends AbstractHelper
             return array();
         }
 
-        $attributeCollection = $this->attributeColFactory->create()
+        $attributeCollection = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
-            ->setAttributeSetFilter($attributeSetIds)
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+            ->setAttributeSetFilter($attributeSetIds);
 
         $attributeCollection->getSelect()->group('entity_attribute.attribute_id');
 
@@ -167,10 +166,9 @@ class Attribute extends AbstractHelper
             return array();
         }
 
-        $attributesData = $this->attributeColFactory->create()
+        $attributesData = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
             ->addFieldToFilter('main_table.attribute_id', array('in' => $attributes))
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC)
             ->toArray();
 
         $resultAttributes = array();
@@ -198,10 +196,9 @@ class Attribute extends AbstractHelper
             throw new \Ess\M2ePro\Model\Exception("Attribute sets must be less then 50");
         }
 
-        $attributeCollection = $this->attributeColFactory->create()
+        $attributeCollection = $this->getPreparedAttributeCollection()
             ->addVisibleFilter()
-            ->setInAllAttributeSetsFilter($attributeSetIds)
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+            ->setInAllAttributeSetsFilter($attributeSetIds);
 
         return $attributeCollection->getAllIds();
     }
@@ -340,10 +337,9 @@ class Attribute extends AbstractHelper
             $attributeCodes[] = $attribute['code'];
         }
 
-        $attributeCollection = $this->attributeColFactory->create()
+        $attributeCollection = $this->getPreparedAttributeCollection()
             ->addFieldToFilter('attribute_code', array('in' => $attributeCodes))
-            ->addFieldToFilter('frontend_input', array('in' => $inputTypes))
-            ->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+            ->addFieldToFilter('frontend_input', array('in' => $inputTypes));
 
         $filteredAttributes = $attributeCollection->toArray();
         $resultAttributes = array();
@@ -399,6 +395,23 @@ class Attribute extends AbstractHelper
         }
 
         return array_unique($missingAttributesSets);
+    }
+
+    //########################################
+
+    /**
+     * Now Magento returns strange combined QTY and StockStatus Attribute. This attribute will not work for
+     * Tracking of Attributes and we will skip it.
+     *
+     * @return \Magento\Catalog\Model\ResourceModel\Product\Attribute\Collection
+     */
+    private function getPreparedAttributeCollection()
+    {
+        $collection = $this->attributeColFactory->create();
+        $collection->addFieldToFilter('attribute_code', array('neq' => 'quantity_and_stock_status'));
+        $collection->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
+
+        return $collection;
     }
 
     //########################################

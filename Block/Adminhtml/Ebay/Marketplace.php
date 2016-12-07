@@ -46,9 +46,9 @@ class Marketplace extends AbstractContainer
     {
         $this->appendHelpBlock([
             'content' => $this->__(
-                '<p>This Page contains a list of eBay international Marketplaces where you 
+                '<p>This Page contains a list of eBay international Marketplaces where you
                 can sell your Items.</p><br>
-                <p><strong>Enable</strong> only those Marketplaces that you want to sell on. 
+                <p><strong>Enable</strong> only those Marketplaces that you want to sell on.
                 High number of enabled Marketplaces will take longer to process the necessary data.</p>'
             )
         ]);

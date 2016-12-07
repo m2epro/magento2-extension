@@ -38,12 +38,12 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->appendHelpBlock([
             'content' => $this->__(
                 <<<HTML
-                <p>The list below displays groups of Items combined together based on their belonging to a 
-                specific Marketplace and Account. The number of the 3rd Party Listings available for each of 
+                <p>The list below displays groups of Items combined together based on their belonging to a
+                specific Marketplace and Account. The number of the 3rd Party Listings available for each of
                 the groups is also available.</p><br>
 
                 <p>3rd Party Listings are the Items which were placed directly on the Channel or by using a tool
-                other than M2E Pro. These Items are imported according to Account settings which means the settings 
+                other than M2E Pro. These Items are imported according to Account settings which means the settings
                 can be managed for different Accounts separately.</p><br>
 
                 <p>Information in this section can be used to see which Items have not been fully managed via M2E Pro

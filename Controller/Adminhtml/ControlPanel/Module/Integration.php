@@ -296,7 +296,7 @@ HTML;
                 $insp = $this->modelFactory->getObject('Amazon\Synchronization\Templates\Synchronization\Inspector');
 
                 $html = '';
-                
+
                 $html .= '<pre>isMeetListRequirements: ' .$insp->isMeetListRequirements($lp). '<br>';
                 $html .= '<pre>isMeetRelistRequirements: ' .$insp->isMeetRelistRequirements($lp). '<br>';
                 $html .= '<pre>isMeetStopRequirements: ' .$insp->isMeetStopRequirements($lp). '<br>';
@@ -562,7 +562,7 @@ HTML;
         }
 
         if (count($nonexistentTemplates) <= 0) {
-            return $this->getEmptyResultsHtml('There are no any nonexistent templates.');
+            return $this->getEmptyResultsHtml('There are not any nonexistent templates.');
         }
 
         $tableContent = <<<HTML
@@ -973,7 +973,7 @@ HTML;
 
                     $stopped++;
                 }
-                
+
                 $this->resourceConnection->getConnection()->delete(
                     $listingProduct,
                     array('id = ?' => $row['listing_product_id'])
@@ -1100,7 +1100,6 @@ HTML;
 
             $duplicated[$row['save_this_id']] = $row;
         }
-
 
         if (count($duplicated) <= 0) {
 

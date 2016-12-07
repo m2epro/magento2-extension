@@ -5,7 +5,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 abstract class AutoAction extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################
-    
+
     protected function getCategoryTemplate($autoMode, $groupId, $listing)
     {
         $template = NULL;

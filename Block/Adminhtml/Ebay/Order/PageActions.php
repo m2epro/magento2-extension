@@ -9,34 +9,32 @@ class PageActions extends AbstractBlock
     protected function _toHtml()
     {
         // ---------------------------------------
-        $marketplaceFilterBlock = $this->createBlock('Marketplace\Switcher')->setData(array(
+        $marketplaceSwitcherBlock = $this->createBlock('Marketplace\Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller_name' => 'ebay_order'
-        ));
-        $marketplaceFilterBlock->setUseConfirm(false);
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $accountFilterBlock = $this->createBlock('Account\Switcher')->setData(array(
+        $accountSwitcherBlock = $this->createBlock('Account\Switcher')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller_name' => 'ebay_order'
-        ));
-        $accountFilterBlock->setUseConfirm(false);
+        ]);
         // ---------------------------------------
 
         // ---------------------------------------
-        $orderStateSwitcherBlock = $this->createBlock('Order\NotCreatedFilter')->setData(array(
+        $orderStateSwitcherBlock = $this->createBlock('Order\NotCreatedFilter')->setData([
             'component_mode' => \Ess\M2ePro\Helper\Component\Ebay::NICK,
             'controller' => 'ebay_order'
-        ));
+        ]);
         // ---------------------------------------
 
         return
-          '<div class="filter_block">'
-        . $marketplaceFilterBlock->toHtml()
-        . $accountFilterBlock->toHtml()
-        . $orderStateSwitcherBlock->toHtml()
-        . '</div>'
-        . parent::_toHtml();
+            '<div class="filter_block">'
+            . $accountSwitcherBlock->toHtml()
+            . $marketplaceSwitcherBlock->toHtml()
+            . $orderStateSwitcherBlock->toHtml()
+            . '</div>'
+            . parent::_toHtml();
     }
 }

@@ -7,11 +7,13 @@ use Ess\M2ePro\Model\Ebay\Template\SellingFormat;
 
 class Data extends AbstractForm
 {
+    protected $resourceConnection;
     protected $currency;
     protected $cacheConfig;
     protected $ebayFactory;
 
     public function __construct(
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Framework\Locale\Currency $currency,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
@@ -21,6 +23,7 @@ class Data extends AbstractForm
         array $data = []
     )
     {
+        $this->resourceConnection = $resourceConnection;
         $this->currency = $currency;
         $this->cacheConfig = $cacheConfig;
         $this->ebayFactory = $ebayFactory;
@@ -711,6 +714,182 @@ class Data extends AbstractForm
             ]
         );
 
+        $fieldset = $form->addFieldset('magento_block_ebay_template_selling_format_edit_form_charity',
+            [
+                'legend' => $this->__('Donations'),
+                'collapsable' => true
+            ]
+        );
+
+        if ($this->getMarketplace()) {
+
+            $fieldset->addClass('charity-row');
+
+            $charityData = json_decode($formData['charity'], true);
+
+            if (!empty($charityData[$this->getMarketplaceId()])) {
+                $charityData = $charityData[$this->getMarketplaceId()];
+            } else {
+                $charityData = NULL;
+            }
+
+            $charityDictionary = $this->getCharityDictionary();
+
+            $featuredCharities = [];
+            $selectedCharityExist = false;
+
+            foreach ($charityDictionary[$this->getMarketplaceId()]['charities'] as $charity) {
+                $attrs = [];
+                if (!empty($charityData) &&
+                    $charityData['organization_id'] == $charity['id']) {
+
+                    $selectedCharityExist = true;
+                    $attrs['selected'] = 'selected';
+                }
+                $featuredCharities[] = [
+                    'attrs' => $attrs,
+                    'value' => $charity['id'],
+                    'label' => $charity['name'],
+                ];
+            }
+
+            $customCharities = [];
+            if (!empty($charityData) && !$selectedCharityExist) {
+                $customCharities[] = [
+                    'attrs' => ['selected' => 'selected'],
+                    'value' => $charityData['organization_id'],
+                    'label' => $charityData['organization_name'],
+                ];
+            }
+
+            $values = [
+                [
+                    'label' => $this->__('None'),
+                    'value' => '',
+                ],
+                [
+                    'label' => $this->__('Search for Charity Organization'),
+                    'value' => '0',
+                    'attrs' => ['class' => 'searchNewCharity'],
+                ]
+            ];
+
+            if (!empty($customCharities)) {
+                $values[] = [
+                    'label' => $this->__('Custom'),
+                    'value' => $customCharities,
+                    'attrs' => ['class' => 'customCharity']
+                ];
+            }
+
+            if (!empty($featuredCharities)) {
+                $values[] = [
+                    'label' => $this->__('Featured'),
+                    'value' => $featuredCharities,
+                    'attrs' => ['class' => 'featuredCharity']
+                ];
+            }
+
+            $fieldset->addField('charity_organization',
+                self::SELECT,
+                [
+                    'label' => $this->__('Organization'),
+                    'name' => 'selling_format[charity][organization_id][0]',
+                    'class' => 'charity-organization',
+                    'onchange' => 'EbayTemplateSellingFormatObj.charityOrganizationCustomModeChange(this)',
+                    'value' => empty($charityData['organization_id']) ?
+                        '' : $charityData['organization_id'],
+                    'values' => $values,
+                    'tooltip' => $this->__(
+                        'Choose whether to donate a percentage of your eBay sales to a non-profit/charity.'
+                    )
+                ]
+            );
+
+            $fieldset->addField('organization_name',
+                'hidden',
+                [
+                    'name' => 'selling_format[charity][organization_name][0]',
+                    'class' => 'organization_name',
+                    'value' => empty($charityData['organization_name']) ?
+                        '' : $charityData['organization_name'],
+                ]
+            );
+
+            $fieldset->addField('organization_custom',
+                'hidden',
+                [
+                    'name' => 'selling_format[charity][organization_custom][0]',
+                    'class' => 'organization_custom',
+                    'value' => empty($charityData['organization_name']) ?
+                        0 : $charityData['organization_name'],
+
+                ]
+            );
+
+            $fieldset->addField('charity_marketplace_id',
+                'hidden',
+                [
+                    'id' => 'charity_marketplace_id',
+                    'name' => 'selling_format[charity][marketplace_id][0]',
+                    'class' => 'charity-marketplace_id',
+                    'value' => $this->getMarketplace()->getId()
+                ]
+            );
+
+            $percentageValues = [[
+                'label' => '',
+                'value' => '',
+                'attrs' => ['class' => 'empty']
+            ]]            ;
+
+            if ($this->getMarketplaceId() == \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS) {
+                $percentageValues[] = [
+                    'label' => '1%',
+                    'value' => 1,
+                ];
+                $percentageValues[] = [
+                    'label' => '5%',
+                    'value' => '5'
+                ];
+            }
+
+            for ($i = 2; $i < 21; $i++) {
+                $percentageValues[] = [
+                    'value' => $i*5,
+                    'label' => $i*5 . '%',
+                ];
+            }
+
+            $style = empty($charityData['percentage']) ? 'style="display: none;"' : '';
+
+            $fieldset->addField('charity_percentage',
+                self::SELECT,
+                [
+                    'label' => $this->__('Donation Percentage'),
+                    'name' => 'selling_format[charity][percentage][0]',
+                    'class' => 'charity-percentage M2ePro-required-when-visible',
+                    'values' => $percentageValues,
+                    'value' => empty($charityData['percentage']) ?
+                        '' : $charityData['percentage'],
+                    'field_extra_attributes' => 'id="charity_percentage" ' . $style
+                ]
+            );
+
+        } else {
+            $charityBlock =  $this->createBlock('Ebay\Template\SellingFormat\Edit\Form\Charity')->addData([
+                'form_data' => $formData
+            ]);
+
+            $fieldset->addField('charity_table_container',
+                self::CUSTOM_CONTAINER,
+                [
+                    'text' => $charityBlock->toHtml(),
+                    'css_class' => 'm2epro-fieldset-table'
+                ]
+            );
+        }
+
         $fieldset = $form->addFieldset('magento_block_ebay_template_selling_format_edit_form_best_offer',
             [
                 'legend' => $this->__('Best Offer'),
@@ -912,21 +1091,14 @@ class Data extends AbstractForm
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay')
         );
-        
-        $this->jsUrl->addUrls([
-            'ebay_template_sellingFormat/getSearchCharityPopUpHtml' => $this->getUrl(
-                '*/ebay_template_sellingFormat/getSearchCharityPopUpHtml'
-            ),
-            'ebay_template_sellingFormat/searchCharity' => $this->getUrl(
-                '*/ebay_template_sellingFormat/searchCharity', ['marketplace_id' => $this->getMarketplaceId()]
-            ),
-        ]);
+
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Template\SellingFormat'));
 
         $this->jsTranslator->addTranslations([
             'Search For Charities' => $this->__('Search For Charities'),
             'Please select a percentage of donation' => $this->__('Please select a percentage of donation'),
-            'If you do not see the organization you were looking for,
-             try to enter another keywords and run the Search again.' => $this->__(
+            'If you do not see the organization you were looking for, '.
+                'try to enter another keywords and run the Search again.' => $this->__(
                 'If you do not see the organization you were looking for,
                 try to enter another keywords and run the Search again.'
             ),
@@ -952,8 +1124,8 @@ class Data extends AbstractForm
             ),
 
             '% of Price' => $this->__('% of Price'),
-            '% of Fixed Price' => $this->__('% of Fixed Price')
-
+            '% of Fixed Price' => $this->__('% of Fixed Price'),
+            'Search for Charity Organization' => $this->__('Search for Charity Organization')
         ]);
 
         $this->js->add("M2ePro.formData.isStpEnabled = Boolean({$this->isStpAvailable()});");
@@ -971,12 +1143,32 @@ class Data extends AbstractForm
             $this->js->add("M2ePro.formData.currency = '{$this->currency->getCurrency($currency)->getSymbol()}';");
         }
 
+        $charityRenderJs = '';
+
+        if (!$this->getMarketplaceId()) {
+            $charityDictionary = json_encode($charityBlock->getCharityDictionary());
+            if (empty($formData['charity'])) {
+
+                $charityRenderJs = <<<JS
+    EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
+JS;
+            } else {
+
+                $charityRenderJs = <<<JS
+    EbayTemplateSellingFormatObj.charityDictionary = {$charityDictionary};
+    EbayTemplateSellingFormatObj.renderCharities({$formData['charity']});
+JS;
+            }
+        }
+
         $this->js->add(<<<JS
     require([
         'M2ePro/Ebay/Template/SellingFormat',
     ], function(){
         window.EbayTemplateSellingFormatObj = new EbayTemplateSellingFormat();
         EbayTemplateSellingFormatObj.initObservers();
+
+        {$charityRenderJs}
     });
 JS
         );
@@ -1210,6 +1402,25 @@ JS
             'default' => $this->getDefault(),
             'attributes_by_input_types' => $this->getAttributesByInputTypes()
         ])->toHtml();
+    }
+
+    //########################################
+
+    public function getCharityDictionary()
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $tableDictMarketplace = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_marketplace');
+
+        $dbSelect = $connection->select()
+            ->from($tableDictMarketplace, ['marketplace_id', 'charities']);
+
+        $data = $connection->fetchAssoc($dbSelect);
+
+        foreach ($data as $key => $item) {
+            $data[$key]['charities'] = json_decode($item['charities'],true);
+        }
+
+        return $data;
     }
 
     //########################################

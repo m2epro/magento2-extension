@@ -29,7 +29,7 @@ class GetTreeInfo extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
         $treeBlock->setSelectedIds($tempSession['products_ids']);
 
         $this->setAjaxContent($treeBlock->getInfoJson(), false);
-        
+
         return $this->getResult();
     }
 

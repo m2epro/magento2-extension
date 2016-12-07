@@ -31,4 +31,3 @@ define(['M2ePro/General/Common', 'underscore'], function(Common, _) {
     });
 
 });
-

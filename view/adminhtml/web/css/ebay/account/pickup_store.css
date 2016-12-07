@@ -1,0 +1,99 @@
+#ebayAccountPickupStoreEditTabs_location_content #get_geocord_custom_container {
+    margin-left: -3em;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content
+.field-work_hours_custom_container > .admin__field-control,
+#ebayAccountPickupStoreEditTabs_business_hours_content
+.field-special_hours_custom_container > .admin__field-control{
+    margin-left: 0 !important;
+    width: 100%;
+}
+
+#special_hours_custom_container,
+#special_hours_grid {
+    width: 100%;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content
+#special_hours_custom_container input[id^='date'] {
+    width: 100%;
+}
+
+.hidden-validation {
+    visibility: hidden;
+    width: 100% !important;
+    margin-top: -25px !important;
+    display: block;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content .table_td .ui-datepicker-trigger {
+    margin-left: -2.25em;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content #date_container_from,
+#ebayAccountPickupStoreEditTabs_business_hours_content #date_container_to {
+    text-align: center;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content div[id^="week_day_"] {
+    text-align: center;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content input[type="checkbox"][id^="week_day"] {
+    margin-top: 10px;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content td.table_td > label {
+    margin-top: 10px;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content .add_btn_wrapper_center {
+    text-align: center;
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content .add_btn_wrapper_center > button {
+    padding: .5em 2em;
+    font-size: 1.1em
+}
+
+#ebayAccountPickupStoreEditTabs_business_hours_content .add_btn_wrapper {
+    margin-top: 10px;
+}
+
+#special_hours_grid_rows .table_td button.ui-datepicker-trigger {
+    background: none;
+    color: #514943;
+    padding: 0;
+    border: 0;
+    margin-bottom: 5px;
+}
+
+#special_hours_grid_rows .table_td .ui-datepicker-trigger:after {
+    -webkit-font-smoothing: antialiased;
+    font-size: 2.1rem;
+    line-height: 32px;
+    color: #514943;
+    content: '\e627';
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    display: inline-block;
+    font-weight: normal;
+    overflow: hidden;
+    speak: none;
+    text-align: center;
+}
+
+#special_hours_grid_rows .table_td .ui-datepicker-trigger span {
+    border: 0;
+    clip: rect(0, 0, 0, 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+    text-shadow: none;
+    font-weight: 400;
+    line-height: inherit;
+}

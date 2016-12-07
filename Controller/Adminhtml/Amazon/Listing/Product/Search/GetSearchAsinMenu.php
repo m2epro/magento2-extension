@@ -20,7 +20,7 @@ class GetSearchAsinMenu extends Main
 
         $productSearchMenuBlock = $this->createBlock('Amazon\Listing\Product\Search\Menu');
         $productSearchMenuBlock->setListingProduct($listingProduct);
-        
+
         $this->setAjaxContent($productSearchMenuBlock);
 
         return $this->getResult();

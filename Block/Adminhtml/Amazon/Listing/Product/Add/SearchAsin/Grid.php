@@ -641,7 +641,7 @@ JS
         ListingGridHandlerObj.actionHandler.setOptions(M2ePro);
         ListingGridHandlerObj.actionHandler.setProgressBar('search_asin_progress_bar');
         ListingGridHandlerObj.actionHandler.setGridWrapper('search_asin_content_container');
-        
+
         ListingGridHandlerObj.productSearchHandler.setOptions(M2ePro);
         ListingGridHandlerObj.afterInitPage();
 
@@ -659,11 +659,11 @@ JS
                 $this->js->add(
 <<<JS
     var mmassActionEl = $("{$gridId}_massaction-select");
-    
+
     if (mmassActionEl &&  mmassActionEl.select('option[value="assignGeneralId"]').length > 0) {
         var assignGeneralIdOption = mmassActionEl.select('option[value="assignGeneralId"]')[0];
         assignGeneralIdOption.disabled = true;
-    
+
         mmassActionEl.insert({bottom: assignGeneralIdOption.remove()});
     }
 JS

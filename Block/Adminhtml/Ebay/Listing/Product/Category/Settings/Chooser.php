@@ -315,7 +315,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
     }
 
     //########################################
-    
+
     public function getHelpBlockHtml()
     {
         $helpBlock = $this->createBlock('HelpBlock', '', ['data' => [
@@ -323,7 +323,7 @@ class Chooser extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
                 '<p>To have new eBay Items listed automatically, eBay Catalog Primary Category must be
                 specified along with the M2E Pro Listing Policy settings.</p><br>
                 <p>Also, you can select an eBay Store Catalog category if needed.</p><br>
-                <p>More detailed information you can find 
+                <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/lAItAQ')
             )

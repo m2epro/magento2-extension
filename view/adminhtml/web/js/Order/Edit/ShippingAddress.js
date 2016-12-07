@@ -1,11 +1,11 @@
 define([
     'M2ePro/Common'
 ], function () {
-    
+
     OrderEditShippingAddress = Class.create(Common, {
-    
+
         // ---------------------------------------
-    
+
         initialize: function(countryElementId, regionContainerElementId, regionElementName)
         {
             this.countryElementId = countryElementId;
@@ -19,13 +19,13 @@ define([
                 .observe('change', OrderEditShippingAddressObj.countryCodeChange)
                 .simulate('change');
         },
-    
+
         // ---------------------------------------
-    
+
         countryCodeChange: function()
         {
             var self = OrderEditShippingAddressObj;
-    
+
             new Ajax.Request(M2ePro.url.get('order/getCountryRegions'), {
                 method: 'get',
                 asynchronous: true,
@@ -37,13 +37,13 @@ define([
                 }
             });
         },
-    
+
         renderRegions: function(data)
         {
             var self = OrderEditShippingAddressObj,
                 regionContainer = $(self.regionContainerElementId).select('.control')[0],
                 html = '';
-    
+
             if (data.length == 0) {
                 html = '<input type="text" name="%name%" class="input-text admin__control-text" value="%value%" />'
                     .replace(/%name%/, self.regionElementName)
@@ -56,10 +56,10 @@ define([
                 });
                 html += '</select>';
             }
-    
+
             regionContainer.innerHTML = html;
         }
-    
+
         // ---------------------------------------
     });
 });

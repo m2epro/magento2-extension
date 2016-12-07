@@ -62,7 +62,7 @@ class CreateLicense extends InstallationEbay
         $licenseResult = $this->getHelper('Module\License')->obtainRecord(
             $licenseData['email'],
             $licenseData['firstname'], $licenseData['lastname'],
-            $licenseData['country'], $licenseData['city'], 
+            $licenseData['country'], $licenseData['city'],
             $licenseData['postal_code'], $licenseData['phone']
         );
 

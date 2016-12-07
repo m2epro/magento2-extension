@@ -68,7 +68,7 @@ class View extends Main
         // ---------------------------------------
 
         $this->getHelper('Data\GlobalData')->setValue('view_listing', $listing);
-        
+
         $this->setPageHelpLink('x/AgItAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend(
@@ -95,7 +95,7 @@ class View extends Main
 
         // ---------------------------------------
         $useCustomOptions = true;
-        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View::VIEW_MODE_MAGENTO;
+        $magentoViewMode = \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\View\Switcher::VIEW_MODE_MAGENTO;
         $sessionParamName = 'amazonListingView' . $listingData['id'] . 'view_mode';
 
         if (($this->getRequest()->getParam('view_mode') == $magentoViewMode) ||

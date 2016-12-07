@@ -598,7 +598,7 @@ define([
             targetAudienceChooser.simulate('change');
             targetAudienceChooser.setAttribute('disabled', 'disabled');
 
-            targetAudienceChooser.up('td.value').appendChild(new Element('input', {
+            targetAudienceChooser.up('.admin__field').appendChild(new Element('input', {
                 name  : targetAudienceChooser.name,
                 type  : 'hidden',
                 value : M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::TARGET_AUDIENCE_MODE_CUSTOM')

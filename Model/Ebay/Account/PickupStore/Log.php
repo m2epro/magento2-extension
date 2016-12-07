@@ -95,7 +95,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         if (!is_null($actionId)) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
-            $dataForAdd['action_id'] = NULL;
+            $dataForAdd['action_id'] = $this->getNextActionId();
         }
 
         if (!is_null($action)) {

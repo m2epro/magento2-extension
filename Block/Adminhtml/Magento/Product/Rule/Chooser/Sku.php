@@ -16,9 +16,9 @@ class Sku extends AbstractGrid
     protected $_catalogType;
     protected $_cpCollection;
     protected $_cpCollectionInstance;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\Set\CollectionFactory $eavAttSetCollection,
         \Magento\Catalog\Model\Product\Type $catalogType,

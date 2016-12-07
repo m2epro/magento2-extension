@@ -52,6 +52,11 @@ td.help_line .hl_container_error {
     background-color: #FFF7EA;
 }
 
+td.help_line .hl_container_notice {
+    border: 1px dashed #C0C0C0;
+    background-color: #F9F9F9;
+}
+
 td.help_line .hl_date {
     float: left;
     width: 175px;

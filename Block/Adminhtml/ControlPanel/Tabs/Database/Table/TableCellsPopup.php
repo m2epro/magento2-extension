@@ -24,7 +24,7 @@ class TableCellsPopup extends AbstractBlock
     private $databaseTableFactory;
 
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Ess\M2ePro\Model\ControlPanel\Database\TableModelFactory $databaseTableFactory,
@@ -54,7 +54,7 @@ class TableCellsPopup extends AbstractBlock
         $this->tableName = $this->getRequest()->getParam('table');
         $this->mode      = $this->getRequest()->getParam('mode');
         $this->rowsIds   = explode(',', $this->getRequest()->getParam('ids'));
-        
+
         $component = $this->getRequest()->getParam('component');
         $mergeMode = (bool)$this->getRequest()->getParam('merge', false);
 
@@ -76,12 +76,12 @@ class TableCellsPopup extends AbstractBlock
     }
 
     //########################################
-    
+
     public function getTableName()
     {
         return $this->tableName;
     }
-    
+
     public function getIds()
     {
         return $this->rowsIds;

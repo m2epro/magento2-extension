@@ -16,9 +16,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $visibility;
     protected $productFactory;
     protected $resourceConnection;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Store\Model\WebsiteFactory $websiteFactory,
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
@@ -181,7 +181,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         // Set collection to grid
         $this->setCollection($collection);
-        
+
         $this->getCollection()->addWebsiteNamesToResult();
 
         return parent::_prepareCollection();
@@ -208,9 +208,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnProductTitle')
         ));
 
-        $tempTypes = $this->type->getOptionArray();
-        unset($tempTypes['virtual']);
-
         $this->addColumn('type', array(
             'header'    => $this->__('Type'),
             'align'     => 'left',
@@ -219,7 +216,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'sortable'  => false,
             'index'     => 'type_id',
             'filter_index' => 'type_id',
-            'options' => $tempTypes
+            'options' => $this->getProductTypes()
         ));
 
         $this->addColumn('is_in_stock', array(
@@ -371,6 +368,24 @@ JS
         // ---------------------------------------
 
         return parent::_toHtml();
+    }
+
+    //########################################
+
+    protected function getProductTypes()
+    {
+        $magentoProductTypes = $this->type->getOptionArray();
+        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
+        foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
+            if (in_array($type, $knownTypes)) {
+                continue;
+            }
+
+            unset($magentoProductTypes[$type]);
+        }
+
+        return $magentoProductTypes;
     }
 
     //########################################

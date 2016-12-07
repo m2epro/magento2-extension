@@ -36,7 +36,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         $this->moduleConfig = $moduleConfig;
         parent::__construct($helperFactory, $context);
     }
-    
+
     //########################################
 
     public function getTitle()

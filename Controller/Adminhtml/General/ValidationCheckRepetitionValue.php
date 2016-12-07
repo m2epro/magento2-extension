@@ -53,4 +53,4 @@ class ValidationCheckRepetitionValue extends General
         $this->setJsonContent(['result'=>!(bool)$collection->getSize()]);
         return $this->getResult();
     }
-} 
+}

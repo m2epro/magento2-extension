@@ -35,7 +35,7 @@ class SynchGetLastResult extends General
 
         $logCollection = $this->activeRecordFactory->getObject('Synchronization\Log')->getCollection();
         $logCollection->addFieldToFilter('operation_history_id', (int)$operationHistory->getId());
-        $logCollection->addFieldToFilter('type', 
+        $logCollection->addFieldToFilter('type',
             array('in' => array(\Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING))
         );
 

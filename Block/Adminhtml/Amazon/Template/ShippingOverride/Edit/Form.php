@@ -186,12 +186,12 @@ HTML
             'content' => $this->__('
         The Shipping Override Policy allows to override Shipping Settings provided in your Amazon Seller Central. So you
         can add/edit selected Shipping Service and  Locale as well as the Shipping Cost Settings.<br/><br/>
-    
+
         <strong>Note:</strong> the Settings specified in Shipping Override Policy are not visible in Seller Central.
         They become available only after the Buyer add the Item with such Settings into a Cart in selected Locale.
         <br/><br/>
-    
-        More detailed information about ability to work with this Page you can find 
+
+        More detailed information about ability to work with this Page you can find
         <a href="%url%" target="_blank" class="external-link">here</a>.',
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/d44VAQ')
             )
@@ -269,33 +269,33 @@ JS;
         }
 
         $this->js->addOnReadyJs(<<<JS
-    
+
     M2ePro.formData.id = '{$this->getRequest()->getParam('id')}';
     M2ePro.formData.title = '{$title}';
-    
+
     document.getElementById('shipping_override_rule_table_container').appendChild(
         document.getElementById('shipping_override_rule_table')
     );
 
     $('magento_block_amazon_template_shipping_override_rules').hide();
     $('shipping_override_rule_table').show();
-    
+
     require([
         'M2ePro/Amazon/Template/ShippingOverride',
     ], function(){
-    
+
         AmazonTemplateShippingOverrideObj = new AmazonTemplateShippingOverride();
 
         AmazonTemplateShippingOverrideObj.overrideServicesData = {$overrideServicesData};
 
         {$rulesRenderJs}
-        
+
         $('{$this->getForm()->getId()}').observe('change', function(e) {
             if (e.target.tagName != 'SELECT') {
                 return;
             }
 
-            $(e.target).select('.empty') && 
+            $(e.target).select('.empty') &&
             $(e.target).select('.empty').length && $(e.target).select('.empty')[0].hide();
         });
     });

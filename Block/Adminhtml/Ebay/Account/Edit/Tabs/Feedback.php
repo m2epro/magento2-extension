@@ -41,10 +41,11 @@ class Feedback extends AbstractForm
             [
                 'content' => $this->__(
     'Choose how you want to deal with Feedback from your eBay Buyers.<br /><br />
-     If you enable Import Feedback from Buyers option, you can also choose whether to set up automatic responses.<br /><br />
-     More detailed information about ability to work with this Page you can find 
+     If you enable Import Feedback from Buyers option, you can also choose whether to set up automatic responses.
+     <br /><br />
+     More detailed information about ability to work with this Page you can find
      <a href="%url%" target="_blank" class="external-link">here</a>.',
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAAJAQ'))
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/fQA0AQ'))
             ]
         );
 
@@ -80,7 +81,8 @@ class Feedback extends AbstractForm
             [
                 'html_id' => 'feedbacks_auto_response',
                 'name' => 'feedbacks_auto_response',
-                'label' => $this->__('Auto-response'),
+                'label' => $this->__('Auto Response'),
+                'class' => 'M2ePro-account-feedback-templates',
                 'values' => [
                     Account::FEEDBACKS_AUTO_RESPONSE_NONE => $this->__('Disabled'),
                     Account::FEEDBACKS_AUTO_RESPONSE_CYCLED => $this->__('Cycle Mode'),
@@ -125,7 +127,7 @@ class Feedback extends AbstractForm
         $this->js->add(<<<JS
     M2ePro.formData.feedbacks_receive = '{$feedbacksReceive}';
     M2ePro.formData.feedbacks_auto_response = '{$feedbacksAutoResponse}';
-    
+
     require([
         'M2ePro/Ebay/Account',
     ], function(){
@@ -145,7 +147,7 @@ JS
     public function _toHtml()
     {
         $this->css->add(<<<CSS
-        
+
 .grid-listing-column-ft_id {
     width: 70px;
 }
@@ -182,11 +184,10 @@ JS
     margin: 0 auto;
 }
 
-
 #add_feedback_template_button_container > table {
     margin-left: calc(50% - 115px);
 }
-    
+
 CSS
         );
 
@@ -198,7 +199,6 @@ CSS
             ))->toHtml();
 
         $formData = $this->getData('form_data');
-
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs\Feedback\Template\Grid $grid */
         $grid = $this->createBlock('Ebay\Account\Edit\Tabs\Feedback\Template\Grid');
@@ -222,7 +222,7 @@ CSS
 {$html}
 <div id="feedback_templates_grid_container" {$gridContainerStyle}>
     <div id="add_feedback_template_button_container" {$showAddTemplateBtn}>
-    
+
         <table style="border: none" cellpadding="0" cellspacing="0">
             <tfoot>
                 <tr>
@@ -232,11 +232,11 @@ CSS
                 </tr>
             </tfoot>
         </table>
-    
+
     </div>
     <div id="feedback_templates_grid" {$gridStyle}>
         {$gridHtml}
-        <table class="data-grid">                                
+        <table class="data-grid">
                 <tbody>
                     <tr class="data-grid-tr-no-data even">
                         <td class="empty-text">

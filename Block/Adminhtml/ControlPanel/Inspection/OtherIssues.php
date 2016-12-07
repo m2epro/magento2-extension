@@ -68,11 +68,11 @@ class OtherIssues extends AbstractInspection
     public function isSystemLogNotEmpty()
     {
         $table = $this->activeRecordFactory->getObject('Log\System')->getResource()->getMainTable();
-        
+
         if (!$this->getHelper('Module\Database\Structure')->isTableExists($table)) {
             return false;
         }
-        
+
         $totalCount = $this->resourceConnection->getConnection()
             ->select()
             ->from(

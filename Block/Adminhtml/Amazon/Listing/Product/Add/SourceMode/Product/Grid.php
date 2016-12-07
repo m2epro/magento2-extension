@@ -170,9 +170,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         // ---------------------------------------
 
         $collection->addFieldToFilter(
-            array(
-                array('attribute' => 'type_id', 'neq' => 'virtual'),
-            )
+            array(array(
+                'attribute' => 'type_id',
+                'in' => $this->getHelper('Magento\Product')->getOriginKnownTypes()
+            ))
         );
 
         $store->getId() && $collection->setStoreId($store->getId());
@@ -205,9 +206,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'frame_callback' => array($this, 'callbackColumnProductTitle')
         ));
 
-        $types = $this->type->getOptionArray();
-        unset($types['virtual']);
-
         $this->addColumn('type', array(
             'header' => $this->__('Type'),
             'align' => 'left',
@@ -216,7 +214,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'sortable' => false,
             'index' => 'type_id',
             'filter_index' => 'type_id',
-            'options' => $types
+            'options' => $this->getProductTypes()
         ));
 
         $this->addColumn('is_in_stock', array(
@@ -391,31 +389,31 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
         WrapperObj = new AreaWrapper('add_products_container');
         ProgressBarObj = new ProgressBar('add_products_progress_bar');
-        
+
         AddListingObj = new AmazonListingProductAdd(ProgressBarObj, WrapperObj);
         AddListingObj.listing_id = '{$this->getRequest()->getParam('id')}';
-        
+
         ListingProductGridObj = new ListingProductGrid(AddListingObj);
         ListingProductGridObj.setGridId('{$this->getId()}');
-        
+
     });
 JS
         );
-        
+
         $this->massactionMassSelectStyleFix();
 
         return parent::_toHtml();
     }
 
     //########################################
-    
+
     protected function massactionMassSelectStyleFix()
     {
         $this->js->add(<<<JS
         require([
         'M2ePro/General/PhpFunctions',
     ], function(){
-        
+
         wait(function() {
             return typeof ProductGridObj != 'undefined';
         }, function() {
@@ -425,6 +423,24 @@ JS
 JS
         );
     }
-    
+
+    //########################################
+
+    protected function getProductTypes()
+    {
+        $magentoProductTypes = $this->type->getOptionArray();
+        $knownTypes = $this->getHelper('Magento\Product')->getOriginKnownTypes();
+
+        foreach ($magentoProductTypes as $type => $magentoProductTypeLabel) {
+            if (in_array($type, $knownTypes)) {
+                continue;
+            }
+
+            unset($magentoProductTypes[$type]);
+        }
+
+        return $magentoProductTypes;
+    }
+
     //########################################
 }

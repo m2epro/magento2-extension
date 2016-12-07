@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Plugin\Config\Magento\Config\Model;
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
     //########################################
-    
+
     protected function canExecute()
     {
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
@@ -33,7 +33,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
     }
 
     // ---------------------------------------
-    
+
     protected function processSave(\Magento\Config\Model\Config $interceptor, \Closure $callback)
     {
         $saveData = $interceptor->getData();

@@ -120,11 +120,11 @@ class Order extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>Specify how M2E Pro should manage the imported from eBay Orders for the Items listed using 
+<p>Specify how M2E Pro should manage the imported from eBay Orders for the Items listed using
 M2E Pro or other tools.</p><br>
-<p><strong>Note:</strong> If an eBay Order is received, Magento Product QTY decreases only if a 
+<p><strong>Note:</strong> If an eBay Order is received, Magento Product QTY decreases only if a
 Magento Order is created.</p><br>
-<p>More detailed information about how to work with this 
+<p>More detailed information about how to work with this
 Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
@@ -218,9 +218,9 @@ HTML
                 'container_id' => 'magento_orders_listings_other_store_id_container',
                 'name' => 'magento_orders_settings[listing_other][store_id]',
                 'label' => $this->__('Magento Store View'),
-                'required' => false,
+                'required' => true,
                 'value' => $formData['magento_orders_settings']['listing_other']['store_id'],
-                'has_empty_option' => false,
+                'has_empty_option' => true,
                 'has_default_option' => false,
                 'tooltip' => $this->__('The Magento Store View that Orders will be placed in.')
             ]
@@ -394,7 +394,8 @@ HTML
                 'name' => 'magento_orders_settings[customer][website_id]',
                 'label' => $this->__('Associate to Website'),
                 'values' => $values,
-                'value' => $formData['magento_orders_settings']['customer']['website_id']
+                'value' => $formData['magento_orders_settings']['customer']['website_id'],
+                'required' => true
             ]
         );
 
@@ -411,7 +412,7 @@ HTML
                 'label' => $this->__('Customer Group'),
                 'values' => $values,
                 'value' => $formData['magento_orders_settings']['customer']['group_id'],
-                'required' => false
+                'required' => true
             ]
         );
 
@@ -433,7 +434,7 @@ HTML
                 ],
                 'value' => $value,
                 'tooltip' => $this->__(
-                    '<p>Necessary emails will be sent according to Magento Settings in 
+                    '<p>Necessary emails will be sent according to Magento Settings in
                     Stores > Configuration > Sales > Sales Emails.</p>
                     <p>Hold Ctrl Button to choose more than one Option.</p>'
                 )
@@ -630,7 +631,7 @@ HTML
                 == Account::MAGENTO_ORDERS_STATUS_MAPPING_MODE_DEFAULT
         || $formData['magento_orders_settings']['shipment_mode'] == Account::MAGENTO_ORDERS_SHIPMENT_MODE_YES
             ? 'checked="checked"' : '';
-        
+
         $fieldset->addField('magento_orders_status_mapping_shipped',
             'select',
             [

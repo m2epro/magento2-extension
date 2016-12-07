@@ -26,18 +26,24 @@ class InstallData implements InstallDataInterface
     /** @var ModuleDataSetupInterface $installer */
     private $installer;
 
+    /** @var \Psr\Log\LoggerInterface */
+    private $logger;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         ModuleListInterface $moduleList,
+        \Ess\M2ePro\Setup\LoggerFactory $loggerFactory,
         \Magento\Framework\Model\ResourceModel\Db\Context $dbContext
     ) {
         $this->helperFactory = $helperFactory;
         $this->modelFactory  = $modelFactory;
         $this->moduleList    = $moduleList;
         $this->moduleResource = new \Magento\Framework\Module\ModuleResource($dbContext);
+
+        $this->logger = $loggerFactory->create();
     }
 
     //########################################
@@ -74,6 +80,9 @@ class InstallData implements InstallDataInterface
             $this->installEbay();
             $this->installAmazon();
         } catch (\Exception $exception) {
+
+            $this->logger->error($exception, ['source' => 'InstallData']);
+
             $this->installer->endSetup();
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
@@ -81,7 +90,7 @@ class InstallData implements InstallDataInterface
 
         $this->installer->endSetup();
 
-        $this->setModuleSetupRow($this->getConfigVersion());
+        $this->setModuleSetupCompleted();
         $this->setMagentoResourceVersion($this->getConfigVersion());
     }
 
@@ -213,6 +222,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/logs/listings/', 'last_action_id', '0', NULL);
         $moduleConfigModifier->insert('/logs/other_listings/', 'last_action_id', '0', NULL);
         $moduleConfigModifier->insert('/logs/ebay_pickup_store/', 'last_action_id', '0', NULL);
+        $moduleConfigModifier->insert('/logs/view/grouped/', 'max_last_handled_records_count', '100000', NULL);
         $moduleConfigModifier->insert('/support/', 'documentation_url', 'https://docs.m2epro.com/', NULL);
         $moduleConfigModifier->insert('/support/', 'clients_portal_url', 'https://clients.m2epro.com/', NULL);
         $moduleConfigModifier->insert('/support/', 'website_url', 'https://m2epro.com/', NULL);
@@ -259,6 +269,18 @@ class InstallData implements InstallDataInterface
             '/order/magento/settings/',
             'create_with_first_product_options_when_variation_unavailable', '1',
             '0 - disable, \r\n1 - enabled'
+        );
+        $moduleConfigModifier->insert(
+            '/magento/product/simple_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $moduleConfigModifier->insert(
+            '/magento/product/configurable_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $moduleConfigModifier->insert(
+            '/magento/product/bundle_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $moduleConfigModifier->insert(
+            '/magento/product/grouped_type/', 'custom_types', '', 'Magento product custom types'
         );
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
@@ -368,6 +390,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/cron/task/update_ebay_accounts_preferences/', 'last_run', NULL, 'date of last run'
         );
+        $moduleConfigModifier->insert('/ebay/in_store_pickup/', 'mode', 0, '0 - disable,\r\n1 - enable');
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
 
@@ -1344,7 +1367,7 @@ class InstallData implements InstallDataInterface
             'use_first_street_line_as_company', '1',
             '0 - disable, \r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/amazon/repricing/', 'mode', '0', '0 - disable, \r\n1 - enable');
+        $moduleConfigModifier->insert('/amazon/repricing/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
             '/amazon/repricing/',
             'base_url', 'https://repricer.m2epro.com/connector/m2epro/',
@@ -1613,9 +1636,13 @@ class InstallData implements InstallDataInterface
             return false;
         }
 
-        $setupRows = $this->getConnection()->select()->from($this->getFullTableName('setup'))->query()->fetchAll();
+        $completedSetupRows = $this->getConnection()->select()
+            ->from($this->getFullTableName('setup'))
+            ->where('is_completed = ?', 1)
+            ->query()
+            ->fetchAll();
 
-        return count($setupRows) > 0;
+        return count($completedSetupRows) > 0;
     }
 
     // ---------------------------------------
@@ -1641,15 +1668,19 @@ class InstallData implements InstallDataInterface
 
     // ---------------------------------------
 
-    private function setModuleSetupRow($version)
+    private function setModuleSetupCompleted()
     {
-        $this->getConnection()->insert($this->getFullTableName('setup'), [
-            'version_from' => NULL,
-            'version_to'   => $version,
-            'is_completed' => 1,
-            'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
-            'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
-        ]);
+        $this->getConnection()->update(
+            $this->getFullTableName('setup'),
+            [
+                'is_completed' => 1,
+                'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
+            ],
+            [
+                'version_from IS NULL',
+                'version_to = ?' => $this->getConfigVersion()
+            ]
+        );
     }
 
     private function setMagentoResourceVersion($version)

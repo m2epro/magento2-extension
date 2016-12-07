@@ -46,7 +46,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         if ($this->getRequest()->getParam('step')) {
             $breadcrumb = $this->createBlock('Ebay\Listing\Create\Breadcrumb');
             $breadcrumb->setSelectedStep((int)$this->getRequest()->getParam('step',2));
-            
+
             return $breadcrumb->_toHtml() . parent::_toHtml();
         }
 

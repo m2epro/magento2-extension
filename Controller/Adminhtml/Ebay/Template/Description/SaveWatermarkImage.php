@@ -7,9 +7,9 @@ use Ess\M2ePro\Controller\Adminhtml\Ebay\Template\Description;
 class SaveWatermarkImage extends Description
 {
     protected $driverPool;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
@@ -24,7 +24,7 @@ class SaveWatermarkImage extends Description
     }
 
     //########################################
-    
+
     public function execute()
     {
         $templateData = $this->getRequest()->getPost('description');
@@ -44,7 +44,7 @@ class SaveWatermarkImage extends Description
         ]]);
 
         $watermarkPath = $varDir->getPath().(int)$templateData['id'].'.png';
-        
+
         $fileDriver = $this->driverPool->getDriver(\Magento\Framework\Filesystem\DriverPool::FILE);
         if ($fileDriver->isFile($watermarkPath)) {
             $fileDriver->deleteFile($watermarkPath);

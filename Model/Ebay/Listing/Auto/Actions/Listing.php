@@ -107,7 +107,7 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
     protected function processAddedListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params)
     {
         $ebayListingProduct = $listingProduct->getChildObject();
-        
+
         if (!empty($params['template_category_id'])) {
             $ebayListingProduct->setData('template_category_id',$params['template_category_id']);
         }

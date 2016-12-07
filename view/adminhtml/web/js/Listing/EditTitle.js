@@ -43,13 +43,13 @@ define([
                         modalClass: 'width-50',
                         buttons: [{
                             text: M2ePro.translator.translate('Cancel'),
-                            //class: 'action-primary',
+                            class: 'action-secondary action-dismiss',
                             click: function () {
                                 form.modal('closeModal');
                             }
                         },{
                             text: M2ePro.translator.translate('Save'),
-                            class: 'action primary',
+                            class: 'action-primary action-accept',
                             click: function () {
                                 EditListingTitleObj.saveListingTitle(id);
                             }

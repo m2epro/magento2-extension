@@ -343,6 +343,7 @@ class Synchronization extends AbstractModel
         $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
             array(
+                'main_table.product_id',
                 'second_table.listing_product_id',
                 'second_table.sku',
                 'second_table.online_price',
@@ -356,6 +357,8 @@ class Synchronization extends AbstractModel
         $listingsProductsData = $listingProductCollection->getData();
 
         $disabledListingsProductsIds = array();
+        $disabledProductsIds = array();
+
         $enabledListingsProductsIds  = array();
 
         foreach ($listingsProductsData as $listingProductData) {
@@ -393,8 +396,12 @@ class Synchronization extends AbstractModel
             }
 
             if ($listingProductData['is_online_disabled'] != $offerData['is_calculation_disabled']) {
-                $offerData['is_calculation_disabled'] && $disabledListingsProductsIds[] = $listingProductId;
-                !$offerData['is_calculation_disabled'] && $enabledListingsProductsIds[] = $listingProductId;
+                if ($offerData['is_calculation_disabled']) {
+                    $disabledListingsProductsIds[] = $listingProductId;
+                    $disabledProductsIds[] = (int)$listingProductData['product_id'];
+                } else {
+                    $enabledListingsProductsIds[] = $listingProductId;
+                }
             }
         }
 
@@ -410,6 +417,15 @@ class Synchronization extends AbstractModel
                         'update_date'        => $this->getHelper('Data')->getCurrentGmtDate(),
                     ),
                     array('listing_product_id IN (?)' => $disabledListingsProductsIdsPack)
+                );
+            }
+        }
+
+        if (!empty($disabledProductsIds)) {
+
+            foreach ($disabledProductsIds as $disabledProductId) {
+                $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
+                    $disabledProductId, \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
                 );
             }
         }

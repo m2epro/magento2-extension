@@ -65,45 +65,56 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
         }
 
         // ---------------------------------------
-        $saveButtonsProps = [];
 
-        $url = $this->getUrl('*/ebay_template/save');
-        if (!$isSaveAndClose) {
-            $saveButtonsProps['save'] = [
-                'label' => $this->__('Save And Back'),
-                'onclick' => 'EbayTemplateEditObj.saveClick('
-                    . '\'' . $url . '\','
-                    . '\'' . $saveConfirmation . '\','
-                    . '\'' . $nick . '\''
-                    . ')',
-            ];
-        }
+        $backUrl = $this->getHelper('Data')->makeBackUrlParam('edit');
+        $url = $this->getUrl('*/ebay_template/save', [
+            'back' => $backUrl,
+            'wizard' => $this->getRequest()->getParam('wizard'),
+            'close_on_save' => $this->getRequest()->getParam('close_on_save'),
+        ]);
 
         if ($isSaveAndClose) {
-            $saveButtonsProps['save'] = [
-                'label' => $this->__('Save And Close'),
-                'onclick' => "EbayTemplateEditObj.saveAndCloseClick('$url')"
-            ];
+
             $this->removeButton('back');
+
+            $saveButtons = [
+                'id' => 'save_and_close',
+                'label' => $this->__('Save And Close'),
+                'class' => 'add',
+                'button_class' => '',
+                'onclick' => "EbayTemplateEditObj.saveAndCloseClick('{$url}', '{$saveConfirmation}')",
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Continue Edit'),
+                        'onclick' =>
+                            "EbayTemplateEditObj.saveAndEditClick('{$url}', '', '{$saveConfirmation}', '{$nick}');"
+                    ]
+                ],
+            ];
+        } else {
+
+            $saveAndBackUrl = $this->getUrl('*/ebay_template/save', [
+                'back' => $this->getHelper('Data')->makeBackUrlParam('list')
+            ]);
+
+            $saveButtons = [
+                'id' => 'save_and_continue',
+                'label' => $this->__('Save And Continue Edit'),
+                'class' => 'add',
+                'button_class' => '',
+                'onclick' =>
+                    "EbayTemplateEditObj.saveAndEditClick('{$url}', '', '{$saveConfirmation}', '{$nick}');",
+                'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
+                'options' => [
+                    'save' => [
+                        'label' => $this->__('Save And Back'),
+                        'onclick' =>
+                            "EbayTemplateEditObj.saveClick('{$saveAndBackUrl}', '{$saveConfirmation}', '{$nick}');",
+                    ]
+                ],
+            ];
         }
-
-        $backUrl = $this->getHelper('Data')->makeBackUrlParam('edit', []);
-        $url = $this->getUrl('*/ebay_template/save', ['back' => $backUrl]);
-
-        $saveButtons = [
-            'id' => 'save_and_continue',
-            'label' => $this->__('Save And Continue Edit'),
-            'class' => 'add',
-            'button_class' => '',
-            'onclick' => 'EbayTemplateEditObj.saveAndEditClick('
-                . '\'' . $url . '\','
-                . '\'\','
-                . '\'' . $saveConfirmation . '\','
-                . '\'' . $nick . '\''
-                . ')',
-            'class_name' => 'Ess\M2ePro\Block\Adminhtml\Magento\Button\SplitButton',
-            'options' => $saveButtonsProps,
-        ];
 
         $this->addButton('save_buttons', $saveButtons);
     }

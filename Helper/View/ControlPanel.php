@@ -15,15 +15,15 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
     // M2ePro_TRANSLATIONS
     // Control Panel (M2E Pro)
 
-    const NICK               = 'control_panel';
+    const NICK                 = 'control_panel';
 
-    const TAB_OVERVIEW       = 'overview';
-    const TAB_INSPECTION     = 'inspection';
-    const TAB_SETUP          = 'setup';
-    const TAB_DATABASE       = 'database';
-    const TAB_TOOLS_GENERAL  = 'tools_general';
-    const TAB_TOOLS_MODULE   = 'tools_module';
-    const TAB_DEBUG          = 'debug';
+    const TAB_OVERVIEW         = 'overview';
+    const TAB_INSPECTION       = 'inspection';
+    const TAB_VERSIONS_HISTORY = 'versions_history';
+    const TAB_DATABASE         = 'database';
+    const TAB_TOOLS_GENERAL    = 'tools_general';
+    const TAB_TOOLS_MODULE     = 'tools_module';
+    const TAB_DEBUG            = 'debug';
 
     private $backendUrlBuilder;
 
@@ -72,6 +72,11 @@ class ControlPanel extends \Ess\M2ePro\Helper\AbstractHelper
     public function getPageDatabaseTabUrl(array $params = [])
     {
         return $this->getPageUrl(array_merge($params,['tab' => self::TAB_DATABASE]));
+    }
+
+    public function getPageVersionsHistoryTabUrl(array $params = [])
+    {
+        return $this->getPageUrl(array_merge($params,['tab' => self::TAB_VERSIONS_HISTORY]));
     }
 
     public function getPageToolsTabUrl(array $params = [])

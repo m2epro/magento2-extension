@@ -28,7 +28,7 @@ class Listing extends AbstractContainer
             sold on a certain Marketplace by a particular Seller and managed by the same Selling, Synchronization, etc.
             Policy Settings.</p><br>
             <p>Each Magento Product can be placed only once in each M2E Pro Listing.</p><br>
-            <p><strong>Note:</strong> Products which are not listed via M2E Pro will be automatically added to the 
+            <p><strong>Note:</strong> Products which are not listed via M2E Pro will be automatically added to the
             3rd Party Listings if the import option is enabled in the Account settings.</p>'
         );
 

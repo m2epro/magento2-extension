@@ -8,8 +8,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Settings\LogsClearing;
 
-use \Ess\M2ePro\Block\Adminhtml\Configuration\Settings\Tabs;
-
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -42,11 +40,14 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                 $post['orders_log_mode'],
                 0
             );
-//            $this->modelFactory->getObject('Log\Clearing')->saveSettings(
-//                \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
-//                $post['orders_log_mode'],
-//                0
-//            );
+
+            if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
+                $this->modelFactory->getObject('Log\Clearing')->saveSettings(
+                    \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE,
+                    $post['ebay_pickup_store_log_mode'],
+                    $post['ebay_pickup_store_log_days']
+                );
+            }
         }
         // ---------------------------------------
 

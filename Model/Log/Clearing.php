@@ -15,6 +15,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
     const LOG_SYNCHRONIZATIONS  = 'synchronizations';
     const LOG_ORDERS            = 'orders';
 
+    const LOG_EBAY_PICKUP_STORE = 'ebay_pickup_store';
+
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
@@ -104,7 +106,8 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
         return $log == self::LOG_LISTINGS ||
                $log == self::LOG_OTHER_LISTINGS ||
                $log == self::LOG_SYNCHRONIZATIONS ||
-               $log == self::LOG_ORDERS;
+               $log == self::LOG_ORDERS ||
+               $log == self::LOG_EBAY_PICKUP_STORE;
     }
 
     private function getMinTimeByDays($days)
@@ -148,6 +151,11 @@ class Clearing extends \Ess\M2ePro\Model\AbstractModel
             case self::LOG_ORDERS:
                 $resourceModel = $this->activeRecordFactory
                               ->getObject('Order\Log')
+                              ->getResource();
+                break;
+            case self::LOG_EBAY_PICKUP_STORE:
+                $resourceModel = $this->activeRecordFactory
+                              ->getObject('Ebay\Account\PickupStore\Log')
                               ->getResource();
                 break;
         }

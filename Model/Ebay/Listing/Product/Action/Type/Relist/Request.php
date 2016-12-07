@@ -32,16 +32,15 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
                 $data,
 
-                $this->getRequestCategories()->getRequestData(),
-
                 $this->getRequestPayment()->getRequestData(),
-                $this->getRequestReturn()->getRequestData(),
-                $this->getRequestShipping()->getRequestData()
+                $this->getRequestReturn()->getRequestData()
             );
         }
 
         return array_merge(
             $data,
+            $this->getRequestCategories()->getRequestData(),
+            $this->getRequestShipping()->getRequestData(),
             $this->getRequestSelling()->getRequestData(),
             $this->getRequestDescription()->getRequestData()
         );

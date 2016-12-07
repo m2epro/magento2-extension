@@ -31,6 +31,11 @@ abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
         return $actionResult;
     }
 
+    protected function _validateSecretKey()
+    {
+        return true;
+    }
+
     //########################################
 
     protected function postDispatch(\Magento\Framework\App\RequestInterface $request) {}

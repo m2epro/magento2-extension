@@ -35,18 +35,22 @@
             <ul>
             <li><p>eBay Specifics - the list of Specifics predefined by eBay for the selected Category. The Specifics marked with the * are the required ones and the appropriate values must be provided for them. A value for each Specific can be selected from the list of eBay recommended options or from the Magento Product data.</p></li>
             <li><p>Custom Specifics - if you would like to include Item Specifics which are missing from list of eBay Specifics, you can add your own custom item specifics. You can provide a Specific Label and value manually or by using a Magento Attribute.</p></li>
-            </ul>
-            
-            <p>More detailed information you can find <a href="%utl%" target="_blank" class="external-link">here</a>.</p>',
-            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/lgItAQ')
+            </ul>'
         );
+
+        if ($block->_isAjax) {
+            $helpBlockContent .= $block->__(
+                '<p>More detailed information you can find <a href="%utl%" target="_blank" class="external-link">here</a>.</p>',
+                $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/lgItAQ')
+            );
+        }
 
         echo $block->getChildBlock('specifics_help_block')->addData([
             'content' => $helpBlockContent
         ])->toHtml();
 
     ?>
-    
+
     <div>
 
     <?php } ?>

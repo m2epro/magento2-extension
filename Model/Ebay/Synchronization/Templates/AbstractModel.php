@@ -66,7 +66,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\Abst
 
     //########################################
 
-    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct, \Exception $exception)
+    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct,
+                                \Exception $exception,
+                                $sendToServer = true)
     {
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Ebay\Listing\Log');
@@ -83,7 +85,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Synchronization\Abst
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
 
-        $this->getHelper('Module\Exception')->process($exception);
+        $this->getHelper('Module\Exception')->process($exception, $sendToServer);
     }
 
     //########################################

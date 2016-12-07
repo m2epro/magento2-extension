@@ -29,7 +29,7 @@ class Switcher extends AbstractBlock
         if ($this->getData('custom_header_text')) {
             return $this->getData('custom_header_text');
         }
-        
+
         $title = '';
 
         switch ($this->getTemplateNick()) {
@@ -329,7 +329,7 @@ HTML;
         'Switcher/Initialization',
         'M2ePro/Ebay/Listing/Template/Switcher'
     ], function(){
-        
+
         EbayListingTemplateSwitcherObj.updateEditVisibility('{$this->getTemplateNick()}');
         EbayListingTemplateSwitcherObj.updateButtonsVisibility('{$this->getTemplateNick()}');
         EbayListingTemplateSwitcherObj.updateTemplateLabelVisibility('{$this->getTemplateNick()}');
@@ -339,10 +339,10 @@ HTML;
         if ({$isTemplateModeTemplate}) {
             $('{$this->getSwitcherId()}').simulate('change');
         }
-    });        
+    });
 JS
 );
-        
+
         return parent::_toHtml() .
             $this->getFormDataBlockHtml() .
             $this->getButtonsHtml();

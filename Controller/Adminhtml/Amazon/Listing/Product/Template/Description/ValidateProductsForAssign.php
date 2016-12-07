@@ -12,7 +12,7 @@ class ValidateProductsForAssign extends Description
 
         if (empty($productsIds)) {
             $this->setAjaxContent('You should provide correct parameters.', false);
-            
+
             return $this->getResult();
         }
 

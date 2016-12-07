@@ -177,51 +177,50 @@ HTML;
                 $additionalInfo = '';
                 $actionsHtml    = '';
 
-                if (!isset($resultRow['info'])) {
-                    continue;
-                }
+                if (isset($resultRow['info'])) {
 
-                $resultInfo = $resultRow['info'];
-                $diffData = isset($resultInfo['diff_data']) ? $resultInfo['diff_data'] : array();
+                    $resultInfo = $resultRow['info'];
+                    $diffData = isset($resultInfo['diff_data']) ? $resultInfo['diff_data'] : array();
 
-                if (isset($resultInfo['diff_data'])) {
-                    foreach ($resultInfo['diff_data'] as $diffCode => $diffValue) {
+                    if (isset($resultInfo['diff_data'])) {
+                        foreach ($resultInfo['diff_data'] as $diffCode => $diffValue) {
 
-                        $additionalInfo .= "<b>{$diffCode}</b>: '{$diffValue}'. ";
-                        $additionalInfo .= "<b>original:</b> '{$resultInfo['original_data'][$diffCode]}'.";
-                        $additionalInfo .= "<br/>";
+                            $additionalInfo .= "<b>{$diffCode}</b>: '{$diffValue}'. ";
+                            $additionalInfo .= "<b>original:</b> '{$resultInfo['original_data'][$diffCode]}'.";
+                            $additionalInfo .= "<br/>";
+                        }
                     }
+
+                    $linkTitle = '';
+                    $urlParams = array(
+                        'action'      => 'fixColumn',
+                        'table_name'  => $tableName,
+                        'column_info' => json_encode($resultInfo['original_data'])
+                    );
+
+                    if (empty($resultInfo['current_data']) ||
+                        (isset($diffData['type']) || isset($diffData['default']) || isset($diffData['null']))) {
+
+                        $linkTitle = 'Fix Properties';
+                        $urlParams['mode'] = 'properties';
+                    }
+
+                    if (isset($diffData['key'])) {
+
+                        $linkTitle = 'Fix Index';
+                        $urlParams['mode'] = 'index';
+                    }
+
+                    if (empty($resultInfo['original_data']) && !empty($resultInfo['current_data'])) {
+
+                        $linkTitle = 'Drop';
+                        $urlParams['mode'] = 'drop';
+                        $urlParams['column_info'] = json_encode($resultInfo['current_data']);
+                    }
+
+                    $url = $this->getUrl('*/*/*', $urlParams);
+                    $actionsHtml .= "<a href=\"{$url}\">{$linkTitle}</a>";
                 }
-
-                $linkTitle = '';
-                $urlParams = array(
-                    'action'      => 'fixColumn',
-                    'table_name'  => $tableName,
-                    'column_info' => json_encode($resultInfo['original_data'])
-                );
-
-                if (empty($resultInfo['current_data']) ||
-                    (isset($diffData['type']) || isset($diffData['default']) || isset($diffData['null']))) {
-
-                    $linkTitle = 'Fix Properties';
-                    $urlParams['mode'] = 'properties';
-                }
-
-                if (isset($diffData['key'])) {
-
-                    $linkTitle = 'Fix Index';
-                    $urlParams['mode'] = 'index';
-                }
-
-                if (empty($resultInfo['original_data']) && !empty($resultInfo['current_data'])) {
-
-                    $linkTitle = 'Drop';
-                    $urlParams['mode'] = 'drop';
-                    $urlParams['column_info'] = json_encode($resultInfo['current_data']);
-                }
-
-                $url = $this->getUrl('*/*/*', $urlParams);
-                $actionsHtml .= "<a href=\"{$url}\">{$linkTitle}</a>";
 
                 $html .= <<<HTML
 <tr>
@@ -301,7 +300,6 @@ HTML;
                    $this->directoryList->getUrlPath(\Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW) .'/'.
                    $this->getHelper('Magento')->getThemePath() .'/'.
                    $this->getHelper('Magento')->getDefaultLocale();
-
 
         $html .= <<<HTML
 <script type="text/javascript" src="{$srcPath}/jquery.js"></script>

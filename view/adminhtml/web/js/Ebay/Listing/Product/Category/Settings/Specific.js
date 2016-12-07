@@ -185,6 +185,9 @@ define([
                 if (specific.type == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Category_Specific::RENDER_TYPE_SELECT_MULTIPLE') ||
                     specific.type == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Category_Specific::RENDER_TYPE_SELECT_MULTIPLE_OR_TEXT')) {
                     $(self.uniqId + 'item_specifics_value_ebay_recommended_' + counter).writeAttribute('multiple', 'true');
+                    $(self.uniqId + 'item_specifics_value_ebay_recommended_' + counter).addClassName('select multiselect admin__control-multiselect');
+                    $(self.uniqId + 'item_specifics_value_ebay_recommended_' + counter).removeClassName('admin__control-select');
+
                     var tempOldName = $(self.uniqId + 'item_specifics_value_ebay_recommended_' + counter).readAttribute('name');
                     $(self.uniqId + 'item_specifics_value_ebay_recommended_' + counter).writeAttribute('name', tempOldName + '[]');
                 }

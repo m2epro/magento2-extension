@@ -10,12 +10,14 @@ namespace Ess\M2ePro\Observer;
 
 class Invoice extends AbstractModel
 {
+    protected $ebayFactory;
     protected $messageManager;
     protected $urlBuilder;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Message\Manager $messageManager,
         \Magento\Framework\UrlInterface $urlBuilder,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -23,6 +25,7 @@ class Invoice extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->ebayFactory = $ebayFactory;
         $this->messageManager = $messageManager;
         $this->urlBuilder = $urlBuilder;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -44,7 +47,7 @@ class Invoice extends AbstractModel
 
         try {
             /** @var $order \Ess\M2ePro\Model\Order */
-            $order = $this->activeRecordFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
+            $order = $this->ebayFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
         } catch (\Exception $e) {
             return;
         }
@@ -85,7 +88,7 @@ class Invoice extends AbstractModel
 
     private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
     {
-        $url = $this->urlBuilder->getUrl('*/ebay_order_log/index', array('order_id' => $order->getId()));
+        $url = $this->urlBuilder->getUrl('*/ebay_log_order/index', array('id' => $order->getId()));
 
         $channelTitle = $order->getComponentTitle();
         // M2ePro\TRANSLATIONS

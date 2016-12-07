@@ -27,21 +27,32 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
      */
     public function getRequestData()
     {
-        $data = $this->getCategoriesData();
-        $data['item_specifics'] = $this->getItemSpecificsData();
+        $data = array();
 
-        if ($this->getMotorsHelper()->isMarketplaceSupportsEpid($this->getMarketplace()->getId())) {
-            $tempData = $this->getMotorsData(
-               \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID
+        if ($this->getConfigurator()->isGeneralAllowed()) {
+
+            $data = array_merge(
+                $data,
+                $this->getCategoriesData()
             );
-            $tempData !== false && $data['motors_epids'] = $tempData;
+
+            if ($this->getMotorsHelper()->isMarketplaceSupportsEpid($this->getMarketplace()->getId())) {
+                $tempData = $this->getMotorsData(
+                    \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID
+                );
+                $tempData !== false && $data['motors_epids'] = $tempData;
+            }
+
+            if ($this->getMotorsHelper()->isMarketplaceSupportsKtype($this->getMarketplace()->getId())) {
+                $tempData = $this->getMotorsData(
+                    \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
+                );
+                $tempData !== false && $data['motors_ktypes'] = $tempData;
+            }
         }
 
-        if ($this->getMotorsHelper()->isMarketplaceSupportsKtype($this->getMarketplace()->getId())) {
-            $tempData = $this->getMotorsData(
-               \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
-            );
-            $tempData !== false && $data['motors_ktypes'] = $tempData;
+        if ($this->getConfigurator()->isSpecificsAllowed()) {
+            $data['item_specifics'] = $this->getItemSpecificsData();
         }
 
         return $data;

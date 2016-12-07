@@ -83,20 +83,20 @@ class Variations extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContai
         'M2ePro/Amazon/Listing/Product/Variation/Manage/Tabs/Variations/Grid',
         'M2ePro/Amazon/Listing/AfnQty'
     ], function(){
-          
+
         ListingProductVariationManageVariationsGridObj = new AmazonListingProductVariationManageTabsVariationsGrid(
             '{$this->getChildBlock('grid')->getId()}',
             {$this->getListingProduct()->getListingId()}
         );
-           
+
         ListingProductVariationManageVariationsGridObj.actionHandler
             .setProgressBar('listing_product_variation_progress_bar');
         ListingProductVariationManageVariationsGridObj.actionHandler
-            .setGridWrapper('listing_product_variation_content_container');        
+            .setGridWrapper('listing_product_variation_content_container');
         ListingProductVariationManageVariationsGridObj.actionHandler
             .setErrorsSummaryContainer('listing_product_variation_errors_summary_container');
         ListingProductVariationManageVariationsGridObj.actionHandler
-            .setActionMessagesContainer('listing_product_variation_action_messages_container'); 
+            .setActionMessagesContainer('listing_product_variation_action_messages_container');
     });
 JS
         );

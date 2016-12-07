@@ -11,7 +11,6 @@ namespace Ess\M2ePro\Observer\Product\AddUpdate;
 abstract class AbstractAddUpdate extends \Ess\M2ePro\Observer\Product\AbstractProduct
 {
     private $affectedListingsProducts = array();
-    private $affectedOtherListings = array();
 
     //########################################
 

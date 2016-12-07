@@ -38,7 +38,7 @@ class Debug extends AbstractBlock
             ->parseDebugCommandsData(\Ess\M2ePro\Helper\View\ControlPanel\Command::CONTROLLER_DEBUG);
 
         // ---------------------------------------
-        $url = $this->getUrl('*/controlPanel_debug/enableMaintenanceMode/');
+        $url = $this->getUrl('*/controlPanel_debug/enableMaintenance/');
         $data = array(
             'label'   => $this->__('Enable'),
             'onclick' => 'setLocation(\'' . $url . '\');',
@@ -47,7 +47,7 @@ class Debug extends AbstractBlock
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
         $this->setChild('enable_maintenance',$buttonBlock);
 
-        $url = $this->getUrl('*/controlPanel_debug/disableMaintenanceMode/');
+        $url = $this->getUrl('*/controlPanel_debug/disableMaintenance/');
         $data = array(
             'label'   => $this->__('Disable'),
             'onclick' => 'setLocation(\'' . $url . '\');',

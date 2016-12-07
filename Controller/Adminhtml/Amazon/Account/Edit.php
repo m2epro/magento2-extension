@@ -55,7 +55,7 @@ class Edit extends Account
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
-        
+
         // ---------------------------------------
 
         $this->addLeft($this->createBlock('Amazon\Account\Edit\Tabs'));

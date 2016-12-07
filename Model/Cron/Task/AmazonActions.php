@@ -353,7 +353,7 @@ final class AmazonActions extends AbstractModel
 
     private function getMaxAllowedMinutesDelay($actionType)
     {
-        if ($this->helperFactory->getObject('Module')->isDevelopmentEnvironment()) {
+        if (!$this->helperFactory->getObject('Module')->isProductionEnvironment()) {
             return 1;
         }
 

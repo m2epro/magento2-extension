@@ -105,7 +105,7 @@ class Product extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     require([
         'M2ePro/Amazon/Listing/AutoAction'
     ], function(){
-    
+
         window.ListingAutoActionObj = new AmazonListingAutoAction();
 
     });

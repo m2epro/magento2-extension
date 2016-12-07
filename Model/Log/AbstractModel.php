@@ -11,6 +11,12 @@ use Ess\M2ePro\Model\Exception;
 
 abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
+    /**
+     * The order of the values of log types' constants is important.
+     * @see \Ess\M2ePro\Helper\View\Log::getMainType()
+     * @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid::_prepareCollection()
+     * @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Grouped\AbstractGrid::_prepareCollection()
+     */
     const TYPE_NOTICE   = 1;
     const TYPE_SUCCESS  = 2;
     const TYPE_WARNING  = 3;

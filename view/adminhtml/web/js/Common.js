@@ -4,7 +4,7 @@ define([
     'mage/backend/form',
     'mage/backend/validation'
 ], function () {
-    
+
     window.Common = Class.create();
     Common.prototype = {
 
@@ -27,6 +27,10 @@ define([
                     if ($(el).up() == document || el.hasClassName('entry-edit')) {
                         break;
                     }
+                }
+
+                if(typeof value === 'string' ) {
+                    value = value.trim();
                 }
 
                 return hidden ? true : value != null && value.length > 0;

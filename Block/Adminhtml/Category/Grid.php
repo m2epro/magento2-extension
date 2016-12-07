@@ -23,7 +23,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->categoryFactory = $categoryFactory;
         parent::__construct($context, $backendHelper, $data);
     }
-    
+
     //########################################
 
     public function getStoreId()
@@ -45,7 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->_prepareCache(clone $collection);
         parent::setCollection($collection);
     }
-    
+
     /**
      * @param \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection $collection
      */

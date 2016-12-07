@@ -236,6 +236,40 @@ class ReviseRules extends AbstractTab
             ]
         );
 
+        $fieldset->addField('revise_update_specifics',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_specifics]',
+                'label' => $this->__('Specifics'),
+                'value' => $formData['revise_update_specifics'],
+                'values' => [
+                    Synchronization::REVISE_UPDATE_SPECIFICS_NONE => $this->__('No'),
+                    Synchronization::REVISE_UPDATE_SPECIFICS_YES => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(
+                    'Automatically Revise the eBay Item Specifics if there was a change to the Attribute value
+                    which is used in Specifics configurations.'
+                )
+            ]
+        );
+
+        $fieldset->addField('revise_update_shipping_services',
+            self::SELECT,
+            [
+                'name' => 'synchronization[revise_update_shipping_services]',
+                'label' => $this->__('Shipping Services'),
+                'value' => $formData['revise_update_shipping_services'],
+                'values' => [
+                    Synchronization::REVISE_UPDATE_SHIPPING_SERVICES_NONE => $this->__('No'),
+                    Synchronization::REVISE_UPDATE_SHIPPING_SERVICES_YES => $this->__('Yes'),
+                ],
+                'tooltip' => $this->__(
+                    'Automatically Revise the Shipping Services data if there was a change to the Attribute value used
+                    for Cost, Additional Cost and Surcharge options configurations.'
+                )
+            ]
+        );
+
         $fieldset = $form->addFieldset('magento_block_ebay_template_synchronization_form_data_revise_templates',
             [
                 'legend' => $this->__('Full Revise'),

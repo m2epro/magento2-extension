@@ -260,6 +260,8 @@ define([
 
         reloadLicenseTab: function()
         {
+            BlockNoticeObj.removeInitializedBlock('block_notice_configuration_license');
+
             new Ajax.Request(M2ePro.url.get('licenseTab'), {
                 method: 'get',
                 asynchronous: true,
@@ -268,8 +270,6 @@ define([
 
                     $('configuration_settings_tabs_license_content').innerHTML = result;
                     $('configuration_settings_tabs_license_content').innerHTML.evalScripts();
-
-                    BlockNoticeObj.removeInitializedBlock('block_notice_configuration_license');
                 }
             });
         }

@@ -142,10 +142,6 @@
 .modal-content .m2epro-tabs-horizontal + div .ui-tabs-panel {
     padding: 25px 0;
 }
-.m2epro-tabs-horizontal + div .ui-tabs-panel:empty {
-    background: url(../images/ajax-loader-big.gif) no-repeat 50% 100%;
-    background-size: 40px;
-}
 .m2epro-tabs-horizontal li.ui-state-disabled a {
     cursor: not-allowed;
 }
@@ -244,7 +240,6 @@ a.hover-underline:hover {
     padding-top: 3px;
 }
 
-
 .width-500 > .modal-inner-wrap {
     width: 600px;
 }
@@ -279,10 +274,9 @@ a.hover-underline:hover {
 }
 
 .errors_summary_close {
+    font-family: 'Admin Icons';
     float: right !important;
-    font-weight: bold !important;
-    font-size: 14px !important;
-    text-decoration: none !important;
+    font-weight: normal !important;
 }
 
 .errors_summary_content {
@@ -351,13 +345,13 @@ label.mage-error > a:before {
 
 .m2ePro-variation-attributes a
 {
-    text-decoration: none;
+    text-decoration: none !important;
     color: grey;
 }
 
 .m2ePro-variation-attributes a:hover
 {
-    text-decoration: underline;
+    text-decoration: underline !important;
 }
 
 .grid-listing-column-identifiers {
@@ -365,7 +359,6 @@ label.mage-error > a:before {
 }
 
 /* ================================================ */
-
 
 /* Amazon Individual Variation */
 /* ================================================ */
@@ -381,7 +374,6 @@ a.amazon-listing-view-edit-variation {
     speak: none;
     text-decoration: none !important;
 }
-
 
 a.amazon-listing-view-edit-variation:before {
     color: #514943;
@@ -402,7 +394,6 @@ a.amazon-listing-view-add-variation {
     text-decoration: none !important;
 }
 
-
 a.amazon-listing-view-add-variation:before {
     color: #514943;
     content: '\e61d';
@@ -421,7 +412,6 @@ a.amazon-listing-view-switch-variation-mode {
     speak: none;
     text-decoration: none !important;
 }
-
 
 a.amazon-listing-view-switch-variation-mode:before {
     color: #514943;
@@ -442,7 +432,6 @@ a.amazon-listing-view-switch-variation-mode:before {
 #container .admin__field-tooltip-content strong {
     background-color: transparent;
 }
-
 
 /* Fix for Magento tooltip */
 /* ================================================ */
@@ -487,6 +476,26 @@ a.amazon-listing-view-switch-variation-mode:before {
     speak: none;
     text-align: center;
     margin: 0 0 0 0.2rem;
+}
+
+.fix-magento-tooltip.m2e-tooltip-grid-warning .admin__field-tooltip-action:before {
+    content: '\e623';
+    color: #EB5202;
+    font-size: 1.6rem;
+}
+
+.fix-magento-tooltip.m2e-tooltip-grid-warning .admin__field-tooltip-content {
+    right: -6px !important;
+}
+
+.fix-magento-tooltip.m2e-tooltip-grid-warning .admin__field-tooltip .admin__field-tooltip-content:after,
+.fix-magento-tooltip.m2e-tooltip-grid-warning .admin__field-tooltip .admin__field-tooltip-content:before {
+    right: 8px !important;
+    border-width: 1.3rem;
+}
+
+.fix-magento-tooltip.m2e-tooltip-grid-warning .admin__field-tooltip .admin__field-tooltip-content {
+    bottom: 3.3rem;
 }
 
 /* ================================================ */

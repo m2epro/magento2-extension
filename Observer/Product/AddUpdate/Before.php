@@ -19,7 +19,7 @@ class Before extends AbstractAddUpdate
     private $proxy = NULL;
 
     //########################################
-    
+
     public function __construct(
         \Ess\M2ePro\Observer\Product\AddUpdate\Before\ProxyFactory $proxyFactory,
         \Magento\Catalog\Model\ProductFactory $productFactory,

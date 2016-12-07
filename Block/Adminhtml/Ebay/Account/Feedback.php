@@ -24,16 +24,16 @@ This page contains Feedbacks received from eBay Buyers and your responses to the
 You can respond to a newly received Feedback by clicking the <strong>Send Response</strong> button for the Order.<br />
 <strong>Note:</strong> Auto-responses to Feedback are sent according to the eBay Accounts > Feedback Settings.
 <br /><br />
-More detailed information about ability to work with this Page you can find 
+More detailed information about ability to work with this Page you can find
 <a href="%url%" target="_blank" class="external-link">here</a>
 HTML
                 ,
-                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAAJAQ')
+                $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/fQA0AQ')
             )
         ]);
 
         $this->css->add(<<<CSS
-        
+
 .grid-listing-column-ebay_item_id {
     width: 120px;
 }
@@ -45,16 +45,15 @@ HTML
 .grid-listing-column-feedback_respond_status {
     width: 120px;
 }
-    
+
 CSS
         );
 
         $this->js->add(<<<JS
 
     require([
-        
-    ], function(){
 
+    ], function(){
 
     });
 JS

@@ -98,9 +98,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->rule = $this->ruleFactory->create()->load(self::TAX_RULE_CODE, 'code');
 
         $this->rule->setCode(self::TAX_RULE_CODE)
-            ->setTaxCustomerClass([$customerTaxClassId])
-            ->setTaxProductClass([$productTaxClass->getId()])
-            ->setTaxRate([$taxCalculationRate->getId()]);
+            ->setCustomerTaxClassIds([$customerTaxClassId])
+            ->setProductTaxClassIds([$productTaxClass->getId()])
+            ->setTaxRateIds([$taxCalculationRate->getId()])
+            ->setPriority(0);
         $this->rule->save();
         // ---------------------------------------
     }

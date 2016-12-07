@@ -154,10 +154,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     //########################################
 
-    protected function _beforeToHtml()
+    protected function _afterToHtml($html)
     {
-        parent::_beforeToHtml();
-
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing')
         );
@@ -171,12 +169,11 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         if ({$hasFormData}) {
             $('website_reset_button').show();
-            $('website_close_button').hide();
         }
 JS
         );
 
-        return $this;
+        return parent::_afterToHtml($html);
     }
 
     protected function _toHtml()

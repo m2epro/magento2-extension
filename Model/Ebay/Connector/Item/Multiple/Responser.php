@@ -8,9 +8,9 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\Item\Multiple;
 
-use Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator;
 use Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
+use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
 abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 {
@@ -97,6 +97,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
     }
 
+    // todo fire event ListingProduct is changed
     protected function inspectProducts()
     {
         $listingsProductsByStatus = array(
@@ -121,37 +122,121 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         /** @var Inspector $inspector */
         $inspector = $this->modelFactory->getObject('Ebay\Synchronization\Templates\Synchronization\Inspector');
 
-        foreach ($listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED] as $listingProduct) {
+        $products = $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED];
 
+        $this->inspectStopRequirements($products, $inspector, $runner);
+        $this->inspectReviseRequirements($products, $inspector, $runner);
+
+        $products = array_merge($listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED],
+                                $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN]);
+
+        $this->inspectRelistRequirements($products, $inspector, $runner);
+
+        $runner->execute();
+    }
+
+    //----------------------------------------
+
+    protected function inspectStopRequirements(array $products, Inspector $inspector, Runner $runner)
+    {
+        $lpForAdvancedRules = [];
+
+        foreach ($products as $listingProduct) {
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-            $ebayListingProduct = $listingProduct->getChildObject();
-
-            /** @var Configurator $configurator */
-            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-
-            if ($inspector->isMeetStopRequirements($listingProduct)) {
-
-                $action = \Ess\M2ePro\Model\Listing\Product::ACTION_STOP;
-
-                if ($ebayListingProduct->isOutOfStockControlEnabled()) {
-                    $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
-
-                    $configurator->setParams(
-                        array('replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP)
-                    );
-                    $configurator->setPartialMode();
-                    $configurator->allowQty()->allowVariations();
-                }
-
-                $runner->addProduct(
-                    $listingProduct, $action, $configurator
-                );
-
+            if (!$inspector->isMeetStopGeneralRequirements($listingProduct)) {
                 continue;
             }
 
+            if ($inspector->isMeetStopRequirements($listingProduct)) {
+
+                $runner->addProduct(
+                    $listingProduct,
+                    $this->getStopAction($listingProduct),
+                    $this->getStopConfigurator($listingProduct)
+                );
+                continue;
+            }
+
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+            $ebayTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
+
+            if ($ebayTemplate->isStopAdvancedRulesEnabled()) {
+
+                $templateId = $ebayTemplate->getId();
+                $storeId    = $listingProduct->getListing()->getStoreId();
+                $magentoProductId  = $listingProduct->getProductId();
+
+                $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+            }
+        }
+
+        $affectedListingProducts = $inspector->getMeetAdvancedRequirementsProducts(
+            $lpForAdvancedRules, SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX, 'stop'
+        );
+
+        foreach ($affectedListingProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            $runner->addProduct(
+                $listingProduct,
+                $this->getStopAction($listingProduct),
+                $this->getStopConfigurator($listingProduct)
+            );
+        }
+    }
+
+    protected function getStopAction(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        $action = \Ess\M2ePro\Model\Listing\Product::ACTION_STOP;
+
+        if ($ebayListingProduct->isOutOfStockControlEnabled()) {
+            $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
+        }
+
+        return $action;
+    }
+
+    protected function getStopConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+
+        if ($ebayListingProduct->isOutOfStockControlEnabled()) {
+
+            $configurator->setParams(
+                array('replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_STOP)
+            );
+
+            $configurator->setPartialMode();
+            $configurator->allowQty()->allowVariations();
+        }
+
+        return $configurator;
+    }
+
+    //----------------------------------------
+
+    protected function inspectReviseRequirements(array $products, Inspector $inspector, Runner $runner)
+    {
+        foreach ($products as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            $isExistInRunner = $runner->isExistProductWithAction(
+                $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
+            );
+
+            if ($isExistInRunner) {
+                continue;
+            }
+
+            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
             $configurator->setPartialMode();
 
             $needRevise = false;
@@ -170,6 +255,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
                 continue;
             }
 
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+
             if ($ebayListingProduct->isVariationsReady()) {
                 $configurator->allowVariations();
             }
@@ -178,12 +266,15 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
                 $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
             );
         }
+    }
 
-        $products = array_merge($listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED],
-                                $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN]);
+    //----------------------------------------
+
+    protected function inspectRelistRequirements(array $products, Inspector $inspector, Runner $runner)
+    {
+        $lpForAdvancedRules = [];
 
         foreach ($products as $listingProduct) {
-
             /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
 
             if (!$inspector->isMeetRelistRequirements($listingProduct)) {
@@ -192,27 +283,69 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
 
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
             $ebayListingProduct = $listingProduct->getChildObject();
+            $ebayTemplate = $ebayListingProduct->getEbaySynchronizationTemplate();
 
-            $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-            $action = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
+            if ($ebayTemplate->isRelistAdvancedRulesEnabled()) {
 
-            if ($listingProduct->isHidden()) {
-                $configurator->setParams(array('replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST));
+                $templateId = $ebayTemplate->getId();
+                $storeId    = $listingProduct->getListing()->getStoreId();
+                $magentoProductId = $listingProduct->getProductId();
 
-                $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
+                $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
+
+            } else {
+
+                $runner->addProduct(
+                    $listingProduct,
+                    $this->getRelistAction($listingProduct),
+                    $this->getRelistConfigurator($listingProduct)
+                );
             }
-
-            if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isRelistSendData()) {
-                $configurator->setPartialMode();
-                $configurator->allowQty()->allowPrice()->allowVariations();
-            }
-
-            $runner->addProduct(
-                $listingProduct, $action, $configurator
-            );
         }
 
-        $runner->execute();
+        $affectedListingProducts = $inspector->getMeetAdvancedRequirementsProducts(
+            $lpForAdvancedRules, SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX, 'relist'
+        );
+
+        foreach ($affectedListingProducts as $listingProduct) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+
+            $runner->addProduct(
+                $listingProduct,
+                $this->getRelistAction($listingProduct),
+                $this->getRelistConfigurator($listingProduct)
+            );
+        }
+    }
+
+    protected function getRelistAction(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        $action = \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST;
+
+        if ($listingProduct->isHidden()) {
+            $action = \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE;
+        }
+
+        return $action;
+    }
+
+    protected function getRelistConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+
+        $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
+
+        if ($listingProduct->isHidden()) {
+            $configurator->setParams(array('replaced_action' => \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST));
+        }
+
+        if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isRelistSendData()) {
+            $configurator->setPartialMode();
+            $configurator->allowQty()->allowPrice()->allowVariations();
+        }
+
+        return $configurator;
     }
 
     //########################################

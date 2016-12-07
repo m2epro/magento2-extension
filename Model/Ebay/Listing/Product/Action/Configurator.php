@@ -12,29 +12,16 @@ use Ess\M2ePro\Model\Exception\Logic;
 
 class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
 {
-    const MODE_EMPTY = 'empty';
-
-    const DATA_TYPE_GENERAL     = 'general';
-    const DATA_TYPE_QTY         = 'qty';
-    const DATA_TYPE_PRICE       = 'price';
-    const DATA_TYPE_TITLE       = 'title';
-    const DATA_TYPE_SUBTITLE    = 'subtitle';
-    const DATA_TYPE_DESCRIPTION = 'description';
-    const DATA_TYPE_IMAGES      = 'images';
-    const DATA_TYPE_VARIATIONS  = 'variations';
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getAllModes()
-    {
-        return array_merge(
-            parent::getAllModes(),
-            array(self::MODE_EMPTY)
-        );
-    }
+    const DATA_TYPE_GENERAL           = 'general';
+    const DATA_TYPE_QTY               = 'qty';
+    const DATA_TYPE_PRICE             = 'price';
+    const DATA_TYPE_TITLE             = 'title';
+    const DATA_TYPE_SUBTITLE          = 'subtitle';
+    const DATA_TYPE_DESCRIPTION       = 'description';
+    const DATA_TYPE_IMAGES            = 'images';
+    const DATA_TYPE_SPECIFICS         = 'specifics';
+    const DATA_TYPE_SHIPPING_SERVICES = 'shipping_services';
+    const DATA_TYPE_VARIATIONS        = 'variations';
 
     //########################################
 
@@ -51,6 +38,8 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_SUBTITLE,
             self::DATA_TYPE_DESCRIPTION,
             self::DATA_TYPE_IMAGES,
+            self::DATA_TYPE_SPECIFICS,
+            self::DATA_TYPE_SHIPPING_SERVICES,
             self::DATA_TYPE_VARIATIONS,
         );
     }
@@ -254,6 +243,58 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowImages()
     {
         return $this->disallow(self::DATA_TYPE_IMAGES);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isSpecificsAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_SPECIFICS);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowSpecifics()
+    {
+        return $this->allow(self::DATA_TYPE_SPECIFICS);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowSpecifics()
+    {
+        return $this->disallow(self::DATA_TYPE_SPECIFICS);
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isShippingServicesAllowed()
+    {
+        return $this->isAllowed(self::DATA_TYPE_SHIPPING_SERVICES);
+    }
+
+    /**
+     * @return $this
+     */
+    public function allowShippingServices()
+    {
+        return $this->allow(self::DATA_TYPE_SHIPPING_SERVICES);
+    }
+
+    /**
+     * @return $this
+     */
+    public function disallowShippingServices()
+    {
+        return $this->disallow(self::DATA_TYPE_SHIPPING_SERVICES);
     }
 
     // ---------------------------------------

@@ -44,7 +44,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Ab
 
     //########################################
 
-    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct, \Exception $exception)
+    protected function logError(\Ess\M2ePro\Model\Listing\Product $listingProduct,
+                                \Exception $exception,
+                                $sendToServer = true)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Log $logModel */
         $logModel = $this->activeRecordFactory->getObject('Amazon\Listing\Log');
@@ -61,7 +63,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Ab
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
         );
 
-        $this->getHelper('Module\Exception')->process($exception);
+        $this->getHelper('Module\Exception')->process($exception, $sendToServer);
     }
 
     //########################################

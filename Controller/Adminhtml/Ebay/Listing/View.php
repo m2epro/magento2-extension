@@ -34,7 +34,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return $this->_redirect('*/*/*', array(
                 '_current'  => true,
                 'do_list'   => NULL,
-                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::VIEW_MODE_EBAY
+                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY
             ));
         }
 

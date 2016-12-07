@@ -39,7 +39,14 @@ define([
                 return;
             }
 
-            jQuery('#more_button_container').clone().removeAttr('id').insertAfter('.field-files:last');
+            var newAttachment = jQuery('#more_button_container').clone();
+            newAttachment.removeAttr('id');
+
+            var newAttachmentInput = newAttachment.find('input[type=file]');
+            newAttachmentInput.removeAttr('id');
+            newAttachmentInput.val("");
+
+            newAttachment.insertAfter('.field-files:last');
 
             $('more_attachments_container').hide();
         }

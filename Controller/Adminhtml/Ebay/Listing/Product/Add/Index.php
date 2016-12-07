@@ -88,7 +88,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             );
             return $this->getResult();
         }
-        
+
         $this->setPageHelpLink('x/jgItAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
@@ -134,7 +134,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             $grid->setCurrentCategoryId($this->getSessionValue('current_category_id'));
 
             $this->setAjaxContent($grid->toHtml());
-            
+
             return $this->getResult();
         }
 

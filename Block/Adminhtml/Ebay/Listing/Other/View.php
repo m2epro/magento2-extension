@@ -47,6 +47,19 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // ---------------------------------------
 
         // ---------------------------------------
+
+        $accountId = $this->getRequest()->getParam('account');
+        $marketplaceId = $this->getRequest()->getParam('marketplace');
+
+        $this->addButton('view_logs', array(
+            'label'   => $this->__('View Log'),
+            'onclick' => 'window.open(\''.$this->getUrl('*/ebay_log_listing_other/index', [
+                'ebayAccount' => $accountId,
+                'ebayMarketplace' => $marketplaceId,
+                'listings' => true
+            ]) . '\');',
+        ));
+
         if (!is_null($this->getRequest()->getParam('back'))) {
             $url = $this->getHelper('Data')->getBackUrl();
             $this->buttonList->add('back', array(
@@ -64,8 +77,8 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'content' => $this->__(
                 <<<HTML
                 <p>The list below shows the 3rd Party Listings imported from a particular Account and Marketplace.
-                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported 
-                Items are Mapped to Magento Products, they can be Moved into an M2E Pro 
+                It contains the functionality of manual and automatic Item Mapping and Moving. After the imported
+                Items are Mapped to Magento Products, they can be Moved into an M2E Pro
                 Listing for further management.</p><br>
 
                 <p>The list is automatically updated if the import option is enabled in the Account settings.</p>
@@ -105,7 +118,7 @@ HTML
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        $logViewUrl = $this->getUrl('*/ebay_listing_other_log/index', array(
+        $logViewUrl = $this->getUrl('*/ebay_log_listing_other/index', array(
             'back'=>$helper->makeBackUrlParam('*/listing_other/index')
         ));
 
@@ -128,7 +141,7 @@ HTML
 
         $this->jsUrl->addUrls($helper->getControllerActions('Listing\Other'));
         $this->jsUrl->addUrls([
-            'ebay_listing_other_log/index' => $this->getUrl('*/ebay_listing_other_log/index'),
+            'ebay_log_listing_other/index' => $this->getUrl('*/ebay_log_listing_other/index'),
             'listing_other_mapping/map' => $this->getUrl('*/listing_other_mapping/map'),
             'logViewUrl' => $logViewUrl,
             'getErrorsSummary' => $this->getUrl('*/listing_other/getErrorsSummary'),
@@ -237,6 +250,10 @@ HTML
         });
 JS
 );
+
+        $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants(
+            '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\AbstractGrid'
+        ));
 
         $mapToProductBlock = $this->createBlock('Listing\Other\Mapping');
 

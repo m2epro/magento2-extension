@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Search;
 
-use \Ess\M2ePro\Block\Adminhtml\Listing\Search\Switcher;
+use \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
@@ -289,7 +289,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $accountId = (int)$this->getRequest()->getParam('ebayAccount', false);
         $marketplaceId = (int)$this->getRequest()->getParam('ebayMarketplace', false);
-        $listingType = (int)$this->getRequest()->getParam('listing_type', false);
+        $listingType = $this->getRequest()->getParam('listing_type', false);
 
         if ($accountId) {
             $resultCollection->getSelect()->where('account_id = ?', $accountId);
@@ -301,11 +301,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         if ($listingType) {
 
-            if ($listingType == Switcher::LISTING_TYPE_M2E_PRO) {
+            if ($listingType == TypeSwitcher::LISTING_TYPE_M2E_PRO) {
 
                 $resultCollection->getSelect()->where('is_m2epro_listing = ?', 1);
 
-            } elseif ($listingType == Switcher::LISTING_TYPE_LISTING_OTHER) {
+            } elseif ($listingType == TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
 
                 $resultCollection->getSelect()->where('is_m2epro_listing = ?', 0);
             }
@@ -494,19 +494,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     private function getListingHtml($row)
     {
-        if (is_null($row->getData('listing_id'))) {
-            $account = $this->ebayFactory->getCachedObjectLoaded('Account', $row->getData('account_id'));
-            $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'));
+        $account = $this->ebayFactory->getCachedObjectLoaded('Account', $row->getData('account_id'));
+        $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $row->getData('marketplace_id'));
 
-            return '<strong>' . $this->__('3rd Party Listings') . ':</strong>'
-            . '&nbsp;' . $account->getTitle() . ', ' . $marketplace->getTitle() . '<br/>';
+        $accountAndMarketplaceInfo =
+            '<strong>' . $this->__('Account') . ':</strong>'
+            . '&nbsp;' . $account->getTitle() . '<br/>'
+            .'<strong>' . $this->__('Marketplace') . ':</strong>'
+            . '&nbsp;' . $marketplace->getTitle() . '<br/>';
+
+        if (is_null($row->getData('listing_id'))) {
+            return $accountAndMarketplaceInfo;
         }
 
         $listingUrl = $this->getUrl('*/ebay_listing/view', array('id' => $row->getData('listing_id')));
         $listingTitle = $this->getHelper('Data')->escapeHtml($row->getData('listing_title'));
 
         return '<strong>' . $this->__('M2E Pro Listing') . ':</strong>'
-            . '&nbsp;<a href="'.$listingUrl.'" target="_blank">'.$listingTitle.'</a><br/>';
+            . '&nbsp;<a href="'.$listingUrl.'" target="_blank">'.$listingTitle.'</a><br/>'
+            . $accountAndMarketplaceInfo;
     }
 
     private function getSkuHtml($row)
@@ -795,7 +801,7 @@ HTML;
 
         if ($row->getData('is_m2epro_listing')) {
             $url = $this->getUrl('*/ebay_listing/view/', array(
-                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View::VIEW_MODE_EBAY,
+                'view_mode' => \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Switcher::VIEW_MODE_EBAY,
                 'id' => $row->getData('listing_id'),
                 'filter' => base64_encode(
                     'product_id[from]='.(int)$row->getData('product_id')

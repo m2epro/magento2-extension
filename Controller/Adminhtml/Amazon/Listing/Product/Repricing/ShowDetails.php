@@ -9,8 +9,8 @@ class ShowDetails extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $listingId     = $this->getRequest()->getParam('id');
         $accountId     = $this->getRequest()->getParam('account_id');
         $responseToken = $this->getRequest()->getParam('response_token');
-        
-        /** @var \Ess\M2ePro\Model\Account $account */         
+
+        /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
 
         if (!$account->getId()) {

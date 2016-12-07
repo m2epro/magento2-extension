@@ -186,7 +186,7 @@ HTML
                 'value' => $marketplaceId,
                 'values' => $marketplaces,
                 'tooltip' => $this->__(
-                    'Choose the Marketplace you want to list on using this M2E Pro Listing. 
+                    'Choose the Marketplace you want to list on using this M2E Pro Listing.
                     Currency will be set automatically based on the Marketplace you choose.'
                 ),
                 'field_extra_attributes' => 'style="margin-bottom: 0px"',

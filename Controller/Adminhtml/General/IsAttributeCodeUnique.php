@@ -14,9 +14,9 @@ class IsAttributeCodeUnique extends General
 {
     protected $attributeFactory;
     protected $catalogProductFactory;
-    
+
     //########################################
-    
+
     public function __construct(
         \Magento\Eav\Model\Entity\AttributeFactory $attributeFactory,
         \Magento\Catalog\Model\ProductFactory $catalogProductFactory,
@@ -29,7 +29,7 @@ class IsAttributeCodeUnique extends General
     }
 
     //########################################
-    
+
     public function execute()
     {
         $attributeObj = $this->attributeFactory->create()->loadByCode(

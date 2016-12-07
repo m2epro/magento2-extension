@@ -79,13 +79,13 @@ class Mode extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $helpBlock = $this->createBlock('HelpBlock')->setData([
             'id' => 'block_notice_listing_auto_action_mode',
             'content' => $this->__(
-                '<p>Magento products can be automatically added into or removed from the M2E Pro Listing based 
+                '<p>Magento products can be automatically added into or removed from the M2E Pro Listing based
                     on the automatic Add and Remove Rules you configure for this Listing.</p>
 
-                <p>You can always modify the add/remove settings by clicking on Edit Settings > Auto Add/Remove 
+                <p>You can always modify the add/remove settings by clicking on Edit Settings > Auto Add/Remove
                 Rules button in your M2E Pro Listing.</p>
-                
-                <p>More detailed information you can find 
+
+                <p>More detailed information you can find
                 <a href="%url%" target="_blank" class="external-link">here</a>.</p>',
                 $this->getHelpPageUrl()
             )

@@ -54,9 +54,9 @@ class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 
             $content = __(<<<HTML
             <p>You can enable/disable eBay Integration.</p><br>
-            
+
             <p>Once the Integration is disabled, its menu is not available in Magento panel.
-            Automatic data synchronization for eBay channel will not be running 
+            Automatic data synchronization for eBay channel will not be running
             (even if you did not remove the data from M2E Pro).</p>
 HTML
             );
@@ -65,9 +65,9 @@ HTML
 
             $content = __(<<<HTML
             <p>You can enable/disable Amazon Integration.</p><br>
-            
+
             <p>Once the Integration is disabled, its menu is not available in Magento panel.
-            Automatic data synchronization for eBay channel will not be running 
+            Automatic data synchronization for eBay channel will not be running
             (even if you did not remove the data from M2E Pro).</p>
 HTML
             );
@@ -77,7 +77,7 @@ HTML
             $content = __(<<<HTML
             <p>Currently, M2E Pro Team is working on the migration of Rakuten.com
             Integration from Magento v 1.x environment to Magento v 2.x.</p><br>
-            
+
             <p>Rakuten.co.uk and Rakuten.de Integrations are either being in the phase of
             implementation or have been scheduled for developement in the shortest possible time.</p>
 HTML

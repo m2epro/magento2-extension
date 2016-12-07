@@ -5,19 +5,19 @@ define([
 ], function (jQuery, _) {
     var M2EPRO_STORAGE_KEY = 'm2epro_data',
         _storage = jQuery.localStorage;
-    
+
     function initStorage() {
         var data = _storage.get(M2EPRO_STORAGE_KEY);
-        
+
         if (!_.isNull(data) && _.isObject(data)) {
             return data;
         }
-        
+
         return _storage.set(M2EPRO_STORAGE_KEY, {});
     }
-    
+
     return {
-        
+
         set: function(key, value) {
             var data = initStorage();
 
@@ -37,11 +37,11 @@ define([
 
         remove: function(key) {
             var data = initStorage();
-            
+
             if (_.isUndefined(data[key])) {
                 return false
             }
-            
+
             delete data[key];
             _storage.set(M2EPRO_STORAGE_KEY, data);
             return true;
