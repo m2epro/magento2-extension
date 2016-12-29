@@ -1,0 +1,25 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\Database\Content $block */ ?>
+
+<div class="wizard_block">
+
+    <p>
+        <?php echo $block->__('The Modules’ running has already been stopped for both M2E Pro for Magento v1.x and Magento v2.x. There are no changes which can be made to the databases data of both installations - for Magento v1.x and for Magento v2.x.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('So, now, you need to export all M2E Pro tables (apparently, with the data saved in them) from your MySQL database of Magento v1.x. It can be done using a MySQLdump utility or PHPMyAdmin options. The titles of M2E Pro tables start with the prefix  ‘m2epro_’, e.g. m2epro_account, etc.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('Thus, you should create a dump of structure and data of all tables which are started from prefix  ‘m2epro_’ in your MySQL database of Magento v1.x.</br> Then, you should import the created dump into the MySQL database of Magento v2.x'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('Once it is done, you should press <strong>Continue</strong> button to move forward and allow M2E Pro to transform the imported data to work with it in M2E Pro running in Magento v2.x.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<b>Note</b>: this step is rather time-consuming. So, you might be logged out from your Magento and the link to the Migration Wizard can be lost. To return to the current step of the wizard, you should navigate to <strong>Stores > Configuration > Multi Channels > Migration from Magento v1.x.</strong>'); ?>
+    </p>
+
+</div>

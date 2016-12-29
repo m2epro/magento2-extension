@@ -54,7 +54,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
             return $this->getResult();
         }
 
-        $this->setDescriptionTemplateFroProducts($filteredProductsIdsByType, $templateId);
+        $this->setDescriptionTemplateForProducts($filteredProductsIdsByType, $templateId);
         $this->runProcessorForParents($filteredProductsIdsByType);
 
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $template */

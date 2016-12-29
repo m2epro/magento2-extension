@@ -15,9 +15,11 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     const NICK  = 'configuration';
 
-    const EBAY_SECTION_COMPONENT = 'ebay_integration';
-    const AMAZON_SECTION_COMPONENT = 'amazon_integration';
-    const BUY_SECTION_COMPONENT = 'buy_integration';
+    const EBAY_SECTION_COMPONENT     = 'm2epro_ebay_integration';
+    const AMAZON_SECTION_COMPONENT   = 'm2epro_amazon_integration';
+    const BUY_SECTION_COMPONENT      = 'm2epro_buy_integration';
+    const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
+    const ADVANCED_SECTION_WIZARD    = 'm2epro_migration_wizard';
 
     protected $urlBuilder;
 

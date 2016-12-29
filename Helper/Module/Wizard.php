@@ -45,12 +45,13 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getNick($wizard)
+    /**
+     * @param \Ess\M2ePro\Model\Wizard $wizard
+     * @return string
+     */
+    public function getNick(\Ess\M2ePro\Model\Wizard $wizard)
     {
-        $parts = explode('\\',get_class($wizard));
-        $nick = array_pop($parts);
-        $nick{0} = strtolower($nick{0});
-        return $nick;
+        return $wizard->getNick();
     }
 
     /**
@@ -215,10 +216,12 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
             unset($this->cache[$id]);
         }
 
-        $this->getHelper('Data\Cache\Permanent')->setValue('wizard',
-                                                    json_encode($this->cache),
-                                                    array('wizard'),
-                                                    60*60);
+        $this->getHelper('Data\Cache\Permanent')->setValue(
+            'wizard',
+            $this->getHelper('Data')->jsonEncode($this->cache),
+            array('wizard'),
+            60*60
+        );
     }
 
     // ---------------------------------------
@@ -247,10 +250,12 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
 
         $this->cache[$nick][$key] = $value;
 
-        $this->getHelper('Data\Cache\Permanent')->setValue('wizard',
-                                                    json_encode($this->cache),
-                                                    array('wizard'),
-                                                    60*60);
+        $this->getHelper('Data\Cache\Permanent')->setValue(
+            'wizard',
+            $this->getHelper('Data')->jsonEncode($this->cache),
+            array('wizard'),
+            60*60
+        );
 
         $connWrite = $this->resourceConnection->getConnection();
         $tableName = $this->resourceConnection->getTableName('m2epro_wizard');

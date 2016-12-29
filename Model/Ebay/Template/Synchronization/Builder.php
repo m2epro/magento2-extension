@@ -63,7 +63,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
 
         $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\Synchronization')->getDefaultSettings();
 
-        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
+        $data = array_replace_recursive($defaultData, $data);
 
         $prepared = array_merge(
             $prepared,

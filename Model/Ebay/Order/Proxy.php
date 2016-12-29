@@ -188,18 +188,19 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         $referenceId = '';
 
         if ($this->order->isUseGlobalShippingProgram()) {
-            $globalShippingDetails = $this->order->getGlobalShippingDetails();
-            $referenceId = 'Ref #'.$globalShippingDetails['warehouse_address']['reference_id'];
+            $details = $this->order->getGlobalShippingDetails();
+            isset($details['warehouse_address']['reference_id']) &&
+            $referenceId = 'Ref #'.$details['warehouse_address']['reference_id'];
         }
 
         if ($this->order->isUseClickAndCollect()) {
-            $clickAndCollectDetails = $this->order->getClickAndCollectDetails();
-            $referenceId = 'Ref #'.$clickAndCollectDetails['reference_id'];
+            $details = $this->order->getClickAndCollectDetails();
+            isset($details['reference_id']) && $referenceId = 'Ref #'.$details['reference_id'];
         }
 
         if ($this->order->isUseInStorePickup()) {
-            $inStorePickupDetails = $this->order->getInStorePickupDetails();
-            $referenceId = 'Ref #'.$inStorePickupDetails['reference_id'];
+            $details = $this->order->getInStorePickupDetails();
+            isset($details['reference_id']) && $referenceId = 'Ref #'.$details['reference_id'];
         }
 
         $streetParts = !empty($rawAddressData['street']) ? $rawAddressData['street'] : array();

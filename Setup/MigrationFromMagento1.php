@@ -56,25 +56,53 @@ class MigrationFromMagento1
 
     public function prepareTablesPrefixes()
     {
-        $allM2eProTables = $this->installer->getConnection()->getTables('%m2epro_%');
-
-        $oldTablesPrefix = (string)preg_replace('/m2epro_[A-Za-z0-9_]+$/', '', reset($allM2eProTables));
+        $oldTablesPrefix = $this->getOldTablesPrefix();
         $currentTablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
 
         if (trim($oldTablesPrefix) == trim($currentTablesPrefix)) {
             return;
         }
 
-        foreach ($allM2eProTables as $oldTableName) {
+        foreach ($this->installer->getConnection()->getTables($oldTablesPrefix.'m2epro_%') as $oldTableName) {
             $clearTableName = str_replace($oldTablesPrefix.'m2epro_', '', $oldTableName);
             $this->getConnection()->renameTable($oldTableName, $this->getFullTableName($clearTableName));
         }
+    }
+
+    private function getOldTablesPrefix()
+    {
+        $prefix = false;
+        $primaryConfigTables = $this->installer->getConnection()->getTables('%m2epro_primary_config');
+
+        if (count($primaryConfigTables) === 1) {
+
+            $prefix = $this->installer->getConnection()
+                ->select()
+                ->from(reset($primaryConfigTables), ['value'])
+                ->where('`group` = ?', '/migrationToMagento2/source/magento/')
+                ->where('`key` = ?', 'tables_prefix')
+                ->query()->fetchColumn();
+        }
+
+        if ($prefix === false) {
+
+            $allM2eProTables = $this->installer->getConnection()->getTables('%m2epro_%');
+            $prefix = (string)preg_replace('/m2epro_[A-Za-z0-9_]+$/', '', reset($allM2eProTables));
+        }
+
+        return (string)$prefix;
     }
 
     //########################################
 
     public function process()
     {
+        /**
+         * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
+         * that does not support 'FLOAT UNSIGNED' column type
+         */
+        $this->prepareFloatUnsignedColumns();
+
         $this->migrateModuleConfig();
         $this->migrateServerLocation();
         $this->migrateModuleName();
@@ -88,16 +116,11 @@ class MigrationFromMagento1
         $this->migrateWizards();
         $this->migrateGridsPerformanceStructure();
         $this->migrateSynchronizationTemplateAdvancedConditions();
-        $this->migrateOrderSynchronization();
 
         $this->migrateEbayReturnTemplate();
         $this->migrateEbaySynchronizationTemplate();
         $this->migrateEbayCharity();
-        $this->migrateEbayItemDuplicateTool();
-        $this->migrateEbayMarketplaces();
 
-        $this->migrateAmazonShippingTemplate();
-        $this->migrateAmazonRepricingSynchronization();
         $this->migrateAmazonMarketplaces();
 
         $this->removeAndBackupBuyData();
@@ -108,6 +131,20 @@ class MigrationFromMagento1
     }
 
     //########################################
+
+    private function prepareFloatUnsignedColumns()
+    {
+        $this->getTableModifier('ebay_template_selling_format')
+            ->changeColumn('vat_percent', 'FLOAT NOT NULL', 0);
+
+        $this->getTableModifier('amazon_template_selling_format')
+            ->changeColumn('price_vat_percent', 'FLOAT NOT NULL', 0);
+
+        $this->getTableModifier('buy_template_selling_format')
+            ->changeColumn('price_vat_percent', 'FLOAT NOT NULL', 0);
+    }
+
+    // ---------------------------------------
 
     private function migrateModuleConfig()
     {
@@ -404,15 +441,19 @@ class MigrationFromMagento1
 
     private function migrateGridsPerformanceStructure()
     {
-        $this->getTableModifier('amazon_listing_product')->dropColumn('is_repricing');
-        $this->getConnection()->dropTable($this->getFullTableName('indexer_listing_product_parent'));
+        $this->getConnection()->renameTable(
+            $this->getFullTableName('indexer_listing_product_parent'),
+            $this->getFullTableName('indexer_listing_product_variation_parent')
+        );
     }
 
     private function migrateSynchronizationTemplateAdvancedConditions()
     {
         $this->getTableModifier('amazon_template_synchronization')
             ->addColumn('list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max')
-            ->addColumn('relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max')
+            ->addColumn(
+                'relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
+            )
             ->addColumn('stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max')
             ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
             ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
@@ -420,33 +461,13 @@ class MigrationFromMagento1
 
         $this->getTableModifier('ebay_template_synchronization')
             ->addColumn('list_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'list_qty_calculated_value_max')
-            ->addColumn('relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max')
+            ->addColumn(
+                'relist_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'relist_qty_calculated_value_max'
+            )
             ->addColumn('stop_advanced_rules_mode','SMALLINT(4) UNSIGNED NOT NULL',NULL,'stop_qty_calculated_value_max')
             ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
             ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
             ->addColumn('stop_advanced_rules_filters','TEXT',NULL,'stop_advanced_rules_mode');
-    }
-
-    private function migrateOrderSynchronization()
-    {
-        $this->getConfigModifier('synchronization')->getEntity('/amazon/orders/update/', 'interval')->delete();
-        $this->getTableModifier('ebay_account')->dropColumn('job_token');
-
-        $this->getTableModifier('amazon_account')->addColumn(
-            'orders_last_synchronization', 'DATETIME', 'NULL', 'other_listings_move_settings', false
-        );
-
-        $this->modifyTableRows($this->getFullTableName('amazon_account'), function ($account) {
-            $fromUpdateDate = $this->getConfigModifier('synchronization')
-                ->getEntity('/amazon/orders/receive/'.$account['merchant_id'].'/', 'from_update_date')
-                ->getValue();
-
-            if (!is_null($fromUpdateDate)) {
-                $account['orders_last_synchronization'] = $fromUpdateDate;
-            }
-
-            return $account;
-        });
     }
 
     private function migrateEbayReturnTemplate()
@@ -504,7 +525,9 @@ class MigrationFromMagento1
             ->addColumn('revise_update_specifics', 'SMALLINT(4) UNSIGNED NOT NULL', NULL, 'revise_update_images');
 
         $this->getTableModifier('ebay_template_synchronization')
-            ->addColumn('revise_update_shipping_services','SMALLINT(4) UNSIGNED NOT NULL',NULL,'revise_update_specifics');
+            ->addColumn(
+                'revise_update_shipping_services','SMALLINT(4) UNSIGNED NOT NULL',NULL,'revise_update_specifics'
+            );
     }
 
     private function migrateEbayCharity()
@@ -530,14 +553,14 @@ class MigrationFromMagento1
         // Joining Listings and Products with template mode Custom
         $select->joinLeft(
             ['el' => $this->getFullTableName('ebay_listing')],
-            '`etsf`.`template_selling_format_id`=`el`.`template_selling_format_custom_id` AND 
+            '`etsf`.`template_selling_format_id`=`el`.`template_selling_format_custom_id` AND
                 `el`.`template_selling_format_mode` = 1',
             ['listing_id']
         );
 
         $select->joinLeft(
             ['elp' => $this->getFullTableName('ebay_listing_product')],
-            '`etsf`.`template_selling_format_id`=`elp`.`template_selling_format_custom_id` AND 
+            '`etsf`.`template_selling_format_id`=`elp`.`template_selling_format_custom_id` AND
                 `elp`.`template_selling_format_mode` = 1',
             ['listing_product_id']
         );
@@ -623,87 +646,14 @@ class MigrationFromMagento1
         }
     }
 
-    private function migrateEbayItemDuplicateTool()
-    {
-        $this->getTableModifier('ebay_listing_product')->dropColumn('item_uuid');
-        $this->getTableModifier('ebay_listing_product')->dropColumn('is_duplicate');
-    }
-
-    private function migrateEbayMarketplaces()
-    {
-        $this->getConnection()->update(
-            $this->getFullTableName('marketplace'),
-            ['url' => 'motors.ebay.com'],
-            ['id = ?' => 9]
-        );
-    }
-
-    private function migrateAmazonShippingTemplate()
-    {
-        $this->getTableModifier('amazon_listing_product')->dropColumn('template_shipping_template_id');
-        $this->getTableModifier('amazon_account')->dropColumn('shipping_mode');
-        $this->getTableModifier('amazon_template_synchronization')->renameColumn(
-            'revise_change_shipping_template', 'revise_change_shipping_override_template'
-        );
-        $this->getTableModifier('amazon_template_synchronization')->dropIndex(
-            'revise_change_shipping_override_template'
-        );
-
-        $this->getConnection()->dropTable($this->getFullTableName('amazon_template_shipping_template'));
-
-        $select = $this->getConnection()->select()
-            ->from($this->getFullTableName('listing_product'))
-            ->where('synch_reasons LIKE ?', '%shippingTemplate%');
-
-        $updatedListingsProducts = [];
-
-        foreach ($this->getConnection()->fetchAll($select) as $listingProduct) {
-            $listingProduct['synch_reasons'] = str_replace(
-                'shippingTemplate', 'shippingOverrideTemplate', $listingProduct['synch_reasons']
-            );
-            $updatedListingsProducts[] = $listingProduct;
-        }
-
-        $updatedListingsProductsIds = [];
-        foreach ($updatedListingsProducts as $updatedListingProduct) {
-            $updatedListingsProductsIds[] = $updatedListingProduct['id'];
-        }
-
-        $this->getConnection()->delete(
-            $this->getFullTableName('listing_product'),
-            ['id IN (?)' => $updatedListingsProductsIds]
-        );
-        $this->getConnection()->insertMultiple($this->getFullTableName('listing_product'), $updatedListingsProducts);
-    }
-
-    private function migrateAmazonRepricingSynchronization()
-    {
-        $this->getConfigModifier('module')->updateGroup(
-            '/cron/task/repricing_synchronization/',
-            ['`group` = ?' => '/cron/task/repricing_synchronization_general/']
-        );
-
-        $this->getConfigModifier('module')->delete('/cron/task/repricing_synchronization_actual_price/');
-    }
-
     private function migrateAmazonMarketplaces()
     {
-        $this->getTableModifier('amazon_marketplace')->renameColumn(
-            'is_new_asin_available', 'is_asin_available', true, true
-        );
-
         $this->getConnection()->delete($this->getFullTableName('marketplace'), [
             'id IN (?)' => [27, 32]
         ]);
         $this->getConnection()->delete($this->getFullTableName('amazon_marketplace'), [
             'marketplace_id IN (?)' => [27, 32]
         ]);
-
-        $this->getConnection()->update(
-            $this->getFullTableName('amazon_marketplace'),
-            ['is_asin_available' => 0],
-            ['marketplace_id = ?' => 24]
-        );
     }
 
     private function removeAndBackupBuyData()
@@ -733,20 +683,16 @@ class MigrationFromMagento1
         ];
 
         foreach ($wholeBackupTables as $tableName) {
-            try {
-                if ($needBackup) {
-                    $resultTableName = $this->getBackupTableName($tableName);
+            if ($needBackup) {
+                $resultTableName = $this->getBackupTableName($tableName);
 
-                    $backupTable = $this->getConnection()->createTableByDdl(
-                        $this->getFullTableName($tableName), $resultTableName
-                    );
-                    $this->getConnection()->createTable($backupTable);
+                $backupTable = $this->getConnection()->createTableByDdl(
+                    $this->getFullTableName($tableName), $resultTableName
+                );
+                $this->getConnection()->createTable($backupTable);
 
-                    $select = $this->getConnection()->select()->from($this->getFullTableName($tableName));
-                    $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
-                }
-            } catch (\Exception $exception) {
-                continue;
+                $select = $this->getConnection()->select()->from($this->getFullTableName($tableName));
+                $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
             }
 
             if (strpos($tableName, 'buy_') === 0) {
@@ -777,19 +723,15 @@ class MigrationFromMagento1
                 ->from($this->getFullTableName($tableName))
                 ->where('component_mode = ?', 'buy');
 
-            try {
-                if ($needBackup) {
-                    $resultTableName = $this->getBackupTableName($tableName);
+            if ($needBackup) {
+                $resultTableName = $this->getBackupTableName($tableName);
 
-                    $backupTable = $this->getConnection()->createTableByDdl(
-                        $this->getFullTableName($tableName), $resultTableName
-                    );
-                    $this->getConnection()->createTable($backupTable);
+                $backupTable = $this->getConnection()->createTableByDdl(
+                    $this->getFullTableName($tableName), $resultTableName
+                );
+                $this->getConnection()->createTable($backupTable);
 
-                    $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
-                }
-            } catch (\Exception $exception) {
-                continue;
+                $this->getConnection()->query($this->getConnection()->insertFromSelect($select, $resultTableName));
             }
 
             $this->getConnection()->query(
@@ -925,16 +867,9 @@ class MigrationFromMagento1
             array('`group` = \'/view/common/autocomplete/\'')
         );
 
-        $this->getConfigModifier('module')->getEntity(NULL, 'is_disabled')->delete();
+        $this->getConfigModifier('module')->getEntity(NULL, 'is_disabled')->updateValue('0');
 
         $this->getConfigModifier('primary')->getEntity('/server/', 'messages')->delete();
-
-        $this->getConfigModifier('module')
-            ->getEntity('/cron/service/', 'hostname_1')->updateKey('hostname');
-        $this->getConfigModifier('module')
-            ->getEntity('/cron/service/', 'hostname_2')->delete();
-
-        $this->getConfigModifier('synchronization')->delete('/amazon/orders/receive_details/');
     }
 
     //########################################
@@ -991,13 +926,12 @@ class MigrationFromMagento1
             return;
         }
 
-        $this->getConnection()->exec(<<<SQL
-CREATE TABLE `{$table}_temp` LIKE `{$table}`;
-INSERT INTO `{$table}_temp` (SELECT * FROM `{$table}` ORDER BY `id` DESC LIMIT {$logsCountLimit});
-DROP TABLE `{$table}`;
-RENAME TABLE `{$table}_temp` TO `{$table}`;
-SQL
-        );
+        $this->getConnection()->exec("CREATE TABLE `{$table}_temp` LIKE `{$table}`");
+        $this->getConnection()->exec("INSERT INTO `{$table}_temp` (
+                                        SELECT * FROM `{$table}` ORDER BY `id` DESC LIMIT {$logsCountLimit}
+                                     )");
+        $this->getConnection()->exec("DROP TABLE `{$table}`");
+        $this->getConnection()->exec("RENAME TABLE `{$table}_temp` TO `{$table}`");
     }
 
     private function processLogsModifyActionIdTask($tableName)
@@ -1028,7 +962,7 @@ SQL
         $this->getConnection()->exec(<<<SQL
 UPDATE `{$table}` `log_table`
   INNER JOIN `{$entityTable}` `entity_table` ON `log_table`.`{$entityIdField}` = `entity_table`.`id`
-SET 
+SET
   `log_table`.`account_id` = `entity_table`.`account_id`,
   `log_table`.`marketplace_id` = `entity_table`.`marketplace_id`;
 SQL

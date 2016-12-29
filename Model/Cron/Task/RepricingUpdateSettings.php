@@ -59,9 +59,12 @@ final class RepricingUpdateSettings extends AbstractModel
 
     private function processAccount(\Ess\M2ePro\Model\Account $account)
     {
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Updating $repricingUpdating */
         $repricingUpdating = $this->modelFactory->getObject('Amazon\Repricing\Updating');
         $repricingUpdating->setAccount($account);
-        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+
+        /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
+        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
         $repricingSynchronization->setAccount($account);
 
         while ($listingsProductsRepricing = $this->getProcessRequiredListingsProductsRepricing($account)) {
@@ -74,7 +77,7 @@ final class RepricingUpdateSettings extends AbstractModel
                 continue;
             }
 
-            $repricingSynchronization->runBySkus($updatedSkus);
+            $repricingSynchronization->run($updatedSkus);
         }
     }
 
@@ -84,17 +87,16 @@ final class RepricingUpdateSettings extends AbstractModel
      */
     private function getProcessRequiredListingsProductsRepricing(\Ess\M2ePro\Model\Account $account)
     {
-        $listingProductCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $listingProductCollection = $this->parentFactory->getObject(
+            \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
+        )->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
             array('l' => $this->resource->getTableName('m2epro_listing')),
             'l.id=main_table.listing_id',
             array()
         );
-        $listingProductCollection->getSelect()->joinInner(
-            array('alpr' => $this->resource->getTableName('m2epro_amazon_listing_product_repricing')),
-            'alpr.listing_product_id=main_table.id',
-            array()
-        );
+        $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
+        $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
         $listingProductCollection->addFieldToFilter(
             'status',
@@ -102,6 +104,12 @@ final class RepricingUpdateSettings extends AbstractModel
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
                 \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN
             ))
+        );
+
+        $listingProductCollection->getSelect()->joinInner(
+            array('alpr' => $this->resource->getTableName('m2epro_amazon_listing_product_repricing')),
+            'alpr.listing_product_id=main_table.id',
+            array()
         );
         $listingProductCollection->addFieldToFilter('alpr.is_process_required', true);
 

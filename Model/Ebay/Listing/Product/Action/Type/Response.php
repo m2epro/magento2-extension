@@ -263,7 +263,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 );
             }
 
-            $data['variations'] = json_encode($variations);
+            $data['variations'] = $this->getHelper('Data')->jsonEncode($variations);
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Item $object */
@@ -317,7 +317,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                     $variationAdditionalData = $variation->getAdditionalData();
                     $variationAdditionalData['ebay_mpn_value'] = $requestVariation['details']['mpn'];
 
-                    $data['additional_data'] = json_encode($variationAdditionalData);
+                    $data['additional_data'] = $this->getHelper('Data')->jsonEncode($variationAdditionalData);
                 }
 
                 $variation->getChildObject()->addData($data)->save();

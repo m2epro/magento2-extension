@@ -63,6 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
+
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
         $collection->getSelect()->columns('entity_id AS category_product_id');
@@ -757,7 +758,7 @@ HTML
         $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay\Account\PickupStore\State', $stateId);
 
         $this->jsTranslator->addTranslations([
-            'Log For Sku '. $stateId => $this->__('Log For Sku (%s%)', $pickupStoreState->getSku())
+            'Log For SKU '. $stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
         ]);
 
         return $summary->toHtml();
@@ -778,7 +779,7 @@ HTML
     protected function _toHtml()
     {
         $allIds = [];
-        foreach ($this->getCollection()->getData() as $item) {
+        foreach ($this->getCollection()->getItems() as $item) {
             $allIds[] = $item['id'];
         }
 
@@ -827,7 +828,8 @@ JS
             'Unassign Product(s) from Stores' => $this->__('Unassign Product(s) from Stores'),
             'View Full Product Log' => $this->__('View Full Product Log'),
             'Back' => $this->__('Back'),
-            'Complete' => $this->__('Complete')
+            'Complete' => $this->__('Complete'),
+            'Log For SKU' => $this->__('Log For SKU')
         ]);
 
         $this->css->add(

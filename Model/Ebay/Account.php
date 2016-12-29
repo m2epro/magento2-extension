@@ -965,7 +965,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return;
         }
 
-        $this->setData('user_preferences', json_encode($responseData['user_preferences']))->save();
+        $this->setData(
+            'user_preferences',
+            $this->getHelper('Data')->jsonEncode($responseData['user_preferences'])
+        )->save();
     }
 
     // ---------------------------------------
@@ -1171,7 +1174,10 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $profiles[$marketplaceId] = $data;
 
-        $this->setData('ebay_shipping_discount_profiles', json_encode($profiles))->save();
+        $this->setData(
+            'ebay_shipping_discount_profiles',
+            $this->getHelper('Data')->jsonEncode($profiles)
+        )->save();
     }
 
     //########################################

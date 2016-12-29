@@ -48,10 +48,10 @@ class Builder extends AbstractModel
         $this->setData('price', (float)$data['price']);
         $this->setData('gift_price', (float)$data['gift_price']);
         $this->setData('currency', trim($data['currency']));
-        $this->setData('discount_details', json_encode($data['discount_details']));
+        $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));
         $this->setData('qty_purchased', (int)$data['qty_purchased']);
         $this->setData('qty_shipped', (int)$data['qty_shipped']);
-        $this->setData('tax_details', json_encode($data['tax_details']));
+        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['tax_details']));
         // ---------------------------------------
     }
 

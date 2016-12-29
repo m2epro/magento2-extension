@@ -61,9 +61,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
+        $collection->setListing($this->listing);
+
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
+            $collection->setIsNeedToUseIndexerParent(true);
+        }
+
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
-        // ---------------------------------------
 
         // Join listing product tables
         // ---------------------------------------
@@ -125,16 +130,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_current_price'  => 'online_current_price',
                 'online_reserve_price'  => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
-                'min_online_price'      => 'IF(
-                    (`t`.`variation_min_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_min_price`
-                )',
-                'max_online_price'      => 'IF(
-                    (`t`.`variation_max_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_max_price`
-                )'
             )
         );
         $eiTable = $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable();
@@ -186,36 +181,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
-        $lpvTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()->getMainTable();
-        $elpvTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')
-            ->getResource()->getMainTable();
-        $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(
-                SELECT
-                    `mlpv`.`listing_product_id`,
-                    MIN(`melpv`.`online_price`) as variation_min_price,
-                    MAX(`melpv`.`online_price`) as variation_max_price
-                FROM `'. $lpvTable .'` AS `mlpv`
-                INNER JOIN `' . $elpvTable . '` AS `melpv`
-                    ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
-                WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
-                GROUP BY `mlpv`.`listing_product_id`
-            )'),
-            'elp.listing_product_id=t.listing_product_id',
-            array(
-                'variation_min_price' => 'variation_min_price',
-                'variation_max_price' => 'variation_max_price',
-            )
-        );
-
         // ---------------------------------------
 
         // Set collection to grid
+        if ($collection->isNeedUseIndexerParent()) {
+            $collection->joinIndexerParent();
+        }
+
         $this->setCollection($collection);
 
-        parent::_prepareCollection();
-
-        return $this;
+        return parent::_prepareCollection();
     }
 
     protected function _prepareColumns()
@@ -628,47 +603,6 @@ HTML;
         }
     }
 
-    public function callbackFilterMotorsAttribute($collection, $column)
-    {
-        $value = $column->getFilter()->getValue();
-
-        if (is_null($value)) {
-            return;
-        }
-
-        if (!$this->motorsAttribute) {
-            return;
-        }
-
-        if ($value == 1) {
-            $attributeCode = $this->motorsAttribute->getAttributeCode();
-
-            $collection->addFieldToFilter($attributeCode,array('notnull'=>true));
-            $collection->addFieldToFilter($attributeCode,array('neq'=>''));
-            $collection->addFieldToFilter(
-                'is_motors_attribute_in_product_attribute_set',array('notnull'=>true)
-            );
-        } else {
-            $attributeId = $this->motorsAttribute->getId();
-            $storeId = $this->listing->getStoreId();
-
-            $joinCondition = 'eaa.entity_id = e.entity_id and eaa.attribute_id = '.$attributeId;
-            if (!$this->motorsAttribute->isScopeGlobal()) {
-                $joinCondition .= ' and eaa.store_id = '.$storeId;
-            }
-
-            $collection->getSelect()->joinLeft(
-                array('eaa' => Mage::getSingleton('core/resource')->getTableName('catalog_product_entity_text')),
-                $joinCondition,
-                array('value')
-            );
-
-            $collection->getSelect()->orWhere('eaa.value IS NULL');
-            $collection->getSelect()->orWhere('eaa.value = \'\'');
-            $collection->getSelect()->orWhere('eea.entity_attribute_id IS NULL');
-        }
-    }
-
     //########################################
 
     public function getGridUrl()
@@ -867,12 +801,10 @@ HTML;
 
     protected function _toHtml()
     {
-        $allIdsStr = implode(',', $this->getCollection()->getAllIds());
         if ($this->getRequest()->isXmlHttpRequest()) {
 
             $this->js->add(<<<JS
             EbayListingViewSettingsGridObj.afterInitPage();
-            EbayListingViewSettingsGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
 JS
             );
 
@@ -1040,7 +972,6 @@ JS
             '{$this->listing->getId()}'
         );
         EbayListingViewSettingsGridObj.afterInitPage();
-        EbayListingViewSettingsGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
         EbayListingViewSettingsGridObj.movingHandler.setOptions(M2ePro);
 
         // TODO NOT SUPPORTED FEATURES

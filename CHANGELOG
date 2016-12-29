@@ -1,4 +1,57 @@
-* 1.1.3 (07/12/2016)
+* 1.2.0 (r1731) (29/12/2016)
+
+* Added: Wizard for module Migration from Magento v1.x
+* Added: Ability to Migrate from Magento1 module v6.5.0.8
+* Added: Compatibility with Magento Enterprise version (Staging modules)
+* Added: [eBay] Ability to use M2E Pro images URLs in Item Description
+* Added: [eBay] Tool for prevention and resolving Item Duplicates issues
+* Added: [Amazon] Ability to use Shipping Templates features
+* Added: [Amazon] Fulfillment Center ID is shown for FBA Orders
+* Added: [Amazon] Ability to create new ASIN/ISBN in Canada Marketplace using Description Policy
+* Added: [Amazon] Ability to remember relations of Amazon and Magento Attributes/Options for variational Products
+* Improvement: Orders could not be downloaded if there were a lot of Orders updates in one second on channel
+* Improvement: There was Orders downloading delay if many List/Relist/Revise/Stop actions are processed at that time
+* Improvement: Grids Performance were increased if there are more than 10000+ Products
+* Improvement: Using own jsonEncode method in order to prevent issues with a broken sequence of bytes for an UTF symbols
+* Improvement: [eBay] M2E Pro Images Gallery uses CSS instead of JS (eBay active content deprecation announcement)
+* Improvement: [eBay] Price will be sent to the eBay each time during Relist action (together with QTY and Variations Data)
+* Improvement: [eBay] Now you cannot List the Variational Product if their Attributes/Options have space at start or end
+* Improvement: [eBay] Another URL is generated to link the Item on channel
+* Improvement: [Amazon] Many Performance improvements during synchronization with Repricing Service
+* Improvement: [Amazon] There was Orders statuses updating delay if many List/Relist/Revise/Stop actions are processed at that time
+* Improvement: [Amazon] Prices will be updated every hour instead of one time a day for Products which are processed by Repricing Service
+* Fix: Upgrade was failed, due to Zend Framework bug, if module migrated from Magento v1 (Many fixes during Setup / Upgrade)
+* Fix: Magento order was not created by "Out of Stock" reason if this Product Quantity was reserved earlier
+* Fix: Quantity could be calculated incorrectly in some special cases (high limited range of cases)
+* Fix: Some Magento Product changes were lost, if it exists in several M2E Pro listings with different Store Views
+* Fix: Customer tax classes instead of Product tax classes were displayed in Account Settings
+* Fix: Missed records in Listings Log during Magento Orders creation for products with negative QTY
+* Fix: Wrong message during Magento Order creation, if it is disabled in Account Settings
+* Fix: Method __() returns an empty string (with specific environment configuration - if there are some Plugins for Magento Blocks)
+* Fix: "Undefined index: interceptor in Ess/M2ePro/Helper/Module/Wizard.php" in some causes (related to Magento Plugins)
+* Fix: Some 404 error could happen during Wizard setup
+* Fix: [eBay] Items with price 0.99 and less could not be Listed and Revised
+* Fix: [eBay] 3rd Party Listings were not imported if client have a big inventory on eBay
+* Fix: [eBay] Wrong QTY could be set for Item after Relist action for items with "Listed (Hidden)" status
+* Fix: [eBay] Incorrect message about changed price of variation product, that has variations with "Listed (Hidden)" status, appears in Listings Logs
+* Fix: [eBay] Price and Quantity changes of individual variations, that performed directly on eBay, were lost in some cases
+* Fix: [eBay] Orders Synchronization could not work correctly sometimes if there are a lot of changes on eBay side
+* Fix: [eBay] Error "The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items" during list item even if requirements are met
+* Fix: [eBay] Some Variational Items may receive errors each time when they are revised/relisted (additional solution to prevent such issue)
+* Fix: [eBay] "Instance does not exist." during removing a Simple Product of Variation Product from Magento
+* Fix: [eBay] The item with "Listed (Hidden)" status can not be listed again if eBay removed it earlier (60 days inactivity reason)
+* Fix: [eBay] Items were stopped even if option "Out of Stock Control" is enabled in some cases
+* Fix: [eBay] Gallery Images were displayed incorrectly in Description on Channel
+* Fix: [Amazon] Products marked as repriced even if account was not linked to M2E Pro Repricing Service
+* Fix: [Amazon] Some products becomes "Inactive (Blocked)" even if them are "Active"
+* Fix: [Amazon] Adding a lot of Products to the Repricing Service from Listing Grid did not work correctly
+* Fix: [Amazon] Full revise by Description Policy did not work, if change was performed on Definition tab
+* Fix: [Amazon] Synchronization was broken due to error "Call to a member function getOptions() on a non-object"
+* Fix: [Amazon] Repricing data was not synchronized correctly if product has numeric SKU
+* Fix: [Amazon] Repriced Products, moved from 3rd Party Listing, were not marked as on Repricing Service
+* Fix: [Amazon] Refund Orders on Channel did not work in some cases
+
+* 1.1.3 (r1627) (07/12/2016)
 
 * Added: Ability to Migrate from Magento1 module v6.5.0.7
 * Added: Advanced conditions in Synchronization Policy based on Magento Product Attribute
@@ -26,11 +79,11 @@
 * Fix: [eBay] PHP Fatal Error: Call to a member function format() on null [vendor/magento/framework/Stdlib/DateTime/Timezone.php]
 * Fix: [Amazon] "Auto Add/Remove Rules" in Listings did not work correctly
 
-* 1.1.2 (21/09/2016)
+* 1.1.2 (r1200) (21/09/2016)
 
 * Added: Ability to Migrate from Magento1 module v6.5.0.6 version
 
-* 1.1.1 (12/09/2016)
+* 1.1.1 (r1199) (12/09/2016)
 
 * Improvement: Different versions values will be used for Marketing and Setup purposes
 * Improvement: Just upgrades will be executed if there are module MySQL tables of previous version
@@ -39,7 +92,7 @@
 * Fix: Much stability of Installation/Upgrade (module sets maintenance and doesn't break setup:upgrade process)
 * Fix: Redefinition of parameter $helperFactory in Ess/M2ePro/Model/Setup/Database/Modifier/AbstractModifier.php on line 29
 
-* 1.1.0 (07/09/2016)
+* 1.1.0 (r1171) (07/09/2016)
 
 * Added: Ability to create Magento Attributes "On the Fly"
 * Added: Advanced Filter for Magento Products / Listings Views Grids
@@ -87,6 +140,6 @@
 * Fix: [Amazon] Incorrect behavior during adding Virtual Attributes to active Variation Products
 * Removed: [eBay] List/Relist Scheduling was removed from Synchronization Policy
 
-* 1.0.0 (04/07/2016)
+* 1.0.0 (r752) (04/07/2016)
 
 * Initial version for Magento v2.*

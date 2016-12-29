@@ -107,7 +107,7 @@ class Manage extends Main
     private function duplicateListingProduct(\Ess\M2ePro\Model\Listing\Product $listingProduct)
     {
         $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
-            $listingProduct->getProductId(),false,false
+            $listingProduct->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_USER, false,false
         );
 
         $variationManager = $listingProduct->getChildObject()->getVariationManager();

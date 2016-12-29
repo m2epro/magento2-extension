@@ -96,7 +96,7 @@ class Qty extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Abstra
             // M2ePro\TRANSLATIONS
             // During the Quantity Calculation the Settings in the "Manage Stock No" field were taken into consideration.
             $this->addWarningMessage('During the Quantity Calculation the Settings in the "Manage Stock No" '.
-                'field were takken into consideration.');
+                'field were taken into consideration.');
         }
 
         if ($type === MagentoProduct::FORCING_QTY_TYPE_BACKORDERS) {

@@ -38,7 +38,7 @@ class Images extends \Ess\M2ePro\Helper\AbstractHelper
             $hashes[] = $tempImageHash;
         }
 
-        $hash = md5(json_encode($hashes));
+        $hash = md5($this->getHelper('Data')->jsonEncode($hashes));
 
         if ($haveNotSelfHostedImage) {
             $date = new \DateTime('now', new \DateTimeZone('UTC'));

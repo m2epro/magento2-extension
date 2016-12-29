@@ -142,10 +142,10 @@ final class Specifics extends AbstractModel
                 'xml_tag'            => $data['xml_tag'],
                 'xpath'              => $data['xpath'],
                 'type'               => (int)$data['type'],
-                'values'             => json_encode($data['values']),
-                'recommended_values' => json_encode($data['recommended_values']),
-                'params'             => json_encode($data['params']),
-                'data_definition'    => json_encode($data['data_definition']),
+                'values'             => $this->getHelper('Data')->jsonEncode($data['values']),
+                'recommended_values' => $this->getHelper('Data')->jsonEncode($data['recommended_values']),
+                'params'             => $this->getHelper('Data')->jsonEncode($data['params']),
+                'data_definition'    => $this->getHelper('Data')->jsonEncode($data['data_definition']),
                 'min_occurs'         => (int)$data['min_occurs'],
                 'max_occurs'         => (int)$data['max_occurs']
             );

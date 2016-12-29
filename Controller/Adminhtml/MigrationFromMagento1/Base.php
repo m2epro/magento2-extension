@@ -3,11 +3,14 @@
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
 use \Magento\Backend\App\Action;
+use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 use \Ess\M2ePro\Helper\Factory as HelperFactory;
 
 abstract class Base extends Action
 {
+    protected $currentWizardStep = NULL;
+
     /** @var HelperFactory $helperFactory */
     protected $helperFactory = NULL;
 
@@ -65,6 +68,54 @@ abstract class Base extends Action
     protected function getHelper($helperName, array $arguments = [])
     {
         return $this->helperFactory->getObject($helperName, $arguments);
+    }
+
+    //########################################
+
+    protected function getCurrentWizardStatus()
+    {
+        if (is_null($this->currentWizardStep)) {
+            $select = $this->resourceConnection->getConnection()
+                ->select()
+                ->from($this->resourceConnection->getTableName('core_config_data'), 'value')
+                ->where('scope = ?', 'default')
+                ->where('scope_id = ?', 0)
+                ->where('path = ?', BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH);
+
+            $this->currentWizardStep = $this->resourceConnection->getConnection()->fetchOne($select);
+        }
+
+        return $this->currentWizardStep;
+    }
+
+    public function setWizardStatus($status)
+    {
+        if ($this->getCurrentWizardStatus() === false) {
+
+            $this->resourceConnection->getConnection()->insert(
+                $this->resourceConnection->getTableName('core_config_data'),
+                [
+                    'scope'    => 'default',
+                    'scope_id' => 0,
+                    'path'     => BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH,
+                    'value'    => $status
+                ]
+            );
+
+        } else {
+
+            $this->resourceConnection->getConnection()->update(
+                $this->resourceConnection->getTableName('core_config_data'),
+                ['value' => $status],
+                [
+                    'scope = ?'    => 'default',
+                    'scope_id = ?' => 0,
+                    'path = ?'     => BaseMigrationFromMagento1::WIZARD_STATUS_CONFIG_PATH,
+                ]
+            );
+        }
+
+        $this->currentWizardStep = NULL;
     }
 
     //########################################

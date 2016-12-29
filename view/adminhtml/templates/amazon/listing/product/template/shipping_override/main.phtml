@@ -1,0 +1,28 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingOverride $block */
+?>
+
+<div id="template_shippingOverride_pop_up_content">
+    <div>
+
+        <?php if(count($block->getMessages()) > 0) : ?>
+            <div id="template_shippingOverride_error_block">
+                <?php echo $this->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->createBlock('HelpBlock')->setData([
+            'content' => $block->__(
+                'The Shipping Override Policy is using to edit/change the Shipping Settings provided
+                in Amazon Seller Central for the particular Items you are going to list on Amazon.<br />
+
+                You can select the Policy from the list of already created or add a new one for your Item by pressing
+                <strong>Add New Shipping Override Policy</strong> button at the top of the page.'
+            )
+        ])->toHtml(); ?>
+
+        <div id="template_shipping_grid">
+        </div>
+
+    </div>
+</div>

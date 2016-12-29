@@ -276,7 +276,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             }
 
             if (!empty($charities)) {
-                $prepared['charity'] = json_encode($charities);
+                $prepared['charity'] = $this->getHelper('Data')->jsonEncode($charities);
             }
         }
 

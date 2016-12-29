@@ -125,11 +125,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $receivedItem = $receivedItems[$existingItem['sku']];
 
             $newData = array(
-                'general_id' => (string)$receivedItem['identifiers']['general_id'],
-                'title' => (string)$receivedItem['title'],
-                'online_price' => (float)$receivedItem['price'],
-                'online_qty' => (int)$receivedItem['qty'],
-                'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
+                'general_id'         => (string)$receivedItem['identifiers']['general_id'],
+                'title'              => (string)$receivedItem['title'],
+                'online_price'       => (float)$receivedItem['price'],
+                'online_qty'         => (int)$receivedItem['qty'],
+                'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
                 'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
             );
 
@@ -145,17 +145,20 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             }
 
             $existingData = array(
-                'general_id' => (string)$existingItem['general_id'],
-                'title' => (string)$existingItem['title'],
-                'online_price' => (float)$existingItem['online_price'],
-                'online_qty' => (int)$existingItem['online_qty'],
-                'is_afn_channel' => (bool)$existingItem['is_afn_channel'],
+                'general_id'         => (string)$existingItem['general_id'],
+                'title'              => (string)$existingItem['title'],
+                'online_price'       => (float)$existingItem['online_price'],
+                'online_qty'         => (int)$existingItem['online_qty'],
+                'is_afn_channel'     => (bool)$existingItem['is_afn_channel'],
                 'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
-                'status' => (int)$existingItem['status']
+                'status'             => (int)$existingItem['status']
             );
 
-            if (!is_null($existingData['title'])) {
-                $newData['title'] = $existingData['title'];
+            if (
+                is_null($receivedItem['title'])
+                || $receivedItem['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
+            ) {
+                unset($newData['title'], $existingData['title']);
             }
 
             if ($newData == $existingData) {
@@ -278,21 +281,29 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             }
 
             $newData = array(
-                'account_id' => $this->getAccount()->getId(),
+                'account_id'     => $this->getAccount()->getId(),
                 'marketplace_id' => $this->getMarketplace()->getId(),
-                'product_id' => NULL,
+                'product_id'     => NULL,
 
                 'general_id' => (string)$receivedItem['identifiers']['general_id'],
 
-                'sku' => (string)$receivedItem['identifiers']['sku'],
+                'sku'   => (string)$receivedItem['identifiers']['sku'],
                 'title' => (string)$receivedItem['title'],
 
                 'online_price' => (float)$receivedItem['price'],
-                'online_qty' => (int)$receivedItem['qty'],
+                'online_qty'   => (int)$receivedItem['qty'],
 
-                'is_afn_channel' => (bool)$receivedItem['channel']['is_afn'],
+                'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
                 'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
             );
+
+            if (
+                isset($this->params['full_items_data'])
+                && $this->params['full_items_data']
+                && $newData['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
+            ) {
+                $newData['title'] = NULL;
+            }
 
             if ((bool)$newData['is_afn_channel']) {
                 $newData['online_qty'] = NULL;

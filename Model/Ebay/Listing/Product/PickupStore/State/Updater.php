@@ -124,7 +124,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                     $fullSettings = $this->getEbayListingProduct()->getEbaySellingFormatTemplate()->getQtySource();
                 }
 
-                $fullSettingsHash = md5(json_encode($fullSettings));
+                $fullSettingsHash = md5($this->getHelper('Data')->jsonEncode($fullSettings));
                 if (isset($fullSettingsCache[$fullSettingsHash])) {
                     $calculatedValues[] = array(
                         'sku' => $sku,
@@ -140,7 +140,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
                     'attribute' => $fullSettings['attribute'],
                 );
 
-                $sourceSettingsHash = md5(json_encode($sourceSettings));
+                $sourceSettingsHash = md5($this->getHelper('Data')->jsonEncode($sourceSettings));
 
                 $bufferedValue = NULL;
                 if (isset($sourceSettingsCache[$sourceSettingsHash])) {
@@ -419,7 +419,7 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             return $variation;
         }
 
-        throw new \Ess\M2ePro\Model\Exception\Logic('Sku not found.');
+        throw new \Ess\M2ePro\Model\Exception\Logic('SKU not found.');
     }
 
     //########################################

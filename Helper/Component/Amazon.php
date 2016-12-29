@@ -97,7 +97,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
-        $domain = $this->amazonFactory->getObjectLoaded('Marketplace',$marketplaceId)->getUrl();
+        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getUrl();
 
         return 'http://'.$domain.'/gp/product/'.$productId;
     }
@@ -107,7 +107,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         $marketplaceId = (int)$marketplaceId;
         $marketplaceId <= 0 && $marketplaceId = self::MARKETPLACE_US;
 
-        $domain = $this->amazonFactory->getObjectLoaded('Marketplace',$marketplaceId)->getUrl();
+        $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getUrl();
 
         return 'https://sellercentral.'.$domain.'/gp/orders-v2/details/?orderID='.$orderId;
     }
@@ -178,7 +178,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     public function getMarketplacesAvailableForAsinCreation()
     {
         $collection = $this->getMarketplacesAvailableForApiCreation();
-        return $collection->addFieldToFilter('is_asin_available', 1);
+        return $collection->addFieldToFilter('is_new_asin_available', 1);
     }
 
     //########################################

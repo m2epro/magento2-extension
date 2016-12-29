@@ -13,7 +13,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
 {
     /**
      * The order of the values of log types' constants is important.
-     * @see \Ess\M2ePro\Helper\View\Log::getMainType()
+     * @see \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::$actionsSortOrder
      * @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\View\Grouped\AbstractGrid::_prepareCollection()
      * @see \Ess\M2ePro\Block\Adminhtml\Log\Listing\Other\View\Grouped\AbstractGrid::_prepareCollection()
      */

@@ -258,7 +258,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductTitle($value, $row, $column, $isExport)
     {
         $title = $row->getChildObject()->getData('title');
-        $title = '<span>' . $this->getHelper('Data')->escapeHtml($title) . '</span>';
+
+        if (is_null($title)) {
+            $title = '<i style="color:gray;">' . $this->__('receiving') . '...</i>';
+        } else {
+            $title = '<span>' . $this->getHelper('Data')->escapeHtml($title) . '</span>';
+        }
 
         $tempSku = $row->getChildObject()->getData('sku');
         empty($tempSku) && $tempSku = $this->__('N/A');
@@ -325,15 +330,18 @@ HTML;
 
             $icon = 'repricing-enabled';
             $text = $this->__(
-                'This product is used by Amazon Repricing Tool.
-                 The Price cannot be updated through the M2E Pro.'
+                'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
+                 <strong>Please note</strong> that the Price value(s) shown in the grid might
+                 be different from the actual one from Amazon. It is caused by the delay
+                 in the values updating made via the Repricing Service'
             );
 
             if ((int)$row->getChildObject()->getData('is_repricing_disabled') == 1) {
                 $icon = 'repricing-disabled';
                 $text = $this->__(
-                    'This product is disabled on Amazon Repricing Tool.
-                     The Price is updated through the M2E Pro.'
+                    'This product is disabled on Amazon Repricing Tool. <br>
+                    You can map it to Magento Product and Move into M2E Pro Listing to make the
+                    Price being updated via M2E Pro.'
                 );
             }
 

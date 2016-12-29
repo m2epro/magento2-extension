@@ -60,16 +60,16 @@ class InstallData implements InstallDataInterface
     {
         $this->installer = $setup;
 
-        if (!$this->helperFactory->getObject('Data\GlobalData')->getValue('is_install_process')) {
-            return;
-        }
-
         if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_setup_failed')) {
             return;
         }
 
+        if (!$this->helperFactory->getObject('Data\GlobalData')->getValue('is_install_process') ||
+            !$this->helperFactory->getObject('Data\GlobalData')->getValue('is_install_schema_completed')) {
+            return;
+        }
+
         if ($this->isInstalled()) {
-            $this->setMagentoResourceVersion($this->getModuleSetupVersion());
             return;
         }
 
@@ -81,17 +81,22 @@ class InstallData implements InstallDataInterface
             $this->installAmazon();
         } catch (\Exception $exception) {
 
+            if ($this->isAllowedToPrintToStdErr()) {
+                echo $exception->__toString();
+            }
+
             $this->logger->error($exception, ['source' => 'InstallData']);
+            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
 
             $this->installer->endSetup();
-            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
         }
 
-        $this->installer->endSetup();
-
         $this->setModuleSetupCompleted();
         $this->setMagentoResourceVersion($this->getConfigVersion());
+
+        $this->helperFactory->getObject('Module\Maintenance\General')->disable();
+        $this->installer->endSetup();
     }
 
     //########################################
@@ -125,6 +130,7 @@ class InstallData implements InstallDataInterface
 
         $moduleConfigModifier = $this->getConfigModifier('module');
 
+        $moduleConfigModifier->insert(null, 'is_disabled', '0', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/', 'runner', 'magento', NULL);
         $moduleConfigModifier->insert('/cron/', 'last_access', NULL, 'Time of last cron synchronization');
@@ -134,7 +140,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/service/', 'auth_key', NULL, NULL);
         $moduleConfigModifier->insert('/cron/service/', 'disabled', '0', NULL);
         $moduleConfigModifier->insert('/cron/magento/', 'disabled', '0', NULL);
-        $moduleConfigModifier->insert('/cron/service/', 'hostname', 'cron.m2epro.com', NULL);
+        $moduleConfigModifier->insert('/cron/service/', 'hostname_1', 'cron.m2epro.com', NULL);
         $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'interval', '86400', 'in seconds');
         $moduleConfigModifier->insert('/cron/task/logs_clearing/', 'last_access', NULL, 'date of last access');
@@ -186,13 +192,26 @@ class InstallData implements InstallDataInterface
         );
         $moduleConfigModifier->insert('/cron/task/repricing_update_settings/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/repricing_synchronization_actual_price/', 'mode', 1, '0 - disable,\r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/cron/task/repricing_synchronization/', 'interval', '86400', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization/', 'last_access', NULL, 'date of last access'
+            '/cron/task/repricing_synchronization_actual_price/', 'interval', 3600, 'in seconds'
         );
-        $moduleConfigModifier->insert('/cron/task/repricing_synchronization/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert(
+            '/cron/task/repricing_synchronization_actual_price/', 'last_run', NULL, 'date of last access'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/repricing_synchronization_general/', 'mode', '1', '0 - disable, \r\n1 - enable'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/repricing_synchronization_general/', 'interval', '86400', 'in seconds'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/repricing_synchronization_general/', 'last_access', NULL, 'date of last access'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/repricing_synchronization_general/', 'last_run', NULL, 'date of last run'
+        );
         $moduleConfigModifier->insert(
             '/cron/task/repricing_inspect_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
@@ -601,7 +620,7 @@ class InstallData implements InstallDataInterface
                 'native_id'      => 100,
                 'title'          => 'eBay Motors',
                 'code'           => 'eBayMotors',
-                'url'            => 'motors.ebay.com',
+                'url'            => 'ebay.com/motors',
                 'status'         => 0,
                 'sorder'         => 23,
                 'group_title'    => 'Other',
@@ -1434,6 +1453,12 @@ class InstallData implements InstallDataInterface
             '/amazon/orders/reserve_cancellation/', 'last_time', NULL, 'Last check time'
         );
         $synchronizationConfigModifier->insert('/amazon/orders/update/', 'mode', '1', 'in seconds');
+        $synchronizationConfigModifier->insert('/amazon/orders/update/', 'interval', 1800, 'in seconds');
+        $synchronizationConfigModifier->insert(
+            '/amazon/orders/receive_details/', 'mode', 0, '0 - disable, \r\n1 - enable'
+        );
+        $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'interval', 3600, 'in seconds');
+        $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'last_time', NULL, 'Last check time');
         $synchronizationConfigModifier->insert('/amazon/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
             '/amazon/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
@@ -1580,49 +1605,49 @@ class InstallData implements InstallDataInterface
                 'marketplace_id'                    => 24,
                 'developer_key'                     => '8636-1433-4377',
                 'default_currency'                  => 'CAD',
-                'is_asin_available'                 => 0,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 0
             ],
             [
                 'marketplace_id'                    => 25,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 1
             ],
             [
                 'marketplace_id'                    => 26,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 0
             ],
             [
                 'marketplace_id'                    => 28,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'GBP',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 1
             ],
             [
                 'marketplace_id'                    => 29,
                 'developer_key'                     => '8636-1433-4377',
                 'default_currency'                  => 'USD',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 1
             ],
             [
                 'marketplace_id'                    => 30,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 0
             ],
             [
                 'marketplace_id'                    => 31,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
-                'is_asin_available'                 => 1,
+                'is_new_asin_available'             => 1,
                 'is_merchant_fulfillment_available' => 0
             ]
         ]);
@@ -1636,30 +1661,17 @@ class InstallData implements InstallDataInterface
             return false;
         }
 
-        $completedSetupRows = $this->getConnection()->select()
+        $setupRow = $this->getConnection()->select()
             ->from($this->getFullTableName('setup'))
+            ->where('version_from IS NULL')
             ->where('is_completed = ?', 1)
             ->query()
-            ->fetchAll();
+            ->fetch();
 
-        return count($completedSetupRows) > 0;
+        return $setupRow !== false;
     }
 
     // ---------------------------------------
-
-    private function getModuleSetupVersion()
-    {
-        if (!$this->isInstalled()) {
-            return NULL;
-        }
-
-        $setupRows = $this->getConnection()->select()
-            ->from($this->getFullTableName('setup'))
-            ->order(array('id ASC'))
-            ->query()->fetchAll();
-
-        return end($setupRows)['version_to'];
-    }
 
     private function getConfigVersion()
     {
@@ -1687,6 +1699,20 @@ class InstallData implements InstallDataInterface
     {
         $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
+    }
+
+    // ---------------------------------------
+
+    private function isAllowedToPrintToStdErr()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     //########################################

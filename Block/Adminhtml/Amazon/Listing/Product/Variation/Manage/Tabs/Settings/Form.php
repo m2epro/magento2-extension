@@ -1149,102 +1149,36 @@ HTML;
 
     public function getUsedChannelVariations()
     {
-        $usedOptions = array();
-
-        foreach ($this->getChildListingProducts() as $childListingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
-
-            /** @var ChildRelation $childTypeModel */
-            $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
-
-            if (!$childTypeModel->isVariationChannelMatched()) {
-                continue;
-            }
-
-            $usedOptions[] = $childTypeModel->getChannelOptions();
-        }
-
-        return $usedOptions;
+        return $this->getListingProductTypeModel()->getUsedChannelOptions();
     }
 
     public function getUsedProductVariations()
     {
-        $usedOptions = array();
-
-        foreach ($this->getChildListingProducts() as $childListingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
-
-            /** @var ChildRelation $childTypeModel */
-            $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
-
-            if (!$childTypeModel->isVariationProductMatched()) {
-                continue;
-            }
-
-            $usedOptions[] = $childTypeModel->getProductOptions();
-        }
-
-        return $usedOptions;
+        return $this->getListingProductTypeModel()->getUsedProductOptions();
     }
 
     // ---------------------------------------
 
     public function getUnusedProductVariations()
     {
-        return $this->getUnusedVariations($this->getCurrentProductVariations(), $this->getUsedProductVariations());
+        return $this->getListingProductTypeModel()->getUnusedProductOptions();
     }
 
     public function getUnusedChannelVariations()
     {
-        return $this->getUnusedVariations($this->getCurrentChannelVariations(), $this->getUsedChannelVariations());
-    }
-
-    private function getUnusedVariations($currentVariations, $usedVariations)
-    {
-        if (empty($currentVariations)) {
-            return array();
-        }
-
-        if (empty($usedVariations)) {
-            return $currentVariations;
-        }
-
-        $unusedOptions = array();
-
-        foreach ($currentVariations as $id => $currentOption) {
-            if ($this->isVariationExistsInArray($currentOption, $usedVariations)) {
-                continue;
-            }
-
-            $unusedOptions[$id] = $currentOption;
-        }
-
-        return $unusedOptions;
-    }
-
-    private function isVariationExistsInArray(array $needle, array $haystack)
-    {
-        foreach ($haystack as $option) {
-            if ($option != $needle) {
-                continue;
-            }
-
-            return true;
-        }
-
-        return false;
+        return $this->getListingProductTypeModel()->getUnusedChannelOptions();
     }
 
     // ---------------------------------------
 
     public function hasUnusedProductVariation()
     {
-        return count($this->getChildListingProducts()) < count($this->getCurrentProductVariations());
+        return (bool)$this->getUnusedProductVariations();
     }
 
     public function hasUnusedChannelVariations()
     {
-        return count($this->getUsedChannelVariations()) < count($this->getCurrentChannelVariations());
+        return (bool)$this->getUnusedChannelVariations();
     }
 
     // ---------------------------------------

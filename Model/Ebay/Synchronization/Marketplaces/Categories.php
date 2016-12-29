@@ -159,7 +159,9 @@ final class Categories extends AbstractModel
                 'title'              => $data['title'],
                 'path'               => $data['path'],
                 'is_leaf'            => $data['is_leaf'],
-                'features'           => ($data['is_leaf'] ? json_encode($data['features']) : NULL)
+                'features'           => (
+                    $data['is_leaf'] ? $this->getHelper('Data')->jsonEncode($data['features']) : NULL
+                )
             );
 
             if (count($insertData) >= 100 || $i >= ($categoriesCount - 1)) {

@@ -314,7 +314,7 @@ define([
                         });
 
                         this.logPopup = jQuery(modalDialogMessage).modal({
-                            title: M2ePro.translator.translate('Log For Sku ' + rowId),
+                            title: M2ePro.translator.translate('Log For SKU ' + rowId),
                             type: 'slide',
                             buttons: []
                         });
@@ -322,7 +322,7 @@ define([
 
                     modalDialogMessage.up('.modal-inner-wrap')
                                       .down('.modal-title')
-                                      .innerHTML = M2ePro.translator.translate('Log For Sku ' + rowId);
+                                      .innerHTML = M2ePro.translator.translate('Log For SKU ' + rowId);
                     this.logPopup.modal('openModal');
 
                     modalDialogMessage.innerHTML = '';

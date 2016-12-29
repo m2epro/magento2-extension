@@ -204,17 +204,24 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
         $typeIdentifier = $this->getMotorsHelper()->getIdentifierKey($type);
 
-        $select = $this->resourceConnection->getConnection()
+        $queryStmt = $this->resourceConnection->getConnection()
             ->select()
             ->from($this->getMotorsHelper()->getDictionaryTable($type))
             ->where(
                 '`'.$typeIdentifier.'` IN (?)',
                 array_keys($data)
-            );
+            )
+            ->query();
 
-        foreach ($select->query()->fetchAll() as $attributeRow) {
-            $data[$attributeRow[$typeIdentifier]]['info'] = $attributeRow;
-            $data[$attributeRow[$typeIdentifier]]['type'] = $typeIdentifier;
+        $existedItems = array();
+        while ($row = $queryStmt->fetch()) {
+            $existedItems[$row[$typeIdentifier]] = $row;
+        }
+
+        foreach ($data as $typeId => $dataItem) {
+
+            $data[$typeId]['type'] = $typeIdentifier;
+            $data[$typeId]['info'] = isset($existedItems[$typeId]) ? $existedItems[$typeId] : array();
         }
 
         return $data;

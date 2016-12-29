@@ -46,7 +46,7 @@ class Data extends AbstractForm
         $formData = $this->getFormData();
 
         $default = $this->getDefault();
-        $formData = $this->getHelper('Data')->arrayReplaceRecursive($default, $formData);
+        $formData = array_replace_recursive($default, $formData);
 
         $isCustomDescription = ($formData['description_mode'] == Description::DESCRIPTION_MODE_CUSTOM);
 
@@ -895,7 +895,12 @@ HTML
                 'wysiwyg' => true,
                 'force_load' => true,
                 'config' => new \Magento\Framework\DataObject([
-                    'enabled' => true
+                    'enabled' => true,
+                    'settings' => [
+                        'force_br_newlines' => false,
+                        'force_p_newlines'  => false,
+                        'forced_root_block' => false
+                    ]
                 ]),
                 'after_element_html' => <<<HTML
 <div id="description_template_buttons">
@@ -1565,6 +1570,18 @@ JS
             'reserve_price' => $this->__('Reserve Price'),
             'buyitnow_price' => $this->__('Buy It Now Price'),
             'qty' => $this->__('QTY'),
+            'main_image' => $this->__('Base Image Url'),
+            'gallery_image[1]' => $this->__('Gallery Image URL 1'),
+            'gallery_image[2]' => $this->__('Gallery Image URL 2'),
+            'gallery_image[3]' => $this->__('Gallery Image URL 3'),
+            'gallery_image[4]' => $this->__('Gallery Image URL 4'),
+            'gallery_image[5]' => $this->__('Gallery Image URL 5'),
+            'gallery_image[6]' => $this->__('Gallery Image URL 6'),
+            'gallery_image[7]' => $this->__('Gallery Image URL 7'),
+            'gallery_image[8]' => $this->__('Gallery Image URL 8'),
+            'gallery_image[9]' => $this->__('Gallery Image URL 9'),
+            'gallery_image[10]' => $this->__('Gallery Image URL 10'),
+            'gallery_image[11]' => $this->__('Gallery Image URL 11'),
             'listing_type' => $this->__('Listing Type'),
             'listing_duration' => $this->__('Listing Duration'),
             'handling_time' => $this->__('Dispatch Time'),

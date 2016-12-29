@@ -268,10 +268,9 @@ HTML
             ]
         );
 
-        $fieldset->addField('relist_advanced_rules_filters_notice',
+        $fieldset->addField('relist_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'container_id' => 'relist_advanced_rules_filters_warning',
                 'messages' => [[
                     'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
                     'content' => $this->__(

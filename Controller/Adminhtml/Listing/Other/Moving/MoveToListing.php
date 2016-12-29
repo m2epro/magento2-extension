@@ -32,7 +32,9 @@ class MoveToListing extends Listing
 
             $listingProductInstance = $listingInstance
                 ->getChildObject()
-                ->addProductFromOther($otherListingProductInstance,false,false);
+                ->addProductFromOther(
+                    $otherListingProductInstance, \Ess\M2ePro\Helper\Data::INITIATOR_USER, false, false
+                );
 
             if (!($listingProductInstance instanceof \Ess\M2ePro\Model\Listing\Product)) {
 

@@ -155,7 +155,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             if (isset($receivedItem['out_of_stock'])) {
 
                 $newData['additional_data'] = array('out_of_stock_control' => (bool)$receivedItem['out_of_stock']);
-                $newData['additional_data'] = json_encode($newData['additional_data']);
+                $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($newData['additional_data']);
 
             } elseif ($newData['status'] == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
                       !is_null($accountOutOfStockControl) && !$accountOutOfStockControl) {
@@ -172,7 +172,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                     $additionalData = array('out_of_stock_control' => true);
                 }
 
-                $newData['additional_data'] = json_encode($additionalData);
+                $newData['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
             }
 
             if ($existsId) {

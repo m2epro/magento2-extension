@@ -102,7 +102,8 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getBaseUrl()
     {
-        return $this->moduleConfig->getGroupValue('/amazon/repricing/', 'base_url');
+        $baseUrl = $this->moduleConfig->getGroupValue('/amazon/repricing/', 'base_url');
+        return rtrim($baseUrl, '/') . '/';
     }
 
     //########################################

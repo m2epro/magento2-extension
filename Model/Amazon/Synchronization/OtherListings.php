@@ -47,6 +47,7 @@ final class OtherListings extends AbstractModel
 
         $result = !$this->processTask('OtherListings\Update\Blocked') ? false : $result;
         $result = !$this->processTask('OtherListings\Update') ? false : $result;
+        $result = !$this->processTask('OtherListings\Title') ? false : $result;
 
         return $result;
     }

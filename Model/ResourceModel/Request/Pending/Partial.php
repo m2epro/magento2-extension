@@ -41,7 +41,7 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
             array(
                 'request_pending_partial_id' => $requestPendingPartial->getId(),
                 'part_number' => $partNumber,
-                'data'    => json_encode($data),
+                'data' => $this->getHelper('Data')->jsonEncode($data),
             )
         );
     }

@@ -10,8 +10,6 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Variation;
 
 class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
 {
-    const VALIDATE_MESSAGE_DATA_KEY = '_validate_limits_conditions_message_';
-
     protected $ebayFactory;
 
     //########################################
@@ -44,7 +42,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
                                             ->reduceOptionsForVariations($rawMagentoVariations);
 
         $rawMagentoVariations = $this->validateExistenceConditions($rawMagentoVariations,$listingProduct);
-        $rawMagentoVariations = $this->validateLimitsConditions($rawMagentoVariations,$listingProduct);
 
         $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
 
@@ -72,69 +69,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             !is_array($sourceVariations['set']) || !is_array($sourceVariations['variations']) ||
             !count($sourceVariations['set']) || !count($sourceVariations['variations'])) {
 
-            $listingProduct->setData(
-                self::VALIDATE_MESSAGE_DATA_KEY,
-                'The Product was Listed as a Simple Product because M2E Pro
-                 cannot retrieve Magento variations from this Product.'
-            );
-
-            return array(
-                'set' => array(),
-                'variations' => array()
-            );
-        }
-
-        return $sourceVariations;
-    }
-
-    protected function validateLimitsConditions($sourceVariations,
-                                                \Ess\M2ePro\Model\Listing\Product $listingProduct)
-    {
-        if (count($sourceVariations['set']) > 5) {
-
-            // Max 5 pair attribute-option:
-            // Color: Blue, Size: XL, ...
-
-            $listingProduct->setData(self::VALIDATE_MESSAGE_DATA_KEY,
-            'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
-            'Reason: number of Options more than 5.'
-            );
-
-            return array(
-                'set' => array(),
-                'variations' => array()
-            );
-        }
-
-        foreach ($sourceVariations['set'] as $singleSet) {
-
-            if (count($singleSet) > 60) {
-
-                // Maximum 60 options by one attribute:
-                // Color: Red, Blue, Green, ...
-
-                $listingProduct->setData(
-                    self::VALIDATE_MESSAGE_DATA_KEY,
-                    'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
-                    'Reason: number of values for each Option more than 60.'
-                );
-
-                return array(
-                    'set' => array(),
-                    'variations' => array()
-                );
-            }
-        }
-
-        if (count($sourceVariations['variations']) > 250) {
-
-            // Not more that 250 possible variations
-
-            $listingProduct->setData(self::VALIDATE_MESSAGE_DATA_KEY,
-            'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
-            'Reason: sum of quantities of all possible Products options more than 250.'
-            );
-
             return array(
                 'set' => array(),
                 'variations' => array()
@@ -158,8 +92,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $additionalData['configurable_attributes'] = $variationsData['additional']['attributes'];
         }
 
-        $listingProduct->setData('additional_data',json_encode($additionalData))
-                       ->save();
+        $listingProduct->setData(
+            'additional_data',
+            $this->getHelper('Data')->jsonEncode($additionalData)
+        )->save();
     }
 
     //########################################

@@ -43,7 +43,7 @@ class Order extends AbstractForm
 
         // ---------------------------------------
         $productTaxClasses = $this->taxClass->getCollection()
-            ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_CUSTOMER)
+            ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
             ->toOptionArray();
         $none = array('value' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE, 'label' => $this->__('None'));
         array_unshift($productTaxClasses, $none);
@@ -112,7 +112,7 @@ class Order extends AbstractForm
             )
         );
 
-        $formData = $this->getHelper('Data')->arrayReplaceRecursive($defaults, $formData);
+        $formData = array_replace_recursive($defaults, $formData);
 
         $form = $this->_formFactory->create();
 

@@ -1,0 +1,25 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingTemplate $block */
+?>
+
+<div id="template_shippingTemplate_pop_up_content">
+    <div>
+
+        <?php if(count($block->getMessages()) > 0) : ?>
+            <div id="template_shippingTemplate_error_block">
+                <?php echo $block->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->createBlock('HelpBlock')->setData([
+            'content' => $block->__(
+                'The Shipping Template Policy is using to specify the Shipping Settings provided in Amazon Seller Central.<br />
+                You can select the Policy from the list of already created or add a new one for your Product by pressing <strong>Add New Shipping Template Policy</strong> Button.'
+            )
+        ])->toHtml(); ?>
+
+        <div id="template_shipping_grid" style="margin: 10px auto; height: 380px !important; overflow-y: auto; overflow-x: hidden;">
+        </div>
+
+    </div>
+</div>

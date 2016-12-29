@@ -65,7 +65,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             'order_id'        => $orderId,
             'description'     => $description,
             'type'            => (int)$type,
-            'additional_data' => json_encode($additionalData)
+            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData)
         );
 
         return $dataForAdd;

@@ -439,13 +439,10 @@ HTML;
         if (
             $row->getChildObject()->getData('is_afn_channel') == Product::IS_AFN_CHANNEL_YES
         ) {
-            $value = $this->__('Amazon');
-            $value .= '<span style="font-weight: bold;">' . $value . '</span>';
-        } else {
-            $value = $this->__('Merchant');
+            return '<span style="font-weight: bold;">' . $this->__('Amazon') . '</span>';
         }
 
-        return $value;
+        return $this->__('Merchant');
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)

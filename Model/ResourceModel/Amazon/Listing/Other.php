@@ -42,11 +42,15 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     //########################################
 
-    public function getAllRepricingSkus(Account $account)
+    public function getAllRepricingSkus(Account $account, $repricingDisabled = null)
     {
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
+
+        if (!is_null($repricingDisabled)) {
+            $listingOtherCollection->addFieldToFilter('is_repricing_disabled', $repricingDisabled);
+        }
 
         $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingOtherCollection->getSelect()->columns(
@@ -58,46 +62,29 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     //########################################
 
-    public function removeRepricing(Account $account, array $skus = array())
+    public function getProductsDataBySkus(array $skus = array(),
+                                          array $filters = array(),
+                                          array $columns = array())
     {
-        if (empty($skus)) {
-            $this->getConnection()->update(
-                $this->getMainTable(),
-                array(
-                    'is_repricing'          => 0,
-                    'is_repricing_disabled' => 0
-                )
-            );
-
-            return;
-        }
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
 
-        $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
-        $listingOtherCollection->addFieldToFilter('is_repricing', 1);
-
         if (!empty($skus)) {
+            $skus = array_map(function($el){ return (string)$el; }, $skus);
             $listingOtherCollection->addFieldToFilter('sku', array('in' => array_unique($skus)));
         }
 
-        $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingOtherCollection->getSelect()->columns(array(
-            'id' => 'main_table.id'
-        ));
-
-        $listingOtherIds = $listingOtherCollection->getColumnValues('id');
-        if (empty($listingOtherIds)) {
-            return;
+        if (!empty($filters)) {
+            foreach ($filters as $columnName => $columnValue) {
+                $listingOtherCollection->addFieldToFilter($columnName, $columnValue);
+            }
         }
 
-        $this->getConnection()->update(
-            $this->getMainTable(),
-            array(
-                'is_repricing'          => 0,
-                'is_repricing_disabled' => 0
-            ),
-            array('listing_other_id IN (?)' => $listingOtherIds)
-        );
+        if (!empty($columns)) {
+            $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $listingOtherCollection->getSelect()->columns($columns);
+        }
+
+        return $listingOtherCollection->getData();
     }
 
     //########################################

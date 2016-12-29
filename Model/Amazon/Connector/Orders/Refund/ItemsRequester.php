@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Connector\Orders\Refund;
 
-class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
+abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Requester
 {
     protected $activeRecordFactory;
 
@@ -18,8 +18,8 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Account $account,
-        array $params
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     )
     {
         $this->activeRecordFactory = $activeRecordFactory;
@@ -67,42 +67,6 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
                 'orders_ids'   => array_unique($ordersIds),
             )
         );
-    }
-
-    // ########################################
-
-    protected function getResponserParams()
-    {
-        $params = array();
-
-        foreach ($this->params['items'] as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $params[$item['change_id']] = $item;
-        }
-
-        return $params;
-    }
-
-    // ########################################
-
-    public function eventBeforeExecuting()
-    {
-        parent::eventBeforeExecuting();
-
-        $changeIds = array();
-
-        foreach ($this->params['items'] as $orderRefund) {
-            if (!is_array($orderRefund)) {
-                continue;
-            }
-
-            $changeIds[] = $orderRefund['change_id'];
-        }
-
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByIds($changeIds);
     }
 
     // ########################################

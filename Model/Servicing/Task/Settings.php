@@ -45,6 +45,7 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
     {
         $this->updateServersBaseUrls($data);
         $this->updateDefaultServerBaseUrlIndex($data);
+        $this->updateCronHosts($data);
         $this->updateLastVersion($data);
         $this->updateSendLogs($data);
     }
@@ -100,11 +101,11 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
 
                 $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
 
-                $connectorObj = $dispatcherObject->getVirtualConnector('server','check','state',
-                                                                       array(
-                                                                           'base_url' => $change['baseurl'].'index.php',
-                                                                           'hostname' => $change['hostname'],
-                                                                       ));
+                $connectorObj = $dispatcherObject->getConnector('server','check','state',
+                                                                array(
+                                                                    'base_url' => $change['baseurl'].'index.php',
+                                                                    'hostname' => $change['hostname'],
+                                                                ));
                 $dispatcherObject->process($connectorObj);
                 $response = $connectorObj->getResponseData();
 
@@ -136,6 +137,38 @@ class Settings extends \Ess\M2ePro\Model\Servicing\Task
         $this->cacheConfig->setGroupValue(
             '/server/location/', 'default_index_given_by_server_at', $this->getHelper('Data')->getCurrentGmtDate()
         );
+    }
+
+    private function updateCronHosts(array $data)
+    {
+        if (!isset($data['cron_domains'])) {
+            return;
+        }
+
+        $index = 1;
+        $config = $this->getHelper('Module')->getConfig();
+
+        foreach ($data['cron_domains'] as $newCronHost) {
+
+            $oldGroupValue = $config->getGroupValue('/cron/service/','hostname_'.$index);
+
+            if ($oldGroupValue != $newCronHost) {
+                $config->setGroupValue('/cron/service/','hostname_'.$index, $newCronHost);
+            }
+
+            $index++;
+        }
+
+        for ($i = $index; $i < 100; $i++) {
+
+            $oldGroupValue = $config->getGroupValue('/cron/service/','hostname_'.$i);
+
+            if (is_null($oldGroupValue)) {
+                break;
+            }
+
+            $config->deleteGroupValue('/server/','hostname_'.$i);
+        }
     }
 
     private function updateLastVersion(array $data)

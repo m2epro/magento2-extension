@@ -22,6 +22,11 @@ abstract class TypeSwitcher extends \Ess\M2ePro\Block\Adminhtml\Switcher
         return $this->__('Listing Type');
     }
 
+    public function hasDefaultOption()
+    {
+        return false;
+    }
+
     //---------------------------------------
 
     protected function loadItems()

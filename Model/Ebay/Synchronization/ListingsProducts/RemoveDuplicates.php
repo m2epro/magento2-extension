@@ -314,7 +314,7 @@ final class RemoveDuplicates extends AbstractModel
 
         $listingProduct->addData(array(
             'status' => $status,
-            'additional_data' => json_encode($additionalData),
+            'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
         ))->save();
 
         $listingProduct->getChildObject()->updateVariationsStatus();

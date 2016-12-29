@@ -34,6 +34,12 @@ class Tabs extends AbstractTabs
             'content' => $this->createBlock('Amazon\Account\Edit\Tabs\Order')->toHtml(),
         ));
 
+        $this->addTab('shipping_settings', array(
+            'label'   => $this->__('Shipping Settings'),
+            'title'   => $this->__('Shipping Settings'),
+            'content' => $this->createBlock('Amazon\Account\Edit\Tabs\ShippingSettings')->toHtml(),
+        ));
+
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
             $this->getHelper('Data\GlobalData')->getValue('edit_account')) {
 

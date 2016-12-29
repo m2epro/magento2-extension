@@ -17,7 +17,7 @@ class ShippingOverride extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractConta
     public function _construct()
     {
         parent::_construct();
-        $this->setTemplate('amazon/listing/product/template/shipping_override.phtml');
+        $this->setTemplate('amazon/listing/product/template/shipping_override/main.phtml');
     }
 
     //########################################

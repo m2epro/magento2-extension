@@ -55,4 +55,19 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
     }
 
     //########################################
+
+    public function addProcessingLockFilter($tag)
+    {
+        $mysqlTag = $this->getConnection()->quote($tag);
+        $this->getSelect()->joinLeft(
+            array('lo' => $this->activeRecordFactory->getObject('Processing\Lock')->getResource()->getMainTable()),
+            '(`lo`.`object_id` = `main_table`.`order_id` AND `lo`.`tag` = '.$mysqlTag.')',
+            array()
+        );
+        $this->getSelect()->where(
+            '`lo`.`object_id` IS NULL'
+        );
+    }
+
+    //########################################
 }

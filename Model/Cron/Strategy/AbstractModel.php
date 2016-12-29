@@ -74,7 +74,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         return $this->allowedTasks = array(
             \Ess\M2ePro\Model\Cron\Task\RepricingInspectProducts::NICK,
             \Ess\M2ePro\Model\Cron\Task\RepricingUpdateSettings::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronization::NICK,
+            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationGeneral::NICK,
+            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationActualPrice::NICK,
             \Ess\M2ePro\Model\Cron\Task\RequestPendingSingle::NICK,
             \Ess\M2ePro\Model\Cron\Task\RequestPendingPartial::NICK,
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingSingle::NICK,

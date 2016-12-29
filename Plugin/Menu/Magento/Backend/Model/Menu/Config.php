@@ -67,6 +67,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
         $this->isProcessed = true;
 
+        // ---------------------------------------
+
         $maintenanceMenuState = $this->helperFactory->getObject('Data\Cache\Permanent')->getValue(
             self::MAINTENANCE_MENU_STATE_CACHE_KEY
         );
@@ -78,7 +80,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
                 );
                 $this->helperFactory->getObject('Magento')->clearMenuCache();
             }
-            return $this->processMaintenance($menuModel);
+            $this->processMaintenance($menuModel);
+            return $menuModel;
         } elseif(!is_null($maintenanceMenuState)) {
             $this->helperFactory->getObject('Data\Cache\Permanent')->removeValue(
                 self::MAINTENANCE_MENU_STATE_CACHE_KEY
@@ -86,7 +89,37 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             $this->helperFactory->getObject('Magento')->clearMenuCache();
         }
 
-        $this->processMenuCacheClearing();
+        // ---------------------------------------
+
+        $previousMenuState = [];
+        $currentMenuState = $this->buildMenuStateData();
+
+        /** @var \Ess\M2ePro\Model\Registry $registry */
+        $registry = $this->activeRecordFactory->getObjectLoaded(
+            'Registry', self::MENU_STATE_REGISTRY_KEY, 'key', false
+        );
+
+        if (!is_null($registry)) {
+            $previousMenuState = $registry->getValueFromJson();
+        }
+
+        if ($previousMenuState != $currentMenuState) {
+            if (is_null($registry)) {
+                $registry = $this->activeRecordFactory->getObject('Registry');
+                $registry->setKey(self::MENU_STATE_REGISTRY_KEY);
+            }
+
+            $registry->setValue(json_encode($currentMenuState))->save();
+
+            $this->helperFactory->getObject('Magento')->clearMenuCache();
+        }
+
+        // ---------------------------------------
+
+        if ($this->helperFactory->getObject('Module')->isDisabled()) {
+            $this->processModuleDisable($menuModel);
+            return $menuModel;
+        }
 
         if ($this->helperFactory->getObject('Component\Ebay')->isEnabled()) {
             $this->processWizard($menuModel->get(Ebay::MENU_ROOT_NODE_NICK), Ebay::NICK);
@@ -122,59 +155,40 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         ]);
 
         $menuModel->add($maintenanceMenuItem, null, Maintenance::MENU_POSITION);
+    }
 
-        return $menuModel;
+    private function processModuleDisable(\Magento\Backend\Model\Menu $menuModel)
+    {
+        $menuModel->remove(Ebay::MENU_ROOT_NODE_NICK);
+        $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
     }
 
     private function processWizard(\Magento\Backend\Model\Menu\Item $menu, $viewNick)
     {
+        /** @var \Ess\M2ePro\Model\Wizard $activeBlocker */
         $activeBlocker = $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard($viewNick);
 
-        if (!$activeBlocker) {
+        if (is_null($activeBlocker)) {
             return;
         }
 
         $menu->getChildren()->exchangeArray([]);
 
-        $actionUrl = 'm2epro/wizard_'.$this->helperFactory->getObject('Module\Wizard')->getNick($activeBlocker);
+        $actionUrl = 'm2epro/wizard_' . $activeBlocker->getNick();
 
-        $globalActiveBlocker = $this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard('*');
-        if ($globalActiveBlocker && $globalActiveBlocker->getNick() == 'migrationFromMagento1') {
-            $actionUrl .= '/index/referrer/'.$viewNick;
+        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1) {
+            $actionUrl .= '/index/referrer/' . $viewNick;
         }
 
         $menu->setAction($actionUrl);
     }
 
-    private function processMenuCacheClearing()
-    {
-        $previousMenuState = [];
-        $currentMenuState = $this->buildMenuStateData();
-
-        /** @var \Ess\M2ePro\Model\Registry $registry */
-        $registry = $this->activeRecordFactory->getObjectLoaded(
-            'Registry', self::MENU_STATE_REGISTRY_KEY, 'key', false
-        );
-
-        if (!is_null($registry)) {
-            $previousMenuState = $registry->getValueFromJson();
-        }
-
-        if ($previousMenuState != $currentMenuState) {
-            if (is_null($registry)) {
-                $registry = $this->activeRecordFactory->getObject('Registry');
-                $registry->setKey(self::MENU_STATE_REGISTRY_KEY);
-            }
-
-            $registry->setValue(json_encode($currentMenuState))->save();
-
-            $this->helperFactory->getObject('Magento')->clearMenuCache();
-        }
-    }
-
     private function buildMenuStateData()
     {
         return [
+            Module::IDENTIFIER => [
+                $this->helperFactory->getObject('Module')->isDisabled()
+            ],
             Ebay::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Ebay')->isEnabled(),
                 is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Ebay::NICK))

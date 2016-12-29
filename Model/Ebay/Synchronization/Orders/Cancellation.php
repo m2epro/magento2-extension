@@ -193,7 +193,7 @@ final class Cancellation extends AbstractModel
         }
 
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('sales', 'get', 'orders',
+        $connectorObj = $dispatcherObj->getVirtualConnector('orders', 'get', 'orders',
                                                             array('orders_ids' => $ordersIds),
                                                             NULL, NULL, $account);
 
@@ -271,7 +271,7 @@ final class Cancellation extends AbstractModel
                 $paymentDetails['method'], $order->getMarketplaceId()
             );
 
-            $order->setData('payment_details', json_encode($paymentDetails));
+            $order->setData('payment_details', $this->getHelper('Data')->jsonEncode($paymentDetails));
             $order->setData('payment_status', $paymentStatus);
         }
 
@@ -285,9 +285,9 @@ final class Cancellation extends AbstractModel
                 $shippingDetails['service'], $order->getMarketplaceId()
             );
 
-            $order->setData('shipping_details', json_encode($shippingDetails));
+            $order->setData('shipping_details', $this->getHelper('Data')->jsonEncode($shippingDetails));
             $order->setData('shipping_status', $shippingStatus);
-            $order->setData('tax_details', json_encode($orderData['tax_details']));
+            $order->setData('tax_details', $this->getHelper('Data')->jsonEncode($orderData['tax_details']));
         }
 
         $order->save();

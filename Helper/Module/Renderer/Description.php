@@ -116,12 +116,9 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
         $mainImage     = $magentoProduct->getImage('image');
         $mainImageLink = $mainImage ? $mainImage->getUrl() : '';
 
-        $blockObj = $this->layout->createBlock(
-            'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
-        );
-
         $search = array();
         $replace = array();
+
         foreach ($matches[0] as $key => $match) {
 
             $tempImageAttributes = explode(',', $matches[1][$key]);
@@ -141,13 +138,18 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $tempImageLink = $tempImage->getUrl();
             }
 
+            $blockObj = $this->layout->createBlock(
+                'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
+            );
+
             $data = array(
-                'width'       => $realImageAttributes[0],
-                'height'      => $realImageAttributes[1],
-                'margin'      => $realImageAttributes[2],
-                'linked_mode' => $realImageAttributes[3],
-                'watermark'   => $realImageAttributes[4],
-                'src'         => $tempImageLink
+                'width'        => $realImageAttributes[0],
+                'height'       => $realImageAttributes[1],
+                'margin'       => $realImageAttributes[2],
+                'linked_mode'  => $realImageAttributes[3],
+                'watermark'    => $realImageAttributes[4],
+                'src'          => $tempImageLink,
+                'index_number' => $key
             );
             $search[] = $match;
             $replace[] = ($tempImageLink == '')
@@ -168,13 +170,9 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             return $text;
         }
 
-        $blockObj = $this->layout->createBlock(
-            'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery'
-        );;
-
         $search = array();
         $replace = array();
-        $attributeCounter = 0;
+
         foreach ($matches[0] as $key => $match) {
             $tempMediaGalleryAttributes = explode(',', $matches[1][$key]);
             $realMediaGalleryAttributes = array();
@@ -219,20 +217,16 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 'linked_mode'  => (int)$realMediaGalleryAttributes[3],
                 'layout'       => $realMediaGalleryAttributes[4],
                 'gallery_hint' => trim($realMediaGalleryAttributes[6], '"'),
-                'watermark' => (int)$realMediaGalleryAttributes[7],
-                'images_count' => count($galleryImagesLinks),
-                'image_counter' => 0
+                'watermark'    => (int)$realMediaGalleryAttributes[7],
+                'images'       => $galleryImagesLinks,
+                'index_number' => $key
             );
 
-            $tempHtml = '';
-            $attributeCounter++;
+            $blockObj = $this->layout->createBlock(
+                'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery'
+            );
+            $tempHtml = $blockObj->setData($data)->toHtml();
 
-            foreach ($galleryImagesLinks as $imageLink) {
-                $data['image_counter']++;
-                $data['attribute_counter'] = $attributeCounter;
-                $data['src'] = $imageLink;
-                $tempHtml .= $blockObj->addData($data)->toHtml();
-            }
             $search[] = $match;
             $replace[] = preg_replace('/\s{2,}/', '', $tempHtml);
         }

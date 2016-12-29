@@ -38,9 +38,9 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _prepareLayout()
     {
         $content = $this->__('
-            In this Section you can Create, Edit and Delete Selling Format, Shipping Override, Description and
-            Synchronization Policies.<br/><br/>
-            <strong>Selling Format Policies</strong> are used to work with values related
+            In this Section you can Create, Edit and Delete "Price, Quantity and Format", "Shipping Override",
+            "Description" and "Synchronization" Policies.<br/><br/>
+            <strong>Price, Quantity and Format Policies</strong> are used to work with values related
             to the offer part of the Listings, such as
             Price, Quantity and similar parameters.<br/><br/>
             <strong>Shipping Override Policies</strong> are used to specify Settings for Shipping Services,
@@ -76,7 +76,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $data = [
             Grid::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Selling Format'),
+                'label' => $this->__('Price, Quantity and Format'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
             Grid::TEMPLATE_DESCRIPTION => [
@@ -86,6 +86,10 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             Grid::TEMPLATE_SYNCHRONIZATION => [
                 'label' => $this->__('Synchronization'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SYNCHRONIZATION) . "')",
+            ],
+            Grid::TEMPLATE_SHIPPING_TEMPLATE => [
+                'label' => $this->__('Shipping Template'),
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING_TEMPLATE) . "')",
             ],
             Grid::TEMPLATE_SHIPPING_OVERRIDE => [
                 'label' => $this->__('Shipping Override'),

@@ -574,13 +574,13 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         try {
 
-            $this->beforeCreateMagentoOrder();
-
             // Store must be initialized before products
             // ---------------------------------------
             $this->associateWithStore();
             $this->associateItemsWithProducts();
             // ---------------------------------------
+
+            $this->beforeCreateMagentoOrder();
 
             // Create magento order
             // ---------------------------------------

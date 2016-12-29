@@ -187,37 +187,6 @@ class Data extends AbstractHelper
         return $text;
     }
 
-    public function arrayReplaceRecursive($base, $replacements)
-    {
-        $args = func_get_args();
-        foreach (array_slice($args, 1) as $replacements) {
-
-            $bref_stack = array(&$base);
-            $head_stack = array($replacements);
-
-            do {
-                end($bref_stack);
-
-                $bref = &$bref_stack[key($bref_stack)];
-                $head = array_pop($head_stack);
-
-                unset($bref_stack[key($bref_stack)]);
-
-                foreach (array_keys($head) as $key) {
-
-                    if (isset($key, $bref, $bref[$key]) && is_array($bref[$key]) && is_array($head[$key])) {
-                        $bref_stack[] = &$bref[$key];
-                        $head_stack[] = $head[$key];
-                    } else {
-                        $bref[$key] = $head[$key];
-                    }
-                }
-            } while (count($head_stack));
-        }
-
-        return $base;
-    }
-
     public function normalizeToUtfEncoding($data)
     {
         if (is_array($data)) {
@@ -269,6 +238,48 @@ class Data extends AbstractHelper
         }
 
         return $string;
+    }
+
+    //########################################
+
+    /**
+     * It prevents situations when json_encode() return NULL due to some broken bytes sequence.
+     * Normally normalizeToUtfEncoding() fixes that
+     *
+     * @param $data
+     * @param bool $throwError
+     * @return null|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function jsonEncode($data, $throwError = true)
+    {
+        $encoded = @json_encode($data);
+        if (!is_null($encoded)) {
+            return $encoded;
+        }
+
+        $encoded = @json_encode($this->normalizeToUtfEncoding($data));
+        if (!is_null($encoded)) {
+            return $encoded;
+        }
+
+        $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
+        \Zend_Json::$useBuiltinEncoderDecoder = false;
+        $encoded = \Zend_Json::encode($data);
+        \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
+
+        if (!is_null($encoded)) {
+            return $encoded;
+        }
+
+        if (!$throwError) {
+            return NULL;
+        }
+
+        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to encode to JSON.' ,
+            array(
+                'source' => serialize($data)
+            ));
     }
 
     //########################################

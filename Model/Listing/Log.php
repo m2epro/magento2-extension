@@ -282,7 +282,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
             $dataForAdd['priority'] = self::PRIORITY_LOW;
         }
 
-        $dataForAdd['additional_data'] = json_encode($additionalData);
+        $dataForAdd['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
 
         return $dataForAdd;
     }

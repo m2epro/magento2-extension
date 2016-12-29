@@ -10,12 +10,14 @@ namespace Ess\M2ePro\Observer;
 
 class CreditMemo extends AbstractModel
 {
+    protected $amazonFactory;
     protected $urlBuilder;
     protected $messageManager;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\UrlInterface $urlBuilder,
         \Magento\Framework\Message\Manager $messageManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -23,6 +25,7 @@ class CreditMemo extends AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
+        $this->amazonFactory = $amazonFactory;
         $this->urlBuilder = $urlBuilder;
         $this->messageManager = $messageManager;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
@@ -86,7 +89,7 @@ class CreditMemo extends AbstractModel
                         continue;
                     }
 
-                    $amazonOrderItemCollection = $this->activeRecordFactory
+                    $amazonOrderItemCollection = $this->amazonFactory
                                                       ->getObject('Order\Item')
                                                       ->getCollection();
                     $amazonOrderItemCollection->addFieldToFilter('amazon_order_item_id', $amazonOrderItemId);

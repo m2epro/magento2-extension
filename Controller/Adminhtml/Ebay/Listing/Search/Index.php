@@ -11,9 +11,17 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
     public function execute()
     {
-        if ($this->getRequest()->getQuery('ajax')) {
+        if ($this->isAjax()) {
+            $listingType = $this->getRequest()->getParam('listing_type', false);
+
+            if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
+                $gridBlock = 'Ebay\Listing\Search\Other\Grid';
+            } else {
+                $gridBlock = 'Ebay\Listing\Search\Product\Grid';
+            }
+
             $this->setAjaxContent(
-                $this->createBlock('Ebay\Listing\Search\Grid')
+                $this->createBlock($gridBlock)
             );
             return $this->getResult();
         }

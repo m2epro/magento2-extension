@@ -48,7 +48,7 @@ class Unassign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
                 'text' => $this->__('Description Policy was successfully unassigned.')
             );
 
-            $this->setDescriptionTemplateFroProducts($productsIdsLocked, NULL);
+            $this->setDescriptionTemplateForProducts($productsIdsLocked, NULL);
             $this->runProcessorForParents($productsIdsLocked);
         }
 

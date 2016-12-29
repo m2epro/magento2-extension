@@ -2,8 +2,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\SetupManagement;
 
-use Ess\M2ePro\Model\Exception;
-use Magento\Framework\App\ResourceConnection;
 use Magento\Framework\Message\MessageInterface;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Setup\Model\Cron;
@@ -12,8 +10,8 @@ use Ess\M2ePro\Setup\LoggerFactory;
 
 class Index extends \Magento\Backend\App\Action
 {
-    const AUTHORIZATION_COOKIE_NAME  = '_m2e_dev_auth_';
-    const AUTHORIZATION_COOKIE_VALUE = 'dbc212e18c98fc59e39a173267847064af5f05ad';
+    const AUTHORIZATION_COOKIE_NAME  = '_auth_';
+    const AUTHORIZATION_COOKIE_VALUE = 'secure';
 
     /** @var \Magento\Framework\App\ResourceConnection $resourceConnection */
     private $resourceConnection;
@@ -391,6 +389,20 @@ HTML;
 <a href="{$url}">[change]</a><br>
 HTML;
 
+        $isAllowedToPrintToStderr = (bool)$this->getMagentoCoreConfigValue('m2epro/setup/allow_print_to_stderr');
+        $className = $isAllowedToPrintToStderr ? 'feature-enabled feature-enabled-word'
+                                               : 'feature-disabled feature-disabled-word';
+        $url = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreConfigValue',
+                                             '_query' => [
+                                                 'config_path'  => 'm2epro/setup/allow_print_to_stderr',
+                                                 'config_value' => (int)!$isAllowedToPrintToStderr
+                                             ]]);
+
+        $html .= <<<HTML
+<span>Allowed to print exceptions to stdErr: <span class="{$className}"></span></span>&nbsp;
+<a href="{$url}">[change]</a><br>
+HTML;
+
         $html .= "</div>";
         return $html;
     }
@@ -505,8 +517,8 @@ HTML;
 
         usort($tables, function($a, $b) {
 
-            $aResult = strpos($a, '_backup_');
-            $bResult = strpos($b, '_backup_');
+            $aResult = strpos($a, '__b_');
+            $bResult = strpos($b, '__b_');
 
             if ($aResult > 0 && $bResult === false) {
                 return -1;
@@ -727,9 +739,12 @@ HTML;
 
         if ($isExistSetupLogFile) {
 
-            $url = $this->_url->getUrl('*/*/*', ['action' => 'downloadSetupLogFile']);
+            $download = $this->_url->getUrl('*/*/*', ['action' => 'downloadSetupLogFile']);
+            $remove   = $this->_url->getUrl('*/*/*', ['action' => 'removeSetupLogFile']);
             $html .= <<<HTML
-<br><a href="{$url}">[download setup-log-file]</a><br>
+<br>
+<a href="{$download}">[download setup-log-file]</a><br>
+<a href="{$remove}">[remove setup-log-file]</a><br>
 HTML;
         }
 
@@ -759,7 +774,8 @@ HTML;
         if (!in_array($path, [
             'm2epro/general/maintenance',
             'm2epro/setup/ignore_maintenace',
-            'm2epro/setup/allow_rollback_from_backup'
+            'm2epro/setup/allow_rollback_from_backup',
+            'm2epro/setup/allow_print_to_stderr'
         ])) {
 
             $this->messageManager->addError("This config path is not supported [{$path}].");
@@ -956,6 +972,15 @@ HTML;
 
         readfile($filePath);
         die;
+    }
+
+    public function removeSetupLogFileAction()
+    {
+        $directory = $this->fileSystem->getDirectoryWrite(DirectoryList::LOG);
+        $directory->delete('m2epro' .DIRECTORY_SEPARATOR. LoggerFactory::LOGFILE_NAME);
+
+        $this->getMessageManager()->addSuccess('Successfully removed.');
+        return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
     //----------------------------------------

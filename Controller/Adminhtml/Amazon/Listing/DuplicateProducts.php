@@ -27,7 +27,7 @@ class DuplicateProducts extends Main
             $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
 
             $duplicatedListingProduct = $listingProduct->getListing()->addProduct(
-                $listingProduct->getProductId(),false,false
+                $listingProduct->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_USER, false, false
             );
 
             $variationManager = $listingProduct->getChildObject()->getVariationManager();

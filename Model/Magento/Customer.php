@@ -95,6 +95,7 @@ class Customer extends AbstractModel
             ->setPostcode($this->getData('postcode'))
             ->setTelephone($this->getData('telephone'))
             ->setStreet($street)
+            ->setCompany($this->getData('company'))
             ->setIsDefaultBilling(true)
             ->setIsDefaultShipping(true);
 

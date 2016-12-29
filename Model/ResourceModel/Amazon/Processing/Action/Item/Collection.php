@@ -43,10 +43,19 @@ class Collection extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection
         return $this;
     }
 
-    public function setAccountFilter(\Ess\M2ePro\Model\Account $account)
+    /**
+     * @param \Ess\M2ePro\Model\Account[] $accounts
+     * @return $this
+     */
+    public function setAccountsFilter(array $accounts)
     {
+        $accountIds = array();
+        foreach ($accounts as $account) {
+            $accountIds[] = $account->getId();
+        }
+
         $this->joinActionData();
-        $this->addFieldToFilter('mapa.account_id', (int)$account->getId());
+        $this->addFieldToFilter('mapa.account_id', array('in' => $accountIds));
 
         return $this;
     }

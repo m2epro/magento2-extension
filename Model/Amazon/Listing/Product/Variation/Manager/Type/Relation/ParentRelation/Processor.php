@@ -20,7 +20,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $typeModel */
     private $typeModel = null;
 
-    /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
+    /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
     private $descriptionTemplate = null;
 
     private $possibleThemes = null;

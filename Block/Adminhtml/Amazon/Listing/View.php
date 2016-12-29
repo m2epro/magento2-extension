@@ -128,6 +128,10 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             '\Ess\M2ePro\Block\Adminhtml\Log\Listing\Product\AbstractGrid'
         ));
 
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account')
+        );
+
         $showAutoAction = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
@@ -166,11 +170,14 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Description')
         );
         $this->jsUrl->addUrls(
-            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\ShippingOverride')
+            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Shipping')
         );
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation'));
         $this->jsUrl->addUrls(
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Manage')
+        );
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Vocabulary')
         );
         $this->jsUrl->addUrls(
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Individual')
@@ -260,6 +267,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $assignString = $this->__('Assign');
 
+        $templateShippingTemplatePopupTitle = $this->__('Assign Shipping Template Policy');
         $templateShippingOverridePopupTitle = $this->__('Assign Shipping Override Policy');
 
         $enterProductSearchQueryMessage = $this->__('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
@@ -298,6 +306,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'You must select at least 1 Category.' => $this->__('You must select at least 1 Category.'),
             'Rule with the same Title already exists.' => $this->__('Rule with the same Title already exists.'),
 
+            'Add New Shipping Template Policy' => $this->__('Add New Shipping Template Policy'),
             'Add New Shipping Override Policy' => $this->__('Add New Shipping Override Policy'),
             'Add New Listing' => $this->__('Add New Listing'),
 
@@ -338,6 +347,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'templateDescriptionPopupTitle' => $templateDescriptionPopupTitle,
 
             'templateShippingOverridePopupTitle' => $templateShippingOverridePopupTitle,
+            'templateShippingTemplatePopupTitle' => $templateShippingTemplatePopupTitle,
 
             'assign' => $assignString,
 

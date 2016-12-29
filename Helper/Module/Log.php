@@ -29,7 +29,7 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
             'links'  => $links
         );
 
-        return json_encode($descriptionData);
+        return $this->getHelper('Data')->jsonEncode($descriptionData);
     }
 
     /**

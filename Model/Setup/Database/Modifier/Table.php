@@ -208,6 +208,10 @@ class Table extends AbstractModifier
      */
     public function renameIndex($from, $to, $autoCommit = true)
     {
+        if (!$this->isIndexExists($from)) {
+            return $this;
+        }
+
         return $this->dropIndex($from, $autoCommit)->addIndex($to, $autoCommit);
     }
 

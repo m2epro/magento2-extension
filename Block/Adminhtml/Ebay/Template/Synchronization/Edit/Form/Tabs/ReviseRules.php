@@ -149,7 +149,7 @@ class ReviseRules extends AbstractTab
                     It is a Percent Value of maximum possible Deviation between Magento Price
                     (Price, Quantity and Format Policy Settings) and eBay Item Price, that can be ignored.<br/><br/>
                     <strong>For example</strong>, your Magento Price is 23.25$. According to
-                    Selling Format Policy Settings Item Price is equal to Magento Price.
+                    Price, Quantity and Format Policy Settings Item Price is equal to Magento Price.
                     The "Revise When Deviation More or Equal than" Option is specified to 1%.<br/>
                     1) If Magento Price was changed to 23.26$, possible Deviation Value (0.23$) is
                     <strong>more</strong> than Price change (0.1$), so the Price

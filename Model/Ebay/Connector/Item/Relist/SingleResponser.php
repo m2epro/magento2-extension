@@ -86,12 +86,17 @@ class SingleResponser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Respo
         if ($this->getStatusChanger() == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_SYNCH &&
             $this->isItemCanNotBeAccessed($responseMessages)) {
 
+            $itemId = null;
+            if (isset($this->params['product']['request']['item_id'])) {
+                $itemId = $this->params['product']['request']['item_id'];
+            }
+
             $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
             $message->initFromPreparedData(
                 $this->getHelper('Module\Translation')->__(
-                    'This Item cannot be accessed on eBay, so the Relist action cannot be executed for it.
+                    "This Item {$itemId} cannot be accessed on eBay, so the Relist action cannot be executed for it.
                     M2E Pro has automatically detected this issue and run the List action to solve it basing
-                    on the List Rule of the Synchronization Policy.'
+                    on the List Rule of the Synchronization Policy."
                 ),
                 Message::TYPE_WARNING
             );
@@ -133,6 +138,14 @@ class SingleResponser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Respo
             !isset($additionalData['is_variation_mpn_filled'])
         ) {
             $this->tryToResolveVariationMpnErrors();
+        }
+
+        if ($message = $this->isDuplicateErrorByUUIDAppeared($responseMessages)) {
+            $this->processDuplicateByUUID($message);
+        }
+
+        if ($message = $this->isDuplicateErrorByEbayEngineAppeared($responseMessages)) {
+            $this->processDuplicateByEbayEngine($message);
         }
 
         parent::eventAfterExecuting();

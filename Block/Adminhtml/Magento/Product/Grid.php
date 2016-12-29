@@ -370,4 +370,39 @@ JS
     }
 
     //########################################
+
+    protected function isFilterOrSortByPriceIsUsed($filterName = null, $advancedFilterName = null)
+    {
+        if ($filterName) {
+
+            $filters = $this->getParam($this->getVarNameFilter());
+            is_string($filters) && $filters = $this->_backendHelper->prepareFilterString($filters);
+
+            if (is_array($filters) && array_key_exists($filterName, $filters)) {
+                return true;
+            }
+
+            $sort = $this->getParam($this->getVarNameSort());
+            if ($sort == $filterName) {
+                return true;
+            }
+        }
+
+        /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */
+        $ruleModel = $this->getHelper('Data\GlobalData')->getValue('rule_model');
+
+        if ($advancedFilterName && $ruleModel) {
+
+            foreach ($ruleModel->getConditions()->getData($ruleModel->getPrefix()) as $cond) {
+
+                if ($cond->getAttribute() == $advancedFilterName) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    //########################################
 }

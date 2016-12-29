@@ -204,17 +204,8 @@ class Connection extends \Ess\M2ePro\Model\AbstractModel
 
     public function getBody()
     {
-        $request = json_encode($this->getRequest()->getInfo());
-        if ($request === false) {
-            $request = $this->getHelper('Data')->normalizeToUtfEncoding($this->getRequest()->getInfo());
-            $request = json_encode($request);
-        }
-
-        $data = json_encode($this->getRequest()->getData());
-        if ($data === false) {
-            $data = $this->getHelper('Data')->normalizeToUtfEncoding($this->getRequest()->getData());
-            $data = json_encode($data);
-        }
+        $request = $this->getHelper('Data')->jsonEncode($this->getRequest()->getInfo());
+        $data    = $this->getHelper('Data')->jsonEncode($this->getRequest()->getData());
 
         return array(
             'api_version' => self::API_VERSION,

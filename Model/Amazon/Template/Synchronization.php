@@ -53,8 +53,8 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     const REVISE_CHANGE_DESCRIPTION_TEMPLATE_NONE = 0;
     const REVISE_CHANGE_DESCRIPTION_TEMPLATE_YES  = 1;
 
-    const REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_NONE = 0;
-    const REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_YES  = 1;
+    const REVISE_CHANGE_SHIPPING_TEMPLATE_NONE = 0;
+    const REVISE_CHANGE_SHIPPING_TEMPLATE_YES  = 1;
 
     const RELIST_FILTER_USER_LOCK_NONE = 0;
     const RELIST_FILTER_USER_LOCK_YES  = 1;
@@ -306,10 +306,10 @@ class Synchronization extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ama
     /**
      * @return bool
      */
-    public function isReviseShippingOverrideTemplate()
+    public function isReviseShippingTemplate()
     {
-        return $this->getData('revise_change_shipping_override_template') !=
-            self::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_NONE;
+        return $this->getData('revise_change_shipping_template') !=
+            self::REVISE_CHANGE_SHIPPING_TEMPLATE_NONE;
     }
 
     // ---------------------------------------

@@ -114,6 +114,21 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]);
         // ---------------------------------------
 
+        $accountSelectionDisabled = false;
+
+        if($this->getRequest()->getParam('account_id')) {
+            $accountId = $this->getRequest()->getParam('account_id');
+            $fieldset->addField(
+                'account_id_hidden',
+                'hidden',
+                [
+                    'name' => 'account_id',
+                    'value' => $accountId
+                ]
+            );
+            $accountSelectionDisabled = true;
+        }
+
         $accounts = $accountsCollection->getConnection()->fetchAssoc($accountsCollection->getSelect());
         $accountSelect = $this->elementFactory->create(self::SELECT, [
             'data' => [
@@ -122,7 +137,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'style' => 'width: 50%;',
                 'value' => $accountId,
                 'values' => $accounts,
-                'required' => count($accounts) > 1
+                'required' => count($accounts) > 1,
+                'disabled' => $accountSelectionDisabled
             ]
         ]);
         $accountSelect->setForm($form);

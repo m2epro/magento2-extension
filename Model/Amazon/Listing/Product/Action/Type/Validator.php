@@ -252,10 +252,11 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $qty = $this->getQty();
         if ($qty <= 0) {
 
-            // M2ePro\TRANSLATIONS
-            // The Quantity must be greater than 0. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Quantity must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
-                'The Quantity must be greater than 0. Please, check the Selling Format Policy and Product Settings.'
+                'The Quantity must be greater than 0. Please, check the Price, Quantity and
+                Format Policy and Product Settings.'
             );
 
             return false;
@@ -273,8 +274,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            $this->getAmazonListingProduct()->isRepricing() &&
-            !$this->getAmazonListingProduct()->isRepricingDisabled()
+            $this->getAmazonListingProduct()->isRepricingEnabled()
         ) {
 
             $this->getConfigurator()->disallowPrice();
@@ -291,10 +291,11 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $price = $this->getPrice();
         if ($price <= 0) {
 
-            // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Price must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
-                'The Price must be greater than 0. Please, check the Selling Format Policy and Product Settings.'
+                'The Price must be greater than 0. Please, check the Price, Quantity and
+                Format Policy and Product Settings.'
             );
 
             return false;

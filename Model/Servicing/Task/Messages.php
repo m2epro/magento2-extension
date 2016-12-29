@@ -80,7 +80,9 @@ class Messages extends \Ess\M2ePro\Model\Servicing\Task
             $registryModel->setData('key', '/server/messages/');
         }
 
-        $registryModel->setData('value', json_encode($messages))->save();
+        $registryModel->setData(
+            'value', $this->getHelper('Data')->jsonEncode($messages)
+        )->save();
     }
 
     //########################################

@@ -30,6 +30,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     protected $moduleList;
 
+    protected $moduleManager;
+
     protected $synchronizationConfig;
 
     //########################################
@@ -44,6 +46,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeCollection,
         \Magento\Framework\Module\ModuleListInterface $moduleList,
+        \Magento\Framework\Module\Manager $moduleManager,
         \Magento\Eav\Model\Config $config,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Ess\M2ePro\Model\Config\Manager\Synchronization $synchronizationConfig,
@@ -64,6 +67,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $this->productFactory = $productFactory;
         $this->attributeCollection = $attributeCollection;
         $this->moduleList = $moduleList;
+        $this->moduleManager = $moduleManager;
         $this->synchronizationConfig = $synchronizationConfig;
         parent::__construct(
             $config,
@@ -98,7 +102,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $lastRun = $cacheConfig->getGroupValue('/servicing/statistic/', 'last_run');
 
-        if (is_null($lastRun) ||
+        if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER ||
+            is_null($lastRun) ||
             $this->getHelper('Data')->getCurrentGmtDate(true) > strtotime($lastRun) + self::RUN_INTERVAL) {
 
             $cacheConfig->setGroupValue('/servicing/statistic/', 'last_run',
@@ -121,11 +126,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         try {
 
-            $requestData['statistics']['server'] = $this->getServerRequestPart();
-            $requestData['statistics']['magento'] = $this->getMagentoRequestPart();
+            $requestData['statistics']['server']    = $this->getServerRequestPart();
+            $requestData['statistics']['magento']   = $this->getMagentoRequestPart();
             $requestData['statistics']['extension'] = $this->getExtensionRequestPart();
 
         } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
             return $requestData;
         }
 
@@ -213,8 +219,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
             $data['modules'][$module] = array(
                 'name'    => $module,
-                'version' => isset($moduleData['version']) ? $moduleData['version'] : null,
-                'status'  => (isset($moduleData['active']) && $moduleData['active'] === 'true')
+                'version' => isset($moduleData['setup_version']) ? $moduleData['setup_version'] : null,
+                'status'  => (int) $this->moduleManager->isEnabled($module)
             );
         }
 
@@ -379,6 +385,8 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $data['info']['version'] = $this->getHelper('Module')->getPublicVersion();
 
+        $data = $this->appendM2eProUpdaterModuleInfo($data);
+
         $data = $this->appendTablesInfo($data);
         $data = $this->appendSettingsInfo($data);
 
@@ -393,6 +401,24 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data = $this->appendExtensionOrdersInfo($data);
 
         $data = $this->appendLogsInfo($data);
+
+        return $data;
+    }
+
+    // ---------------------------------------
+
+    private function appendM2eProUpdaterModuleInfo($data)
+    {
+        $updaterModule = (array)$this->moduleList->getOne('Ess_M2eProUpdater');
+
+        $updaterData['installed'] = (int)$updaterModule;
+
+        if ($updaterData['installed']) {
+            $updaterData['status'] = (int)$this->moduleManager->isEnabled($updaterModule['name']);
+            $updaterData['version'] = empty($updaterModule['setup_version']) ? '' : $updaterModule['setup_version'];
+        }
+
+        $data['info']['m2eproupdater_module'] = $updaterData;
 
         return $data;
     }
@@ -564,6 +590,10 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendListingsProductsInfo($data)
     {
+        $tableListingProduct       = $this->resource->getTableName('m2epro_listing_product');
+        $tableAmazonListingProduct = $this->resource->getTableName('m2epro_amazon_listing_product');
+        $tableProductEntity        = $this->resource->getTableName('catalog_product_entity');
+
         $queryStmt = $this->resource->getConnection()
               ->select()
               ->from($this->resource->getTableName('m2epro_listing'),
@@ -580,11 +610,56 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                       ))
               ->query();
 
+        $productTypes = array(
+            \Ess\M2ePro\Model\Magento\Product::TYPE_SIMPLE_ORIGIN,
+            \Ess\M2ePro\Model\Magento\Product::TYPE_CONFIGURABLE_ORIGIN,
+            \Ess\M2ePro\Model\Magento\Product::TYPE_BUNDLE_ORIGIN,
+            \Ess\M2ePro\Model\Magento\Product::TYPE_GROUPED_ORIGIN,
+            \Ess\M2ePro\Model\Magento\Product::TYPE_DOWNLOADABLE_ORIGIN,
+            \Ess\M2ePro\Model\Magento\Product::TYPE_VIRTUAL_ORIGIN
+        );
+
         $data['listings_products']['total'] = 0;
 
         $availableComponents = $this->getHelper('Component')->getComponents();
         foreach ($availableComponents as $nick) {
             $data['listings_products'][$nick]['total'] = 0;
+
+            foreach ($productTypes as $type) {
+                $select = $this->resource->getConnection()->select();
+                $select->from(array('lp' => $tableListingProduct), array('count(*)'))
+                    ->where('component_mode = ?', $nick)
+                    ->joinLeft(
+                        array('cpe' => $tableProductEntity),
+                        'lp.product_id = cpe.entity_id',
+                        array()
+                    )
+                    ->where('type_id = ?', $type);
+
+                if ($nick === \Ess\M2ePro\Helper\Component\Amazon::NICK) {
+                    $select->joinLeft(
+                        array('alp' => $tableAmazonListingProduct),
+                        'lp.id = alp.listing_product_id',
+                        array()
+                    )
+                        ->where('variation_parent_id IS NULL');
+                }
+
+                $data['listings_products'][$nick]['products']['type'][$type] = array(
+                    'amount' => $this->resource->getConnection()->fetchOne($select)
+                );
+            }
+        }
+
+        foreach ($productTypes as $type) {
+            $amount = 0;
+            foreach ($availableComponents as $nick) {
+                $amount += $data['listings_products'][$nick]['products']['type'][$type]['amount'];
+            }
+
+            $data['listings_products']['products']['type'][$type] = array(
+                'amount' => $amount
+            );
         }
 
         while ($row = $queryStmt->fetch()) {

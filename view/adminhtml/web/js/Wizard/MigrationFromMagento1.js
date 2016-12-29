@@ -12,13 +12,6 @@ define(function () {
         // Steps
         // ---------------------------------------
 
-        welcomeStep: function ()
-        {
-            WizardObj.setStep(WizardObj.getNextStep(), function () {
-                WizardObj.complete();
-            });
-        },
-
         synchronizationStep: function ()
         {
             jQuery('#continue').prop('disabled', true);

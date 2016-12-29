@@ -81,7 +81,10 @@ class OtherCategory extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abstrac
         ksort($newData);
         ksort($oldData);
 
-        return md5(json_encode($newData)) !== md5(json_encode($oldData));
+        $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
+        $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
+
+        return md5($encodedNewData) !== md5($encodedOldData);
     }
 
     //########################################

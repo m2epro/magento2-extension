@@ -114,6 +114,32 @@
                         </tr>
 
                         <tr>
+                            <td class="label"><?php echo $block->__('Fulfilled By Amazon') ?>:</td>
+                            <td class="value">
+                                <strong>
+                                    <?php if ($this->order->getChildObject()->isFulfilledByAmazon()): ?>
+                                        <?php echo $block->__('Yes') ?>
+                                    <?php else: ?>
+                                        <?php echo $block->__('No') ?>
+                                    <?php endif; ?>
+                                </strong>
+                            </td>
+                        </tr>
+
+                        <?php $additionalData = $this->order->getAdditionalData(); ?>
+
+                        <?php if ($this->order->getChildObject()->isFulfilledByAmazon() && !empty($additionalData['fulfillment_details']['fulfillment_center_id'])): ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('AFN Warehouse') ?>:</td>
+                                <td class="value">
+                                    <strong>
+                                        <?php echo $additionalData['fulfillment_details']['fulfillment_center_id'] ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
                             <td class="label"><?php echo $block->__('Account');?></td>
                             <td class="value">
                                 <strong>

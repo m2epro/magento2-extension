@@ -38,7 +38,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
             $this->modelFactory->getObject('Log\Clearing')->saveSettings(
                 \Ess\M2ePro\Model\Log\Clearing::LOG_ORDERS,
                 $post['orders_log_mode'],
-                0
+                90
             );
 
             if ($this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
@@ -59,12 +59,17 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         $messages = [];
         if (!is_null($task)) {
 
+            $title = ucwords(str_replace('_', ' ', $log));
+            if ($log == \Ess\M2ePro\Model\Log\Clearing::LOG_EBAY_PICKUP_STORE) {
+                $title = 'eBay In-Store Pickup';
+            }
+
             switch ($task) {
                 case 'run_now':
                     $this->modelFactory->getObject('Log\Clearing')->clearOldRecords($log);
                     $tempString = $this->__(
                         'Log for %title% has been successfully cleared.',
-                        str_replace('_',' ',$log)
+                        $title
                     );
                     $messages[] = ['success' => $tempString];
                     break;
@@ -73,7 +78,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
                     $this->modelFactory->getObject('Log\Clearing')->clearAllLog($log);
                     $tempString = $this->__(
                         'All Log for %title% has been successfully cleared.',
-                        str_replace('_',' ',$log)
+                        $title
                     );
                     $messages[] = ['success' => $tempString];
                     break;

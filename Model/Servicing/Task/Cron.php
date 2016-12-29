@@ -29,6 +29,10 @@ class Cron extends \Ess\M2ePro\Model\Servicing\Task
     {
         $helper = $this->getHelper('Module\Cron');
 
+        if ($this->getInitiator() === \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
+            return true;
+        }
+
         if (is_null($helper->getLastRun())) {
             return true;
         }

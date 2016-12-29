@@ -23,7 +23,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Magento\Catalog\Model\ProductFactory $productFactory,
-        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -33,7 +33,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
         $this->resourceConnection = $resourceConnection;
         $this->productFactory = $productFactory;
 
-        parent::__construct($categoryFactory, $context, $backendHelper, $data);
+        parent::__construct($categoryCollectionFactory, $context, $backendHelper, $data);
     }
 
     //########################################
@@ -63,8 +63,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareCollection()
     {
-        /* @var $collection \Magento\Catalog\Model\Category */
-        $collection = $this->categoryFactory->create()->getCollection();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection $collection */
+        $collection = $this->categoryCollectionFactory->create();
         $collection->addAttributeToSelect('name');
 
         $collection->addFieldToFilter(array(
@@ -265,6 +265,7 @@ HTML;
     require([
         'M2ePro/Plugin/Messages'
     ],function(MessageObj) {
+        MessageObj.clear();
         MessageObj.addErrorMessage('{$msg}');
         $('save_and_go_to_listing_view').addClassName('disabled').onclick = function() {
             return null;

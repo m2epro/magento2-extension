@@ -90,7 +90,7 @@ class ProductData extends \Ess\M2ePro\Helper\AbstractHelper
 
         $registryModel->addData(array(
             'key'   => $key,
-            'value' => json_encode($allRecent)
+            'value' => $this->getHelper('Data')->jsonEncode($allRecent)
         ))->save();
     }
 

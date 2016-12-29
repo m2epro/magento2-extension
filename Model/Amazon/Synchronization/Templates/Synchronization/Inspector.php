@@ -751,8 +751,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            $amazonListingProduct->isRepricing() &&
-            !$amazonListingProduct->getRepricing()->isOnlineDisabled()) {
+            $amazonListingProduct->isRepricingEnabled()) {
             return false;
         }
 

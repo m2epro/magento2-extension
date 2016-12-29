@@ -25,7 +25,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
             'rule_id'    => $categoryGroup->getId(),
             'rule_title' => $categoryGroup->getTitle(),
         );
-        $listingProduct = $this->getListing()->addProduct($product, false, true, $logData);
+        $listingProduct = $this->getListing()->addProduct(
+            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+        );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
@@ -54,7 +56,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $logData = array(
             'reason' => __METHOD__,
         );
-        $listingProduct = $this->getListing()->addProduct($product, false, true, $logData);
+        $listingProduct = $this->getListing()->addProduct(
+            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+        );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;
@@ -85,7 +89,9 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $logData = array(
             'reason' => __METHOD__,
         );
-        $listingProduct = $this->getListing()->addProduct($product, false, true, $logData);
+        $listingProduct = $this->getListing()->addProduct(
+            $product, \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION, false, true, $logData
+        );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return;

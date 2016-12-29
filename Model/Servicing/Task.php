@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Model\Servicing;
 abstract class Task extends \Ess\M2ePro\Model\AbstractModel
 {
     private $params = array();
+    private $initiator;
 
     protected $config;
     protected $cacheConfig;
@@ -40,6 +41,19 @@ abstract class Task extends \Ess\M2ePro\Model\AbstractModel
         $this->resource = $resource;
 
         parent::__construct($helperFactory, $modelFactory);
+    }
+
+    //########################################
+
+    public function setInitiator($initiator)
+    {
+        $this->initiator = $initiator;
+        return $this;
+    }
+
+    public function getInitiator()
+    {
+        return $this->initiator;
     }
 
     //########################################

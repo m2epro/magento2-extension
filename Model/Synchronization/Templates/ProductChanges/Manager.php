@@ -103,7 +103,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     private function getListingProducts(array $attributes, $withStoreFilter, $fetchFunction)
     {
         $args = func_get_args();
-        $cacheKey = md5(json_encode($args));
+        $cacheKey = md5($this->getHelper('Data')->jsonEncode($args));
 
         if (isset($this->cache['listings_products_by_params'][$cacheKey])) {
             return $this->cache['listings_products_by_params'][$cacheKey];

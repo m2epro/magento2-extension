@@ -318,6 +318,18 @@ class Save extends Account
 
         $isEdit = !is_null($id);
 
+        // tab: shipping settings
+        // ---------------------------------------
+        $keys = array(
+            'shipping_mode'
+        );
+        foreach ($keys as $key) {
+            if (isset($post[$key])) {
+                $data[$key] = $post[$key];
+            }
+        }
+        // ---------------------------------------
+
         // Add or update model
         // ---------------------------------------
         $model = $this->amazonFactory->getObject('Account');

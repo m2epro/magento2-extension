@@ -154,13 +154,12 @@ class LogsImprovements extends AbstractFeature
 
         $limit = self::LIMIT_LOGS_COUNT;
 
-        $this->getConnection()->exec(<<<SQL
-CREATE TABLE `{$table}_temp` LIKE `{$table}`;
-INSERT INTO `{$table}_temp` (SELECT * FROM `{$table}` ORDER BY `id` DESC LIMIT {$limit});
-DROP TABLE `{$table}`;
-RENAME TABLE `{$table}_temp` TO `{$table}`;
-SQL
-        );
+        $this->getConnection()->exec("CREATE TABLE `{$table}_temp` LIKE `{$table}`");
+        $this->getConnection()->exec("INSERT INTO `{$table}_temp` (
+                                        SELECT * FROM `{$table}` ORDER BY `id` DESC LIMIT {$limit}
+                                     )");
+        $this->getConnection()->exec("DROP TABLE `{$table}`");
+        $this->getConnection()->exec("RENAME TABLE `{$table}_temp` TO `{$table}`");
     }
 
     protected function processModifyActionId($tableName)

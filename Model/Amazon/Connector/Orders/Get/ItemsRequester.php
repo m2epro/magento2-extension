@@ -22,8 +22,7 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
     protected function getResponserParams()
     {
         return array(
-            'account_id' => $this->account->getId(),
-            'marketplace_id' => $this->account->getChildObject()->getMarketplaceId()
+            'accounts_access_tokens' => $this->getAccountsAccessTokens()
         );
     }
 
@@ -31,11 +30,29 @@ class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\
 
     protected function getRequestData()
     {
-        return array(
-            'updated_since_time' => $this->params['from_date'],
-            'updated_to_time'    => $this->params['to_date'],
-            'status_filter'      => !empty($this->params['status']) ? $this->params['status'] : NULL
+        $data = array(
+            'accounts' => $this->getAccountsAccessTokens(),
+            'from_update_date' => $this->params['from_update_date'],
+            'to_update_date' => $this->params['to_update_date']
         );
+
+        if (!empty($this->params['job_token'])) {
+            $data['job_token'] = $this->params['job_token'];
+        }
+
+        return $data;
+    }
+
+    //-----------------------------------------
+
+    private function getAccountsAccessTokens()
+    {
+        $accountsAccessTokens = array();
+        foreach ($this->params['accounts'] as $account) {
+            $accountsAccessTokens[] = $account->getChildObject()->getServerHash();
+        }
+
+        return $accountsAccessTokens;
     }
 
     // ########################################

@@ -103,14 +103,14 @@ class Shipment extends AbstractModel
             $url = $this->urlBuilder->getUrl('*/amazon_log_order/index', array('id' => $order->getId()));
         }
 
-        $chanelTitle = $order->getComponentTitle();
+        $channelTitle = $order->getComponentTitle();
         // M2ePro\TRANSLATIONS
-        // Shipping Status for %chanel_title% Order was not updated. View <a href="%url%" target="_blank" >Order Log</a> for more details.
+        // Shipping Status for %channel_title% Order was not updated. View <a href="%url%" target="_blank" >Order Log</a> for more details.
         $message = $this->getHelper('Module\Translation')->__(
-            'Shipping Status for %chanel_title% Order was not updated.'.
+            'Shipping Status for %channel_title% Order was not updated.'.
             ' View <a href="%url% target="_blank" >Order Log</a>'.
             ' for more details.',
-            $chanelTitle, $url
+            $channelTitle, $url
         );
 
         $this->messageManager->addError($message);

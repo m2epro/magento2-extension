@@ -34,7 +34,7 @@ class ShippingOverride extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abst
             return;
         }
 
-        $templates = array('shippingOverrideTemplate');
+        $templates = array('shippingTemplate');
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
 
@@ -82,7 +82,10 @@ class ShippingOverride extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Abst
         array_walk($newData['services'],'ksort');
         array_walk($oldData['services'],'ksort');
 
-        return md5(json_encode($newData)) !== md5(json_encode($oldData));
+        $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
+        $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
+
+        return md5($encodedNewData) !== md5($encodedOldData);
     }
 
     //########################################

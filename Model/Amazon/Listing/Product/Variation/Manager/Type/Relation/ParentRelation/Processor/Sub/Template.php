@@ -16,7 +16,8 @@ class Template extends AbstractModel
 
     protected function execute()
     {
-        $descriptionTemplateId = $this->getProcessor()->getAmazonListingProduct()->getTemplateDescriptionId();
+        $descriptionTemplateId      = $this->getProcessor()->getAmazonListingProduct()->getTemplateDescriptionId();
+        $shippingTemplateTemplateId = $this->getProcessor()->getAmazonListingProduct()->getTemplateShippingTemplateId();
         $shippingOverrideTemplateId = $this->getProcessor()->getAmazonListingProduct()->getTemplateShippingOverrideId();
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
@@ -28,6 +29,11 @@ class Template extends AbstractModel
 
             if ($amazonListingProduct->getTemplateDescriptionId() != $descriptionTemplateId) {
                 $amazonListingProduct->setData('template_description_id', $descriptionTemplateId);
+                $needSave = true;
+            }
+
+            if ($amazonListingProduct->getTemplateShippingTemplateId() != $shippingTemplateTemplateId) {
+                $listingProduct->setData('template_shipping_template_id', $shippingTemplateTemplateId);
                 $needSave = true;
             }
 

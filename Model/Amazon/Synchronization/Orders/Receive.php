@@ -48,55 +48,58 @@ final class Receive extends AbstractModel
         $iteration = 0;
         $percentsForOneAccount = $this->getPercentsInterval() / count($permittedAccounts);
 
-        foreach ($permittedAccounts as $account) {
+        foreach ($permittedAccounts as $merchantId => $accounts) {
 
             /** @var $account \Ess\M2ePro\Model\Account **/
 
+            $accountsIds = array();
+            $accountsTitles = array();
+            foreach ($accounts as $account) {
+                $accountsIds[] = $account->getId();
+                $accountsTitles[] = $account->getTitle();
+            }
+            $accountsIds = implode(', ',$accountsIds);
+            $accountsTitles = implode(', ',$accountsTitles);
+
             // ---------------------------------------
-            $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            // M2ePro\TRANSLATIONS
-            // The "Receive" Action for Amazon Account: "%account_title%" is started. Please wait...
+            $this->getActualOperationHistory()->addText('Starting Accounts "'.$accountsTitles.'"');
+
             $status = 'The "Receive" Action for Amazon Account: "%account_title%" is started. Please wait...';
             $this->getActualLockItem()->setStatus(
-                $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+                $this->getHelper('Module\Translation')->__($status, $accountsTitles)
             );
             // ---------------------------------------
 
-            if (!$this->isLockedAccount($account)) {
+            // ---------------------------------------
+            $this->getActualOperationHistory()->addTimePoint(
+                __METHOD__ . 'process' . $accountsIds,
+                'Process Accounts ' . $accountsTitles
+            );
+            // ---------------------------------------
 
-                // ---------------------------------------
-                $this->getActualOperationHistory()->addTimePoint(
-                    __METHOD__.'process'.$account->getId(),
-                    'Process Account '.$account->getTitle()
+            try {
+
+                $this->processAccounts($merchantId, $accounts);
+
+            } catch (\Exception $exception) {
+
+                $message = $this->getHelper('Module\Translation')->__(
+                    'The "Receive" Action for Amazon Accounts "%account%" was completed with error.',
+                    $accountsTitles
                 );
-                // ---------------------------------------
 
-                try {
-
-                    $this->processAccount($account);
-
-                } catch (\Exception $exception) {
-
-                    $message = $this->getHelper('Module\Translation')->__(
-                        'The "Receive" Action for Amazon Account "%account%" was completed with error.',
-                        $account->getTitle()
-                    );
-
-                    $this->processTaskAccountException($message, __FILE__, __LINE__);
-                    $this->processTaskException($exception);
-                }
-
-                // ---------------------------------------
-                $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'process'.$account->getId());
-                // ---------------------------------------
+                $this->processTaskAccountException($message, __FILE__, __LINE__);
+                $this->processTaskException($exception);
             }
 
             // ---------------------------------------
-            // M2ePro\TRANSLATIONS
-            // The "Receive" Action for Amazon Account: "%account_title%" is finished. Please wait...
-            $status = 'The "Receive" Action for Amazon Account: "%account_title%" is finished. Please wait...';
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__ . 'process' . $accountsIds);
+            // ---------------------------------------
+
+            // ---------------------------------------
+            $status = 'The "Receive" Action for Amazon Accounts: "%account_title%" is finished. Please wait...';
             $this->getActualLockItem()->setStatus(
-                $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+                $this->getHelper('Module\Translation')->__($status, $accountsTitles)
             );
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $iteration * $percentsForOneAccount);
             $this->getActualLockItem()->activate();
@@ -111,25 +114,32 @@ final class Receive extends AbstractModel
     private function getPermittedAccounts()
     {
         $accountsCollection = $this->amazonFactory->getObject('Account')->getCollection();
-        return $accountsCollection->getItems();
+
+        $accounts = array();
+        foreach ($accountsCollection->getItems() as $accountItem) {
+            /** @var $accountItem \Ess\M2ePro\Model\Account */
+
+            $merchantId = $accountItem->getChildObject()->getMerchantId();
+            if (!isset($accounts[$merchantId])) {
+                $accounts[$merchantId] = array();
+            }
+
+            $accounts[$merchantId][] = $accountItem;
+        }
+
+        return $accounts;
     }
 
     // ---------------------------------------
 
-    private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
+    private function processAccounts($merchantId, array $accounts)
     {
-        /** @var $lockItem \Ess\M2ePro\Model\LockItem */
-        $lockItem = $this->activeRecordFactory->getObject('LockItem');
-        $lockItem->setNick(Receive\ProcessingRunner::LOCK_ITEM_PREFIX.'_'.$account->getId());
-        $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
+        $updateSinceTime = $this->modelFactory->getObject('Config\Manager\Synchronization')->getGroupValue(
+            "/amazon/orders/receive/{$merchantId}/", "from_update_date"
+        );
 
-        return $lockItem->isExist();
-    }
-
-    private function processAccount(\Ess\M2ePro\Model\Account $account)
-    {
-        $fromDate = $this->prepareFromDate($account->getChildObject()->getData('orders_last_synchronization'));
-        $toDate   = $this->prepareToDate();
+        $fromDate = $this->prepareFromDate($updateSinceTime);
+        $toDate = $this->prepareToDate();
 
         if (strtotime($fromDate) >= strtotime($toDate)) {
             $fromDate = new \DateTime($toDate, new \DateTimeZone('UTC'));
@@ -139,20 +149,22 @@ final class Receive extends AbstractModel
         }
 
         $params = array(
-            'from_date' => $fromDate,
-            'to_date'   => $toDate,
+            'accounts' => $accounts,
+            'from_update_date' => $fromDate,
+            'to_update_date'=> $toDate
         );
 
-        /** @var \Ess\M2ePro\Model\Amazon\Account $amazonAccount */
-        $amazonAccount = $account->getChildObject();
+        $jobToken = $this->modelFactory->getObject('Config\Manager\Synchronization')->getGroupValue(
+            "/amazon/orders/receive/{$merchantId}/", "job_token"
+        );
 
-        if (is_null($amazonAccount->getData('orders_last_synchronization'))) {
-            $amazonAccount->setData('orders_last_synchronization', $fromDate)->save();
+        if (!empty($jobToken)) {
+            $params['job_token'] = $jobToken;
         }
 
         $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Synchronization\Orders\Receive\Requester', $params, $account
+            'Amazon\Synchronization\Orders\Receive\Requester', $params
         );
         $dispatcherObject->process($connectorObj);
     }
@@ -163,7 +175,7 @@ final class Receive extends AbstractModel
     {
         // Get last from date
         // ---------------------------------------
-        if (is_null($lastFromDate)) {
+        if (empty($lastFromDate)) {
             $lastFromDate = new \DateTime('now', new \DateTimeZone('UTC'));
         } else {
             $lastFromDate = new \DateTime($lastFromDate, new \DateTimeZone('UTC'));
@@ -173,7 +185,7 @@ final class Receive extends AbstractModel
         // Get min date for synch
         // ---------------------------------------
         $minDate = new \DateTime('now',new \DateTimeZone('UTC'));
-        $minDate->modify('-7 days');
+        $minDate->modify('-30 days');
         // ---------------------------------------
 
         // Prepare last date

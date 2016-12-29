@@ -21,6 +21,24 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         $this->_init('Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Variation');
     }
 
+    public function afterSave()
+    {
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$this->getListingProduct()->getId()}_variations"
+        );
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$this->getListingProduct()->getId()}_variations"
+        );
+
+        return parent::beforeDelete();
+    }
+
     //########################################
 
     /**

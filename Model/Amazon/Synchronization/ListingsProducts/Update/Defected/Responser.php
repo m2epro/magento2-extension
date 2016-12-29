@@ -139,7 +139,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Defecte
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
 
-        $skus = array_keys($receivedItems);
+        $skus = array_map(function($el){ return (string)$el; }, array_keys($receivedItems));
 
         //ZF-5063: Segmentaion fault on preg_replace in Zend_Db_Statement
         if (count($skus) >= 250) {

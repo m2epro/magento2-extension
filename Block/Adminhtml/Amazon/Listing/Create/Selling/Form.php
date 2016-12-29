@@ -230,7 +230,7 @@ class Form extends AbstractForm
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Selling Format Policy'),
+                'label' => $this->__('Price, Quantity and Format Policy'),
                 'style' => 'line-height: 34px; display: initial;',
                 'required' => true,
                 'text' => <<<HTML
@@ -367,7 +367,7 @@ HTML
         foreach ($attributesByTypes['text'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
-                $formData['sku_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
+                $formData['condition_mode'] == \Ess\M2ePro\Model\Amazon\Listing::SKU_MODE_CUSTOM_ATTRIBUTE
                 && $attribute['code'] == $formData['condition_custom_attribute']
             ) {
                 $attrs['selected'] = 'selected';
@@ -547,7 +547,7 @@ HTML
 
         $preparedLimitOptions[] = [
             'attrs' => ['attribute_code' => 1],
-            'value' => '',
+            'value' => 1,
             'label' => 1,
         ];
         if ($formData['gallery_images_limit'] == 1 &&

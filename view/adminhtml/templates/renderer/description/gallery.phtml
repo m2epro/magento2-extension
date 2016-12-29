@@ -1,81 +1,142 @@
-<?php /** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery $this */ ?>
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery $block */
+$data = $block->getData();
+?>
 
-<?php $data = $this->getData(); ?>
+<?php if ($block->isModeGallery()) : ?>
 
-<?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_GALLERY): ?>
+    <style>
 
-    <?php if ($data['image_counter'] == 1): ?>
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> {
+            display: block;
+            text-align: center;
+        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
+        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+        }
 
-        <style type="text/css">
-            .gallery-thumbnail {
-                padding: 0;
-                margin: 0;
-                display: table;
-            }
-            .gallery-image {
-                margin-bottom: 20px;
-            }
-            .gallery-image div {
-                margin-top: 10px;
-            }
-            .gallery-thumbnail li {
-                list-style: none;
-                margin: 5px;
-                text-align: right;
-            }
-            .gallery-column-view .gallery-thumbnail {
-                width: 20%;
-                float: left;
-            }
-            .gallery-column-view .gallery-image {
-                width: 78%;
-                float: right;
-                text-align: left;
-            }
-            .gallery-row-view .gallery-thumbnail li {
-                float: left;
-            }
-        </style>
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .full-image {
+        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
+        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+            display: none;
+        }
 
-    <?php $galleryClass = $data['layout'] == \Ess\M2ePro\Helper\Module\Renderer\Description::LAYOUT_MODE_COLUMN ? 'gallery-column-view' : 'gallery-row-view'; ?>
-    <center class="<?php echo $galleryClass; ?>">
-        <div class="gallery-image">
-            <img name="view<?php echo $data['attribute_counter']; ?>" id="image<?php echo $data['attribute_counter']; ?>" src="<?php echo $data['src']; ?>"<?php if ($data['width'] != ''): echo " width={$data['width']}"; endif; ?><?php if ($data['height'] != ''): echo " height={$data['height']}"; endif; ?><?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> style="<?php if ($data['margin'] != ''): echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>" />
-            <br/>
-            <div style="<?php if ($data['width'] != ''): echo "width: {$data['width']}px"; endif; ?>">
-                <?php echo $this->getHelper('Data')->escapeHtml($data['gallery_hint']); ?>
+        .m2e-gallery .hint {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .m2e-gallery .preview {
+            display: inline-block;
+            margin: 5px;
+            height: 72px;
+        }
+        .m2e-gallery .preview > img {
+            width: 68px;
+            height: 68px;
+        }
+        .m2e-gallery .preview:hover > img {
+            cursor: pointer;
+            opacity: 0.3;
+        }
+        #m2e-gallery-<?php echo $block->getGalleryId(); ?> .current > input:checked + img {
+            display: inline-block;
+        }
+        .m2e-gallery .current {
+            margin-bottom: 20px;
+        }
+        .m2e-gallery .current > input {
+            visibility: hidden;
+            position: absolute;
+        }
+
+        .m2e-gallery .current.vertical {
+            float: right;
+            width: 78%;
+            text-align: left;
+        }
+        .m2e-gallery .preview-container.vertical {
+            float: left;
+            width: 20%;
+            text-align: right;
+        }
+        .m2e-gallery .preview-container.vertical label {
+            display: block;
+        }
+        .m2e-gallery .current.vertical .hint {
+            text-align: left;
+        }
+
+    </style>
+
+    <?php $galleryClass = $block->isLayoutColumnMode() ? 'vertical' : ''; ?>
+
+    <div class="m2e-gallery" id="m2e-gallery-<?php echo $block->getGalleryId(); ?>">
+
+        <div class="current <?php echo $galleryClass; ?>">
+
+            <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+                <input type="radio"
+                       name="image-gallery-<?php echo $block->getGalleryId(); ?>"
+                    <?php $imageIndex == 0 && print ' checked="checked" '; ?>
+                       id="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>"
+                />
+                <img class="full-image" src="<?php echo $imageUrl; ?>" />
+            <?php endforeach; ?>
+
+            <div class="hint">
+                <span>
+                    <?php echo $block->getHelper('Data')->escapeHtml($data['gallery_hint']); ?>
+                </span>
             </div>
+
         </div>
 
-        <ul class="gallery-thumbnail">
+        <div class="preview-container <?php echo $galleryClass; ?>">
+            <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+                <label class="preview" for="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>">
+                    <img src="<?php echo $imageUrl; ?>" />
+                </label>
+            <?php endforeach; ?>
+        </div>
 
-    <?php endif; ?>
+    </div>
 
-            <li>
-                <img width="68" height="68" style="cursor: pointer;" onclick="document.images['view<?php echo $data['attribute_counter']; ?>'].src='<?php echo $data['src']; ?>';" src="<?php echo $data['src']; ?>"<?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
-            </li>
-
-    <?php if ($data['image_counter'] == $data['images_count']): ?>
-
-        </ul>
-    </center>
-
-    <?php endif; ?>
+    <div style="clear: both;"></div>
 
 <?php else: ?>
 
-    <?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW): ?>
-        <a href="<?php echo $data['src']; ?>" target="_blank"<?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?>>
-    <?php endif; ?>
+    <style>
 
-        <img src="<?php echo $data['src']; ?>"<?php if ($data['width'] != ''): echo ' width="'.$data['width'].'"'; endif; ?><?php if ($data['height'] != ''): echo ' height="'.$data['height'].'"'; endif; ?><?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> style="<?php if ($data['margin'] != ''): echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?><?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW): echo ' cursor: pointer; border: none;'; endif; ?>" />
+        #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
+        <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
+        <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
+        <?php if ($block->isLinkMode()) : echo 'cursor: pointer; border: none;'; endif; ?>
+        <?php if ($data['margin'] != '') : echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>
+        }
 
-    <?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW): ?>
-        </a>
-    <?php endif; ?>
+    </style>
 
-    <?php if ($data['layout'] == \Ess\M2ePro\Helper\Module\Renderer\Description::LAYOUT_MODE_COLUMN): ?>
-        <br/>
-    <?php endif; ?>
+    <div class="m2e-gallery-list" id="m2e-gallery-list-<?php echo $block->getGalleryId(); ?>">
+
+        <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
+
+            <?php if ($block->isLinkMode()): ?>
+                <a href="<?php echo $imageUrl; ?>" target="_blank"<?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?>>
+            <?php endif; ?>
+
+            <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
+
+            <?php if ($block->isLinkMode()): ?>
+                </a>
+            <?php endif; ?>
+
+            <?php if ($block->isLayoutColumnMode()): ?>
+                <br/>
+            <?php endif; ?>
+
+        <?php endforeach; ?>
+
+    </div>
 
 <?php endif; ?>

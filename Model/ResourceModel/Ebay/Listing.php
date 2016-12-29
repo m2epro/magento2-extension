@@ -143,57 +143,5 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         return $collection;
     }
 
-    public function updateMotorsAttributesData($listingId,
-                                               array $listingProductIds,
-                                               $attribute,
-                                               $data,
-                                               $overwrite = false) {
-        if (count($listingProductIds) == 0) {
-            return;
-        }
-
-        $listing = $this->parentFactory->getCachedObjectLoaded(
-            \Ess\M2ePro\Helper\Component\Ebay::NICK,'Listing', $listingId
-        );
-        $storeId = (int)$listing->getStoreId();
-
-        $listingProductsCollection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
-        $listingProductsCollection->addFieldToFilter('id', array('in' => $listingProductIds));
-        $listingProductsCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingProductsCollection->getSelect()->columns(array('product_id'));
-
-        $productIds = $listingProductsCollection->getColumnValues('product_id');
-
-        if ($overwrite) {
-            $this->catalogProductAction->updateAttributes(
-                $productIds,
-                array($attribute => $data),
-                $storeId
-            );
-            return;
-        }
-
-        $productCollection = Mage::getModel('catalog/product')->getCollection();
-        $productCollection->setStoreId($storeId);
-        $productCollection->addFieldToFilter('entity_id', array('in' => $productIds));
-        $productCollection->addAttributeToSelect($attribute);
-
-        foreach ($productCollection->getItems() as $itemId => $item) {
-
-            $currentAttributeValue = $item->getData($attribute);
-            $newAttributeValue = $data;
-
-            if (!empty($currentAttributeValue)) {
-                $newAttributeValue = $currentAttributeValue . ',' . $data;
-            }
-
-            $this->catalogProductAction->updateAttributes(
-                array($itemId),
-                array($attribute => $newAttributeValue),
-                $storeId
-            );
-        }
-    }
-
     //########################################
 }

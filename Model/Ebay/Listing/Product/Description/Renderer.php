@@ -10,6 +10,11 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Description;
 
 class Renderer extends \Ess\M2ePro\Model\AbstractModel
 {
+    const MODE_FULL = 1;
+    const MODE_PREVIEW = 2;
+
+    protected $renderMode = self::MODE_FULL;
+
     /* @var \Ess\M2ePro\Model\Ebay\Listing\Product */
     protected $listingProduct = NULL;
 
@@ -25,6 +30,24 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $modelFactory);
+    }
+
+    //########################################
+
+    /**
+     * @return int
+     */
+    public function getRenderMode()
+    {
+        return $this->renderMode;
+    }
+
+    /**
+     * @param int $renderMode
+     */
+    public function setRenderMode($renderMode)
+    {
+        $this->renderMode = $renderMode;
     }
 
     //########################################
@@ -490,6 +513,39 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return sprintf('%01.2f', $cost);
+    }
+
+    //########################################
+
+    protected function getMainImage()
+    {
+        if ($this->renderMode === self::MODE_FULL) {
+            $mainImage = $this->listingProduct->getDescriptionTemplateSource()->getMainImage();
+        } else {
+            $mainImage = $this->listingProduct->getMagentoProduct()->getImage('image');
+        }
+
+        return !empty($mainImage) ? $mainImage->getUrl() : '';
+    }
+
+    protected function getGalleryImage($index)
+    {
+        if ($this->renderMode === self::MODE_FULL) {
+            $images = array_values($this->listingProduct->getDescriptionTemplateSource()->getGalleryImages());
+        } else {
+            $images = array_values($this->listingProduct->getMagentoProduct()->getGalleryImages(11));
+
+            if ($index <= 0) {
+                return '';
+            }
+            $index--;
+        }
+
+        if (!empty($images[$index]) && $images[$index]->getUrl()) {
+            return $images[$index]->getUrl();
+        }
+
+        return '';
     }
 
     //########################################

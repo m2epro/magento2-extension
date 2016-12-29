@@ -54,8 +54,7 @@ final class Update extends AbstractModel
 
             // ---------------------------------------
             $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            // M2ePro\TRANSLATIONS
-            // The "Update" Action for Amazon Account: "%account_title%" is started. Please wait...
+
             $status = 'The "Update" Action for Amazon Account: "%account_title%" is started. Please wait...';
             $this->getActualLockItem()->setStatus(
                 $this->getHelper('Module\Translation')->__($status, $account->getTitle())
@@ -89,8 +88,6 @@ final class Update extends AbstractModel
             // ---------------------------------------
 
             // ---------------------------------------
-            // M2ePro\TRANSLATIONS
-            // The "Update" Action for Amazon Account: "%account_title%" is finished. Please wait...
             $status = 'The "Update" Action for Amazon Account: "%account_title%" is finished. Please wait...';
             $this->getActualLockItem()->setStatus(
                 $this->getHelper('Module\Translation')->__($status, $account->getTitle())
@@ -148,8 +145,11 @@ final class Update extends AbstractModel
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
         $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getConnector('orders', 'update', 'itemsRequester',
-                                                        array('items' => $items), $account);
+        $connectorObj = $dispatcherObject->getCustomConnector(
+            'Amazon\Synchronization\Orders\Update\Requester',
+            array('items' => $items),
+            $account
+        );
         $dispatcherObject->process($connectorObj);
     }
 

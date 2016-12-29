@@ -13,6 +13,8 @@ namespace Ess\M2ePro\Model\Amazon\Listing;
  */
 class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
+    const EMPTY_TITLE_PLACEHOLDER = '--';
+
     //########################################
 
     public function _construct()

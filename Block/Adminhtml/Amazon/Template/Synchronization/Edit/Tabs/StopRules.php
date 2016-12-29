@@ -147,7 +147,7 @@ class StopRules extends AbstractForm
                     Synchronization::STOP_QTY_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically stops Item(s) if Calculated Quantity according to the Selling Format
+                    'Automatically stops Item(s) if Calculated Quantity according to the Price, Quantity and Format
                     Policy has been changed and meets the Conditions.'
                 )
             ]
@@ -192,10 +192,9 @@ class StopRules extends AbstractForm
             ]
         );
 
-        $fieldset->addField('stop_advanced_rules_filters_notice',
+        $fieldset->addField('stop_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'container_id' => 'stop_advanced_rules_filters_warning',
                 'messages' => [[
                     'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
                     'content' => $this->__(

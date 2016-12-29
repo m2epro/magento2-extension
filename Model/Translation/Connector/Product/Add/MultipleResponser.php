@@ -135,7 +135,9 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
                         'currency'   => $matches[2],
                     );
 
-                    $listingProduct->setData('additional_data', json_encode($additionalData))->save();
+                    $listingProduct->setData(
+                        'additional_data', $this->getHelper('Data')->jsonEncode($additionalData)
+                    )->save();
                     $listingProduct->getChildObject()->setData(
                         'translation_status',
                         \Ess\M2ePro\Model\Ebay\Listing\Product::TRANSLATION_STATUS_PENDING_PAYMENT_REQUIRED
@@ -251,7 +253,7 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
         $additionalData['translation_service']['to'] = array_merge(
             $additionalData['translation_service']['to'], $response
         );
-        $productData['additional_data'] = json_encode($additionalData);
+        $productData['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalData);
 
         $listingProduct->addData($productData)->save();
         $listingProduct->getChildObject()->addData(array(
@@ -376,7 +378,7 @@ class MultipleResponser extends \Ess\M2ePro\Model\Translation\Connector\Command\
                 'mode'                  =>\Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_CUSTOM_ITEM_SPECIFICS,
                 'attribute_title'       => $responseSpecific['name'],
                 'value_mode'            => \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE,
-                'value_ebay_recommended'=> json_encode(array()),
+                'value_ebay_recommended'=> $this->getHelper('Data')->jsonEncode(array()),
                 'value_custom_value'    => join(",", $responseSpecific['value']),
                 'value_custom_attribute'=> ''
             );

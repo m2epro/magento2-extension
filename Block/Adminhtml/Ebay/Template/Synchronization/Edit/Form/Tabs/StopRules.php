@@ -187,10 +187,9 @@ class StopRules extends AbstractTab
             ]
         );
 
-        $fieldset->addField('stop_advanced_rules_filters_notice',
+        $fieldset->addField('stop_advanced_rules_filters_warning',
             self::MESSAGES,
             [
-                'container_id' => 'stop_advanced_rules_filters_warning',
                 'messages' => [[
                     'type' => \Magento\Framework\Message\MessageInterface::TYPE_WARNING,
                     'content' => $this->__(

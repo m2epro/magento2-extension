@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
+use Magento\Framework\Message\MessageInterface;
 
 class Repricing extends AbstractForm
 {
@@ -224,8 +225,8 @@ HTML
     You can select the configurations for automatic updating of the Regular Price value
     by selecting from these options:<br/>
     <strong>Manually</strong> - means that the according value will be manually provided for the Products;<br/>
-    <strong>According to Selling Format Policy settings</strong> - means that the Price value will
-    be taken based on the Selling Format Policy settings, which is used for this Item in the Listing;<br/>
+    <strong>According to Price, Quantity and Format Policy settings</strong> - means that the Price value will
+    be taken based on the Price, Quantity and Format Policy settings, which is used for this Item in the Listing;<br/>
     <strong>From Product Price</strong> - means that the Price value from Magento Product Price will be taken;<br/>
     <strong>From Special Price</strong> - means that the Price value from Magento Special Price will be taken;<br/>
     <strong>From Magento Attribute</strong> - means that the Price value will
@@ -261,7 +262,7 @@ HTML
                         'values' => [
                             \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_MANUAL => $this->__('Manually'),
                             \Ess\M2ePro\Model\Amazon\Account\Repricing::REGULAR_PRICE_MODE_PRODUCT_POLICY =>
-                                $this->__('According to Selling Format Policy'),
+                                $this->__('According to Price, Quantity and Format Policy'),
                             \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_PRODUCT =>
                                 $this->__('From Product Price'),
                             \Ess\M2ePro\Model\Amazon\Account\Repricing::PRICE_MODE_SPECIAL =>
@@ -487,30 +488,24 @@ HTML
                     ]
                 );
 
-                $fieldset->addField('min_price_warning',
-                    self::CUSTOM_CONTAINER,
+                $fieldset->addField('min_price_warning_tr',
+                    self::MESSAGES,
                     [
-                        'container_id' => 'min_price_warning_tr',
-                        'css_class' => 'm2epro-custom-container-full-width',
-                        'style' => '',
-                        'text' => <<<HTML
-<div class="messages m2epro-messages">
-    <div class="message message-error error">
-        <div data-ui-id="messages-message-error">
-            {$this->__('Min Price value is required to be specified to guarantee that M2E
-                Amazon Repricing Service will never set the Price of your Offer
-                lower than Min allowed Price. It allows Sellers to automatically
-                prevent any incorrect Price values to be set for their Items.<br/><br/>
-                The dynamic updating of the Min Price value cannot give the 100%
-                assurance that all the data will be properly set and the correct
-                Price will be used for the Item. Thus, more preferable and reliable
-                option is Manual updating of the Min Price value.')}
-        </div>
-    </div>
-</div>
-HTML
-                        ,
-                        'field_extra_attributes' => 'style="display: none;"'
+                        'messages' => [
+                            [
+                                'type' => MessageInterface::TYPE_WARNING,
+                                'content' => $this->__(
+                                    'Min Price value is required to be specified to guarantee that M2E
+                                    Amazon Repricing Service will never set the Price of your Offer
+                                    lower than Min allowed Price. It allows Sellers to automatically
+                                    prevent any incorrect Price values to be set for their Items.<br/><br/>
+                                    The dynamic updating of the Min Price value cannot give the 100%
+                                    assurance that all the data will be properly set and the correct
+                                    Price will be used for the Item. Thus, more preferable and reliable
+                                    option is Manual updating of the Min Price value.')
+                            ],
+                        ],
+                        'style' => 'display: none'
                     ]
                 );
 
@@ -696,29 +691,24 @@ HTML
                     ]
                 );
 
-                $fieldset->addField('max_price_warning',
-                    self::CUSTOM_CONTAINER,
+                $fieldset->addField('max_price_warning_tr',
+                    self::MESSAGES,
                     [
-                        'container_id' => 'max_price_warning_tr',
-                        'style' => '',
-                        'text' => <<<HTML
-<div class="messages">
-    <div class="message message-error error">
-        <div data-ui-id="messages-message-error">
-            {$this->__('Max Price value is required to be specified to guarantee that M2E
-                Amazon Repricing Service will never set the Price of your Offer
-                higher than Max allowed Price. It allows Sellers to automatically
-                prevent any incorrect Price values to be set for their Items.<br/><br/>
-                The dynamic updating of the Max Price value cannot give the 100%
-                assurance that all the data will be properly set and the correct
-                Price will be used for the Item. Thus, more preferable and reliable
-                option is Manual updating of the Max Price value.')}
-        </div>
-    </div>
-</div>
-HTML
-                        ,
-                        'field_extra_attributes' => 'style="display: none;"'
+                        'messages' => [
+                            [
+                                'type' => MessageInterface::TYPE_WARNING,
+                                'content' => $this->__(
+                                    'Max Price value is required to be specified to guarantee that M2E
+                                    Amazon Repricing Service will never set the Price of your Offer
+                                    higher than Max allowed Price. It allows Sellers to automatically
+                                    prevent any incorrect Price values to be set for their Items.<br/><br/>
+                                    The dynamic updating of the Max Price value cannot give the 100%
+                                    assurance that all the data will be properly set and the correct
+                                    Price will be used for the Item. Thus, more preferable and reliable
+                                    option is Manual updating of the Max Price value.')
+                            ],
+                        ],
+                        'style' => 'display: none;'
                     ]
                 );
 
@@ -879,15 +869,6 @@ HTML
     #additional_settings .price_mode label.addafter {
         display: initial !important;
     }
-
-    #min_price_warning_tr .control {
-        width: 100% !important;
-        margin-left: 0 !important;
-    }
-    #max_price_warning_tr .control {
-        width: 100% !important;
-        margin-left: 0 !important;
-    }
 CSS
         );
 
@@ -922,16 +903,8 @@ CSS
         );
 
         $collection->getSelect()->where("`second_table`.`is_variation_parent` = 0");
+        $collection->getSelect()->where("`second_table`.`is_repricing` = 1");
         $collection->getSelect()->where("`l`.`account_id` = ?", $account->getId());
-
-        $collection->getSelect()->join(
-            [
-                'malpr' => $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
-                    ->getResource()->getMainTable()
-            ],
-            '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
-            []
-        );
 
         return $collection->count();
     }

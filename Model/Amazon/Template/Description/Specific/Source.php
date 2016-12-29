@@ -100,7 +100,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
 
         $path = str_replace(
             '%data%',
-            '{"value": ' .json_encode($this->getValue()). ',"attributes": ' .$this->getValueAttributes(). '}',
+            '{"value": '
+            . $this->getHelper('Data')->jsonEncode($this->getValue())
+            . ',"attributes": ' .$this->getValueAttributes(). '}',
             $path
         );
 
@@ -151,7 +153,7 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        return json_encode($attributes);
+        return $this->getHelper('Data')->jsonEncode($attributes);
     }
 
     //########################################

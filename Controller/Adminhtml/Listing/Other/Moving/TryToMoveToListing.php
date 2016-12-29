@@ -23,7 +23,13 @@ class TryToMoveToListing extends Listing
                 $componentMode, 'Listing\Other' ,$selectedProduct
             );
 
-            if (!$listingInstance->getChildObject()->addProductFromOther($otherListingProductInstance,true,false)) {
+            $listingProduct = $listingInstance
+                ->getChildObject()
+                ->addProductFromOther(
+                    $otherListingProductInstance, \Ess\M2ePro\Helper\Data::INITIATOR_USER, true, false
+                );
+
+            if (!$listingProduct) {
                 $failedProducts[] = $otherListingProductInstance->getProductId();
             }
         }

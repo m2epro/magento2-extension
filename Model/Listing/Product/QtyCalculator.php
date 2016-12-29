@@ -290,7 +290,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     {
         $percents = $this->getSource('qty_percentage');
 
-        if ($value <= 0 || $percents < 0 || $percents > 100) {
+        if ($value <= 0 || $percents < 0 || $percents == 100) {
             return $value;
         }
 

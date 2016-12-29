@@ -23,6 +23,32 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstr
 
     //########################################
 
+    public function afterSave()
+    {
+        $listingProductId = $this->getListingProduct()->getId();
+        $variationId      = $this->getListingProductVariation()->getId();
+
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$listingProductId}_variation_{$variationId}_options"
+        );
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $listingProductId = $this->getListingProduct()->getId();
+        $variationId      = $this->getListingProductVariation()->getId();
+
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$listingProductId}_variation_{$variationId}_options"
+        );
+
+        return parent::beforeDelete();
+    }
+
+    //########################################
+
     /**
      * @return \Ess\M2ePro\Model\Account
      */

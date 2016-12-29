@@ -149,10 +149,12 @@ final class Categories extends AbstractModel
                 'category_id'        => $data['id'],
                 'parent_category_id' => $data['parent_id'],
                 'browsenode_id'      => ($isLeaf ? $data['browsenode_id'] : NULL),
-                'product_data_nicks' => ($isLeaf ? json_encode($data['product_data_nicks']) : NULL),
+                'product_data_nicks' => (
+                    $isLeaf ? $this->getHelper('Data')->jsonEncode($data['product_data_nicks']) : NULL
+                ),
                 'title'              => $data['title'],
                 'path'               => $data['path'],
-                'keywords'           => ($isLeaf ? json_encode($data['keywords']) : NULL),
+                'keywords'           => ($isLeaf ? $this->getHelper('Data')->jsonEncode($data['keywords']) : NULL),
                 'is_leaf'            => $isLeaf,
             );
 

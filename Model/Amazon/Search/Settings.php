@@ -210,7 +210,7 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $dataForUpdate = array(
             'general_id' => $generalId,
-            'general_id_search_info' => json_encode($generalIdSearchInfo),
+            'general_id_search_info' => $this->getHelper('Data')->jsonEncode($generalIdSearchInfo),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($generalId),
             'search_settings_status' => null,
             'search_settings_data'   => null,

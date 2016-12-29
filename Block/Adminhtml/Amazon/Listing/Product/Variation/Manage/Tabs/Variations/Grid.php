@@ -580,12 +580,14 @@ HTML;
         $repricingHtml ='';
 
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            (bool)(int)$row->getData('is_repricing')) {
+            (bool)(int)$row->getChildObject()->getData('is_repricing')) {
 
             $icon = 'repricing-enabled';
             $text = $this->__(
-                'This product is used by Amazon Repricing Tool.
-                 The Price cannot be updated through the M2E Pro.'
+                'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
+                 <strong>Please note</strong> that the Price value(s) shown in the grid might
+                 be different from the actual one from Amazon. It is caused by the delay
+                 in the values updating made via the Repricing Service.'
             );
 
             if ((int)$row->getData('is_repricing_disabled') == 1) {
@@ -617,7 +619,7 @@ HTML;
             $priceValue = $this->convertAndFormatPriceCurrency($value, $currency);
         }
 
-        if ($row->getData('is_repricing') &&
+        if ($row->getChildObject()->getData('is_repricing') &&
             !$row->getData('is_repricing_disabled')
         ) {
             $accountId = $this->getListingProduct()->getListing()->getAccountId();
@@ -1069,12 +1071,20 @@ HTML;
 
     public function hasUnusedProductVariation()
     {
-        return count($this->getChildListingProducts()) < count($this->getCurrentProductVariations());
+        return (bool)$this->getListingProduct()
+            ->getChildObject()
+            ->getVariationManager()
+            ->getTypeModel()
+            ->getUnusedProductOptions();
     }
 
     public function hasUnusedChannelVariations()
     {
-        return count($this->getUsedChannelVariations()) < count($this->getCurrentChannelVariations());
+        return (bool)$this->getListingProduct()
+            ->getChildObject()
+            ->getVariationManager()
+            ->getTypeModel()
+            ->getUnusedChannelOptions();
     }
 
     public function hasChildWithEmptyProductOptions()
@@ -1111,22 +1121,11 @@ HTML;
 
     public function getUsedChannelVariations()
     {
-        $usedOptions = array();
-
-        foreach ($this->getChildListingProducts() as $childListingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
-
-            /** @var ChildRelation $childTypeModel */
-            $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
-
-            if (!$childTypeModel->isVariationChannelMatched()) {
-                continue;
-            }
-
-            $usedOptions[] = $childTypeModel->getChannelOptions();
-        }
-
-        return $usedOptions;
+        return (bool)$this->getListingProduct()
+            ->getChildObject()
+            ->getVariationManager()
+            ->getTypeModel()
+            ->getUsedChannelOptions();
     }
 
     // ---------------------------------------
@@ -1369,25 +1368,11 @@ HTML;
     public function getUsedProductVariations()
     {
         if (is_null($this->usedProductVariations)) {
-
-            $usedOptions = array();
-
-            foreach ($this->getChildListingProducts() as $childListingProduct) {
-                /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
-
-                /**
-                 * @var ChildRelation $childTypeModel
-                 */
-                $childTypeModel = $childListingProduct->getChildObject()->getVariationManager()->getTypeModel();
-
-                if (!$childTypeModel->isVariationProductMatched()) {
-                    continue;
-                }
-
-                $usedOptions[] = $childTypeModel->getProductOptions();
-            }
-
-            $this->usedProductVariations = $usedOptions;
+            $this->usedProductVariations = $this->getListingProduct()
+                ->getChildObject()
+                ->getVariationManager()
+                ->getTypeModel()
+                ->getUsedProductOptions();
         }
 
         return $this->usedProductVariations;
@@ -1397,30 +1382,11 @@ HTML;
 
     public function getUnusedProductVariations()
     {
-        return $this->getUnusedVariations($this->getCurrentProductVariations(), $this->getUsedProductVariations());
-    }
-
-    private function getUnusedVariations($currentVariations, $usedVariations)
-    {
-        if (empty($currentVariations)) {
-            return array();
-        }
-
-        if (empty($usedVariations)) {
-            return $currentVariations;
-        }
-
-        $unusedOptions = array();
-
-        foreach ($currentVariations as $id => $currentOption) {
-            if ($this->isVariationExistsInArray($currentOption, $usedVariations)) {
-                continue;
-            }
-
-            $unusedOptions[$id] = $currentOption;
-        }
-
-        return $unusedOptions;
+        return $this->getListingProduct()
+            ->getChildObject()
+            ->getVariationManager()
+            ->getTypeModel()
+            ->getUnusedProductOptions();
     }
 
     private function isVariationExistsInArray(array $needle, array $haystack)

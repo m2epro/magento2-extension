@@ -164,8 +164,10 @@ final class Refund extends AbstractModel
 
         /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
         $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getConnector('orders', 'refund', 'itemsRequester',
-                                                        array('items' => $items), $account);
+        $connectorObj = $dispatcherObject->getCustomConnector(
+            'Amazon\Synchronization\Orders\Refund\Requester',
+            array('items' => $items), $account
+        );
         $dispatcherObject->process($connectorObj);
     }
 

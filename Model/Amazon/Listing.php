@@ -987,12 +987,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
+     * @param int $initiator
      * @param bool $checkingMode
      * @param bool $checkHasProduct
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductFromOther(\Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
+                                        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
                                         $checkingMode = false,
                                         $checkHasProduct = true)
     {
@@ -1001,7 +1003,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         }
 
         $productId = $listingOtherProduct->getProductId();
-        $result = $this->getParentObject()->addProduct($productId, $checkingMode, $checkHasProduct);
+        $result = $this->getParentObject()->addProduct($productId, $initiator, $checkingMode, $checkHasProduct);
 
         if ($checkingMode) {
             return $result;
@@ -1033,6 +1035,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             'sku'                => $amazonListingOther->getSku(),
             'online_price'       => $amazonListingOther->getOnlinePrice(),
             'online_qty'         => $amazonListingOther->getOnlineQty(),
+            'is_repricing'       => (int)$amazonListingOther->isRepricing(),
             'is_afn_channel'     => (int)$amazonListingOther->isAfnChannel(),
             'is_isbn_general_id' => (int)$amazonListingOther->isIsbnGeneralId(),
             'status'             => $listingOtherProduct->getStatus(),

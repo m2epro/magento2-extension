@@ -10,7 +10,9 @@ class Synchronization extends MigrationFromMagento1
     {
         $marketplaceCollection = $this->activeRecordFactory->getObject('Marketplace')
             ->getCollection()
-            ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
+            ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
+            ->setOrder('sorder','ASC')
+            ->setOrder('title','ASC');
 
         if (!$marketplaceCollection->count()) {
             $this->setStep($this->getNextStep());

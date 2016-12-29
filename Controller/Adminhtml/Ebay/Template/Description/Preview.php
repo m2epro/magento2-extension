@@ -94,6 +94,7 @@ class Preview extends Description
 
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer $renderer */
             $renderer = $this->modelFactory->getObject('Ebay\Listing\Product\Description\Renderer');
+            $renderer->setRenderMode(\Ess\M2ePro\Model\Ebay\Listing\Product\Description\Renderer::MODE_PREVIEW);
             $renderer->setListingProduct($listingProduct->getChildObject());
             $description = $renderer->parseTemplate($description);
         }

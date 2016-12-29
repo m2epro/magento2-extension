@@ -89,13 +89,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareLayout()
     {
+        $shippingMode = $this->getRequest()->getParam('shipping_mode');
         $this->setChild('refresh_button',
             $this->createBlock('Magento\Button')
                 ->setData(array(
                     'id' => 'shipping_override_template_refresh_btn',
                     'label'     => $this->__('Refresh'),
                     'class'     => 'action primary',
-                    'onclick'   => $this->getJsObjectName().'.reload()'
+                    'onclick'   => "ListingGridHandlerObj.templateShippingHandler.loadGrid('{$shippingMode}')"
                 ))
         );
 
@@ -139,8 +140,8 @@ HTML;
 
         return <<<HTML
 <a href="javascript:void(0)"
-    class="assign-shipping-override-template"
-    templateShippingOverrideId="{$value}">
+    class="assign-shipping-template"
+    templateShippingId="{$value}">
     {$assignText}
 </a>
 HTML;
@@ -153,7 +154,7 @@ HTML;
     {
         $this->js->add(
             <<<JS
-ListingGridHandlerObj.templateShippingOverrideHandler.newTemplateUrl='{$this->getNewTemplateShippingOverrideUrl()}';
+ListingGridHandlerObj.templateShippingHandler.newTemplateUrl='{$this->getNewTemplateShippingOverrideUrl()}';
 JS
         );
 
@@ -166,6 +167,7 @@ JS
     {
         return $this->getUrl('*/*/viewGrid', array(
             '_current' => true,
+            'shipping_mode' => \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE,
             '_query' => array(
                 'marketplace_id' => $this->getMarketplaceId()
             )
@@ -186,7 +188,7 @@ JS
 
         $message = <<<HTML
 <p>{$messageTxt} <a href="javascript:void(0);"
-    class="new-shipping-override-template">{$linkTitle}</a>
+    class="new-shipping-template">{$linkTitle}</a>
 </p>
 HTML;
 
@@ -196,8 +198,8 @@ HTML;
     protected function getNewTemplateShippingOverrideUrl()
     {
         return $this->getUrl('*/amazon_template_shippingOverride/new', array(
-            'marketplace_id'        => $this->getMarketplaceId(),
-            'close_on_save'         => 1
+            'marketplace_id' => $this->getMarketplaceId(),
+            'close_on_save'  => true
         ));
     }
 

@@ -21,29 +21,26 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     const MODE_SIMPLE = 'simple';
     const MODE_ADVANCED = 'advanced';
 
+    protected $ebayFactory;
     protected $activeRecordFactory;
-    protected $urlBuilder;
     protected $cacheConfig;
     protected $modelFactory;
-    protected $authSession;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Model\ActiveRecord\Factory $modelFactory,
-        \Magento\Backend\Model\Auth\Session $authSession,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->ebayFactory = $ebayFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->urlBuilder = $urlBuilder;
         $this->cacheConfig = $cacheConfig;
         $this->modelFactory = $modelFactory;
-        $this->authSession = $authSession;
         parent::__construct($helperFactory, $context);
     }
 
@@ -124,6 +121,26 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return $accountCollection->getSize() || $feedbackCollection->getSize();
+    }
+
+    //----------------------------------------
+
+    public function isDuplicatesFilterShouldBeShown($listingId = null)
+    {
+        $sessionCache = $this->getHelper('Data\Cache\Runtime');
+
+        if (!is_null($sessionCache->getValue('is_duplicates_filter_should_be_shown'))) {
+            return $sessionCache->getValue('is_duplicates_filter_should_be_shown');
+        }
+
+        $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
+        $collection->addFieldToFilter('is_duplicate', 1);
+        $listingId && $collection->addFieldToFilter('listing_id', (int)$listingId);
+
+        $result = (bool)$collection->getSize();
+        $sessionCache->setValue('is_duplicates_filter_should_be_shown', $result);
+
+        return $result;
     }
 
     //########################################

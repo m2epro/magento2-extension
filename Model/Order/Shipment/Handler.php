@@ -17,6 +17,21 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
     const HANDLE_RESULT_SKIPPED   = 0;
     const HANDLE_RESULT_SUCCEEDED = 1;
 
+    protected $activeRecordFactory = NULL;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ) {
+        $this->activeRecordFactory = $activeRecordFactory;
+
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
+
     //########################################
 
     public function factory($component)
@@ -57,7 +72,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         $track = $shipment->getTracksCollection()->getLastItem();
         $trackingDetails = array();
 
-        $number = trim($track->getData('number'));
+        $number = trim($track->getData('track_number'));
 
         if (!empty($number)) {
             $carrierCode = trim($track->getData('carrier_code'));

@@ -98,7 +98,10 @@ class Description extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component
         array_walk($specificsNewData, 'ksort');
         array_walk($specificsOldData, 'ksort');
 
-        return md5(json_encode($specificsNewData)) !== md5(json_encode($specificsOldData)) ||
+        $encodedSpecificsNewData = $this->getHelper('Data')->jsonEncode($specificsNewData);
+        $encodedSpecificsOldData = $this->getHelper('Data')->jsonEncode($specificsOldData);
+
+        return md5($encodedSpecificsNewData) !== md5($encodedSpecificsOldData) ||
                count(array_diff_assoc($definitionNewData, $definitionOldData)) ||
                count(array_diff_assoc($newData, $oldData));
     }

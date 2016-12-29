@@ -44,4 +44,57 @@
         </arguments>
     </type>
 
+    <!-- func_get_args() fix - see detailed explanation into the Plugin -->
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_abstractBlock"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Category\AbstractCategory">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_category_abstractCategory"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_form_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_form_abstractForm"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_abstractContainer"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_abstractGrid"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AbstractFilter">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_column_filter_abstractFilter"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_grid_column_filter_range"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs">
+        <plugin name="m2epro_plugin_functionGetArgsFix_block_magento_tabs_abstractTabs"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
+    <type name="Ess\M2ePro\Helper\Module\Translation">
+        <plugin name="m2epro_plugin_functionGetArgsFix_helper_module_translation"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
+
 </config>

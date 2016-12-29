@@ -105,6 +105,8 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_listing_product_variation',
             'm2epro_listing_product_variation_option',
 
+            'm2epro_indexer_listing_product_variation_parent',
+
             'm2epro_order',
             'm2epro_order_change',
             'm2epro_order_item',
@@ -178,6 +180,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_amazon_template_selling_format',
             'm2epro_amazon_template_synchronization',
             'm2epro_amazon_dictionary_shipping_override',
+            'm2epro_amazon_template_shipping_template',
             'm2epro_amazon_template_shipping_override',
             'm2epro_amazon_template_shipping_override_service'
         );

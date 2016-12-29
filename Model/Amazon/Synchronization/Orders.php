@@ -42,6 +42,7 @@ final class Orders extends AbstractModel
 
         $result = !$this->processTask('Orders\Reserve\Cancellation') ? false : $result;
         $result = !$this->processTask('Orders\Receive') ? false : $result;
+        $result = !$this->processTask('Orders\Receive\Details') ? false : $result;
         $result = !$this->processTask('Orders\Refund') ? false : $result;
         $result = !$this->processTask('Orders\Cancel') ? false : $result;
         $result = !$this->processTask('Orders\Update') ? false : $result;

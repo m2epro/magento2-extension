@@ -74,7 +74,24 @@ final class AmazonActions extends AbstractModel
         $accounts = $accountCollection->getItems();
 
         foreach ($accounts as $account) {
-            $this->executeNotProcessedActions($account);
+            $this->executeNotProcessedSingleAccountActions($account);
+        }
+
+        $groupedAccounts = array();
+
+        foreach ($accounts as $account) {
+            /** @var $account \Ess\M2ePro\Model\Account */
+
+            $merchantId = $account->getChildObject()->getMerchantId();
+            if (!isset($groupedAccounts[$merchantId])) {
+                $groupedAccounts[$merchantId] = array();
+            }
+
+            $groupedAccounts[$merchantId][] = $account;
+        }
+
+        foreach ($groupedAccounts as $accountsGroup) {
+            $this->executeNotProcessedMultipleAccountsActions($accountsGroup);
         }
     }
 
@@ -226,23 +243,37 @@ final class AmazonActions extends AbstractModel
         }
     }
 
-    private function executeNotProcessedActions(Account $account)
+    private function executeNotProcessedSingleAccountActions(Account $account)
     {
-        foreach ($this->getActionTypes() as $actionType) {
-            while ($this->isNeedExecuteAction($actionType, $account)) {
-                $this->executeAction($actionType, $account);
+        foreach ($this->getSingleAccountActionTypes() as $actionType) {
+            while ($this->isNeedExecuteAction($actionType, array($account))) {
+                $this->executeAction($actionType, array($account));
+            }
+        }
+    }
+
+    private function executeNotProcessedMultipleAccountsActions(array $accounts)
+    {
+        foreach ($this->getMultipleAccountsActionTypes() as $actionType) {
+            while ($this->isNeedExecuteAction($actionType, $accounts)) {
+                $this->executeAction($actionType, $accounts);
             }
         }
     }
 
     //####################################
 
-    private function isNeedExecuteAction($actionType, Account $account)
+    /**
+     * @param $actionType
+     * @param Account[] $accounts
+     * @return bool
+     */
+    private function isNeedExecuteAction($actionType, array $accounts)
     {
         $actionItemCollection = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getCollection();
         $actionItemCollection->setNotProcessedFilter();
         $actionItemCollection->setActionTypeFilter($actionType);
-        $actionItemCollection->setAccountFilter($account);
+        $actionItemCollection->setAccountsFilter($accounts);
 
         if (!empty($this->alreadyProcessedItemIds)) {
             $actionItemCollection->addFieldToFilter('main_table.id', array('nin' => $this->alreadyProcessedItemIds));
@@ -255,7 +286,7 @@ final class AmazonActions extends AbstractModel
         $actionItemCollection = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getCollection();
         $actionItemCollection->setNotProcessedFilter();
         $actionItemCollection->setActionTypeFilter($actionType);
-        $actionItemCollection->setAccountFilter($account);
+        $actionItemCollection->setAccountsFilter($accounts);
         $actionItemCollection->setCreatedBeforeFilter($this->getMaxAllowedMinutesDelay($actionType));
 
         if (!empty($this->alreadyProcessedItemIds)) {
@@ -265,13 +296,17 @@ final class AmazonActions extends AbstractModel
         return (bool)$actionItemCollection->getSize();
     }
 
-    private function executeAction($actionType, Account $account)
+    /**
+     * @param $actionType
+     * @param Account[] $accounts
+     */
+    private function executeAction($actionType, array $accounts)
     {
         $actionItemCollection = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getCollection();
         $actionItemCollection->setNotProcessedFilter();
         $actionItemCollection->addFieldToFilter('is_skipped', 0);
         $actionItemCollection->setActionTypeFilter($actionType);
-        $actionItemCollection->setAccountFilter($account);
+        $actionItemCollection->setAccountsFilter($accounts);
         $actionItemCollection->setPageSize($this->getMaxItemsCountInRequest($actionType));
         $actionItemCollection->setOrder('create_date', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
@@ -290,9 +325,19 @@ final class AmazonActions extends AbstractModel
         /** @var Action\Item[] $actionItems */
         $actionItems = $actionItemCollection->getItems();
 
+        $requestData = $this->getItemsRequestData($actionItems, $actionType);
+
+        if ($this->isMultipleAccountsActionType($actionType)) {
+            foreach ($accounts as $account) {
+                $requestData['accounts'][] = $account->getChildObject()->getServerHash();
+            }
+        } else {
+            $requestData['account'] = reset($accounts)->getChildObject()->getServerHash();
+        }
+
         $connectorObj = $dispatcherObject->getVirtualConnector(
             $command[0], $command[1], $command[2],
-            $this->getItemsRequestData($actionItems, $actionType), null, $account
+            $requestData, null, null
         );
 
         $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getResource()->incrementAttemptsCount(
@@ -433,9 +478,29 @@ final class AmazonActions extends AbstractModel
 
     //####################################
 
-    private function getActionTypes()
+    private function getSingleAccountActionTypes()
     {
-        return array_merge($this->getProductActionTypes(), $this->getOrderActionTypes());
+        return array(
+            Action::TYPE_PRODUCT_ADD,
+            Action::TYPE_PRODUCT_UPDATE,
+            Action::TYPE_PRODUCT_DELETE,
+            Action::TYPE_ORDER_CANCEL,
+            Action::TYPE_ORDER_REFUND,
+        );
+    }
+
+    // ---------------------------------------
+
+    private function getMultipleAccountsActionTypes()
+    {
+        return array(
+            Action::TYPE_ORDER_UPDATE,
+        );
+    }
+
+    private function isMultipleAccountsActionType($actionType)
+    {
+        return in_array($actionType, $this->getMultipleAccountsActionTypes());
     }
 
     // ---------------------------------------
@@ -481,6 +546,10 @@ final class AmazonActions extends AbstractModel
     private function getItemResponseMessages(array $responseData, array $responseMessages, $relatedId)
     {
         $itemMessages = $responseMessages;
+
+        if (!empty($responseData['messages'][0])) {
+            $itemMessages = array_merge($itemMessages, $responseData['messages']['0']);
+        }
 
         if (!empty($responseData['messages']['0-id'])) {
             $itemMessages = array_merge($itemMessages, $responseData['messages']['0-id']);

@@ -108,7 +108,9 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $listingProduct = $listing->addProduct($otherListing->getProductId());
+        $listingProduct = $listing->addProduct(
+            $otherListing->getProductId(), \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION
+        );
 
         if (!($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product)) {
             return false;
@@ -330,8 +332,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
                                 \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_SELLING_FORMAT_TEMPLATE_NONE,
             'revise_change_description_template' =>
                             \Ess\M2ePro\Model\Amazon\Template\Synchronization::REVISE_CHANGE_DESCRIPTION_TEMPLATE_NONE,
-            'revise_change_shipping_override_template' =>
-                \Ess\M2ePro\Model\Amazon\Template\Synchronization::REVISE_CHANGE_SHIPPING_OVERRIDE_TEMPLATE_NONE,
+            'revise_change_shipping_template' =>
+                \Ess\M2ePro\Model\Amazon\Template\Synchronization::REVISE_CHANGE_SHIPPING_TEMPLATE_NONE,
             'revise_change_listing' =>
                                 \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_LISTING_NONE,
             'stop_status_disabled' => \Ess\M2ePro\Model\Amazon\Template\Synchronization::STOP_STATUS_DISABLED_NONE,

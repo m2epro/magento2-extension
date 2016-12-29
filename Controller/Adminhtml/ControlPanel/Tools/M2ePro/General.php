@@ -357,6 +357,7 @@ HTML;
 
             $deletedOptions = $deletedVariations = $deletedProducts = $deletedListings = 0;
 
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             while ($option = $collection->fetchItem()) {
 
                 try {
@@ -366,7 +367,7 @@ HTML;
                     $tempOption = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
                                                             ->load($option->getId());
                     if (!is_null($tempOption->getId())) {
-                        $option->delete() && $deletedOptions++;
+                        $option->getResource()->delete($option) && $deletedOptions++;
                     }
                     continue;
                 }
@@ -374,7 +375,7 @@ HTML;
                 try {
                     $listingProduct = $variation->getListingProduct();
                 } catch (Logic $e) {
-                    $variation->delete() && $deletedVariations++;
+                    $variation->getResource()->delete($variation) && $deletedVariations++;
                     continue;
                 }
             }
@@ -382,19 +383,20 @@ HTML;
             $collection = $this->parentFactory->getObject($component, 'Listing\Product')
                                               ->getCollection();
 
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
             while ($listingProduct = $collection->fetchItem()) {
 
                 try {
                     $listing = $listingProduct->getListing();
                 } catch (Logic $e) {
-                    $listingProduct->delete() && $deletedProducts++;
+                    $listingProduct->getResource()->delete($listingProduct) && $deletedProducts++;
                     continue;
                 }
 
                 try {
                     $account = $listing->getAccount();
                 } catch (Logic $e) {
-                    $listing->delete() && $deletedListings++;
+                    $listing->getResource()->delete($listing) && $deletedListings++;
                     continue;
                 }
             }
@@ -403,7 +405,7 @@ HTML;
             $result .= sprintf('Deleted variations on %s count = %d <br/>', $component, $deletedVariations);
             $result .= sprintf('Deleted products on %s count = %d <br/>', $component, $deletedProducts);
             $result .= sprintf('Deleted listings on %s count = %d <br/>', $component, $deletedListings);
-            $result .= '<br/>';
+            $result .= '<br/>Please run repair broken tables feature.<br/>';
         }
 
         $backUrl = $this->getHelper('View\ControlPanel')->getPageToolsTabUrl();

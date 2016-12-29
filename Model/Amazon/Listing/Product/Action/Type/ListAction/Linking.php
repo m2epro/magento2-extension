@@ -130,18 +130,22 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
             $typeModel = $this->getVariationManager()->getTypeModel();
-            $data['variation_product_options'] = json_encode($typeModel->getProductOptions());
+            $data['variation_product_options'] = $this->getHelper('Data')->jsonEncode($typeModel->getProductOptions());
         }
 
         if ($this->getVariationManager()->isRelationChildType()) {
             $typeModel = $this->getVariationManager()->getTypeModel();
 
             if ($typeModel->isVariationProductMatched()) {
-                $data['variation_product_options'] = json_encode($typeModel->getRealProductOptions());
+                $data['variation_product_options'] = $this->getHelper('Data')->jsonEncode(
+                    $typeModel->getRealProductOptions()
+                );
             }
 
             if ($typeModel->isVariationChannelMatched()) {
-                $data['variation_channel_options'] = json_encode($typeModel->getRealChannelOptions());
+                $data['variation_channel_options'] = $this->getHelper('Data')->jsonEncode(
+                    $typeModel->getRealChannelOptions()
+                );
             }
         }
 

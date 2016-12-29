@@ -199,7 +199,8 @@ HTML;
                     );
 
                     if (empty($resultInfo['current_data']) ||
-                        (isset($diffData['type']) || isset($diffData['default']) || isset($diffData['null']))) {
+                        (isset($diffData['type']) || isset($diffData['default']) ||
+                         isset($diffData['null']) || isset($diffData['extra']))) {
 
                         $linkTitle = 'Fix Properties';
                         $urlParams['mode'] = 'properties';

@@ -193,6 +193,9 @@ HTML
             'wizard' => $this->getRequest()->getParam('wizard')
         ]));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Search'));
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation\Vocabulary')
+        );
 
         $this->jsUrl->addUrls([
             'back' => $this->getUrl('*/*/index'),

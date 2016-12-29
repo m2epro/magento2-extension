@@ -373,7 +373,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
      */
     public function setSettings($fieldName, array $settings = array())
     {
-        $this->setData((string)$fieldName, json_encode($settings));
+        $this->setData((string)$fieldName, $this->getHelper('Data')->jsonEncode($settings));
 
         return $this;
     }

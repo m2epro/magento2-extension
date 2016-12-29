@@ -46,7 +46,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        if (is_int($account) || is_string($account)) {
+        if ($account instanceof \Ess\M2ePro\Model\Account) {
+            $connectorObjectData['account'] = $account;
+        } elseif (is_int($account) || is_string($account)) {
             $connectorObjectData['account'] = $this->ebayFactory->getCachedObjectLoaded(
                 'Account',(int)$account
             );
@@ -68,7 +70,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             );
         }
 
-        if (is_int($account) || is_string($account)) {
+        if ($account instanceof \Ess\M2ePro\Model\Account) {
+            $connectorObjectData['account'] = $account;
+        } elseif (is_int($account) || is_string($account)) {
             $connectorObjectData['account'] = $this->ebayFactory->getCachedObjectLoaded(
                 'Account',(int)$account
             );

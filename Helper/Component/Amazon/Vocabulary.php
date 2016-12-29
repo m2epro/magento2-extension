@@ -73,7 +73,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\ParentRelation\Parent\Processor\Mass'
+            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
         );
         $massProcessor->setListingsProducts($affectedParentListingsProducts);
         $massProcessor->setForceExecuting(false);
@@ -269,7 +269,7 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $massProcessor = $this->modelFactory->getObject(
-            'Amazon\Listing\Product\Variation\Manager\Type\ParentRelation\Parent\Processor\Mass'
+            'Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Mass'
         );
         $massProcessor->setListingsProducts($affectedParentListingsProducts);
         $massProcessor->setForceExecuting(false);
@@ -474,9 +474,11 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getLocalData()
     {
-        $cacheData = $this->getLocalDataCache();
-        if (is_array($cacheData)) {
-            return $cacheData;
+        if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+            $cacheData = $this->getLocalDataCache();
+            if (is_array($cacheData)) {
+                return $cacheData;
+            }
         }
 
         /** @var \Ess\M2ePro\Model\Registry $registry */
@@ -490,7 +492,9 @@ class Vocabulary extends \Ess\M2ePro\Helper\AbstractHelper
 
         $vocabularyData = $registry->getSettings('value');
 
-        $this->setLocalDataCache($vocabularyData);
+        if (!$this->getHelper('Module')->isDevelopmentEnvironment()) {
+            $this->setLocalDataCache($vocabularyData);
+        }
 
         return $vocabularyData;
     }

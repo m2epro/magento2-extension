@@ -50,10 +50,10 @@ class Link extends Account
 
             $accountRepricingModel->save();
 
-            /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
-            $repricing = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+            /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            $repricing = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
             $repricing->setAccount($account);
-            $repricing->runFull();
+            $repricing->run();
         }
 
         return $this->_redirect($this->getUrl('*/amazon_account/edit', array(

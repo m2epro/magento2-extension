@@ -7,7 +7,6 @@ use Ess\M2ePro\Model\Wizard;
 class MigrationFromMagento1 extends Wizard
 {
     protected $steps = array(
-        'welcome',
         'synchronization',
         'congratulation'
     );

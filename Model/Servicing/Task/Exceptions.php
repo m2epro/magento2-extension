@@ -55,7 +55,7 @@ class Exceptions extends \Ess\M2ePro\Model\Servicing\Task
 
         $registryModel->addData(array(
             'key' => '/exceptions_filters/',
-            'value' => json_encode($data['filters'])
+            'value' => $this->getHelper('Data')->jsonEncode($data['filters'])
         ))->save();
     }
 

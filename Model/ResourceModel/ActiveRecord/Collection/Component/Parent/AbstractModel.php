@@ -18,6 +18,7 @@ abstract class AbstractModel
     //########################################
 
     public function __construct(
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -34,6 +35,7 @@ abstract class AbstractModel
         }
 
         parent::__construct(
+            $metadataPool,
             $helperFactory,
             $activeRecordFactory,
             $entityFactory,

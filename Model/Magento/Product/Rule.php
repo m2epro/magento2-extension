@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
-Class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
+class Rule extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     protected $_form;
     protected $productFactory;

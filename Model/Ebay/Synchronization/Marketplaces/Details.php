@@ -107,19 +107,21 @@ final class Details extends AbstractModel
             'marketplace_id'                  => $marketplace->getId(),
             'client_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
             'server_details_last_update_date' => isset($details['last_update']) ? $details['last_update'] : NULL,
-            'dispatch'                        => json_encode($details['dispatch']),
-            'packages'                        => json_encode($details['packages']),
-            'return_policy'                   => json_encode($details['return_policy']),
-            'listing_features'                => json_encode($details['listing_features']),
-            'payments'                        => json_encode($details['payments']),
-            'shipping_locations'              => json_encode($details['shipping_locations']),
-            'shipping_locations_exclude'      => json_encode($details['shipping_locations_exclude']),
-            'tax_categories'                  => json_encode($details['tax_categories']),
-            'charities'                       => json_encode($details['charities']),
+            'dispatch'                        => $this->getHelper('Data')->jsonEncode($details['dispatch']),
+            'packages'                        => $this->getHelper('Data')->jsonEncode($details['packages']),
+            'return_policy'                   => $this->getHelper('Data')->jsonEncode($details['return_policy']),
+            'listing_features'                => $this->getHelper('Data')->jsonEncode($details['listing_features']),
+            'payments'                        => $this->getHelper('Data')->jsonEncode($details['payments']),
+            'shipping_locations'              => $this->getHelper('Data')->jsonEncode($details['shipping_locations']),
+            'shipping_locations_exclude'      => $this->getHelper('Data')->jsonEncode(
+                $details['shipping_locations_exclude']
+            ),
+            'tax_categories'                  => $this->getHelper('Data')->jsonEncode($details['tax_categories']),
+            'charities'                       => $this->getHelper('Data')->jsonEncode($details['charities']),
         );
 
         if (isset($details['additional_data'])) {
-            $insertData['additional_data'] = json_encode($details['additional_data']);
+            $insertData['additional_data'] = $this->getHelper('Data')->jsonEncode($details['additional_data']);
         }
 
         unset($details['categories_version']);
@@ -135,11 +137,11 @@ final class Details extends AbstractModel
                 'marketplace_id'   => $marketplace->getId(),
                 'ebay_id'          => $data['ebay_id'],
                 'title'            => $data['title'],
-                'category'         => json_encode($data['category']),
+                'category'         => $this->getHelper('Data')->jsonEncode($data['category']),
                 'is_flat'          => $data['is_flat'],
                 'is_calculated'    => $data['is_calculated'],
                 'is_international' => $data['is_international'],
-                'data'             => json_encode($data['data']),
+                'data'             => $this->getHelper('Data')->jsonEncode($data['data']),
             );
             $connWrite->insert($tableShipping, $insertData);
         }

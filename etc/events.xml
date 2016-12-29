@@ -117,4 +117,18 @@
                   shared="false" />
     </event>
 
+    <!-- listing product -->
+
+    <event name="ess_listing_product_save_after">
+        <observer name="m2epro_observer_listing_product_save_after"
+                  instance="Ess\M2ePro\Observer\Listing\Product\Save\After"
+                  shared="false" />
+    </event>
+
+    <event name="ess_listing_product_delete_before">
+        <observer name="m2epro_observer_listing_product_delete_before"
+                  instance="Ess\M2ePro\Observer\Listing\Product\Delete\Before"
+                  shared="false" />
+    </event>
+
 </config>

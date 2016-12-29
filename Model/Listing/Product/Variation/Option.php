@@ -30,12 +30,40 @@ class Option extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMod
 
     //########################################
 
+    public function afterSave()
+    {
+        $listingProductId = $this->getListingProduct()->getId();
+        $variationId      = $this->getListingProductVariationId();
+
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$listingProductId}_variation_{$variationId}_options"
+        );
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $listingProductId = $this->getListingProduct()->getId();
+        $variationId      = $this->getListingProductVariationId();
+
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$listingProductId}_variation_{$variationId}_options"
+        );
+
+        return parent::beforeDelete();
+    }
+
     public function delete()
     {
-        $temp = parent::delete();
-        $temp && $this->listingProductVariationModel = NULL;
-        $temp && $this->magentoProductModel = NULL;
-        return $temp;
+        if (!parent::delete()) {
+            return false;
+        }
+
+        $this->listingProductVariationModel = NULL;
+        $this->magentoProductModel = NULL;
+
+        return true;
     }
 
     //########################################

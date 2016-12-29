@@ -10,6 +10,7 @@ use Magento\Framework\Module\ModuleListInterface;
 use Magento\Framework\Setup\InstallSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 
 class InstallSchema implements InstallSchemaInterface
 {
@@ -24,6 +25,9 @@ class InstallSchema implements InstallSchemaInterface
     /** @var SchemaSetupInterface $installer */
     private $installer;
 
+    /** @var \Magento\Framework\App\DeploymentConfig */
+    private $deploymentConfig;
+
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
 
@@ -32,10 +36,12 @@ class InstallSchema implements InstallSchemaInterface
     public function __construct(
         Factory $helperFactory,
         ModuleListInterface $moduleList,
+        \Magento\Framework\App\DeploymentConfig $deploymentConfig,
         \Ess\M2ePro\Setup\LoggerFactory $loggerFactory
     ) {
         $this->helperFactory = $helperFactory;
         $this->moduleList = $moduleList;
+        $this->deploymentConfig = $deploymentConfig;
 
         $this->logger = $loggerFactory->create();
     }
@@ -54,13 +60,14 @@ class InstallSchema implements InstallSchemaInterface
     {
         $this->installer = $setup;
 
-        $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_process', true);
-
         if ($this->helperFactory->getObject('Data\GlobalData')->getValue('is_setup_failed')) {
             return;
         }
 
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+        $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_process', true);
+
+        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
+            !$this->isMaintenanceCanBeIgnored()) {
             return;
         }
 
@@ -72,6 +79,8 @@ class InstallSchema implements InstallSchemaInterface
         $this->installer->startSetup();
 
         try {
+            $this->dropTables();
+
             $this->initVersionHistory();
             $this->initSetupRow();
 
@@ -80,17 +89,33 @@ class InstallSchema implements InstallSchemaInterface
             $this->installAmazon();
         } catch (\Exception $exception) {
 
+            if ($this->isAllowedToPrintToStdErr()) {
+                echo $exception->__toString();
+            }
+
             $this->logger->error($exception, ['source' => 'InstallSchema']);
+            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
 
             $this->installer->endSetup();
-            $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
             return;
         }
 
+        $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_schema_completed', true);
         $this->installer->endSetup();
     }
 
     //########################################
+
+    private function dropTables()
+    {
+        $tables = $this->installer->getConnection()->getTables(
+            (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX).'m2epro_%'
+        );
+
+        foreach ($tables as $table) {
+            $this->installer->getConnection()->dropTable($table);
+        }
+    }
 
     private function initVersionHistory()
     {
@@ -838,6 +863,40 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($listingProductVariationOptionTable);
+
+        $indexerListingProductVariationParentTable = $this->getConnection()->newTable(
+            $this->getFullTableName('indexer_listing_product_variation_parent')
+        )
+            ->addColumn(
+                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'listing_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'component_mode', Table::TYPE_TEXT, 10,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'min_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'max_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, NULL,
+                ['nullable' => false]
+            )
+            ->addIndex('listing_id', 'listing_id')
+            ->addIndex('component_mode', 'component_mode')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($indexerListingProductVariationParentTable);
 
         $lockItemTable = $this->getConnection()->newTable($this->getFullTableName('lock_item'))
             ->addColumn(
@@ -1671,7 +1730,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => NULL]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
+                'description', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
                 ['default' => NULL]
             )
             ->addColumn(
@@ -2000,6 +2059,10 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'ebay_shipping_discount_profiles', Table::TYPE_TEXT, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'job_token', Table::TYPE_TEXT, 255,
                 ['default' => NULL]
             )
             ->addColumn(
@@ -2932,6 +2995,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addColumn(
+                'item_uuid', Table::TYPE_TEXT, 32,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'is_duplicate', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'online_sku', Table::TYPE_TEXT, 255,
                 ['default' => NULL]
             )
@@ -3068,6 +3139,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addIndex('ebay_item_id', 'ebay_item_id')
+            ->addIndex('item_uuid', 'item_uuid')
+            ->addIndex('is_duplicate', 'is_duplicate')
             ->addIndex('end_date', 'end_date')
             ->addIndex('online_bids', 'online_bids')
             ->addIndex('online_buyitnow_price', 'online_buyitnow_price')
@@ -4223,7 +4296,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'vat_percent', Table::TYPE_FLOAT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'tax_table_mode', Table::TYPE_SMALLINT, NULL,
@@ -4868,6 +4941,10 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
+                'shipping_mode', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'default' => 1]
+            )
+            ->addColumn(
                 'other_listings_synchronization', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
@@ -4885,10 +4962,6 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'other_listings_move_settings', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'orders_last_synchronization', Table::TYPE_DATETIME, NULL,
                 ['default' => NULL]
             )
             ->addColumn(
@@ -5524,6 +5597,10 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addColumn(
+                'template_shipping_template_id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'default' => NULL]
+            )
+            ->addColumn(
                 'template_shipping_override_id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'default' => NULL]
             )
@@ -5596,6 +5673,10 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addColumn(
+                'is_repricing', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
                 'is_afn_channel', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
@@ -5613,6 +5694,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addIndex('general_id', 'general_id')
             ->addIndex('search_settings_status', 'search_settings_status')
+            ->addIndex('is_repricing', 'is_repricing')
             ->addIndex('is_afn_channel', 'is_afn_channel')
             ->addIndex('is_isbn_general_id', 'is_isbn_general_id')
             ->addIndex('is_variation_product_matched', 'is_variation_product_matched')
@@ -5627,6 +5709,7 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('variation_parent_id', 'variation_parent_id')
             ->addIndex('is_general_id_owner', 'is_general_id_owner')
             ->addIndex('template_shipping_override_id', 'template_shipping_override_id')
+            ->addIndex('template_shipping_template_id', 'template_shipping_template_id')
             ->addIndex('template_description_id', 'template_description_id')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -5717,14 +5800,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_asin_available', Table::TYPE_SMALLINT, NULL,
+                'is_new_asin_available', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
                 'is_merchant_fulfillment_available', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
-            ->addIndex('is_asin_available', 'is_asin_available')
+            ->addIndex('is_new_asin_available', 'is_new_asin_available')
             ->addIndex('is_merchant_fulfillment_available', 'is_merchant_fulfillment_available')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -5986,6 +6069,36 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonProcessingActionItemTable);
+
+        $amazonTemplateShippingTemplateTable = $this->getConnection()->newTable(
+            $this->getFullTableName('amazon_template_shipping_template')
+        )
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'template_name', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addIndex('title', 'title')
+            ->addIndex('template_name', 'template_name')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($amazonTemplateShippingTemplateTable);
 
         $amazonTemplateShippingOverrideTable = $this->getConnection()->newTable(
             $this->getFullTableName('amazon_template_shipping_override')
@@ -6560,7 +6673,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'price_vat_percent', Table::TYPE_FLOAT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+                ['nullable' => false, 'default' => 0]
             )
             ->addIndex('price_variation_mode', 'price_variation_mode')
             ->setOption('type', 'INNODB')
@@ -6600,14 +6713,6 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false]
-            )
-            ->addColumn(
-                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
-                ['nullable' => true]
-            )
-            ->addColumn(
                 'list_qty_calculated', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
@@ -6618,6 +6723,14 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'list_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                ['nullable' => true]
             )
             ->addColumn(
                 'revise_update_qty', Table::TYPE_SMALLINT, NULL,
@@ -6656,7 +6769,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_shipping_override_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_shipping_template', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6761,7 +6874,42 @@ class InstallSchema implements InstallSchemaInterface
 
     private function isInstalled()
     {
-        return $this->getConnection()->isTableExists($this->getFullTableName('setup'));
+        if (!$this->getConnection()->isTableExists($this->getFullTableName('setup'))) {
+            return false;
+        }
+
+        $setupRow = $this->getConnection()->select()
+            ->from($this->getFullTableName('setup'))
+            ->where('version_from IS NULL')
+            ->where('is_completed = ?', 1)
+            ->query()
+            ->fetch();
+
+        return $setupRow !== false;
+    }
+
+    private function isMaintenanceCanBeIgnored()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/ignore_maintenace');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
+    }
+
+    private function isAllowedToPrintToStdErr()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     //########################################

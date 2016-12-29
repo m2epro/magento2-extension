@@ -33,7 +33,15 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         if ($this->getEbayListingProduct()->isVariationsReady()) {
 
-            return $this->validateVariationsFixedPrice();
+            if (!$this->validateVariationsOptions()) {
+                return false;
+            }
+
+            if (!$this->validateVariationsFixedPrice()) {
+                return false;
+            }
+
+            return true;
         }
 
         if ($this->getEbayListingProduct()->isListingTypeAuction()) {

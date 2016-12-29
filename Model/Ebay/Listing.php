@@ -507,12 +507,14 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
+     * @param int $initiator
      * @param bool $checkingMode
      * @param bool $checkHasProduct
      * @return bool|\Ess\M2ePro\Model\Listing\Product
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function addProductFromOther(\Ess\M2ePro\Model\Listing\Other $listingOtherProduct,
+                                        $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN,
                                         $checkingMode = false,
                                         $checkHasProduct = true)
     {
@@ -521,7 +523,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
 
         $productId = $listingOtherProduct->getProductId();
-        $result = $this->getParentObject()->addProduct($productId, $checkingMode, true);
+        $result = $this->getParentObject()->addProduct($productId, $initiator, $checkingMode, true);
 
         if ($checkingMode) {
             return $result;
@@ -578,7 +580,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             $additionalDataForUpdate = array_merge(
                 $listingProductAdditionalData, array('out_of_stock_control' => true)
             );
-            $dataForUpdate['additional_data'] = json_encode($additionalDataForUpdate);
+            $dataForUpdate['additional_data'] = $this->getHelper('Data')->jsonEncode($additionalDataForUpdate);
         }
 
         $listingProduct->addData($dataForUpdate)

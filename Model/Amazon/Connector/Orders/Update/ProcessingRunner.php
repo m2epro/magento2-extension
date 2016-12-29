@@ -32,7 +32,7 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
             $processingActionItem->setData(array(
                 'action_id'  => $processingAction->getId(),
                 'related_id' => $changeId,
-                'input_data' => json_encode($orderData),
+                'input_data' => $this->getHelper('Data')->jsonEncode($orderData),
             ));
 
             $processingActionItem->save();
@@ -45,13 +45,13 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        if (!isset($params['items']) || !is_array($params['items'])) {
+        if (!isset($params['request_data']['items']) || !is_array($params['request_data']['items'])) {
             return;
         }
 
         $ordersIds = array();
 
-        foreach ($params['items'] as $update) {
+        foreach ($params['request_data']['items'] as $update) {
             if (!isset($update['order_id'])) {
                 throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
             }
@@ -76,13 +76,13 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        if (!isset($params['items']) || !is_array($params['items'])) {
+        if (!isset($params['request_data']['items']) || !is_array($params['request_data']['items'])) {
             return;
         }
 
         $ordersIds = array();
 
-        foreach ($params['items'] as $update) {
+        foreach ($params['request_data']['items'] as $update) {
             if (!isset($update['order_id'])) {
                 throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
             }

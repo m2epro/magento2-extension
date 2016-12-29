@@ -10,6 +10,22 @@ namespace Ess\M2ePro\Model\Amazon\Repricing\Action;
 
 class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 {
+    protected $resourceCatalogProduct;
+
+    //########################################
+
+    public function __construct(
+        \Magento\Catalog\Model\ResourceModel\Product $resourceCatalogProduct,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory
+    ){
+        $this->resourceCatalogProduct = $resourceCatalogProduct;
+        parent::__construct($activeRecordFactory, $amazonFactory, $resourceConnection, $helperFactory, $modelFactory);
+    }
+
     //########################################
 
     public function sendAddProductsActionData(array $listingsProductsIds, $backUrl)
@@ -87,7 +103,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                             'params' => array()
                         )
                     ),
-                    'data' => json_encode(array(
+                    'data' => $this->getHelper('Data')->jsonEncode(array(
                         'offers' => $offersData,
                     ))
                 )
@@ -113,12 +129,15 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
      */
     private function getOffersData(array $listingProductIds, $alreadyOnRepricing = false)
     {
+        /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->getSelect()->joinLeft(
+        $listingProductCollection->joinLeft(
             array('l' => $this->resourceConnection->getTableName('m2epro_listing')),
             'l.id = main_table.listing_id',
             array('store_id')
         );
+
+        $nameAttribute = $this->resourceCatalogProduct->getAttribute('name');
 
         $storeIdSelect = $this->resourceConnection->getConnection()
             ->select()
@@ -127,35 +146,28 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                 new \Zend_Db_Expr('MAX(`store_id`)')
             )
             ->where("`entity_id` = `main_table`.`product_id`")
-            ->where("`attribute_id` = `ea`.`attribute_id`")
+            ->where("`attribute_id` = ?", $nameAttribute->getAttributeId())
             ->where("`store_id` = 0 OR `store_id` = `l`.`store_id`");
 
-        $listingProductCollection->getSelect()
-            ->join(
-                array('cpev' => $this->resourceConnection->getTableName('catalog_product_entity_varchar')),
-                "cpev.entity_id = main_table.product_id",
-                array('product_title' => 'value')
-            )
-            ->join(
-                array('ea' => $this->resourceConnection->getTableName('eav_attribute')),
-                'cpev.attribute_id = ea.attribute_id AND ea.attribute_code = \'name\'',
-                array()
-            )
-            ->where('cpev.store_id = ('.$storeIdSelect->__toString().')');
-
-        $tableAmazonListingProductRepricing = $this->resourceConnection->getTableName(
-            'm2epro_amazon_listing_product_repricing'
-        );
-        $listingProductCollection->getSelect()->joinLeft(
-            array('alpr' => $tableAmazonListingProductRepricing),
-            'alpr.listing_product_id = second_table.listing_product_id',
+        $listingProductCollection->joinInner(
+            array('cpe' => $this->resourceConnection->getTableName('catalog_product_entity')),
+            '(cpe.entity_id = `main_table`.product_id)',
             array()
         );
+        $listingProductCollection->joinInner(
+            array('cpev' => $this->resourceConnection->getTableName('catalog_product_entity_varchar')),
+            "cpev.entity_id = cpe.entity_id",
+            array('product_title' => 'value')
+        );
+
+        $listingProductCollection->getSelect()
+            ->where('`cpev`.`attribute_id` = ?', $nameAttribute->getAttributeId())
+            ->where('`cpev`.`store_id` = ('.$storeIdSelect->__toString().')');
 
         if ($alreadyOnRepricing) {
-            $listingProductCollection->addFieldToFilter('alpr.listing_product_id', array('notnull' => true));
+            $listingProductCollection->addFieldToFilter('second_table.is_repricing', 1);
         } else {
-            $listingProductCollection->addFieldToFilter('alpr.listing_product_id', array('null' => true));
+            $listingProductCollection->addFieldToFilter('second_table.is_repricing', 0);
         }
 
         $listingProductCollection->addFieldToFilter('main_table.id', array('in' => $listingProductIds));

@@ -482,11 +482,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     /**
      * @param bool $asObjects
      * @param array $filters
+     * @param bool $tryToGetFromStorage
      * @return array
      */
-    public function getVariations($asObjects = false, array $filters = array())
+    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getVariations($asObjects,$filters);
+        return $this->getParentObject()->getVariations($asObjects,$filters,$tryToGetFromStorage);
     }
 
     //########################################
@@ -529,6 +530,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getEbayItemId()
     {
         return (int)$this->getData('ebay_item_id');
+    }
+
+    public function getItemUUID()
+    {
+        return $this->getData('item_uuid');
+    }
+
+    public function generateItemUUID()
+    {
+        $uuid  = str_pad($this->getAccount()->getId(), 2, '0', STR_PAD_LEFT);
+        $uuid .= str_pad($this->getListing()->getId(), 4, '0', STR_PAD_LEFT);
+        $uuid .= str_pad($this->getId(), 10, '0', STR_PAD_LEFT);
+
+        // max int value is 2147483647 = 0x7FFFFFFF
+        $randomPart = dechex(mt_rand(0x000000, 0x7FFFFFFF));
+        $uuid .= str_pad($randomPart, 16, '0', STR_PAD_LEFT);
+
+        return strtoupper($uuid);
     }
 
     // ---------------------------------------

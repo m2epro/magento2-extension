@@ -47,8 +47,19 @@ class Cron extends AbstractInspection
             $this->cronIsNotWorking = $this->getHelper('Module\Cron')->isLastRunMoreThan(12,true);
         }
 
-        $serviceHostName = $moduleConfig->getGroupValue('/cron/service/', 'hostname');
-        $this->cronServiceIp = gethostbyname($serviceHostName);
+        $cronServiceIps = array();
+
+        for ($i = 1; $i < 100; $i++) {
+            $serviceHostName = $moduleConfig->getGroupValue('/cron/service/','hostname_'.$i);
+
+            if (is_null($serviceHostName)) {
+                break;
+            }
+
+            $cronServiceIps[] = gethostbyname($serviceHostName);
+        }
+
+        $this->cronServiceIps = implode(', ', $cronServiceIps);
 
         $this->isMagentoCronDisabled = (bool)(int)$moduleConfig->getGroupValue('/cron/magento/','disabled');
         $this->isServiceCronDisabled = (bool)(int)$moduleConfig->getGroupValue('/cron/service/','disabled');

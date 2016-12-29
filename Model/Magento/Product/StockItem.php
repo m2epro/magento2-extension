@@ -80,7 +80,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         $stockItem = $this->getStockItem();
         $stockItem->setQty($stockItem->getQty() + $qty);
 
-        if ($this->stockConfiguration->getCanBackInStock() && $stockItem->getQty() > $stockItem->getMinQty()) {
+        if ($stockItem->getQty() > $stockItem->getMinQty()) {
             $stockItem->setIsInStock(true);
         }
 

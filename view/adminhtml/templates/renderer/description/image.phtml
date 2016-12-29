@@ -1,13 +1,28 @@
-<?php /** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image $this */ ?>
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image $this */
+$data = $this->getData();
+?>
 
-<?php $data = $this->getData(); ?>
+    <style>
 
-<?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW) { ?>
+        #m2e-description-image-<?php echo $this->getImageId(); ?> {
+        <?php if ($data['width'] != 0) : echo "width: {$data['width']}px;"; endif; ?>
+        <?php if ($data['height'] != 0) : echo "height: {$data['height']}px;"; endif; ?>
+        <?php if ($data['margin'] != 0) : echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>
+        }
+
+    </style>
+
+<?php if ($this->isLinkMode()) { ?>
     <a href="<?php echo $data['src']; ?>" target="_blank"<?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> style="cursor: pointer;">
 <?php } ?>
 
-<img src="<?php echo $data['src']; ?>" border="0"<?php if ($data['width'] != 0): echo ' width="'.$data['width'].'"'; endif; ?><?php if ($data['height'] != 0): echo ' height="'.$data['height'].'"'; endif; ?><?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> style="<?php if ($data['margin'] != 0): echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>" />
+    <img src="<?php echo $data['src']; ?>"
+         border="0"
+        <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?>
+         id="m2e-description-image-<?php echo $this->getImageId(); ?>"
+    />
 
-<?php if ($data['linked_mode'] == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW) { ?>
+<?php if ($this->isLinkMode()) { ?>
     </a>
 <?php } ?>

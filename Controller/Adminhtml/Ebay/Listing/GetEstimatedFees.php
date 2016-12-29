@@ -41,6 +41,13 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             $this->getHelper('Module\Exception')->process($exception);
         }
 
+        foreach ($connector->getResponse()->getMessages()->getErrorEntities() as $errorMessage) {
+            $connector->getLogger()->logListingProductMessage(
+                $listingProduct,
+                $errorMessage
+            );
+        }
+
         $errors = $connector->getLogger()->getStoredMessages();
 
         // ---------------------------------------

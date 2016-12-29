@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings\Update;
 
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Partial
 {
+    const MAX_LIFETIME = 90720;
+    const PENDING_REQUEST_MAX_LIFE_TIME = 86400;
+
     const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
 
     // ##################################

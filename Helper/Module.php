@@ -83,7 +83,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.1.3';
+        return '1.2.0';
     }
 
     public function getSetupVersion()
@@ -118,7 +118,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '1627';
+        return '1731';
     }
 
     //########################################
@@ -176,6 +176,13 @@ class Module extends AbstractHelper
     {
         $resource = $this->activeRecordFactory->getObject('VersionsHistory')->getResource();
         return $resource->getLastItem()->getCreateDate();
+    }
+
+    //########################################
+
+    public function isDisabled()
+    {
+        return (bool)$this->getConfig()->getGroupValue(NULL, 'is_disabled');
     }
 
     //########################################

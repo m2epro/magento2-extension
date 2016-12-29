@@ -131,15 +131,12 @@ class SystemRequirements extends AbstractBlock
         );
 
         $tablesPrefix = $this->getHelper('Magento')->getDatabaseTablesPrefix();
-        if (empty($tablesPrefix)) {
-            $tablesPrefix = '<span style="color: red;">'.$this->__('disabled').'</span>';
-        }
-
         $fieldSet->addField('mysql_tables_prefix',
             'note',
             [
                 'label' => $this->__('Tables Prefix'),
-                'text' => $tablesPrefix
+                'text' => !empty($tablesPrefix) ? '<span style="color: red;">'.$tablesPrefix.'</span>'
+                                                : $this->__('disabled')
             ]
         );
 

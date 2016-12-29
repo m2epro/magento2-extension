@@ -564,7 +564,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      * @param bool $onlyPhysicalUnits
      * @return array
      */
-    public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
+    public function getAffectedListingsProducts($asArrays = true, $columns = '*')
     {
         $listingCollection = $this->amazonFactory->getObject('Listing')->getCollection();
         $listingCollection->addFieldToFilter('account_id', $this->getAccountId());
@@ -572,17 +572,9 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $listingCollection->getSelect()->columns('id');
 
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->getSelect()->joinInner(
-            array('alpr' => $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
-                ->getResource()->getMainTable()),
-            'alpr.listing_product_id=main_table.id',
-            array()
-        );
+        $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
+        $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('listing_id', array('in' => $listingCollection->getSelect()));
-
-        if ($onlyPhysicalUnits) {
-            $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
-        }
 
         if (is_array($columns) && !empty($columns)) {
             $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -594,7 +586,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function setProcessRequired($newData, $oldData)
     {
-        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'), true);
+        $listingsProducts = $this->getAffectedListingsProducts(true, array('id'));
         if (empty($listingsProducts)) {
             return;
         }

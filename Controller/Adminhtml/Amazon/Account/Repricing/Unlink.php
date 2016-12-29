@@ -37,8 +37,10 @@ class Unlink extends Account
         }
 
         if ($status == '1') {
-            $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource()->remove($account);
-            $this->activeRecordFactory->getObject('Amazon\Listing\Other')->getResource()->removeRepricing($account);
+            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
+            $repricingSynchronization->setAccount($account);
+            $repricingSynchronization->reset();
 
             $account->getChildObject()->getRepricing()->delete();
         }

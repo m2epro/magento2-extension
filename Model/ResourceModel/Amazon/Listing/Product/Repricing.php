@@ -42,20 +42,26 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
 
     //########################################
 
-    public function getAllSkus(Account $account)
+    public function getAllSkus(Account $account, $repricingDisabled = null)
     {
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
             array('l' => $this->getTable('m2epro_listing')),
             'l.id = main_table.listing_id'
         );
-        $listingProductCollection->getSelect()->joinInner(
-            array('alpr' => $this->getMainTable()),
-            'alpr.listing_product_id=main_table.id',
-            array()
-        );
+        $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
+        $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
         $listingProductCollection->addFieldToFilter('second_table.sku', array('notnull' => true));
+
+        if (!is_null($repricingDisabled)) {
+            $listingProductCollection->getSelect()->joinLeft(
+                array('alpr' => $this->getMainTable()),
+                'alpr.listing_product_id = main_table.id'
+            );
+
+            $listingProductCollection->addFieldToFilter('alpr.is_online_disabled', $repricingDisabled);
+        }
 
         $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $listingProductCollection->getSelect()->columns(
@@ -88,40 +94,6 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
                 'listing_product_id IN (?)' => array_unique($listingsProductsIds),
                 'is_process_required = ?'   => 1,
             )
-        );
-    }
-
-    //########################################
-
-    public function remove(Account $account, array $skus = array())
-    {
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-
-        $listingProductCollection->getSelect()->join(
-            array('l' => $this->getTable('m2epro_listing')),
-            'l.id = main_table.listing_id',
-            array()
-        );
-
-        $listingProductCollection->getSelect()->where('l.account_id = ?', $account->getId());
-
-        if (!empty($skus)) {
-            $listingProductCollection->addFieldToFilter('sku', array('in' => array_unique($skus)));
-        }
-
-        $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $listingProductCollection->getSelect()->columns(array(
-            'id' => 'main_table.id'
-        ));
-
-        $listingProductIds = $listingProductCollection->getColumnValues('id');
-        if (empty($listingProductIds)) {
-            return;
-        }
-
-        $this->getConnection()->delete(
-            $this->getMainTable(),
-            array('listing_product_id IN (?)' => $listingProductIds)
         );
     }
 

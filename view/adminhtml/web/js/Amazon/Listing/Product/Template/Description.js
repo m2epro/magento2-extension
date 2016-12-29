@@ -158,6 +158,11 @@ define([
                 title: title,
                 type: 'slide',
                 buttons: [{
+                    text: M2ePro.translator.translate('Cancel'),
+                    click: function () {
+                        self.templateDescriptionPopup.modal('closeModal');
+                    }
+                }, {
                     text: M2ePro.translator.translate('Add New Description Policy'),
                     class: 'action primary ',
                     click: function () {

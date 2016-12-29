@@ -19,7 +19,7 @@ class Protocol extends \Ess\M2ePro\Model\Connector\Protocol
 
     public function getComponentVersion()
     {
-        return 7;
+        return 8;
     }
 
     // ########################################

@@ -36,10 +36,10 @@ final class RepricingInspectProducts extends AbstractModel
             $operationDate = $this->getHelper('Data')->getCurrentGmtDate();
             $skus = $this->getNewNoneSyncSkus($permittedAccount);
 
-            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization   */
-            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
             $repricingSynchronization->setAccount($permittedAccount);
-            $repricingSynchronization->runBySkus($skus);
+            $repricingSynchronization->run($skus);
 
             $this->setLastUpdateDate($permittedAccount, $operationDate);
         }

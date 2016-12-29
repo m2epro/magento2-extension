@@ -117,7 +117,9 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $data[$key] = $value;
-        $this->object->setData('data',json_encode($data))->save();
+        $this->object->setData(
+            'data', $this->getHelper('Data')->jsonEncode($data)
+        )->save();
 
         return true;
     }

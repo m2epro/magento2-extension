@@ -63,6 +63,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     protected $filesystem;
     protected $objectManager;
     protected $activeRecordFactory;
+    protected $magentoProductCollectionFactory;
 
     protected $statisticId;
 
@@ -106,6 +107,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory
     )
@@ -123,6 +125,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->filesystem = $filesystem;
         $this->objectManager = $objectManager;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -163,7 +166,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->_productModel = $this->productFactory->create()->setStoreId($storeId);
-        $this->_productModel->load($productId);
+        $this->_productModel->load($productId, 'entity_id');
 
         $this->setProductId($productId);
         $this->setStoreId($storeId);
@@ -454,14 +457,21 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $storeIds = [(int)$storeId, \Magento\Store\Model\Store::DEFAULT_STORE_ID];
         $storeIds = array_unique($storeIds);
 
-        $queryStmt = $resource->getConnection('core_read')
-              ->select()
-              ->from($resource->getTableName('catalog_product_entity_varchar'), ['value'])
-              ->where('store_id IN (?)', $storeIds)
-              ->where('entity_id = ?', (int)$productId)
-              ->where('attribute_id = ?', (int)$attributeId)
-              ->order('store_id DESC')
-              ->query();
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->addFieldToFilter('entity_id', (int)$productId);
+        $collection->joinTable(
+            ['cpev' => $resource->getTableName('catalog_product_entity_varchar')],
+            'entity_id = entity_id',
+            ['value' => 'value']
+        );
+        $queryStmt = $collection->getSelect()
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns(['value' => 'cpev.value'])
+            ->where('cpev.store_id IN (?)', $storeIds)
+            ->where('cpev.attribute_id = ?', (int)$attributeId)
+            ->order('cpev.store_id DESC')
+            ->query();
 
         $nameValue = '';
         while ($tempValue = $queryStmt->fetchColumn()) {
@@ -1171,7 +1181,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         // PRICE
         }  else if ($attribute->getFrontendInput() == 'price') {
-            $value = (string)round($value, 2);
+            $value = (string)number_format($value, 2);
 
         // MEDIA IMAGE
         }  else if ($attribute->getFrontendInput() == 'media_image') {
@@ -1233,14 +1243,21 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $storeIds = [(int)$this->getStoreId(), \Magento\Store\Model\Store::DEFAULT_STORE_ID];
         $storeIds = array_unique($storeIds);
 
-        $queryStmt = $resource->getConnection()
-              ->select()
-              ->from($resource->getTableName('catalog_product_entity_varchar'), ['value'])
-              ->where('store_id IN (?)', $storeIds)
-              ->where('entity_id = ?', (int)$this->getProductId())
-              ->where('attribute_id = ?', (int)$attributeId)
-              ->order('store_id DESC')
-              ->query();
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->addFieldToFilter('entity_id', (int)$this->getProductId());
+        $collection->joinTable(
+            ['cpev' => $resource->getTableName('catalog_product_entity_varchar')],
+            'entity_id = entity_id',
+            ['value' => 'value']
+        );
+        $queryStmt = $collection->getSelect()
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns(['value' => 'cpev.value'])
+            ->where('cpev.store_id IN (?)', $storeIds)
+            ->where('cpev.attribute_id = ?', (int)$attributeId)
+            ->order('cpev.store_id DESC')
+            ->query();
 
         $thumbnailTempPath = null;
         while ($tempPath = $queryStmt->fetchColumn()) {
@@ -1424,11 +1441,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return null;
         }
 
-        if (!isset($galleryImages['images'][$position])) {
+        $galleryImages = array_values($galleryImages['images']);
+
+        if (!isset($galleryImages[$position])) {
             return null;
         }
 
-        $galleryImage = $galleryImages['images'][$position];
+        $galleryImage = $galleryImages[$position];
 
         if (isset($galleryImage['disabled']) && (bool)$galleryImage['disabled']) {
             return null;

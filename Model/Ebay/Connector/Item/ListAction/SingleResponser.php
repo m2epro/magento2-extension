@@ -40,6 +40,14 @@ class SingleResponser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Respo
             $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
         }
 
+        if ($message = $this->isDuplicateErrorByUUIDAppeared($responseMessages)) {
+            $this->processDuplicateByUUID($message);
+        }
+
+        if ($message = $this->isDuplicateErrorByEbayEngineAppeared($responseMessages)) {
+            $this->processDuplicateByEbayEngine($message);
+        }
+
         parent::eventAfterExecuting();
     }
 

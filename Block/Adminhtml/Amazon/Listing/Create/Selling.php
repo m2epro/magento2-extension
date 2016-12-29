@@ -78,7 +78,7 @@ class Selling extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 Condition Note, Gift Wrap, Gift Message and also specify
                 Additional Settings - Production Time and Restock Date.<br/><br/>
 
-                In addition to, in this Section you can select Selling Format Policy that contains
+                In addition to, in this Section you can select Price, Quantity and Format Policy that contains
                 Settings connected with forming
                 of Price, Quantity etc. and Synchronization Policy that describes Rules of
                 Automatic Synchronization of Magento Product and Amazon Item.<br/><br/>

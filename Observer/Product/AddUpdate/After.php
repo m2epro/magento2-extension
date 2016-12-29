@@ -14,6 +14,7 @@ class After extends AbstractAddUpdate
 {
     private $eavConfig;
     private $storeManager;
+    private $objectManager;
     private $attributeAffectOnStoreIdCache = array();
 
     //########################################
@@ -24,11 +25,13 @@ class After extends AbstractAddUpdate
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Framework\ObjectManagerInterface $objectManager
     )
     {
         $this->eavConfig = $eavConfig;
         $this->storeManager = $storeManager;
+        $this->objectManager = $objectManager;
         parent::__construct($productFactory, $helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -483,7 +486,14 @@ class After extends AbstractAddUpdate
             $product->setStoreId($onStoreId);
             $product->load($this->getProductId());
 
-            return $this->attributeAffectOnStoreIdCache[$cacheKey] = !$product->getExistsStoreValueFlag($attributeCode);
+            $scopeOverridden = $this->objectManager->create('Magento\Catalog\Model\Attribute\ScopeOverriddenValue');
+            $isExistsValueForStore = $scopeOverridden->containsValue(
+                \Magento\Catalog\Api\Data\ProductInterface::class,
+                $product,
+                $attributeCode,
+                $onStoreId
+            );
+            return $this->attributeAffectOnStoreIdCache[$cacheKey] = !$isExistsValueForStore;
         }
 
         if ($attributeScope == \Magento\Catalog\Model\ResourceModel\Eav\Attribute::SCOPE_STORE) {

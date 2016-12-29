@@ -14,7 +14,8 @@ use Magento\Framework\Module\Setup;
 
 class Backup extends AbstractModel
 {
-    const TABLE_SUFFIX = '__backup';
+    const TABLE_SUFFIX = '__b';
+    const TABLE_IDENTIFIER_MAX_LEN = 20;
 
     private $versionFrom;
 
@@ -67,6 +68,13 @@ class Backup extends AbstractModel
     public function create()
     {
         foreach ($this->tablesList as $table) {
+
+            /**
+             * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
+             * that does not support 'FLOAT UNSIGNED' column type
+             */
+            $this->prepareFloatUnsignedColumns($table);
+
             $backupTable = $this->getConnection()->createTableByDdl(
                 $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table),
                 $this->getResultTableName($table)
@@ -123,10 +131,46 @@ class Backup extends AbstractModel
 
     private function getResultTableName($table)
     {
-        return $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+        $tableName = $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
                .self::TABLE_SUFFIX
-               .'_v'.str_replace('.', '_', $this->versionFrom)
-               .'_v'.str_replace('.', '_', $this->versionTo);
+               .'_'.str_replace('.', '', $this->versionFrom)
+               .'_'.str_replace('.', '', $this->versionTo);
+
+        if (strlen($tableName) > self::TABLE_IDENTIFIER_MAX_LEN) {
+            $tableName = 'm2epro' . self::TABLE_SUFFIX .'_'. sha1($tableName);
+        }
+
+        return $tableName;
+    }
+
+    private function prepareFloatUnsignedColumns($table)
+    {
+        $tableInfo = $this->getConnection()->describeTable(
+            $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
+        );
+
+        /** @var \Ess\M2ePro\Model\Setup\Database\Modifier\Table $tableModifier */
+        $tableModifier = $this->modelFactory->getObject('Setup\Database\Modifier\Table',
+            [
+                'installer' => $this->installer,
+                'tableName' => $table,
+            ]
+        );
+
+        foreach ($tableInfo as $columnTitle => $columnInfo) {
+            if (strtolower($columnInfo['DATA_TYPE']) != 'float unsigned') {
+                continue;
+            }
+
+            $columnType = 'FLOAT';
+            if (isset($columnInfo['NULLABLE']) && !$columnInfo['NULLABLE']) {
+                $columnType .= ' NOT NULL';
+            }
+
+            $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], NULL, false);
+        }
+
+        $tableModifier->commit();
     }
 
     //########################################

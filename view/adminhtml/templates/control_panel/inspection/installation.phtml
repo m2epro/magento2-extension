@@ -1,3 +1,7 @@
+<?php
+    use Ess\M2ePro\Controller\Adminhtml\SetupManagement\Index;
+?>
+
 <table class="form-list" cellspacing="0" cellpadding="0">
 
     <tr>
@@ -24,6 +28,21 @@
         </td>
         <td class="value">
             <?php echo !empty($this->lastUpgradeDate) ? $this->lastUpgradeDate : '--' ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td class="label">
+            <label><?php echo $this->__('Setup Management Tool'); ?>: </label>
+        </td>
+        <td class="value">
+            <?php
+                $url = $this->getUrl(
+                    '*/setupManagement/index',
+                    [Index::AUTHORIZATION_COOKIE_NAME => Index::AUTHORIZATION_COOKIE_VALUE]
+                );
+            ?>
+            <a target="_blank" href="<?php echo $url; ?>"><?php echo $this->__('manage'); ?></a>
         </td>
     </tr>
 

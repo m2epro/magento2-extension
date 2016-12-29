@@ -82,15 +82,14 @@ HTML;
             'content' => $settingsBlock->toHtml()
         ));
 
-//        $this->addTab('vocabulary', array(
-//            'label'   => $this->__('Advanced'),
-//            'title'   => $this->__('Advanced'),
-//            'content' => $this->getLayout()
-//                ->createBlock('M2ePro/adminhtml_common_amazon_listing_variation_product_manage_tabs_vocabulary')
-//                ->setListingProductId($this->getListingProductId())
-//                ->toHtml()
-//        ));
-//
+        $this->addTab('vocabulary', array(
+            'label'   => $this->__('Advanced'),
+            'title'   => $this->__('Advanced'),
+            'content' => $this->createBlock('Amazon\Listing\Product\Variation\Manage\Tabs\Vocabulary')
+                ->setListingProduct($this->getListingProduct())
+                ->toHtml()
+        ));
+
         $generalId = $this->getListingProduct()->getChildObject()->getGeneralId();
         if (empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner()) {
             $this->setActiveTab('settings');

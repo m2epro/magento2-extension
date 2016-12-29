@@ -37,7 +37,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendIsVariationMpnFilledValue($data);
 
         if (isset($data['additional_data'])) {
-            $data['additional_data'] = json_encode($data['additional_data']);
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);

@@ -16,13 +16,29 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
     public function getCacheValue($key)
     {
-        $key = sha1('magento_product_'.$this->getProductId().'_'.$this->getStoreId().'_'.json_encode($key));
+        $key = sha1(
+            'magento_product_'
+            . $this->getProductId()
+            . '_'
+            . $this->getStoreId()
+            . '_'
+            . $this->getHelper('Data')->jsonEncode($key)
+        );
+
         return $this->getHelper('Data\Cache\Runtime')->getValue($key);
     }
 
     public function setCacheValue($key, $value)
     {
-        $key = sha1('magento_product_'.$this->getProductId().'_'.$this->getStoreId().'_'.json_encode($key));
+        $key = sha1(
+            'magento_product_'
+            . $this->getProductId()
+            . '_'
+            . $this->getStoreId()
+            . '_'
+            . $this->getHelper('Data')->jsonEncode($key)
+        );
+
         $tags = array(
             'magento_product',
             'magento_product_'.$this->getProductId().'_'.$this->getStoreId()

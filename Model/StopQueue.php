@@ -78,7 +78,7 @@ class StopQueue extends ActiveRecord\AbstractModel
                                         $listingProduct->getMarketplace()->getNativeId() : NULL;
 
         $addedData = array(
-            'item_data' => json_encode($itemData),
+            'item_data' => $this->getHelper('Data')->jsonEncode($itemData),
             'account_hash' => $listingProduct->getAccount()->getChildObject()->getServerHash(),
             'marketplace_id' => $marketplaceNativeId,
             'component_mode' => $listingProduct->getComponentMode(),

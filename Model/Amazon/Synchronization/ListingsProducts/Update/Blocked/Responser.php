@@ -276,7 +276,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
         }
 
         $this->getAccount()
-             ->setAdditionalData(json_encode($additionalData))
+             ->setAdditionalData($this->getHelper('Data')->jsonEncode($additionalData))
              ->save();
     }
 

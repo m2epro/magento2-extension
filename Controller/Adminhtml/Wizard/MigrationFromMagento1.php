@@ -9,7 +9,7 @@ abstract class MigrationFromMagento1 extends Wizard
     protected function init()
     {
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('Migration from Magento v1.x')
+            $this->__('M2E Pro Module Migration from Magento v1.x')
         );
     }
 

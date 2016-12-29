@@ -92,21 +92,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $variationUpdater->afterMassProcessEvent();
 
         $isVariationItem = $this->getEbayListingProduct()->isVariationsReady();
-
         $this->setIsVariationItem($isVariationItem);
-
-        $validateVariationsKey = \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater::VALIDATE_MESSAGE_DATA_KEY;
-
-        if ($this->getListingProduct()->hasData($validateVariationsKey)) {
-
-            $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
-                    $this->getListingProduct()->getData($validateVariationsKey)
-                )
-            );
-
-            $this->getListingProduct()->unsetData($validateVariationsKey);
-        }
     }
 
     protected function beforeBuildDataEvent() {}

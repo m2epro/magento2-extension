@@ -14,7 +14,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $status;
     protected $type;
     protected $visibility;
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
     protected $resourceConnection;
 
     //########################################
@@ -24,7 +24,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Catalog\Model\Product\Visibility $visibility,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -35,7 +35,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->status = $status;
         $this->type = $type;
         $this->visibility = $visibility;
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -58,24 +58,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _prepareCollection()
     {
-        /** @var \Ess\M2ePro\Model\Listing $listing */
-        $listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
-
         // Get collection
         // ---------------------------------------
-        $collection = $this->productFactory->create()->getCollection();
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+
+        $collection->getSelect()->group('e.entity_id');
+        $collection->setListing($this->listing);
+
         $collection
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id')
-            ->joinTable(
-                array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')),
-                'product_id=entity_id',
-                array('qty' => 'qty',
-                      'is_in_stock' => 'is_in_stock'),
-                '{{table}}.stock_id=1',
-                'left'
-            );
+            ->joinStockItem(array('qty' => 'qty', 'is_in_stock' => 'is_in_stock'));
+
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
+            $collection->setIsNeedToUseIndexerParent(true);
+        }
         // ---------------------------------------
 
         // ---------------------------------------
@@ -87,7 +86,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'ebay_status' => 'status',
                 'additional_data' => 'additional_data'
             ),
-            '{{table}}.listing_id='.(int)$listing->getId()
+            '{{table}}.listing_id='.(int)$this->listing->getId()
         );
         $collection->joinTable(
             array(
@@ -108,16 +107,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_current_price'  => 'online_current_price',
                 'online_reserve_price'  => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
-                'min_online_price'      => 'IF(
-                    (`t`.`variation_min_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_min_price`
-                )',
-                'max_online_price'      => 'IF(
-                    (`t`.`variation_max_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_max_price`
-                )'
             ),
             NULL,
             'left'
@@ -131,27 +120,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             NULL,
             'left'
         );
-        $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(
-                SELECT
-                    `mlpv`.`listing_product_id`,
-                    MIN(`melpv`.`online_price`) as variation_min_price,
-                    MAX(`melpv`.`online_price`) as variation_max_price
-                FROM `'. $this->activeRecordFactory->getObject('Listing\Product\Variation')
-                             ->getResource()->getMainTable() .'` AS `mlpv`
-                INNER JOIN `' .
-                $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')->getResource()->getMainTable() .
-                '` AS `melpv`
-                    ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
-                WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
-                GROUP BY `mlpv`.`listing_product_id`
-            )'),
-            'elp.listing_product_id=t.listing_product_id',
-            array(
-                'variation_min_price' => 'variation_min_price',
-                'variation_max_price' => 'variation_max_price',
-            )
-        );
         // ---------------------------------------
 
         // Set filter store
@@ -160,7 +128,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($store->getId()) {
             $collection->joinAttribute(
-                'price', 'catalog_product/price', 'entity_id', NULL, 'left', $store->getId()
+                'magento_price', 'catalog_product/price', 'entity_id', NULL, 'left', $store->getId()
             );
             $collection->joinAttribute(
                 'status', 'catalog_product/status', 'entity_id', NULL, 'inner',$store->getId()
@@ -180,6 +148,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
 
         // Set collection to grid
+        if ($collection->isNeedUseIndexerParent()) {
+            $collection->joinIndexerParent();
+        }
+
         $this->setCollection($collection);
 
         $this->getCollection()->addWebsiteNamesToResult();
@@ -245,15 +217,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $store = $this->_getStore();
 
-        $this->addColumn('price', array(
+        $priceAttributeAlias = 'price';
+        if ($store->getId()) {
+            $priceAttributeAlias = 'magento_price';
+        }
+
+        $this->addColumn($priceAttributeAlias, array(
             'header'    => $this->__('Price'),
             'align'     => 'right',
             'width'     => '100px',
             'type'      => 'price',
             'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Price',
             'currency_code' => $store->getBaseCurrency()->getCode(),
-            'index'     => 'price',
-            'filter_index' => 'price',
+            'index'     => $priceAttributeAlias,
+            'filter_index' => $priceAttributeAlias,
             'frame_callback' => array($this, 'callbackColumnPrice')
         ));
 
@@ -309,6 +286,27 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     //########################################
 
+    public function callbackColumnPrice($value, $row, $column, $isExport)
+    {
+        $rowVal = $row->getData();
+
+        if ($column->getId() == 'magento_price' &&
+            (!isset($rowVal['magento_price']) || (float)$rowVal['magento_price'] <= 0)
+        ) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        if ($column->getId() == 'price' &&
+            (!isset($rowVal['price']) || (float)$rowVal['price'] <= 0)
+        ) {
+            $value = '<span style="color: red;">0</span>';
+        }
+
+        return $value;
+    }
+
+    //########################################
+
     protected function _addColumnFilterToCollection($column)
     {
         if ($this->getCollection()) {
@@ -328,11 +326,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function _getStore()
     {
-        $listing = $this->getHelper('Data\GlobalData')->getValue('view_listing');
-
         // Get store filter
         // ---------------------------------------
-        $storeId = $listing['store_id'];
+        $storeId = $this->listing->getStoreId();
         // ---------------------------------------
 
         return $this->_storeManager->getStore((int)$storeId);

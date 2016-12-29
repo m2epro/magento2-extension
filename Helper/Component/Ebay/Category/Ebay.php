@@ -220,11 +220,12 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
             $dispatcherObject->process($connectorObj);
             $specifics = (array)$connectorObj->getResponseData();
+            $encodedSpecifics = $this->getHelper('Data')->jsonEncode($specifics);
 
             /** @var $connWrite \Magento\Framework\DB\Adapter\AdapterInterface */
             $connWrite = $this->resourceConnection->getConnection();
             $connWrite->update($tableDictCategory,
-                               array('item_specifics' => json_encode($specifics)),
+                               array('item_specifics' => $encodedSpecifics),
                                array('marketplace_id = ?' => (int)$marketplaceId,
                                      'category_id = ?' => (int)$categoryId));
         }

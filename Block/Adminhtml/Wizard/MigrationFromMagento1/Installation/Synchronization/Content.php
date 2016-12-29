@@ -11,10 +11,9 @@ class Content extends AbstractBlock
     protected function _prepareLayout()
     {
         $this->getLayout()->getBlock('wizard.help.block')->setContent(<<<HTML
-The Marketplace Data must be resynchronized to complete M2E Pro migration from Magento v 1.x to Magento v 2.x.<br/><br/>
-Below you can find the list of the Marketplaces which were enabled in M2E Pro based on the Magento v 1.x.
-They will be automatically resynchronized after pressing <strong>Continue</strong> button.<br/><br/><strong>
-Please note</strong> that the process might be rather time- and resource-consuming and may take up to 30 minutes.
+All the data from the database has been imported and prepared for its working in the M2E Pro for Magento v2.x and
+now to move forward, you will need to synchronize the Marketplaces data.<br/>
+<b>Please note</b> that the process might be rather time- and resource-consuming and might take up to 30 minutes.
 HTML
 );
 

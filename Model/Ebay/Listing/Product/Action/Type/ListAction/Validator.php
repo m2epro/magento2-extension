@@ -10,6 +10,8 @@ namespace Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction;
 
 class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Validator
 {
+    protected $isVerifyCall = false;
+
     protected $activeRecordFactory;
     protected $ebayFactory;
     protected $moduleConfig;
@@ -67,7 +69,19 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
         if ($this->getEbayListingProduct()->isVariationsReady()) {
 
-            return $this->validateVariationsFixedPrice();
+            if (!$this->validateVariationsOptions()) {
+                return false;
+            }
+
+            if (!$this->validateVariationsFixedPrice()) {
+                return false;
+            }
+
+            if (!$this->validateSpacesAtTheEndOfVariationAttributesAndOptions()) {
+                return false;
+            }
+
+            return true;
         }
 
         if ($this->getEbayListingProduct()->isListingTypeAuction()) {
@@ -95,6 +109,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
 
     protected function validateSameProductAlreadyListed()
     {
+        if ($this->isVerifyCall) {
+            return true;
+        }
+
         $params = $this->getParams();
         if ($params['status_changer'] == \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER) {
             return true;
@@ -116,7 +134,7 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             ->join(array('l'=>$listingTable),'`main_table`.`listing_id` = `l`.`id`',array());
 
         $listingProductCollection
-            ->addFieldToFilter('status',array('neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED))
+            ->addFieldToFilter('status', array('neq' => \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED))
             ->addFieldToFilter('product_id',$this->getListingProduct()->getProductId())
             ->addFieldToFilter('account_id',$this->getAccount()->getId())
             ->addFieldToFilter('marketplace_id',$this->getMarketplace()->getId());
@@ -144,6 +162,60 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
         ));
 
         return false;
+    }
+
+    protected function validateSpacesAtTheEndOfVariationAttributesAndOptions()
+    {
+        $failedAttributes = array();
+        $failedOptions    = array();
+
+        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+
+            foreach ($variation->getOptions(true) as $option) {
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
+
+                if ($option->getAttribute() != trim($option->getAttribute())) {
+                    $failedAttributes[] = $option->getAttribute();
+                }
+
+                if ($option->getOption() != trim($option->getOption())) {
+                    $failedOptions[] = $option->getOption();
+                }
+            }
+        }
+
+        if (empty($failedAttributes) && empty($failedOptions)) {
+            return true;
+        }
+
+        if (!empty($failedAttributes)) {
+            $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
+                'The Item cannot be updated properly on eBay because its Variational Attribute %attributes% title
+                contains a space at the start or in the end of the value which will cause the further errors.
+                Please, adjust the Attribute title to solve this issue.',
+                array('attributes' => implode(', ', array_unique($failedAttributes)))
+            ));
+        }
+
+        if (!empty($failedOptions)) {
+            $this->addMessage(
+                'The Item cannot be updated properly on eBay because its Option label(s) contain(s) a space
+                at the start or in the end of the value which will cause the further errors.
+                Please, adjust the Option label(s) to solve this issue.',
+                array('options' => implode(', ', array_unique($failedOptions)))
+            );
+        }
+
+        return false;
+    }
+
+    //########################################
+
+    public function setIsVerifyCall($value)
+    {
+        $this->isVerifyCall = $value;
+        return $this;
     }
 
     //########################################

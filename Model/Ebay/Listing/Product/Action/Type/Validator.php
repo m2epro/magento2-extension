@@ -212,10 +212,11 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         $qty = $this->getQty();
         if ($qty <= 0) {
 
-            // M2ePro\TRANSLATIONS
-            // The Quantity must be greater than 0. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Quantity must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
-                'The Quantity must be greater than 0. Please, check the Selling Format Policy and Product Settings.'
+                'The Quantity must be greater than 0. Please, check the Price, Quantity and Format
+                Policy and Product Settings.'
             );
 
             return false;
@@ -228,6 +229,77 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    protected function validateVariationsOptions()
+    {
+        $totalVariationsCount = 0;
+        $totalDeletedVariationsCount = 0;
+        $uniqueAttributesValues = array();
+
+        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+
+            foreach ($variation->getOptions(true) as $option) {
+                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
+
+                $uniqueAttributesValues[$option->getAttribute()][$option->getOption()] = true;
+
+                // Max 5 pair attribute-option:
+                // Color: Blue, Size: XL, ...
+                if (count($uniqueAttributesValues) > 5) {
+
+                    $this->addMessage(
+                        'Variations of this Magento Product are out of the eBay Variational Items limits.
+                        Its number of Variational Attributes is more than 5.
+                        That is why, this Product cannot be updated on eBay.
+                        Please, decrease the number of Attributes to solve this issue.'
+                    );
+                    return false;
+                }
+
+                // Maximum 60 options by one attribute:
+                // Color: Red, Blue, Green, ...
+                if (count($uniqueAttributesValues[$option->getAttribute()]) > 60) {
+
+                    $this->addMessage(
+                        'Variations of this Magento Product are out of the eBay Variational Items limits.
+                        Its number of Options for some Variational Attribute(s) is more than 60.
+                        That is why, this Product cannot be updated on eBay.
+                        Please, decrease the number of Options to solve this issue.'
+                    );
+                    return false;
+                }
+            }
+
+            $totalVariationsCount++;
+            $variation->isDeleted() && $totalDeletedVariationsCount++;
+
+            // Not more that 250 possible variations
+            if ($totalVariationsCount > 250) {
+
+                $this->addMessage(
+                    'Variations of this Magento Product are out of the eBay Variational Items limits.
+                    The Number of Variations is more than 250. That is why, this Product cannot be updated on eBay.
+                    Please, decrease the number of Variations to solve this issue.'
+                );
+                return false;
+            }
+        }
+
+        if ($totalVariationsCount == $totalDeletedVariationsCount) {
+
+            $this->addMessage(
+                'This Product was listed to eBay as Variational Item.
+                Changing of the Item type from Variational to Non-Variational during Revise/Relist
+                actions is restricted by eBay.
+                At the moment this Product is considered as Simple without any Variations,
+                that does not allow updating eBay Variational Item.'
+            );
+            return false;
+        }
+
+        return true;
+    }
+
     protected function validateVariationsFixedPrice()
     {
         if (!$this->getConfigurator()->isPriceAllowed() ||
@@ -237,8 +309,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
-        $variations = $this->getEbayListingProduct()->getVariations(true);
-        foreach ($variations as $variation) {
+        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
 
             if ($variation->getChildObject()->isDelete()) {
@@ -251,13 +322,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
                 $variationPrice = $variation->getChildObject()->getPrice();
             }
 
-            if ($variationPrice < 1) {
+            if ($variationPrice < 0.99) {
 
-                // M2ePro_TRANSLATIONS
-                // The Price must be greater than 0.99. Please, check the Selling Format Policy and Product Settings.
+// M2ePro_TRANSLATIONS
+// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
                 $this->addMessage(
                     'The Fixed Price must be greater than 0.99.
-                    Please, check the Selling Format Policy and Product Settings.'
+                    Please, check the Price, Quantity and Format Policy and Product Settings.'
                 );
 
                 return false;
@@ -279,13 +350,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $price = $this->getFixedPrice();
-        if ($price < 1) {
+        if ($price < 0.99) {
 
-            // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0.99. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
                 'The Fixed Price must be greater than 0.99.
-                Please, check the Selling Format Policy and Product Settings.'
+                Please, check the Price, Quantity and Format Policy and Product Settings.'
             );
 
             return false;
@@ -303,13 +374,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $price = $this->getStartPrice();
-        if ($price < 1) {
+        if ($price < 0.99) {
 
-            // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0.99. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
                 'The Start Price must be greater than 0.99.
-                 Please, check the Selling Format Policy and Product Settings.'
+                 Please, check the Price, Quantity and Format Policy and Product Settings.'
             );
 
             return false;
@@ -327,13 +398,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $price = $this->getReservePrice();
-        if ($price < 1) {
+        if ($price < 0.99) {
 
-            // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0.99. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
                 'The Reserve Price must be greater than 0.99.
-                 Please, check the Selling Format Policy and Product Settings.'
+                 Please, check the Price, Quantity and Format Policy and Product Settings.'
             );
 
             return false;
@@ -351,13 +422,13 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $price = $this->getBuyItNowPrice();
-        if ($price < 0) {
+        if ($price < 0.99) {
 
-            // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0. Please, check the Selling Format Policy and Product Settings.
+// M2ePro\TRANSLATIONS
+// The Price must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
             $this->addMessage(
                 'The Buy It Now Price must be greater than 0.99.
-                 Please, check the Selling Format Policy and Product Settings.'
+                 Please, check the Price, Quantity and Format Policy and Product Settings.'
             );
 
             return false;

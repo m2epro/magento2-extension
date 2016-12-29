@@ -109,7 +109,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
         $registryModel->addData(array(
             'key'   => $key,
-            'value' => json_encode($allRecentCategories)
+            'value' => $this->getHelper('Data')->jsonEncode($allRecentCategories)
         ))->save();
     }
 
@@ -183,7 +183,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
         $registryModel->addData(array(
             'key' => $this->getConfigGroup(),
-            'value' => json_encode($allRecentCategories)
+            'value' => $this->getHelper('Data')->jsonEncode($allRecentCategories)
         ))->save();
     }
 

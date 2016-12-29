@@ -36,7 +36,7 @@ class Edit extends Template
 
         $this->addContent($this->createBlock('Amazon\Template\ShippingOverride\Edit'));
 
-        $this->setPageHelpLink('TODO LINK');
+        $this->setPageHelpLink('x/jAA0AQ');
 
         return $this->getResultPage();
     }

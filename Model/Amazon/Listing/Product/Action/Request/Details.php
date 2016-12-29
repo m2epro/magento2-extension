@@ -11,6 +11,11 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request;
 class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\AbstractModel
 {
     /**
+     * @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate
+     */
+    private $shippingTemplateTemplate = NULL;
+
+    /**
      * @var \Ess\M2ePro\Model\Amazon\Template\Description
      */
     private $descriptionTemplate = NULL;
@@ -45,6 +50,8 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
                 $this->getGiftData()
             );
         }
+
+        $data = array_merge($data, $this->getShippingData());
 
         $isUseDescriptionTemplate = false;
 
@@ -282,9 +289,7 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
                 continue;
             }
 
-            $data = $this->getHelper('Data')->arrayReplaceRecursive(
-                $data, json_decode($source->getPath(), true)
-            );
+            $data = array_replace_recursive($data, json_decode($source->getPath(), true));
         }
 
         $this->processNotFoundAttributes('Product Specifics');
@@ -295,7 +300,39 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         );
     }
 
+    /**
+     * @return array
+     */
+    private function getShippingData()
+    {
+        if (!$this->getAmazonListingProduct()->getAmazonAccount()->isShippingModeTemplate()) {
+            return array();
+        }
+
+        if (!$this->getAmazonListingProduct()->isExistShippingTemplateTemplate()) {
+            return array();
+        }
+
+        $data = array();
+        $data['shipping_data']['template_name'] = $this->getShippingTemplateTemplate()->getTemplateName();
+
+        return $data;
+    }
+
     //########################################
+
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate
+     */
+    private function getShippingTemplateTemplate()
+    {
+        if (is_null($this->shippingTemplateTemplate)) {
+            $this->shippingTemplateTemplate = $this->getAmazonListingProduct()->getShippingTemplateTemplate();
+        }
+        return $this->shippingTemplateTemplate;
+    }
+
+    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Template\Description

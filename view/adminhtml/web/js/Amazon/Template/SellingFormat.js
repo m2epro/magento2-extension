@@ -125,7 +125,7 @@ define([
                                                     'Template\\SellingFormat', 'title', '','',
                                                     M2ePro.php.constant('Ess_M2ePro_Helper_Component_Amazon::NICK'));
 
-            $super($headId, M2ePro.translator.translate('Add Selling Format Policy'));
+            $super($headId, M2ePro.translator.translate('Add Price, Quantity and Format Policy'));
         },
 
         // ---------------------------------------

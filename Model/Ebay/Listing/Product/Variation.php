@@ -23,6 +23,24 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
 
     //########################################
 
+    public function afterSave()
+    {
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$this->getListingProduct()->getId()}_variations"
+        );
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $this->getHelper('Data\Cache\Runtime')->removeTagValues(
+            "listing_product_{$this->getListingProduct()->getId()}_variations"
+        );
+
+        return parent::beforeDelete();
+    }
+
     public function delete()
     {
         if (is_null($this->getId())) {
@@ -200,11 +218,12 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
     /**
      * @param bool $asObjects
      * @param array $filters
+     * @param bool $tryToGetFromStorage
      * @return \Ess\M2ePro\Model\Listing\Product\Variation\Option[]
      */
-    public function getOptions($asObjects = false, array $filters = array())
+    public function getOptions($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getOptions($asObjects,$filters);
+        return $this->getParentObject()->getOptions($asObjects,$filters,$tryToGetFromStorage);
     }
 
     //########################################

@@ -82,6 +82,23 @@ class Tabs extends AbstractTabs
             ]
         );
 
+        $this->addTab(
+            'servicing',
+            [
+                'label' => __('Servicing'),
+                'title' => __('Servicing'),
+                'content' => $this->getLayout()->createBlock(
+                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_MODULE_SERVICING
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
         return parent::_beforeToHtml();
     }
 

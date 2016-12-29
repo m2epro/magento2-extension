@@ -59,10 +59,6 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        if ((int)$this->getStockItem()->getQty() <= 0) {
-            return;
-        }
-
         $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
             $this->getProduct()->getId(),
             \Ess\M2ePro\Model\ProductChange::INITIATOR_OBSERVER

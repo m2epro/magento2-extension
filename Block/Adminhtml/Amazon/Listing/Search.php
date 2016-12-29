@@ -19,7 +19,15 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // Initialization block
         // ---------------------------------------
         $this->setId('listingAmazonSearch');
-        $this->_controller = 'adminhtml_amazon_listing_search';
+
+        $listingType = $this->getRequest()->getParam('listing_type', false);
+
+        if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
+            $this->_controller = 'adminhtml_amazon_listing_search_other';
+        } else {
+            $this->_controller = 'adminhtml_amazon_listing_search_product';
+        }
+
         // ---------------------------------------
 
         // Set buttons actions

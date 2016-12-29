@@ -428,9 +428,9 @@ class Builder extends AbstractModel
     {
         $this->prepareShippingAddress();
 
-        $this->setData('tax_details', json_encode($this->getData('tax_details')));
-        $this->setData('shipping_details', json_encode($this->getData('shipping_details')));
-        $this->setData('payment_details', json_encode($this->getData('payment_details')));
+        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($this->getData('tax_details')));
+        $this->setData('shipping_details', $this->getHelper('Data')->jsonEncode($this->getData('shipping_details')));
+        $this->setData('payment_details', $this->getHelper('Data')->jsonEncode($this->getData('payment_details')));
 
         $this->order->addData($this->getData());
         $this->order->save();

@@ -265,7 +265,7 @@ class PhysicalUnit extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Ma
             'sku' => $this->getAmazonListingProduct()->getSku(),
             'product_id' => (int)$this->getListingProduct()->getProductId(),
             'store_id' => (int)$this->getListing()->getStoreId(),
-            'variation_product_options' => json_encode($options),
+            'variation_product_options' => $this->getHelper('Data')->jsonEncode($options),
         );
 
         $this->activeRecordFactory->getObject('Amazon\Item')->setData($data)->save();

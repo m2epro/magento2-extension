@@ -61,18 +61,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
-        $collection->addAttributeToSelect('sku');
-        $collection->addAttributeToSelect('name');
+        $collection->setListing($this->listing->getId());
 
-        $collection->joinTable(
-            array('cisi' => 'cataloginventory_stock_item'),
-            'product_id=entity_id',
-            array(
-                'qty' => 'qty'
-            ),
-            '{{table}}.stock_id=1',
-            'left'
-        );
+        if ($this->isFilterOrSortByPriceIsUsed(null, 'amazon_online_price')) {
+            $collection->setIsNeedToUseIndexerParent(true);
+        }
+
+        $collection->addAttributeToSelect('name')
+            ->addAttributeToSelect('sku')
+            ->joinStockItem();
 
         // ---------------------------------------
 
@@ -98,6 +95,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             array('alp' => $alpTable),
             'listing_product_id=id',
             array(
+                'template_shipping_template_id'  => 'template_shipping_template_id',
                 'template_shipping_override_id'  => 'template_shipping_override_id',
                 'template_description_id'        => 'template_description_id',
                 'general_id'                     => 'general_id',
@@ -214,6 +212,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
+        $tsTable = $this->activeRecordFactory->getObject('Amazon\Template\ShippingTemplate')
+            ->getResource()->getMainTable();
+        $collection->joinTable(
+            array('ts' => $tsTable),
+            'id=template_shipping_template_id',
+            array(
+                'template_shipping_template_title' => 'title'
+            ),
+            null,
+            'left'
+        );
+
         // ---------------------------------------
 
         // Set collection to grid
@@ -273,14 +283,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnTemplateDescription')
         ));
 
+        $indexField = 'template_shipping_override_title';
+        $title = $this->__('Shipping Override Policy');
+
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
+            $indexField = 'template_shipping_template_title';
+            $title = $this->__('Shipping Template Policy');
+        }
+
         $this->addColumn('shipping_override_template', array(
-            'header' => $this->__('Shipping Override Policy'),
+            'header' => $title,
             'align' => 'left',
             'width' => '170px',
             'type' => 'text',
-            'index' => 'template_shipping_override_title',
-            'filter_index' => 'template_shipping_override_title',
-            'frame_callback' => array($this, 'callbackColumnTemplateShippingOverride')
+            'index' => $indexField,
+            'filter_index' => $indexField,
+            'frame_callback' => array($this, 'callbackColumnTemplateShipping')
         ));
 
         $this->addColumn('actions', array(
@@ -304,10 +322,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
     protected function getGroupOrder()
     {
-        return array(
+        $groups = array(
             'edit_template_description' => $this->__('Description Policy'),
-            'edit_template_shipping_override' => $this->__('Shipping Override Policy'),
+            'edit_template_shipping'    => $this->__('Shipping Override Policy')
         );
+
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
+            $groups['edit_template_shipping'] = $this->__('Shipping Template Policy');
+        }
+
+        return $groups;
     }
 
     protected function getColumnActionsItems()
@@ -326,21 +350,41 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.unassignTemplateDescriptionIdActionConfrim'
             ),
+        );
 
-            'assignTemplateShippingOverride' => array(
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
+
+            $actions['assignTemplateShipping'] = array(
                 'caption' => $this->__('Assign'),
-                'group'   => 'edit_template_shipping_override',
+                'group'   => 'edit_template_shipping',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.actions[\'assignTemplateShippingTemplateIdAction\']'
+            );
+
+            $actions['unassignTemplateShipping'] = array(
+                'caption' => $this->__('Unassign'),
+                'group'   => 'edit_template_shipping',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.unassignTemplateShippingTemplateIdActionConfrim'
+            );
+        }
+
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeOverride()) {
+
+            $actions['assignTemplateShippingOverride'] = array(
+                'caption' => $this->__('Assign'),
+                'group'   => 'edit_template_shipping',
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.actions[\'assignTemplateShippingOverrideIdAction\']'
-            ),
+            );
 
-            'unassignTemplateShippingOverride' => array(
+            $actions['unassignTemplateShippingOverride'] = array(
                 'caption' => $this->__('Unassign'),
-                'group'   => 'edit_template_shipping_override',
+                'group'   => 'edit_template_shipping',
                 'field'   => 'id',
                 'onclick_action' => 'ListingGridHandlerObj.unassignTemplateShippingOverrideIdActionConfrim'
-            )
-        );
+            );
+        }
 
         return $actions;
     }
@@ -359,9 +403,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
         $groups = array(
             'description_policy' => $this->__('Description Policy'),
-            'shipping_override_policy' => $this->__('Shipping Override Policy'),
+            'shipping_policy' => $this->__('Shipping Override Policy'),
             'other'              => $this->__('Other'),
         );
+
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
+            $groups['shipping_policy'] = $this->__('Shipping Template Policy');
+        }
 
         $this->getMassactionBlock()->setGroups($groups);
 
@@ -377,17 +425,35 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'confirm'  => $this->__('Are you sure?')
         ), 'description_policy');
 
-        $this->getMassactionBlock()->addItem('assignTemplateShippingOverrideId', array(
-            'label'    => $this->__('Assign'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
-        ), 'shipping_override_policy');
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
 
-        $this->getMassactionBlock()->addItem('unassignTemplateShippingOverrideId', array(
-            'label'    => $this->__('Unassign'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
-        ), 'shipping_override_policy');
+            $this->getMassactionBlock()->addItem('assignTemplateShippingTemplateId', array(
+                'label'   => $this->__('Assign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'shipping_policy');
+
+            $this->getMassactionBlock()->addItem('unassignTemplateShippingTemplateId', array(
+                'label'   => $this->__('Unassign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'shipping_policy');
+        }
+
+        if ($this->listing->getAccount()->getChildObject()->isShippingModeOverride()) {
+
+            $this->getMassactionBlock()->addItem('assignTemplateShippingOverrideId', array(
+                'label'   => $this->__('Assign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'shipping_policy');
+
+            $this->getMassactionBlock()->addItem('unassignTemplateShippingOverrideId', array(
+                'label'   => $this->__('Unassign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'shipping_policy');
+        }
 
         $this->getMassactionBlock()->addItem('moving', array(
             'label'    => $this->__('Move Item(s) to Another Listing'),
@@ -588,7 +654,8 @@ HTML;
         if ($row->getData('template_description_id')) {
 
             $url = $this->getUrl('*/amazon_template_description/edit', array(
-                'id' => $row->getData('template_description_id')
+                'id' => $row->getData('template_description_id'),
+                'close_on_save' => true
             ));
 
             $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_description_title'));
@@ -601,17 +668,38 @@ HTML;
         return $html;
     }
 
-    public function callbackColumnTemplateShippingOverride($value, $row, $column, $isExport)
+    public function callbackColumnTemplateShipping($value, $row, $column, $isExport)
     {
         $html = $this->__('N/A');
 
-        if ($row->getData('template_shipping_override_id')) {
+        if (
+            $this->listing->getAccount()->getChildObject()->isShippingModeOverride()
+            && $row->getData('template_shipping_override_id')
+        ) {
 
             $url = $this->getUrl('*/amazon_template_shippingOverride/edit', array(
-                'id' => $row->getData('template_shipping_override_id')
+                'id' => $row->getData('template_shipping_override_id'),
+                'close_on_save' => true
             ));
 
             $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_shipping_override_title'));
+
+            return <<<HTML
+<a target="_blank" href="{$url}">{$templateTitle}</a>
+HTML;
+        }
+
+        if (
+            $this->listing->getAccount()->getChildObject()->isShippingModeTemplate()
+            && $row->getData('template_shipping_template_id')
+        ) {
+
+            $url = $this->getUrl('*/amazon_template_shippingTemplate/edit', array(
+                'id' => $row->getData('template_shipping_template_id'),
+                'close_on_save' => true
+            ));
+
+            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_shipping_template_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>

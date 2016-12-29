@@ -9,18 +9,18 @@ namespace Ess\M2ePro\Block\Adminhtml\Category;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $categoryFactory;
+    protected $categoryCollectionFactory;
 
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\CategoryFactory $categoryFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->categoryFactory = $categoryFactory;
+        $this->categoryCollectionFactory = $categoryCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -63,34 +63,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return;
         }
 
-        /* @var $attribute \Magento\Eav\Model\Attribute */
-        $attribute = $collection->getFirstItem()->getResource()->getAttribute('name');
-
-        $resource = $collection->getResource();
-
-        $tableName = \Magento\Catalog\Model\Category::ENTITY . '_entity_' . $attribute->getBackendType();
-
-        $dbSelect1 = $resource->getConnection()
-            ->select()
-            ->from($resource->getTable($tableName), new \Zend_Db_Expr('MAX(`store_id`)'))
-            ->where("`entity_id` = `ccev`.`entity_id`")
-            ->where("`attribute_id` = `ccev`.`attribute_id`")
-            ->where("`store_id` = 0 OR `store_id` = ?",$this->getStoreId());
-
-        $dbSelect2 = $resource->getConnection()
-            ->select()
-            ->from(
-                array('ccev' => $resource->getTable($tableName)),
-                array('name' => 'value','category_id' => 'entity_id')
-            )
-            ->where('ccev.entity_id IN ('.implode(',',$ids).')')
-            ->where('ccev.attribute_id = ?', $attribute->getAttributeId())
-            ->where('ccev.store_id = ('.$dbSelect1->__toString().')');
+        /** @var \Ess\M2ePro\Model\ResourceModel\Magento\Category\Collection $collection */
+        $collection = $this->categoryCollectionFactory->create();
+        $collection->joinAttribute(
+            'name', 'catalog_category/name', 'entity_id', NULL, 'inner', $this->getStoreId()
+        );
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', 'in' => $ids]
+        ]);
 
         $cacheData = array();
-
-        foreach ($resource->getConnection()->fetchAll($dbSelect2) as $row) {
-            $cacheData[$row['category_id']] = $row['name'];
+        foreach ($collection->getItems() as $item) {
+            /** @var \Magento\Catalog\Model\Category $item */
+            $cacheData[$item->getData('entity_id')] = $item->getData('name');
         }
         $this->setData('categories_cache', $cacheData);
     }

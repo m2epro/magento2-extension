@@ -1,10 +1,6 @@
-<script type="application/javascript">
-    AmazonListingVariationProductManageHandlerObj = new CommonAmazonListingVariationProductManageHandler();
-</script>
-
-<div id="vocabulary_options_pupup_template" style="display: none;">
-    <div style="padding: 10px;">
-        <?php echo $this->__('
+<div id="vocabulary_options_pupup" style="display: none;">
+    <div style="margin-top: 10px;">
+        <?php echo $block->__('
         You have just specified an accordance between <strong>Magento Variational Option</strong> and
         <strong>Amazon Variational Option</strong> that was not defined earlier. M2E Pro can remember Options match
         below and use them in future automatically for that Attribute.<br/><br/>
@@ -16,20 +12,13 @@
 
         <input type="hidden" id="vocabulary_options_data" value="">
 
-        <div class="clear"></div>
-        <div class="left">
-            <div style="margin-left: 20px">
-                <input id="vocabulary_options_remember_checkbox" type="checkbox">
-                &nbsp;&nbsp;
-                <label for="vocabulary_options_remember_checkbox"><?php echo $this->__('Remember my choice') ?></label>
-            </div>
+        <div class="admin__field admin__field-option" style="position: absolute; margin-top: 30px;">
+            <input class="admin__control-checkbox" type="checkbox" id="vocabulary_options_remember_checkbox">
+            &nbsp;&nbsp;
+            <label for="vocabulary_options_remember_checkbox" class="admin__field-label">
+                <span><?php echo $block->__('Remember my choice') ?></span>
+            </label>
         </div>
-        <div class="right">
-            <?php echo $this->getChildHtml('yes_btn'); ?>
-            <div style="display: inline-block;"></div>
-            <?php echo $this->getChildHtml('no_btn'); ?>
-        </div>
-        <div class="clear"></div>
     </div>
 
 </div>

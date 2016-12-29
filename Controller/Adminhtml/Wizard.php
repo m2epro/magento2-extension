@@ -74,15 +74,14 @@ abstract class Wizard extends Main
     protected function installationAction()
     {
         if ($this->isFinished()) {
-            $this->congratulationAction();
-            return;
+            return $this->congratulationAction();
         }
 
         if ($this->isNotStarted()) {
             $this->setStatus(\Ess\M2ePro\Helper\Module\Wizard::STATUS_ACTIVE);
         }
 
-        if (!$this->getCurrentStep()) {
+        if (!$this->getCurrentStep() || !in_array($this->getCurrentStep(), $this->getSteps())) {
             $this->setStep($this->getFirstStep());
         }
 

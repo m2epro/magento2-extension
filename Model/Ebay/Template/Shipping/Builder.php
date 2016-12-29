@@ -118,17 +118,19 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         }
 
         if (isset($data['local_shipping_discount_profile_id'])) {
-            $prepared['local_shipping_discount_profile_id'] =
-                json_encode(array_diff($data['local_shipping_discount_profile_id'], array('')));
+            $prepared['local_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(
+                array_diff($data['local_shipping_discount_profile_id'], array(''))
+            );
         } else {
-            $prepared['local_shipping_discount_profile_id'] = json_encode(array());
+            $prepared['local_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(array());
         }
 
         if (isset($data['international_shipping_discount_profile_id'])) {
-            $prepared['international_shipping_discount_profile_id'] =
-                json_encode(array_diff($data['international_shipping_discount_profile_id'], array('')));
+            $prepared['international_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(
+                array_diff($data['international_shipping_discount_profile_id'], array(''))
+            );
         } else {
-            $prepared['international_shipping_discount_profile_id'] = json_encode(array());
+            $prepared['international_shipping_discount_profile_id'] = $this->getHelper('Data')->jsonEncode(array());
         }
 
         if (isset($data['excluded_locations'])) {
@@ -347,7 +349,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
                 'cost_additional_value' => $costAdditional,
                 'cost_surcharge_value'  => $costSurcharge,
                 'priority'              => $data['shipping_priority'][$i],
-                'locations'             => json_encode($locations)
+                'locations'             => $this->getHelper('Data')->jsonEncode($locations)
             );
         }
 

@@ -17,7 +17,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     protected $ebayFactory;
     protected $localeCurrency;
     protected $resourceConnection;
-    protected $productResource;
 
     //########################################
 
@@ -26,7 +25,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -36,7 +34,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $this->ebayFactory = $ebayFactory;
         $this->localeCurrency = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        $this->productResource = $productResource;
 
         parent::__construct($context, $backendHelper, $data);
     }
@@ -46,6 +43,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
     public function _construct()
     {
         parent::_construct();
+
+        $this->setDefaultSort(false);
 
         // Initialization block
         // ---------------------------------------
@@ -84,9 +83,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
+        $collection->setListing($this->listing);
+
+        if ($this->isFilterOrSortByPriceIsUsed('price', 'ebay_online_current_price')) {
+            $collection->setIsNeedToUseIndexerParent(true);
+        }
+
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
-        // ---------------------------------------
 
         // Join listing product tables
         // ---------------------------------------
@@ -123,16 +127,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_reserve_price'  => 'online_reserve_price',
                 'online_buyitnow_price' => 'online_buyitnow_price',
                 'template_category_id'  => 'template_category_id',
-                'min_online_price'      => 'IF(
-                    (`t`.`variation_min_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_min_price`
-                )',
-                'max_online_price'      => 'IF(
-                    (`t`.`variation_max_price` IS NULL),
-                    `elp`.`online_current_price`,
-                    `t`.`variation_max_price`
-                )'
+
+                'is_duplicate'          => 'is_duplicate',
             )
         );
 
@@ -147,30 +143,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'left'
         );
 
-        $lpvTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()->getMainTable();
-        $elpvTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product\Variation')
-            ->getResource()->getMainTable();
-        $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(
-                SELECT
-                    `mlpv`.`listing_product_id`,
-                    MIN(`melpv`.`online_price`) as variation_min_price,
-                    MAX(`melpv`.`online_price`) as variation_max_price
-                FROM `'. $lpvTable .'` AS `mlpv`
-                INNER JOIN `' . $elpvTable . '` AS `melpv`
-                    ON (`mlpv`.`id` = `melpv`.`listing_product_variation_id`)
-                WHERE `melpv`.`status` != ' . \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED . '
-                GROUP BY `mlpv`.`listing_product_id`
-            )'),
-            'elp.listing_product_id=t.listing_product_id',
-            array(
-                'variation_min_price' => 'variation_min_price',
-                'variation_max_price' => 'variation_max_price',
-            )
-        );
-        // ---------------------------------------
+        if ($collection->isNeedUseIndexerParent()) {
+            $collection->joinIndexerParent();
+        } else {
+            $collection->setIsNeedToInjectPrices(true);
+        }
 
-        // Set collection to grid
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
@@ -255,14 +233,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnEndTime')
         ));
 
-        $this->addColumn('status', array(
-            'header'=> $this->__('Status'),
-            'width' => '100px',
-            'index' => 'ebay_status',
+        $statusColumn = array(
+            'header'       => $this->__('Status'),
+            'width'        => '100px',
+            'index'        => 'ebay_status',
             'filter_index' => 'ebay_status',
-            'type'  => 'options',
-            'sortable'  => false,
-            'options' => array(
+            'type'         => 'options',
+            'sortable'     => false,
+            'options'      => array(
                 \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED => $this->__('Not Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED     => $this->__('Listed'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN     => $this->__('Listed (Hidden)'),
@@ -271,8 +249,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED   => $this->__('Finished'),
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED    => $this->__('Pending')
             ),
-            'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+            'frame_callback' => array($this, 'callbackColumnStatus'),
+            'filter_condition_callback' => array($this, 'callbackFilterStatus')
+        );
+
+        if ($this->getHelper('View\Ebay')->isDuplicatesFilterShouldBeShown($this->listing->getId())) {
+            $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
+        }
+        $this->addColumn('status', $statusColumn);
 
         return parent::_prepareColumns();
     }
@@ -736,6 +720,18 @@ HTML;
                 break;
         }
 
+        $duplicateMark = $listingProduct->getSetting('additional_data', 'item_duplicate_action_required');
+        if ($row->getData('is_duplicate') && $duplicateMark) {
+
+            $html .= <<<HTML
+<div class="icon-warning left">
+    <a href="javascript:" onclick="EbayListingViewEbayGridObj.openItemDuplicatePopUp({$listingProductId});">
+        {$this->__('Duplicate')}
+    </a>
+</div>
+HTML;
+        }
+
         $html .= $this->getLockedTag($row);
 
         return $html;
@@ -810,6 +806,26 @@ HTML;
         $condition .= ')';
 
         $collection->getSelect()->having($condition);
+    }
+
+    protected function callbackFilterStatus($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+        $index = $column->getIndex();
+
+        if ($value == null) {
+            return;
+        }
+
+        if (is_array($value) && isset($value['value'])) {
+            $collection->addFieldToFilter($index, (int)$value['value']);
+        } elseif (!is_array($value) && !is_null($value)) {
+            $collection->addFieldToFilter($index, (int)$value);
+        }
+
+        if (isset($value['is_duplicate'])) {
+            $collection->addFieldToFilter('is_duplicate' , 1);
+        }
     }
 
     // ---------------------------------------
@@ -896,14 +912,11 @@ HTML;
     {
         $this->getInitTerapeakWidgetHtml();
 
-        $allIdsStr = implode(',', $this->getCollection()->getAllIds());
-
         if ($this->getRequest()->isXmlHttpRequest()) {
 
             $this->js->add(
                 <<<JS
                 EbayListingViewEbayGridObj.afterInitPage();
-                EbayListingViewEbayGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
 JS
             );
 
@@ -927,6 +940,8 @@ JS
             'runRemoveProducts' => $this->getUrl('*/ebay_listing/runRemoveProducts'),
             'previewItems' => $this->getUrl('*/ebay_listing/previewItems'),
         ]);
+
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Listing\Product\Duplicate'));
 
         $this->jsUrl->add($this->getUrl('*/ebay_listing/getEstimatedFees'), 'ebay_listing/getEstimatedFees');
         $this->jsUrl->add(
@@ -1024,7 +1039,8 @@ JS
             'Product(s) failed to Move' => $this->__('Product(s) failed to Move'),
             'eBay Categories' => $this->__('eBay Categories'),
             'of Product' => $this->__('of Product'),
-            'Specifics' => $this->__('Specifics')
+            'Specifics' => $this->__('Specifics'),
+            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
         ]);
 
         $showAutoAction   = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
@@ -1061,7 +1077,6 @@ JS
             {$this->listing['id']}
         );
         EbayListingViewEbayGridObj.afterInitPage();
-        EbayListingViewEbayGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
 
         EbayListingViewEbayGridObj.actionHandler.setOptions(M2ePro);
         EbayListingViewEbayGridObj.variationProductManageHandler.setOptions(M2ePro);

@@ -115,7 +115,13 @@ HTML
 
         $preparedValues = [];
         if (!$isEdit) {
-            $preparedValues[]  = '';
+            $preparedValues[] = [
+                'label' => '',
+                'value' => '',
+                'attrs' => [
+                    'style' => 'display: none;'
+                ]
+            ];
         }
         foreach ($marketplaces as $marketplace) {
             $preparedValues[$marketplace['id']] = $marketplace['title'];
@@ -123,7 +129,7 @@ HTML
 
         $fieldset->addField(
             'marketplace_id',
-            'select',
+            self::SELECT,
             [
                 'name' => 'marketplace_id',
                 'label' => $this->__('Marketplace'),

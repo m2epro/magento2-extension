@@ -59,8 +59,8 @@ abstract class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        $account,
-        array $params
+        \Ess\M2ePro\Model\Account $account = null,
+        array $params = []
     )
     {
         if (!isset($params['logs_action_id']) || !isset($params['status_changer'])) {

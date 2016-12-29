@@ -498,13 +498,13 @@ define([
                     if (transport.responseText.isJSON()) {
                         var response = transport.responseText.evalJSON();
 
-                        // if (response['vocabulary_attributes']) {
-                        //     self.openVocabularyAttributesPopUp(response['vocabulary_attributes']);
-                        // }
-                        //
-                        // if (response['vocabulary_attribute_options']) {
-                        //     self.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
-                        // }
+                        if (response['vocabulary_attributes']) {
+                            self.openVocabularyAttributesPopUp(response['vocabulary_attributes']);
+                        }
+
+                        if (response['vocabulary_attribute_options']) {
+                            self.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
+                        }
 
                         self.gridHandler.unselectAllAndReload();
                         return;
@@ -522,42 +522,55 @@ define([
         },
 
         openVocabularyAttributesPopUp: function (attributes) {
-            var attributesHtml = '';
-            $H(attributes).each(function (element) {
-                attributesHtml += '<li>' + element.key + ' > ' + element.value + '</li>';
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/getAttributesPopup'), {
+                onSuccess: function (transport) {
+
+                    var containerEl = $('vocabulary_attributes_pupup');
+
+                    if (containerEl) {
+                        containerEl.remove();
+                    }
+
+                    $('html-body').insert({bottom: transport.responseText});
+
+                    self.vocabularyAttributesPupup = jQuery('#vocabulary_attributes_pupup');
+
+                    modal({
+                        title: 'Remember Attributes Accordance',
+                        type: 'popup',
+                        buttons: [{
+                            text: M2ePro.translator.translate('No'),
+                            class: 'action-secondary action-dismiss',
+                            click: function () {
+                                self.addAttributesToVocabulary(false);
+                            }
+                        },{
+                            text: M2ePro.translator.translate('Yes'),
+                            class: 'action-primary action-accept',
+                            click: function () {
+                                self.addAttributesToVocabulary(true);
+                            }
+                        }]
+                    }, self.vocabularyAttributesPupup);
+
+                    self.vocabularyAttributesPupup.modal('openModal');
+
+                    $('vocabulary_attributes_data').value = Object.toJSON(attributes);
+
+                    var attributesHtml = '';
+                    $H(attributes).each(function (element) {
+                        attributesHtml += '<li>' + element.key + ' > ' + element.value + '</li>';
+                    });
+
+                    attributesHtml = '<ul style="list-style-position: inside;">' + attributesHtml + '</ul>';
+
+                    var bodyHtml = str_replace('%attributes%', attributesHtml, $('vocabulary_attributes_pupup').innerHTML);
+
+                    $('vocabulary_attributes_pupup').update(bodyHtml);
+                }
             });
-
-            attributesHtml = '<ul>' + attributesHtml + '</ul>';
-            var vocabularyPopUpHtml = str_replace('%attributes%', attributesHtml, $('vocabulary_attributes_pupup_template').innerHTML);
-
-            vocabularyAttributesPopUp = Dialog.info(null, {
-                draggable: true,
-                resizable: true,
-                closable: true,
-                className: "magento",
-                windowClassName: "popup-window",
-                title: 'Remember Attributes Accordance',
-                top: 5,
-                width: 400,
-                height: 220,
-                zIndex: 100,
-                hideEffect: Element.hide,
-                showEffect: Element.show,
-                onClose: function () {
-                    this.reloadSettings();
-                    this.reloadVariationsGrid();
-                }.bind(this)
-            });
-            vocabularyAttributesPopUp.options.destroyOnClose = true;
-
-            $('modal_dialog_message').update(vocabularyPopUpHtml);
-
-            $('vocabulary_attributes_data').value = Object.toJSON(attributes);
-
-            setTimeout(function () {
-                Windows.getFocusedWindow().content.style.height = '';
-                Windows.getFocusedWindow().content.style.maxHeight = '630px';
-            }, 50);
         },
 
         addAttributesToVocabulary: function (needAdd) {
@@ -566,11 +579,11 @@ define([
             var isRemember = $('vocabulary_attributes_remember_checkbox').checked;
 
             if (!needAdd && !isRemember) {
-                Windows.getFocusedWindow().close();
+                self.vocabularyAttributesPupup.modal('closeModal');
                 return;
             }
 
-            new Ajax.Request(self.options.url.addAttributesToVocabulary, {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/addAttributes'), {
                 method: 'post',
                 parameters: {
                     attributes: $('vocabulary_attributes_data').value,
@@ -578,55 +591,70 @@ define([
                     is_remember: isRemember ? 1 : 0
                 },
                 onSuccess: function (transport) {
-                    vocabularyAttributesPopUp.close();
+                    self.vocabularyAttributesPupup.modal('closeModal');
                 }
             });
         },
 
         openVocabularyOptionsPopUp: function (options) {
-            vocabularyOptionsPopUp = Dialog.info(null, {
-                draggable: true,
-                resizable: true,
-                closable: true,
-                className: "magento",
-                windowClassName: "popup-window",
-                title: 'Remember Options Accordance',
-                top: 15,
-                width: 400,
-                height: 220,
-                zIndex: 100,
-                hideEffect: Element.hide,
-                showEffect: Element.show,
-                onClose: function () {
-                    this.reloadSettings();
-                    this.reloadVariationsGrid();
-                }.bind(this)
+            var self = this;
+
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/getOptionsPopup'), {
+                onSuccess: function (transport) {
+
+                    var containerEl = $('vocabulary_options_pupup');
+
+                    if (containerEl) {
+                        containerEl.remove();
+                    }
+
+                    $('html-body').insert({bottom: transport.responseText});
+
+                    self.vocabularyOptionsPopup = jQuery('#vocabulary_options_pupup');
+
+                    modal({
+                        title: 'Vocabulary',
+                        type: 'popup',
+                        closed: function() {
+                            self.reloadVariationsGrid();
+                        },
+                        buttons: [{
+                            text: M2ePro.translator.translate('No'),
+                            class: 'action-secondary action-dismiss',
+                            click: function () {
+                                self.addOptionsToVocabulary(false);
+                            }
+                        },{
+                            text: M2ePro.translator.translate('Yes'),
+                            class: 'action-primary action-accept',
+                            click: function () {
+                                self.addOptionsToVocabulary(true);
+                            }
+                        }]
+                    }, self.vocabularyOptionsPopup);
+
+                    self.vocabularyOptionsPopup.modal('openModal');
+
+                    $('vocabulary_options_data').value = Object.toJSON(options);
+
+                    var optionsHtml = '';
+                    $H(options).each(function (element) {
+
+                        var valuesHtml = '';
+                        $H(element.value).each(function (value) {
+                            valuesHtml += value.key + ' > ' + value.value;
+                        });
+
+                        optionsHtml += '<li>' + element.key + ': ' + valuesHtml + '</li>';
+                    });
+
+                    optionsHtml = '<ul style="list-style-position: inside">' + optionsHtml + '</ul>';
+
+                    var bodyHtml = str_replace('%options%', optionsHtml, $('vocabulary_options_pupup').innerHTML);
+
+                    $('vocabulary_options_pupup').update(bodyHtml);
+                }
             });
-            vocabularyOptionsPopUp.options.destroyOnClose = true;
-
-            $('vocabulary_options_data').value = Object.toJSON(options);
-
-            var optionsHtml = '';
-            $H(options).each(function (element) {
-
-                var valuesHtml = '';
-                $H(element.value).each(function (value) {
-                    valuesHtml += value.key + ' > ' + value.value;
-                });
-
-                optionsHtml += '<li>' + element.key + ': ' + valuesHtml + '</li>';
-            });
-
-            optionsHtml = '<ul>' + optionsHtml + '</ul>';
-
-            var bodyHtml = str_replace('%options%', optionsHtml, $('vocabulary_options_pupup_template').innerHTML);
-
-            $('modal_dialog_message').update(bodyHtml);
-
-            setTimeout(function () {
-                Windows.getFocusedWindow().content.style.height = '';
-                Windows.getFocusedWindow().content.style.maxHeight = '500px';
-            }, 50);
         },
 
         addOptionsToVocabulary: function (needAdd) {
@@ -635,11 +663,11 @@ define([
             var isRemember = $('vocabulary_options_remember_checkbox').checked;
 
             if (!needAdd && !isRemember) {
-                Windows.getFocusedWindow().close();
+                self.vocabularyOptionsPopup.modal('closeModal');
                 return;
             }
 
-            new Ajax.Request(self.options.url.addOptionsToVocabulary, {
+            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/addOptions'), {
                 method: 'post',
                 parameters: {
                     options_data: $('vocabulary_options_data').value,
@@ -647,7 +675,7 @@ define([
                     is_remember: isRemember ? 1 : 0
                 },
                 onSuccess: function (transport) {
-                    vocabularyOptionsPopUp.close();
+                    self.vocabularyOptionsPopup.modal('closeModal');
                 }
             });
         },

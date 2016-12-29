@@ -23,9 +23,8 @@ class Account extends AbstractContainer
 <p>Settings for such configurations as eBay Orders along with Magento Order creation conditions,
 3rd Party Listings import including options of Mapping them to Magento Products and Moving them to M2E Pro Listings,
 etc. can be specified for each Account separately.</p><br>
-<p><strong>Note:</strong> eBay Account can be deleted only if it is not being used for any of M2E Pro Listings.</p><br>
+<p><strong>Note:</strong> eBay Account can be deleted only if it is not being used for any of M2E Pro Listings.</p>
 HTML
-
 )
         ]);
 

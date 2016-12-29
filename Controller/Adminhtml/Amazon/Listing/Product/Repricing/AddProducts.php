@@ -53,10 +53,10 @@ class AddProducts extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $skus[] = $offer['sku'];
         }
 
-        /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
-        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+        /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+        $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
         $repricingSynchronization->setAccount($account);
-        $repricingSynchronization->runBySkus($skus);
+        $repricingSynchronization->run($skus);
 
         $this->getMessageManager()->addSuccess(
             $this->__('Amazon Products have been successfully added to the Amazon Repricing Tool.')

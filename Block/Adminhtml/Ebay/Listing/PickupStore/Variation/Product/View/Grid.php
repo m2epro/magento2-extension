@@ -355,7 +355,7 @@ class Grid extends AbstractGrid
         $pickupStoreState = $this->activeRecordFactory->getObjectLoaded('Ebay\Account\PickupStore\State', $stateId);
 
         $this->jsTranslator->addTranslations([
-            'Log For Sku '.$stateId => $this->__('Log For Sku (%s%)', $pickupStoreState->getSku())
+            'Log For SKU '.$stateId => $this->__('Log For SKU (%s%)', $pickupStoreState->getSku())
         ]);
 
         return $summary->toHtml();

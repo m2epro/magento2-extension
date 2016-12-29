@@ -70,19 +70,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
-        $collection->addAttributeToSelect('sku');
-        $collection->addAttributeToSelect('name');
+        $collection->setListing($this->listing->getId());
 
-        $collection->joinTable(
-            array('cisi' => 'cataloginventory_stock_item'),
-            'product_id=entity_id',
-            array(
-                'qty' => 'qty',
-                'is_in_stock' => 'is_in_stock'
-            ),
-            '{{table}}.stock_id=1',
-            'left'
-        );
+        $collection->addAttributeToSelect('name')
+            ->addAttributeToSelect('sku')
+            ->joinStockItem(array('qty' => 'qty', 'is_in_stock' => 'is_in_stock'));
 
         // ---------------------------------------
 
@@ -129,12 +121,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'online_sale_price_start_date'  => 'online_sale_price_start_date',
                 'online_sale_price_end_date'    => 'online_sale_price_end_date',
                 'is_afn_channel'                => 'is_afn_channel',
+                'is_repricing'                  => 'is_repricing',
                 'is_general_id_owner'           => 'is_general_id_owner',
                 'is_variation_parent'           => 'is_variation_parent',
                 'variation_child_statuses'      => 'variation_child_statuses',
                 'variation_parent_id'           => 'variation_parent_id',
                 'defected_messages'             => 'defected_messages',
-                'min_online_price'                     => 'IF(
+                'min_online_price'              => 'IF(
                     `alp`.`online_sale_price_start_date` IS NOT NULL AND
                     `alp`.`online_sale_price_end_date` IS NOT NULL AND
                     `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
@@ -152,7 +145,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             array('malpr' => $alprTable),
             '(`alp`.`listing_product_id` = `malpr`.`listing_product_id`)',
             array(
-                'is_repricing' => 'listing_product_id',
                 'is_repricing_disabled' => 'is_online_disabled',
             )
         );
@@ -594,8 +586,10 @@ HTML;
 
             $icon = 'repricing-enabled';
             $text = $this->__(
-                'This product is used by Amazon Repricing Tool.
-                 The Price cannot be updated through the M2E Pro.'
+                'This Product is used by Amazon Repricing Tool, so its Price cannot be managed via M2E Pro. <br>
+                 <strong>Please note</strong> that the Price value(s) shown in the grid might
+                 be different from the actual one from Amazon. It is caused by the delay
+                 in the values updating made via the Repricing Service'
             );
 
             if ((int)$row->getData('is_repricing_disabled') == 1) {
@@ -845,12 +839,7 @@ HTML;
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
-
-            if ($value['is_repricing'] === '0') {
-                $condition .= 'is_repricing IS NULL';
-            } else {
-                $condition .= 'is_repricing > 0';
-            }
+            $condition .= 'is_repricing = ' . (int)$value['is_repricing'];
         }
 
         $collection->getSelect()->having($condition);

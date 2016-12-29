@@ -12,6 +12,7 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $resourceModel;
     protected $productResource;
+    protected $magentoProductCollectionFactory;
 
     protected $_productAttributes  = array();
 
@@ -20,12 +21,14 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceModel,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
         $this->resourceModel = $resourceModel;
         $this->productResource = $productResource;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -48,40 +51,27 @@ class Status extends \Ess\M2ePro\Model\AbstractModel
 
     public function getProductStatus($productIds, $storeId = null)
     {
-        $statuses = array();
-
-        $attribute      = $this->_getProductAttribute('status');
-        $attributeTable = $attribute->getBackend()->getTable();
-        $adapter        = $this->_getReadAdapter();
-
         if (!is_array($productIds)) {
             $productIds = array($productIds);
         }
 
-        if ($storeId === null || $storeId == \Magento\Store\Model\Store::DEFAULT_STORE_ID) {
-            $select = $adapter->select()
-                ->from($attributeTable, array('entity_id', 'value'))
-                ->where('entity_id IN (?)', $productIds)
-                ->where('attribute_id = ?', $attribute->getAttributeId())
-                ->where('store_id = ?', \Magento\Store\Model\Store::DEFAULT_STORE_ID);
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->addFieldToFilter([
+            ['attribute' => 'entity_id', 'in' => $productIds]
+        ]);
+        $collection->joinAttribute(
+            'status', 'catalog_product/status', 'entity_id', NULL, 'inner', (int)$storeId
+        );
 
-            $rows = $adapter->fetchPairs($select);
-        } else {
-            $select = $adapter->select()
-                ->from(
-                    array('t1' => $attributeTable),
-                    array('entity_id', 'IF(t2.value_id>0, t2.value, t1.value) as value'))
-                ->joinLeft(
-                    array('t2' => $attributeTable),
-                    't1.entity_id = t2.entity_id AND t1.attribute_id = t2.attribute_id AND t2.store_id = '.
-                        (int)$storeId,
-                    array('t1.entity_id')
-                )
-                ->where('t1.store_id = ?', \Magento\Store\Model\Store::DEFAULT_STORE_ID)
-                ->where('t1.attribute_id = ?', $attribute->getAttributeId())
-                ->where('t1.entity_id IN(?)', $productIds);
-            $rows = $adapter->fetchPairs($select);
+        $rows = [];
+        $queryStmt = $collection->getSelect()->query();
+
+        while ($row = $queryStmt->fetch()) {
+            $rows[$row['entity_id']] = $row['status'];
         }
+
+        $statuses = array();
 
         foreach ($productIds as $productId) {
             if (isset($rows[$productId])) {

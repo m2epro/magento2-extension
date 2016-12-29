@@ -29,6 +29,10 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             return array();
         }
 
+        if (!$this->getAmazonListingProduct()->getAmazonAccount()->isShippingModeOverride()) {
+            return array();
+        }
+
         if (!$this->getAmazonListingProduct()->isExistShippingOverrideTemplate()) {
             return array();
         }

@@ -38,10 +38,10 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
             $currency = $amazonAccount->getMarketplace()->getChildObject()->getDefaultCurrency();
 
-            /** @var $repricing \Ess\M2ePro\Model\Amazon\Repricing\Synchronization */
-            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization');
+            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
             $repricingSynchronization->setAccount($account);
-            $repricingSynchronization->runBySkus($skus);
+            $repricingSynchronization->run($skus);
 
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
             $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();

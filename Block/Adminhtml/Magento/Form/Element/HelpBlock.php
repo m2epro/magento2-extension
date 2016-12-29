@@ -35,6 +35,7 @@ class HelpBlock extends AbstractElement
             'tooltiped'     => $this->getData('tooltiped'),
             'no_hide'       => $this->getData('no_hide'),
             'no_collapse'   => $this->getData('no_collapse'),
+            'style'         => $this->getData('style'),
         ])->toHtml();
     }
 }

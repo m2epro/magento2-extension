@@ -66,7 +66,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $defaultData['product_details'] = json_decode($defaultData['product_details'], true);
         $defaultData['watermark_settings'] = json_decode($defaultData['watermark_settings'], true);
 
-        $data = $this->getHelper('Data')->arrayReplaceRecursive($defaultData, $data);
+        $data = array_replace_recursive($defaultData, $data);
 
         if (isset($data['title_mode'])) {
             $prepared['title_mode'] = (int)$data['title_mode'];
@@ -117,7 +117,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['product_details'] = $data['product_details'];
 
             if (is_array($prepared['product_details'])) {
-                $prepared['product_details'] = json_encode($prepared['product_details']);
+                $prepared['product_details'] = $this->getHelper('Data')->jsonEncode($prepared['product_details']);
             }
         }
 
@@ -190,7 +190,9 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['variation_configurable_images'] = $data['variation_configurable_images'];
 
             if (is_array($prepared['variation_configurable_images'])) {
-                $prepared['variation_configurable_images'] = json_encode($prepared['variation_configurable_images']);
+                $prepared['variation_configurable_images'] = $this->getHelper('Data')->jsonEncode(
+                    $prepared['variation_configurable_images']
+                );
             }
         }
 
@@ -273,7 +275,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $watermarkSettings['hashes']['current'] = $data['old_watermark_settings']['hashes']['current'];
         }
 
-        $prepared['watermark_settings'] = json_encode($watermarkSettings);
+        $prepared['watermark_settings'] = $this->getHelper('Data')->jsonEncode($watermarkSettings);
 
         // ---------------------------------------
 

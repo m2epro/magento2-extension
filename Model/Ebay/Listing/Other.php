@@ -165,6 +165,21 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     public function afterMapProduct()
     {
+        $existedRelation = $this->getResource()->getConnection()
+            ->select()
+            ->from(array('ei' => $this->activeRecordFactory->getObject('Ebay\Item')->getResource()->getMainTable()))
+            ->where('`account_id` = ?', $this->getAccount()->getId())
+            ->where('`marketplace_id` = ?', $this->getMarketplace()->getId())
+            ->where('`item_id` = ?', $this->getItemId())
+            ->where('`product_id` = ?', $this->getParentObject()->getProductId())
+            ->where('`store_id` = ?', $this->getRelatedStoreId())
+            ->query()
+            ->fetchColumn();
+
+        if ($existedRelation) {
+            return;
+        }
+
         $dataForAdd = array(
             'account_id'     => $this->getAccount()->getId(),
             'marketplace_id' => $this->getMarketplace()->getId(),

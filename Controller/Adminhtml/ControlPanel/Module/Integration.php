@@ -144,6 +144,7 @@ HTML;
     /**
      * @title "Print Request Data"
      * @description "Print [List/Relist/Revise] Request Data"
+     * @new_line
      */
     public function getRequestDataAction()
     {
@@ -373,6 +374,63 @@ HTML;
 
         $this->getMessageManager()->addSuccess('Successfully removed.');
         $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
+    /**
+     * @title "Stop eBay 3rd Party"
+     * @description "[in order to resolve the problem with duplicates]"
+     * @new_line
+     */
+    public function stopEbay3rdPartyAction()
+    {
+        $collection = $this->parentFactory->getObject(Ebay::NICK, 'Listing\Other')->getCollection();
+        $collection->addFieldToFilter('status', array('in' => array(
+            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
+            \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN
+        )));
+
+        $total       = 0;
+        $groupedData = array();
+
+        foreach ($collection->getItems() as $item) {
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Other $item */
+
+            $key = $item->getAccount()->getId() .'##'. $item->getMarketplace()->getId();
+            $groupedData[$key][$item->getId()] = $item->getItemId();
+            $total++;
+        }
+
+        foreach ($groupedData as $groupKey => $items) {
+
+            list($accountId, $marketplaceId) = explode('##', $groupKey);
+
+            foreach (array_chunk($items, 10, true) as $itemsPart) {
+
+                /** @var $dispatcherObject \Ess\M2ePro\Model\Ebay\Connector\Dispatcher */
+                $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+                $connectorObj = $dispatcherObject->getVirtualConnector('item','update','ends',
+                    array('items' => $itemsPart), null, $marketplaceId, $accountId
+                );
+
+                $dispatcherObject->process($connectorObj);
+                $response = $connectorObj->getResponseData();
+
+                foreach ($response['result'] as $itemId => $iResp) {
+
+                    $item = $this->parentFactory->getObjectLoaded(
+                        Ebay::NICK, 'Listing\Other', $itemId, null, false
+                    );
+                    if (!is_null($item) &&
+                        ((isset($iResp['already_stop']) && $iResp['already_stop']) ||
+                            isset($iResp['ebay_end_date_raw'])))
+                    {
+                        $item->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED)->save();
+                    }
+                }
+            }
+        }
+
+        return "Processed {$total} products.";
     }
 
     /**

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Magento\Product;
 
 use Ess\M2ePro\Model\AbstractModel;
 
-Class Image extends AbstractModel
+class Image extends AbstractModel
 {
     protected $driverPool;
     protected $storeManager;
@@ -97,7 +97,7 @@ Class Image extends AbstractModel
             return $this->hash;
         }
 
-        return $this->hash = $this->generateHash($this->url, $this->getPath());
+        return $this->hash = $this->generateHash($this->getUrl(), $this->getPath());
     }
 
     /**
@@ -142,7 +142,7 @@ Class Image extends AbstractModel
 
     public function getPathByUrl()
     {
-        $imageUrl = str_replace('%20', ' ', $this->url);
+        $imageUrl = str_replace('%20', ' ', $this->getUrl());
         $imageUrl = preg_replace('/^http(s)?:\/\//i', '', $imageUrl);
 
         $baseMediaUrl = $this->storeManager->getStore($this->storeId)->getBaseUrl(

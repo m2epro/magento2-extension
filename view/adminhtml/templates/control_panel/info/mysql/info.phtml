@@ -32,7 +32,8 @@
             <label><?php echo $this->__('Tables Prefix'); ?>: </label>
         </td>
         <td class="value">
-            <?php echo $this->mySqlPrefix != '' ? $this->mySqlPrefix : $this->__('Disabled'); ?>
+            <?php echo $this->mySqlPrefix != '' ? '<span style="color: red;">'.$this->mySqlPrefix.'</span>'
+                                                : $this->__('Disabled'); ?>
         </td>
     </tr>
 

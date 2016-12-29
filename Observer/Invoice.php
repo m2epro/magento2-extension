@@ -92,9 +92,9 @@ class Invoice extends AbstractModel
 
         $channelTitle = $order->getComponentTitle();
         // M2ePro\TRANSLATIONS
-        // Payment Status for %chanel_title% Order was not updated. View <a href="%url%" target="_blank">Order Log</a> for more details.
+        // Payment Status for %channel_title% Order was not updated. View <a href="%url%" target="_blank">Order Log</a> for more details.
         $message  = $this->getHelper('Module\Translation')->__(
-            'Payment Status for %chanel_title% Order was not updated.'.
+            'Payment Status for %channel_title% Order was not updated.'.
             ' View <a href="%url%" target="_blank">Order Log</a> for more details.',
             $channelTitle, $url
         );

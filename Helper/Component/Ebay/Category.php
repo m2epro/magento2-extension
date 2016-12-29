@@ -128,7 +128,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
         $allRecentCategories[$configPath][$marketplaceOrAccountId] = implode(',' ,$categories);
         $registryModel->addData(array(
             'key' => $key,
-            'value' => json_encode($allRecentCategories)
+            'value' => $this->getHelper('Data')->jsonEncode($allRecentCategories)
         ))->save();
     }
 

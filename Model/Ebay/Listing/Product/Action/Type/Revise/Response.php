@@ -40,7 +40,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendVariationsThatCanNotBeDeleted($data, $response);
 
         if (isset($data['additional_data'])) {
-            $data['additional_data'] = json_encode($data['additional_data']);
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
         }
 
         $this->getListingProduct()->addData($data);
@@ -70,7 +70,7 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         }
 
         $data['additional_data']['ebay_item_fees'] = array();
-        $data['additional_data'] = json_encode($data['additional_data']);
+        $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
 
         $this->getListingProduct()->addData($data)->save();
     }
@@ -184,21 +184,6 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
             $this->getEbayListingProduct()->getOnlineBids()) {
             unset($data['online_current_price']);
         }
-
-        $params = $this->getConfigurator()->getParams();
-
-        if (!isset($params['replaced_action']) ||
-            $params['replaced_action'] != \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
-            return $data;
-        }
-
-        if (!$this->getEbayListingProduct()->isListingTypeFixed() ||
-            !$this->getRequestData()->hasVariations() ||
-            !isset($data['online_current_price'])) {
-            return $data;
-        }
-
-        $data['online_current_price'] = $this->getRequestData()->getVariationPrice(true);
 
         return $data;
     }

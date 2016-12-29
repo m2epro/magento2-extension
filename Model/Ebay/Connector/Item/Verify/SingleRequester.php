@@ -10,6 +10,8 @@ namespace Ess\M2ePro\Model\Ebay\Connector\Item\Verify;
 
 class SingleRequester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Requester
 {
+    protected $isRealTime = true;
+
     //########################################
 
     protected function getCommand()
@@ -29,16 +31,6 @@ class SingleRequester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Reque
 
     //########################################
 
-    public function process()
-    {
-        $this->setIsRealTime(true);
-        $this->getLogger()->setStoreMode(true);
-
-        parent::process();
-    }
-
-    //########################################
-
     protected function isListingProductLocked()
     {
         return false;
@@ -48,18 +40,32 @@ class SingleRequester extends \Ess\M2ePro\Model\Ebay\Connector\Item\Single\Reque
 
     protected function unlockListingProduct() {}
 
-    //########################################
+    //----------------------------------------
 
-    protected function getRequestData()
+    protected function getValidatorObject()
     {
-        if ($this->listingProduct->getChildObject()->isVariationsReady()) {
-            $this->getRequestObject()->resetVariations();
-        }
+        /** @var $obj \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Validator */
+        $obj = parent::getValidatorObject();
+        $obj->setIsVerifyCall(true);
 
-        $requestData = parent::getRequestData();
-        $requestData['verify_call'] = true;
+        return $obj;
+    }
 
-        return $requestData;
+    protected function makeRequestObject()
+    {
+        /** @var $obj \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\ListAction\Request */
+        $obj = parent::makeRequestObject();
+        $obj->setIsVerifyCall(true);
+
+        return $obj;
+    }
+
+    public function getLogger()
+    {
+        $obj = parent::getLogger();
+        $obj->setStoreMode(true);
+
+        return $obj;
     }
 
     //########################################

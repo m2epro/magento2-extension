@@ -97,7 +97,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             }
         }
 
-        if ($this->isRepricing()) {
+        if ($this->isRepricingUsed()) {
             $this->getRepricing()->delete();
         }
 
@@ -204,6 +204,30 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getAmazonSynchronizationTemplate()
     {
         return $this->getSynchronizationTemplate()->getChildObject();
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isExistShippingTemplateTemplate()
+    {
+        return $this->getTemplateShippingTemplateId() > 0;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate | null
+     */
+    public function getShippingTemplateTemplate()
+    {
+        if (!$this->isExistShippingTemplateTemplate()) {
+            return null;
+        }
+
+        return $this->activeRecordFactory->getCachedObjectLoaded(
+            'Amazon\Template\ShippingTemplate', $this->getTemplateShippingTemplateId()
+        );
     }
 
     // ---------------------------------------
@@ -371,28 +395,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->variationManager;
     }
 
-    public function getVariations($asObjects = false, array $filters = array())
+    /**
+     * @param bool $asObjects
+     * @param array $filters
+     * @param bool $tryToGetFromStorage
+     * @return array
+     */
+    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
     {
-        return $this->getParentObject()->getVariations($asObjects,$filters);
+        return $this->getParentObject()->getVariations($asObjects,$filters,$tryToGetFromStorage);
     }
 
     //########################################
-
-    /**
-     * @return bool
-     */
-    public function isRepricing()
-    {
-        return !is_null($this->getRepricing());
-    }
-
-    /**
-     * @return bool
-     */
-    public function isRepricingDisabled()
-    {
-        return $this->isRepricing() && $this->getRepricing()->isOnlineDisabled();
-    }
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing
@@ -408,6 +422,30 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         return $this->repricingModel;
     }
 
+    /**
+     * @return bool
+     */
+    public function isRepricingUsed()
+    {
+        return $this->isRepricing() && !is_null($this->getRepricing());
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRepricingEnabled()
+    {
+        return $this->isRepricingUsed() && !$this->getRepricing()->isOnlineDisabled();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRepricingDisabled()
+    {
+        return $this->isRepricingUsed() && $this->getRepricing()->isOnlineDisabled();
+    }
+
     //########################################
 
     /**
@@ -416,6 +454,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getTemplateDescriptionId()
     {
         return (int)($this->getData('template_description_id'));
+    }
+
+    /**
+     * @return int
+     */
+    public function getTemplateShippingTemplateId()
+    {
+        return (int)($this->getData('template_shipping_template_id'));
     }
 
     /**
@@ -478,6 +524,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     }
 
     // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isRepricing()
+    {
+        return (int)$this->getData('is_repricing') == self::IS_REPRICING_YES;
+    }
 
     /**
      * @return bool
@@ -829,11 +883,32 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $attributes = array_merge($attributes, $descriptionTemplate->getTrackingAttributes());
         }
 
-        if ($this->isRepricing()) {
+        if ($this->isRepricingUsed()) {
             $attributes = array_merge($attributes, $this->getAmazonAccount()->getRepricing()->getTrackingAttributes());
         }
 
         return array_unique($attributes);
+    }
+
+    //########################################
+
+    public function setSynchStatusNeed($newData, $oldData)
+    {
+        $this->getResource()->setSynchStatusNeedByDescriptionTemplate(
+            $newData, $oldData, $this->getParentObject()->getData()
+        );
+
+        $modelName = 'Amazon\Template\ShippingOverride';
+        $fieldName = 'template_shipping_override_id';
+
+        if ($this->getAccount()->getChildObject()->isShippingModeTemplate()) {
+            $modelName = 'Amazon\Template\ShippingTemplate';
+            $fieldName = 'template_shipping_template_id';
+        }
+
+        $this->getResource()->setSynchStatusNeedByShippingTemplate(
+            $newData, $oldData, $this->getParentObject()->getData(), $modelName, $fieldName
+        );
     }
 
     //########################################

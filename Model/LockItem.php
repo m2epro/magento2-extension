@@ -176,7 +176,7 @@ class LockItem extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $data[$key] = $value;
 
-        $lockModel->setData('data', json_encode($data));
+        $lockModel->setData('data', $this->getHelper('Data')->jsonEncode($data));
         $lockModel->save();
 
         return true;
@@ -191,7 +191,9 @@ class LockItem extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return false;
         }
 
-        $lockModel->setData('data',json_encode($data))->save();
+        $lockModel->setData(
+            'data', $this->getHelper('Data')->jsonEncode($data)
+        )->save();
 
         return true;
     }

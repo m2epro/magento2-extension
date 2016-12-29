@@ -86,8 +86,8 @@ class Builder extends AbstractModel
         // Init sale data
         // ---------------------------------------
         $this->setData('paid_amount', (float)$data['paid_amount']);
-        $this->setData('tax_details', json_encode($data['tax_details']));
-        $this->setData('discount_details', json_encode($data['discount_details']));
+        $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['tax_details']));
+        $this->setData('discount_details', $this->getHelper('Data')->jsonEncode($data['discount_details']));
         $this->setData('currency', $data['currency']);
         $this->setData('qty_shipped', $data['qty_shipped']);
         $this->setData('qty_unshipped', $data['qty_unshipped']);
@@ -100,7 +100,7 @@ class Builder extends AbstractModel
         $this->setData('shipping_service', $data['shipping_service']);
         $this->setData('shipping_address', $data['shipping_address']);
         $this->setData('shipping_price', (float)$data['shipping_price']);
-        $this->setData('shipping_dates', json_encode($data['shipping_dates']));
+        $this->setData('shipping_dates', $this->getHelper('Data')->jsonEncode($data['shipping_dates']));
         // ---------------------------------------
 
         $this->items = $data['items'];
@@ -245,7 +245,9 @@ class Builder extends AbstractModel
             $this->order->getChildObject()->setData('purchase_update_date', $this->getData('purchase_update_date'));
             $this->order->getChildObject()->save();
         } else {
-            $this->setData('shipping_address', json_encode($this->getData('shipping_address')));
+            $this->setData('shipping_address', $this->getHelper('Data')->jsonEncode(
+                $this->getData('shipping_address')
+            ));
             $this->order->addData($this->getData());
             $this->order->save();
 

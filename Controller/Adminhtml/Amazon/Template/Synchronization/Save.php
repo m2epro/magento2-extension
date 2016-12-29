@@ -64,7 +64,7 @@ class Save extends Template
             'revise_update_images',
             'revise_change_selling_format_template',
             'revise_change_description_template',
-            'revise_change_shipping_override_template',
+            'revise_change_shipping_template',
             'revise_change_listing'
         );
         foreach ($keys as $key) {

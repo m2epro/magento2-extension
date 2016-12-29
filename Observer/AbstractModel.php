@@ -49,6 +49,7 @@ abstract class AbstractModel implements \Magento\Framework\Event\ObserverInterfa
     public function execute(\Magento\Framework\Event\Observer $eventObserver)
     {
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() ||
+            $this->helperFactory->getObject('Module')->isDisabled() ||
             !$this->helperFactory->getObject('Module')->isReadyToWork()) {
 
             return;

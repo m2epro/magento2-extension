@@ -59,7 +59,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected function _prepareCollection()
     {
-        $collection = $this->categoryFactory->create()->getCollection();
+        $collection = $this->categoryCollectionFactory->create();
         $collection->addAttributeToSelect('name');
 
         $dbSelect = $collection->getConnection()

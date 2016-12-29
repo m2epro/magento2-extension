@@ -212,6 +212,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         $columnInfo['null'] == 'no' && $definition .= 'NOT NULL ';
         $columnInfo['default'] != '' && $definition .= "DEFAULT '{$columnInfo['default']}' ";
         ($columnInfo['null'] == 'yes' && $columnInfo['default'] == '') && $definition .= 'DEFAULT NULL ';
+        $columnInfo['extra'] == 'auto_increment' && $definition .= 'AUTO_INCREMENT ';
         !empty($columnInfo['after']) && $definition .= "AFTER `{$columnInfo['after']}`";
 
         $writeConnection = $this->resourceConnection->getConnection('core_write');

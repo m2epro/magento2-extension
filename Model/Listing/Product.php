@@ -35,6 +35,8 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     const SYNCH_STATUS_NEED  = 1;
     const SYNCH_STATUS_SKIP  = 2;
 
+    protected $_eventPrefix = 'ess_listing_product';
+
     //########################################
 
     /**
@@ -193,10 +195,18 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
     /**
      * @param bool $asObjects
      * @param array $filters
+     * @param bool $tryToGetFromStorage
      * @return \Ess\M2ePro\Model\Listing\Product\Variation[]
      */
-    public function getVariations($asObjects = false, array $filters = array())
+    public function getVariations($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
     {
+        $storageKey = "listing_product_{$this->getId()}_variations_" .
+            md5((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
+
+        if ($tryToGetFromStorage && ($cacheData = $this->getHelper('Data\Cache\Runtime')->getValue($storageKey))) {
+            return $cacheData;
+        }
+
         $variations = $this->getRelatedComponentItems(
             'Listing\Product\Variation','listing_product_id',$asObjects,$filters
         );
@@ -207,6 +217,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 $variation->setListingProduct($this);
             }
         }
+
+        $this->getHelper('Data\Cache\Runtime')->setValue($storageKey, $variations, array(
+            'listing_product',
+            "listing_product_{$this->getId()}",
+            "listing_product_{$this->getId()}_variations"
+        ));
 
         return $variations;
     }

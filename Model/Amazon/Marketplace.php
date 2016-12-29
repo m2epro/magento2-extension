@@ -80,9 +80,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     /**
      * @return bool
      */
-    public function isAsinAvailable()
+    public function isNewAsinAvailable()
     {
-        return (bool)$this->getData('is_asin_available');
+        return (bool)$this->getData('is_new_asin_available');
     }
 
     /**
@@ -91,22 +91,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function isMerchantFulfillmentAvailable()
     {
         return (bool)$this->getData('is_merchant_fulfillment_available');
-    }
-
-    //########################################
-
-    /**
-     * @return bool
-     */
-    public function isNewAsinAvailable()
-    {
-        $newAsinNotImplementedMarketplaces = array(
-            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_CA,
-            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_JP,
-            \Ess\M2ePro\Helper\Component\Amazon::MARKETPLACE_CN,
-        );
-
-        return !in_array((int)$this->getId(),$newAsinNotImplementedMarketplaces);
     }
 
     //########################################

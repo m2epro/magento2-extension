@@ -784,17 +784,17 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             'cash_on_delivery_cost' => NULL,
             'global_shipping_program' => 0,
             'cross_border_trade' => self::CROSS_BORDER_TRADE_NONE,
-            'excluded_locations' => json_encode(array()),
+            'excluded_locations' => $this->getHelper('Data')->jsonEncode(array()),
 
             'local_shipping_mode' =>  self::SHIPPING_TYPE_FLAT,
             'local_shipping_discount_mode' => 0,
-            'local_shipping_discount_profile_id' => json_encode(array()),
+            'local_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode(array()),
             'local_shipping_rate_table_mode' => 0,
             'click_and_collect_mode' => 1,
 
             'international_shipping_mode' => self::SHIPPING_TYPE_NO_INTERNATIONAL,
             'international_shipping_discount_mode' => 0,
-            'international_shipping_discount_profile_id' => json_encode(array()),
+            'international_shipping_discount_profile_id' => $this->getHelper('Data')->jsonEncode(array()),
             'international_shipping_rate_table_mode' => 0,
 
             // CALCULATED SHIPPING

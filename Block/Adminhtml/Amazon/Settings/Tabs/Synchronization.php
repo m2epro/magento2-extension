@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Amazon\Settings\Tabs;
+use Magento\Framework\Message\MessageInterface;
 
 class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
 {

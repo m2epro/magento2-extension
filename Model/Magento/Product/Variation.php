@@ -452,7 +452,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
         foreach ($optionsScope[$optionScopeIndex] as $option) {
 
             if (!isset($set[$option['attribute']]) ||
-                !in_array($option['option'],$set[$option['attribute']])) {
+                !in_array($option['option'],$set[$option['attribute']],true)) {
                 continue;
             }
 
@@ -477,7 +477,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
 
         $sortedOptions = array();
         foreach ($optionCollection as $option) {
-            if (!in_array($option->getValue(), $options) ||
+            if (!in_array($option->getValue(), $options, true) ||
                 in_array($option->getValue(), $sortedOptions, true)) {
                 continue;
             }
@@ -950,7 +950,11 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
             $resultTitles[$attributeKeyTitle]['titles'] = array_values(array_unique($attributeStoreTitles));
 
             $attributeValues = array();
-            foreach ($this->storeManager->getStores(true) as $store) {
+
+            $stores = $this->storeManager->getStores(true);
+            ksort($stores);
+
+            foreach ($stores as $store) {
                 /** @var \Magento\Store\Api\Data\StoreInterface $store */
 
                 $storeId = (int)$store->getId();
@@ -966,7 +970,9 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                         $attributeValues[$valueId] = array();
                     }
 
-                    $attributeValues[$valueId][$storeId] = $attributeValue->getValue();
+                    if (!in_array($attributeValue->getValue(), $attributeValues[$valueId], true)) {
+                        $attributeValues[$valueId][$storeId] = $attributeValue->getValue();
+                    }
                 }
             }
 

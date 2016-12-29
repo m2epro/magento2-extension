@@ -1,5 +1,12 @@
 <?php /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Preview $this */ ?>
 
+<?php echo $this->createBlock('HelpBlock')->setData([
+    'style' => 'margin-top: 30px',
+    'no_hide' => true,
+    'title' => $this->__('Description Preview'),
+    'content' => $this->__('If your description contains M2E Pro Attributes, some of them such as Image URLs, Images, etc. might display for the previewing the value which is different from the actual one that will be sent to eBay.')
+])->toHtml() ?>
+
 <div class="pagination_container page-main-actions">
     <div class="product_title">
         <h2><?php echo $this->getData('title'); ?> (ID: <?php echo $this->getData('magento_product_id'); ?>)</h2>

@@ -76,14 +76,16 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
                     continue;
                 }
 
-                $item = $order->getItemsCollection()
-                    ->getItemByColumnValue('amazon_order_item_id', $data['order_item_id']);
+                /** @var \Ess\M2ePro\Model\Amazon\Order\Item $item */
+                $item = $this->activeRecordFactory->getObjectLoaded(
+                    'Amazon\Order\Item', $data['order_item_id'], 'amazon_order_item_id'
+                );
 
                 if (is_null($item)) {
                     continue;
                 }
 
-                $qty = $item->getChildObject()->getQtyPurchased();
+                $qty = $item->getQtyPurchased();
 
                 if ($qty > $qtyAvailable) {
                     $qty = $qtyAvailable;

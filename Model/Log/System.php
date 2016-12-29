@@ -49,7 +49,7 @@ class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function setAdditionalData(array $data = [])
     {
-        $this->setData('additional_data', json_encode($data));
+        $this->setData('additional_data', $this->getHelper('Data')->jsonEncode($data));
     }
 
     /**

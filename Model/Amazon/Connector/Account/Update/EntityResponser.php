@@ -30,7 +30,7 @@ class EntityResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending
         $amazonAccount = $this->getAccount()->getChildObject();
 
         $dataForUpdate = array(
-            'info' => json_encode($responseData['info'])
+            'info' => $this->getHelper('Data')->jsonEncode($responseData['info'])
         );
 
         $amazonAccount->addData($dataForUpdate)->save();

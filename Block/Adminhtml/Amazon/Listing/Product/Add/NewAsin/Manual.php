@@ -72,7 +72,7 @@ class Manual extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         // TEXT
         $this->jsTranslator->addTranslations([
             'templateDescriptionPopupTitle' => $this->__('Assign Description Policy'),
-            'setDescriptionPolicy' => $this->__('Set Description Policy.'),
+            'setDescriptionPolicy' => $this->__('Set Description Policy'),
             'Add New Description Policy' => $this->__('Add New Description Policy')
         ]);
         // ---------------------------------------

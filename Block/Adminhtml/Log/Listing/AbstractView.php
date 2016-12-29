@@ -57,7 +57,7 @@ require(['M2ePro/Log/View'], function () {
 
     window.LogViewObj = new LogView();
 
-    {$this->getChildBlock('grid')->getId()}JsObject.initCallback = LogViewObj.processColorMapping;
+    {$this->getChildBlock('grid')->getJsObjectName()}.initCallback = LogViewObj.processColorMapping;
     LogViewObj.processColorMapping();
 });
 JS

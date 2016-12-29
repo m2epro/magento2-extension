@@ -35,20 +35,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     public function getValue($index=null)
     {
-        if (!$this->getHelper('Component\Ebay\PickupStore')->isFeatureEnabled()) {
-            return $this->getData('value', $index);
-        }
-
-        if ($index) {
-            return $this->getData('value', $index);
-        }
-
-        $value = $this->getData('value');
-        if (isset($value['is_in_store_pickup']) && $value['is_in_store_pickup'] == 1) {
-            return $value;
-        }
-
-        return null;
+        return $this->getData('value', $index);
     }
 
     //########################################

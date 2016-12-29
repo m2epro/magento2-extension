@@ -1009,7 +1009,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         );
 
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('sales', 'get', 'itemTransactions',
+        $connectorObj = $dispatcherObj->getVirtualConnector('orders', 'get', 'itemTransactions',
                                                             $params, 'buyer_info',
                                                             NULL, $this->getParentObject()->getAccount(), NULL);
 

@@ -66,7 +66,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
 
     protected function getCommand()
     {
-        return array('sales', 'update', 'status');
+        return array('orders', 'update', 'status');
     }
 
     // ########################################

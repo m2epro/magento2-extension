@@ -803,7 +803,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $action = \Ess\M2ePro\Model\Order\Change::ACTION_REFUND;
         }
 
-        $this->modelFactory->getObject('Order\Change')->create(
+        $this->activeRecordFactory->getObject('Order\Change')->create(
             $orderId, $action, $creatorType, $component, $params
         );
 

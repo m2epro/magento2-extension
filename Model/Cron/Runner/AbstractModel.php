@@ -137,6 +137,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
+        if ($this->getHelper('Module')->isDisabled()) {
+            return false;
+        }
+
         if (!$this->getHelper('Module')->isReadyToWork()) {
             return false;
         }

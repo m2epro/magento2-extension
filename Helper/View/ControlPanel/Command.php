@@ -18,6 +18,7 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
     const CONTROLLER_MODULE_MODULE          = 'controlPanel_module/module';
     const CONTROLLER_MODULE_SYNCHRONIZATION = 'controlPanel_module/synchronization';
     const CONTROLLER_MODULE_INTEGRATION     = 'controlPanel_module/integration';
+    const CONTROLLER_MODULE_SERVICING       = 'controlPanel_module/servicing';
 
     const CONTROLLER_TOOLS_M2EPRO_GENERAL   = 'controlPanel_tools_m2ePro/general';
     const CONTROLLER_TOOLS_M2EPRO_INSTALL   = 'controlPanel_tools_m2ePro/install';

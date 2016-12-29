@@ -18,7 +18,10 @@ class Selling extends AbstractModel
     {
         $qty = null;
         $price = null;
-        $afn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
+
+        $isAfn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
+        $isRepricing = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_NO;
+        $repricingEnabled = $repricingDisabled = $afnCount = 0;
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
             if ($listingProduct->isNotListed()) {
@@ -28,16 +31,25 @@ class Selling extends AbstractModel
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 
-            if ($amazonListingProduct->isAfnChannel()) {
-                $afn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
-                continue;
+            if ($amazonListingProduct->isRepricingUsed()) {
+
+                $isRepricing = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_YES;
+
+                $amazonListingProduct->isRepricingDisabled() && $repricingDisabled++;
+                $amazonListingProduct->isRepricingEnabled()  && $repricingEnabled++;
             }
 
-            $qty = (int)$qty + (int)$amazonListingProduct->getOnlineQty();
+            if ($amazonListingProduct->isAfnChannel()) {
 
-            $actualOnlinePrice = (float)$amazonListingProduct->getOnlinePrice();
+                $isAfn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
+                $afnCount++;
+
+            } else {
+                $qty = (int)$qty + (int)$amazonListingProduct->getOnlineQty();
+            }
 
             $salePrice = (float)$amazonListingProduct->getOnlineSalePrice();
+            $actualOnlinePrice = (float)$amazonListingProduct->getOnlinePrice();
 
             if ($salePrice > 0) {
                 $startDateTimestamp = strtotime($amazonListingProduct->getOnlineSalePriceStartDate());
@@ -61,8 +73,19 @@ class Selling extends AbstractModel
         $this->getProcessor()->getListingProduct()->getChildObject()->addData(array(
             'online_qty'        => $qty,
             'online_price'      => $price,
-            'is_afn_channel'    => $afn,
+            'is_afn_channel'    => $isAfn,
+            'is_repricing'      => $isRepricing
         ));
+
+        $this->getProcessor()->getListingProduct()->setSetting(
+            'additional_data', 'repricing_enabled_count', $repricingEnabled
+        );
+        $this->getProcessor()->getListingProduct()->setSetting(
+            'additional_data', 'repricing_disabled_count', $repricingDisabled
+        );
+        $this->getProcessor()->getListingProduct()->setSetting(
+            'additional_data', 'afn_count', $afnCount
+        );
     }
 
     //########################################

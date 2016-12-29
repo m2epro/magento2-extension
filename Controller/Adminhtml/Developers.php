@@ -45,5 +45,10 @@ abstract class Developers extends \Ess\M2ePro\Controller\Adminhtml\Base
                $this->_authorization->isAllowed('Ess_M2ePro::amazon_help_center_for_developers');
     }
 
+    protected function _validateSecretKey()
+    {
+        return true;
+    }
+
     //########################################
 }

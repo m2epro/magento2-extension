@@ -56,6 +56,7 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
             \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_AU,
             \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_UK,
             \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_DE,
+            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_IT,
         );
     }
 

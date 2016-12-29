@@ -243,20 +243,41 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Repricing Synchronization"
-     * @description "Process Repricing Synchronization"
+     * @title "Process Repricing Synchronization General"
+     * @description "Process Repricing Synchronization General"
      */
-    public function repricingSynchronizationAction()
+    public function repricingSynchronizationGeneralAction()
     {
         $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
         $cronRunner->setAllowedTasks(array(
-            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronization::NICK
+            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationGeneral::NICK
         ));
 
         if ($cronRunner->process()) {
-            $this->getMessageManager()->addSuccess('Repricing Receive Data was successfully performed.');
+            $this->getMessageManager()->addSuccess('Repricing Synchronization General was successfully performed.');
         } else {
-            $this->getMessageManager()->addError('Repricing Receive Data was performed with errors.');
+            $this->getMessageManager()->addError('Repricing Synchronization General was performed with errors.');
+        }
+
+        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
+    /**
+     * @title "Process Repricing Synchronization Actual Price"
+     * @description "Process Repricing Synchronization Actual Price"
+     */
+    public function repricingSynchronizationActualPriceAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationActualPrice::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()
+                ->addSuccess('Repricing Synchronization Actual Price was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Repricing Synchronization Actual Price was performed with errors.');
         }
 
         $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());

@@ -153,7 +153,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         $change->addData(array(
             'order_id'     => $orderId,
             'action'       => $action,
-            'params'       => json_encode($params),
+            'params'       => $this->getHelper('Data')->jsonEncode($params),
             'creator_type' => $creatorType,
             'component'    => $component,
             'hash'         => $hash

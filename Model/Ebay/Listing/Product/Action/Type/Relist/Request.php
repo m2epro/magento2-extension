@@ -12,14 +12,38 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     //########################################
 
+    protected function beforeBuildDataEvent()
+    {
+        parent::beforeBuildDataEvent();
+
+        $additionalData = $this->getListingProduct()->getAdditionalData();
+
+        unset($additionalData['add_to_schedule']);
+        unset($additionalData['item_duplicate_action_required']);
+
+        $this->getListingProduct()->setSettings('additional_data', $additionalData);
+        $this->getEbayListingProduct()->setData('is_duplicate', 0);
+
+        $this->getListingProduct()->save();
+    }
+
+    //########################################
+
     /**
      * @return array
      */
     public function getActionData()
     {
+        if (!$uuid = $this->getEbayListingProduct()->getItemUUID()) {
+
+            $uuid = $this->getEbayListingProduct()->generateItemUUID();
+            $this->getEbayListingProduct()->setData('item_uuid', $uuid)->save();
+        }
+
         $data = array_merge(
             array(
-                'item_id' => $this->getEbayListingProduct()->getEbayItemIdReal()
+                'item_id'   => $this->getEbayListingProduct()->getEbayItemIdReal(),
+                'item_uuid' => $uuid
             ),
             $this->getRequestVariations()->getRequestData()
         );

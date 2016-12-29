@@ -13,11 +13,15 @@ use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 
 class Uninstall implements \Magento\Framework\Setup\UninstallInterface
 {
     private $variablesDir = NULL;
     private $deploymentConfig = NULL;
+
+    /** @var  ModuleDataSetupInterface $installer */
+    private $installer;
 
     /** @var \Psr\Log\LoggerInterface */
     private $logger;
@@ -39,19 +43,11 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
 
     public function uninstall(SchemaSetupInterface $setup, ModuleContextInterface $context)
     {
+        $this->installer = $setup;
+
         try {
 
-            $tablesPrefix = (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX);
-
-            $canRemoveData = (bool)$setup->getConnection()->select()
-                ->from($tablesPrefix.'m2epro_module_config')
-                ->reset(\Zend_Db_Select::COLUMNS)
-                ->columns('value')
-                ->where('`group` = ?', '/uninstall/')
-                ->where('`key` = ?', 'can_remove_data')
-                ->query()->fetchColumn();
-
-            if (!$canRemoveData) {
+            if (!$this->canRemoveData()) {
                 return;
             }
 
@@ -62,7 +58,9 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
 
             // Database
             // -----------------------
-            $tables = $setup->getConnection()->getTables($tablesPrefix.'m2epro_%');
+            $tables = $setup->getConnection()->getTables(
+                (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX).'m2epro_%'
+            );
 
             foreach ($tables as $table) {
                 $setup->getConnection()->dropTable($table);
@@ -75,8 +73,37 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
             // -----------------------
 
         } catch (\Exception $exception) {
+
+            if ($this->isAllowedToPrintToStdErr()) {
+                echo $exception->__toString();
+            }
             $this->logger->error($exception, ['source' => 'Uninstall']);
         }
+    }
+
+    //########################################
+
+    private function canRemoveData()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('m2epro_module_config'), 'value')
+            ->where('`group` = ?', '/uninstall/')
+            ->where('`key` = ?', 'can_remove_data');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
+    }
+
+    private function isAllowedToPrintToStdErr()
+    {
+        $select = $this->installer->getConnection()
+            ->select()
+            ->from($this->installer->getTable('core_config_data'), 'value')
+            ->where('scope = ?', 'default')
+            ->where('scope_id = ?', 0)
+            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
+
+        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     //########################################

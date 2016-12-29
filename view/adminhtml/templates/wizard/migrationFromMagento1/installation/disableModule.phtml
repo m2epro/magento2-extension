@@ -1,0 +1,32 @@
+<?php /** @var \Ess\M2ePro\Block\Adminhtml\Wizard\MigrationFromMagento1\Installation\DisableModule\Content $block */ ?>
+
+<div class="wizard_block">
+
+    <p>
+        <?php echo $block->__('Dynamic functioning of M2E Pro has to be disabled for both Magento v1.x and Magento v2.x.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('To do that, you should navigate to <strong>System > Configuration > M2E Pro > Advanced</strong> in your Magento v1.x and click <strong>Proceed</strong> button.'); ?>
+    </p>
+    <p>
+        <?php echo $block->__('It will disable M2E Pro dynamic tasks run by Cron, block the M2E Pro Interface and prepare the extension for the migration to Magento v2.x environment.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<strong>Please note</strong> that disabling of the M2E Pro Cron tasks and blocking of M2E Pro Interface are required to prevent any possible changes made to the data during the migration process. Also, please know that this action cannot be reverted back and there will be no way to return the Module into the same state as before the preparation.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('Next, you should wait for at least 15 minutes. The time is needed to ensure that the started Cron tasks of M2E Pro for Magento v1.x are completed, execution of residual scripts is over and the data is saved and prepared for the migration.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('Then, you should click <strong>Continue</strong> button to disable Module for Magento v2.x. It will disable M2E Pro dynamic tasks run by Cron, block the M2E Pro Interface and prepare the extension for the migration to Magento v2.x environment.'); ?>
+    </p>
+
+    <p>
+        <?php echo $block->__('<strong>Please note</strong> that disabling of the M2E Pro Cron tasks and blocking of M2E Pro Interface are required to prevent any possible changes made to the data during the migration process. Also, please know that this action cannot be reverted back and there will be no way to return the Module into the same state as before the preparation.'); ?>
+    </p>
+
+</div>

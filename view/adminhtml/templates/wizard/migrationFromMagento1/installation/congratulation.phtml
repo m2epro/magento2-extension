@@ -3,60 +3,10 @@
 <div class="wizard_block">
 
     <h2>
-        <?php echo $block->__('Congratulations! You have successfully completed migration of M2E Pro from Magento v 1.x to Magneto v 2.x. <br/> All the data which used to be available in M2E Pro for Magento v 1.x has been imported and adapted to Magento v 2.x.'); ?>
+        <?php echo $block->__('Our Congratulations! You have successfully completed the Migration process.'); ?>
     </h2>
 
     <p>
-        <?php echo $block->__('<strong>Note</strong>: data for the features which are temporary unavailable in M2E Pro for Magento v.2.x was also imported. <br/> However, management tools will become available once the according feature are implemented into Extension.'); ?>
-    </p>
-
-    <br/>
-
-    <p>
-        <?php echo $block->__('Please bare in mind that there is no backward migration to M2E Pro compatible with Magento v 1.x.'); ?>
-    </p>
-
-    <br/>
-
-    <p>
-        <?php
-            echo $block->__(
-                'M2E Pro Team is working hard to develop and implement the features which are available in the recent versions for Magento v 1.x. as soon as possible. <br/> The list of supported functions is planned to be expanded on a regular basis. You can check our <a href="%1%" target="_blank"> Release Notes</a> to read the detailed information.',
-                $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/3wIkAQ')
-            );
-        ?>
-    </p>
-
-    <br/>
-
-    <p>
-        <?php echo $block->__('M2E Pro for Magento v 2.x is a separate independent module which should not be considered as a next step of the previously available versions. <br/> It has its own specifics such as'); ?>:
-    </p>
-
-    <ul class="migration-notes">
-        <li>
-            <?php echo $block->__('Separate versions;'); ?>
-        </li>
-        <li>
-            <?php echo $block->__('Independent <a href="%1%" target="_blank">Documentation</a> both for <a href="%2%" target="_blank">eBay Integration</a> and <a href="%3%" target="_blank">Amazon Integration</a>;',
-                $block->getHelper('Module\Support')->getDocumentationUrl(),
-                $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/2AIkAQ'),
-                $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/3AIkAQ')
-                ); ?>
-        </li>
-        <li>
-            <?php echo $block->__('Different frequency of the Upgrades available comparing to M2E Pro for Magento v 1.x. You can check our <a href="%1%" target="_blank">Release Notes</a> to find more information about each release;',
-                $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/3wIkAQ')
-                ); ?>
-        </li>
-        <li>
-            <?php echo $block->__('Moreover, some functionality is going to be implemented only in M2E Pro Magento v 2.x.'); ?>
-        </li>
-    </ul>
-
-    <br/>
-
-    <p>
-        <?php echo $block->__('Now, your M2E Pro is ready &ndash; automatic Synchronization is enabled, User Interface is unblocked. <br/> You can continue working with it in a more convenient, easier and faster way.'); ?>
+        <?php echo $block->__('So now M2E Pro dynamic tasks run by Cron are automatically enabled and M2E Pro Interface is unblocked. Thus, you can use all available M2E Pro features for the version based on the Magento v2.x.'); ?>
     </p>
 </div>

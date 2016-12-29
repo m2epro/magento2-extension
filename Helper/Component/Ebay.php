@@ -19,6 +19,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     const MARKETPLACE_AU = 4;
     const MARKETPLACE_UK = 3;
     const MARKETPLACE_DE = 8;
+    const MARKETPLACE_IT = 10;
 
     const LISTING_DURATION_GTC = 100;
     const MAX_LENGTH_FOR_OPTION_VALUE = 50;
@@ -93,12 +94,13 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
             $marketplaceId = self::MARKETPLACE_US;
         }
 
-        $domain = $this->ebayFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getUrl();
-        if ($accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX) {
-            $domain = 'sandbox.'.$domain;
-        }
+        /** @var \Ess\M2ePro\Model\Marketplace $marketplace */
+        $marketplace = $this->activeRecordFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
+        $domain = $marketplace->getUrl();
 
-        return 'http://cgi.'.$domain.'/ws/eBayISAPI.dll?ViewItem&item='.(double)$ebayItemId;
+        return $accountMode == \Ess\M2ePro\Model\Ebay\Account::MODE_SANDBOX
+            ? 'http://cgi.sandbox.' .$domain. '/ws/eBayISAPI.dll?ViewItem&item=' .(double)$ebayItemId
+            : 'http://www.' .$domain. '/itm/'.(double)$ebayItemId;
     }
 
     public function getMemberUrl($ebayMemberId, $accountMode = \Ess\M2ePro\Model\Ebay\Account::MODE_PRODUCTION)

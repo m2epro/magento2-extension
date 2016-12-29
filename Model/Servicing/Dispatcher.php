@@ -15,6 +15,7 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     private $params = array();
     private $forceTasksRunning = false;
+    private $initiator;
 
     protected $cacheConfig;
 
@@ -44,6 +45,19 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    public function setInitiator($initiator)
+    {
+        $this->initiator = $initiator;
+        return $this;
+    }
+
+    public function getInitiator()
+    {
+        return $this->initiator;
+    }
+
+    // ---------------------------------------
+
     /**
      * @return array
      */
@@ -66,7 +80,8 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         $timeLastUpdate = $this->getLastUpdateTimestamp();
 
-        if (!is_null($minInterval) &&
+        if ($this->getInitiator() !== \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER &&
+            !is_null($minInterval) &&
             $timeLastUpdate + (int)$minInterval > $this->getHelper('Data')->getCurrentGmtDate(true)) {
             return false;
         }
@@ -120,6 +135,7 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             /** @var $taskModel \Ess\M2ePro\Model\Servicing\Task */
             $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
             $taskModel->setParams($this->getParams());
+            $taskModel->setInitiator($this->getInitiator());
 
             if (!$this->getForceTasksRunning() && !$taskModel->isAllowed()) {
                 continue;
@@ -163,7 +179,6 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'license',
             'messages',
             'settings',
-            'backups',
             'exceptions',
             'marketplaces',
             'cron',
@@ -177,7 +192,6 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     public function getSlowTasks()
     {
         return array(
-            'backups',
             'exceptions',
             'statistic'
         );

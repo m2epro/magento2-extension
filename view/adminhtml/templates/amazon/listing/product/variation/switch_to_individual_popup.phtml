@@ -7,11 +7,11 @@
         }
     </style>
 
-    <?php echo $this->createBlock('HelpBlock')->setData([
+    <?php echo $block->createBlock('HelpBlock')->setData([
         'no_collapse' => true,
         'no_hide' => true,
         'style' => 'margin-bottom: 0px',
-        'content' => $this->__('M2E Pro is able to work with Magento Variational Products in two different Modes:
+        'content' => $block->__('M2E Pro is able to work with Magento Variational Products in two different Modes:
             <ul class="list">
                 <li>Selling Magento Variational Product as an Amazon Product with Parent/Child relation;</li>
                 <li>Selling certain Variation of Magento Product as Individual Amazon Product</li>
@@ -20,14 +20,14 @@
             You can read more about those two Modes in M2E Pro <a href="%url%" target="_blank" class="external-link">documentation</a>. <br/>
             This Product is now being treated as <strong>Amazon Product with Parent/Child relation</strong>, do you want to
             switch to <strong>Individual Mode</strong>? <br/>',
-            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/O4oVAQ')
+            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/O4oVAQ')
         )
     ])->toHtml(); ?>
 
     <div class="admin__field admin__field-option" style="position: absolute; margin-left: 10px; margin-top: 30px;">
         <input class="admin__control-checkbox" type="checkbox" id="switch_to_individual_remember_checkbox" name="switch_to_individual_remember_checkbox">&nbsp;
         <label for="switch_to_individual_remember_checkbox" class="admin__field-label">
-            <span>Remember my choice</span>
+            <span><?php echo $block->__('Remember my choice') ?></span>
         </label>
     </div>
 

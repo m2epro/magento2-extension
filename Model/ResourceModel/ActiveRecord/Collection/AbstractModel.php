@@ -8,14 +8,26 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection;
 
+use Magento\Catalog\Api\Data\CategoryInterface;
+use Magento\Catalog\Api\Data\CategoryAttributeInterface;
+use Magento\Catalog\Api\Data\ProductInterface;
+use Magento\Catalog\Api\Data\ProductAttributeInterface;
+
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
+    /** @var \Magento\Framework\EntityManager\EntityMetadata */
+    protected $productMetadata;
+
+    /** @var \Magento\Framework\EntityManager\EntityMetadata */
+    protected $categoryMetadata;
+
     protected $helperFactory;
     protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
+        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -26,6 +38,8 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     )
     {
+        $this->productMetadata = $metadataPool->getMetadata(ProductInterface::class);
+        $this->categoryMetadata = $metadataPool->getMetadata(CategoryInterface::class);
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
@@ -54,6 +68,41 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
     protected function getHelper($helperName, array $arguments = [])
     {
         return $this->helperFactory->getObject($helperName, $arguments);
+    }
+
+    //########################################
+
+    public function joinLeft($name, $cond, $cols = '*', $schema = null)
+    {
+        $cond = $this->replaceJoinCondition($name, $cond);
+        $this->getSelect()->joinLeft($name, $cond, $cols, $schema);
+    }
+
+    public function joinInner($name, $cond, $cols = '*', $schema = null)
+    {
+        $cond = $this->replaceJoinCondition($name, $cond);
+        $this->getSelect()->joinInner($name, $cond, $cols, $schema);
+    }
+
+    /**
+     * Compatibility with Magento Enterprise (Staging modules) - entity_id column issue
+     */
+    private function replaceJoinCondition($table, $cond)
+    {
+        /** @var \Ess\M2ePro\Helper\Magento\Staging $helper */
+        $helper = $this->getHelper('Magento\Staging');
+
+        if ($helper->isInstalled() && $helper->isStagedTable($table) &&
+            strpos($cond, 'entity_id') !== false) {
+
+            $linkField = $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE)
+                ? $this->productMetadata->getLinkField()
+                : $this->categoryMetadata->getLinkField();
+
+            $cond = str_replace('entity_id', $linkField, $cond);
+        }
+
+        return $cond;
     }
 
     //########################################

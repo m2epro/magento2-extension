@@ -22,8 +22,7 @@ abstract class Main extends Base
 
         $blockerWizardNick = $this->getBlockerWizardNick();
         if ($blockerWizardNick !== false) {
-            $this->_redirect('*/wizard_' . $blockerWizardNick);
-            return false;
+            return $this->_redirect('*/wizard_' . $blockerWizardNick);
         }
 
         $this->addNotificationMessages();
@@ -411,6 +410,7 @@ abstract class Main extends Base
     private function isContentLocked()
     {
         return $this->getHelper('Module\Maintenance\General')->isEnabled()
+                || $this->getHelper('Module')->isDisabled()
                 || $this->getHelper('Client')->isBrowserIE()
                 || (
                        $this->getHelper('Magento')->isProduction() &&

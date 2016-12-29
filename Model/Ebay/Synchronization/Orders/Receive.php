@@ -161,10 +161,21 @@ final class Receive extends AbstractModel
             $fromTime = \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($fromTime);
         }
 
+        $params = array(
+            'from_update_date' => $fromTime,
+            'to_update_date'=> $toTime
+        );
+
+        $jobToken = $account->getData('job_token');
+        if (!empty($jobToken)) {
+            $params['job_token'] = $jobToken;
+        }
+
+        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getVirtualConnector('sales', 'get', 'list',
-                                                            array('from_time' => $fromTime, 'to_time' => $toTime),
-                                                            NULL, NULL, $account);
+        $connectorObj = $dispatcherObj->getCustomConnector(
+            'Ebay\Connector\Order\Receive\Items', $params, NULL, $account
+        );
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
@@ -173,22 +184,13 @@ final class Receive extends AbstractModel
 
         $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
 
-        $ebayOrders = array();
-        $toTime = $fromTime;
-
-        if (isset($response['orders']) && isset($response['updated_to'])) {
-            $ebayOrders = $response['orders'];
-            $toTime = $response['updated_to'];
-        }
-
-        if (empty($ebayOrders)) {
-            $this->saveLastUpdateTime($account, $toTime);
+        if (!isset($response['items']) || !isset($response['to_update_date'])) {
             return array();
         }
 
         $orders = array();
 
-        foreach ($ebayOrders as $ebayOrderData) {
+        foreach ($response['items'] as $ebayOrderData) {
             /** @var $ebayOrder \Ess\M2ePro\Model\Ebay\Order\Builder */
             $ebayOrder = $this->orderBuilderFactory->create();
             $ebayOrder->initialize($account, $ebayOrderData);
@@ -200,7 +202,17 @@ final class Receive extends AbstractModel
             }
         }
 
-        $this->saveLastUpdateTime($account, $toTime);
+        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+        $ebayAccount = $account->getChildObject();
+
+        if (!empty($response['job_token'])) {
+            $ebayAccount->setData('job_token', $response['job_token']);
+        } else {
+            $ebayAccount->setData('job_token', NULL);
+        }
+
+        $ebayAccount->setData('orders_last_synchronization', $response['to_update_date']);
+        $ebayAccount->save();
 
         return array_filter($orders);
     }
@@ -235,12 +247,6 @@ final class Receive extends AbstractModel
 
         foreach ($ebayOrders as $order) {
             /** @var $order \Ess\M2ePro\Model\Order */
-
-            $purchaseDate = $order->getChildObject()->getPurchaseCreateDate();
-
-            if (strtotime('2015-08-18 00:00:00') > strtotime($purchaseDate)) {
-                continue;
-            }
 
             if ($order->canCreateMagentoOrder()) {
                 try {
@@ -289,7 +295,9 @@ final class Receive extends AbstractModel
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
             $sinceTime =\Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($sinceTime);
 
-            $this->saveLastUpdateTime($account, $sinceTime);
+            /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+            $ebayAccount = $account->getChildObject();
+            $ebayAccount->setData('orders_last_synchronization', $sinceTime)->save();
 
             return $sinceTime;
         }
@@ -322,13 +330,6 @@ final class Receive extends AbstractModel
         }
 
         return \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($toTime);
-    }
-
-    private function saveLastUpdateTime(\Ess\M2ePro\Model\Account $account, $lastUpdateTime)
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
-        $ebayAccount = $account->getChildObject();
-        $ebayAccount->setData('orders_last_synchronization', $lastUpdateTime)->save();
     }
 
     //########################################

@@ -41,16 +41,11 @@ JS;
 
     public function getSelectedParam()
     {
-        if (preg_match('/' . self::LISTING_TYPE_LISTING_OTHER . '/', $this->getRequest()->getControllerName())) {
+        if (strpos($this->getRequest()->getControllerName(), self::LISTING_TYPE_LISTING_OTHER) !== false) {
             return self::LISTING_TYPE_LISTING_OTHER;
         }
 
         return self::LISTING_TYPE_M2E_PRO;
-    }
-
-    public function hasDefaultOption()
-    {
-        return false;
     }
 
     //########################################

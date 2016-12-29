@@ -82,7 +82,10 @@ class Payment extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
         array_walk($newData['services'],'ksort');
         array_walk($oldData['services'],'ksort');
 
-        return md5(json_encode($newData)) !== md5(json_encode($oldData));
+        $encodedNewData = $this->getHelper('Data')->jsonEncode($newData);
+        $encodedOldData = $this->getHelper('Data')->jsonEncode($oldData);
+
+        return md5($encodedNewData) !== md5($encodedOldData);
     }
 
     //########################################
