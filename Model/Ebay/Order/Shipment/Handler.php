@@ -12,8 +12,6 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {
     private $ebayFactory;
 
-    private $activeRecordFactory;
-
     //########################################
 
     public function __construct(
@@ -24,8 +22,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
     )
     {
         $this->ebayFactory = $ebayFactory;
-        $this->activeRecordFactory = $activeRecordFactory;
-        parent::__construct($helperFactory, $modelFactory);
+        parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
     }
 
     //########################################
