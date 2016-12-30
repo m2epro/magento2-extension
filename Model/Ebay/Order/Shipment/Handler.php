@@ -12,7 +12,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
 {
     private $ebayFactory;
 
-    private $activeRecordFactory;
+    protected $activeRecordFactory;
 
     //########################################
 
