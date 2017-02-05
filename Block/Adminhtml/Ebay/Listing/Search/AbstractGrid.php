@@ -402,7 +402,7 @@ HTML;
                 break;
         }
 
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         if ($row->getData('is_duplicate') && isset($additionalData['item_duplicate_action_required'])) {
 
             $linkContent = $this->__('Duplicate');

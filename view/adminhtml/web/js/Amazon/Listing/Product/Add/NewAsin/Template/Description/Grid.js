@@ -110,7 +110,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -147,7 +147,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -171,7 +171,7 @@ define([
                 },
                 onSuccess: function (transport) {
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -194,7 +194,7 @@ define([
                         setLocation(url);
                     } else {
                         if (!transport.responseText.isJSON()) {
-                            alert(transport.responseText);
+                            self.alert(transport.responseText);
                             return;
                         }
 
@@ -218,7 +218,7 @@ define([
                         setLocation(url);
                     } else {
                         if (!transport.responseText.isJSON()) {
-                            alert(transport.responseText);
+                            self.alert(transport.responseText);
                             return;
                         }
 

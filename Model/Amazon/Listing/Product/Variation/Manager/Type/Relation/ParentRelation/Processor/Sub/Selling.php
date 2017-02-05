@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation\Processor\Sub;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product;
+
 class Selling extends AbstractModel
 {
     //########################################
@@ -19,21 +21,26 @@ class Selling extends AbstractModel
         $qty = null;
         $price = null;
 
-        $isAfn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_NO;
-        $isRepricing = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_NO;
-        $repricingEnabled = $repricingDisabled = $afnCount = 0;
+        $afnState = NULL;
+        $repricingState = NULL;
+        $isAfn = Product::IS_AFN_CHANNEL_NO;
+        $isRepricing = Product::IS_REPRICING_NO;
+        $repricingEnabled = $repricingDisabled = $afnCount = $totalCount = 0;
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
-            if ($listingProduct->isNotListed()) {
+
+            if ($listingProduct->isNotListed() || $listingProduct->isBlocked()) {
                 continue;
             }
+
+            $totalCount++;
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
             $amazonListingProduct = $listingProduct->getChildObject();
 
             if ($amazonListingProduct->isRepricingUsed()) {
 
-                $isRepricing = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_REPRICING_YES;
+                $isRepricing = Product::IS_REPRICING_YES;
 
                 $amazonListingProduct->isRepricingDisabled() && $repricingDisabled++;
                 $amazonListingProduct->isRepricingEnabled()  && $repricingEnabled++;
@@ -41,7 +48,7 @@ class Selling extends AbstractModel
 
             if ($amazonListingProduct->isAfnChannel()) {
 
-                $isAfn = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_AFN_CHANNEL_YES;
+                $isAfn = Product::IS_AFN_CHANNEL_YES;
                 $afnCount++;
 
             } else {
@@ -70,11 +77,22 @@ class Selling extends AbstractModel
             }
         }
 
+        ($afnCount == 0)           && $afnState = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_NO;
+        ($afnCount > 0)            && $afnState = Product::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
+        ($afnCount == $totalCount) && $afnState = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_YES;
+
+        $totalOnRepricing = $repricingDisabled + $repricingEnabled;
+        ($totalOnRepricing == 0)           && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO;
+        ($totalOnRepricing > 0)            && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
+        ($totalOnRepricing == $totalCount) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
+
         $this->getProcessor()->getListingProduct()->getChildObject()->addData(array(
             'online_qty'        => $qty,
             'online_price'      => $price,
             'is_afn_channel'    => $isAfn,
-            'is_repricing'      => $isRepricing
+            'is_repricing'      => $isRepricing,
+            'variation_parent_afn_state'       => $afnState,
+            'variation_parent_repricing_state' => $repricingState
         ));
 
         $this->getProcessor()->getListingProduct()->setSetting(

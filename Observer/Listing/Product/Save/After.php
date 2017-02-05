@@ -36,7 +36,7 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             }
         }
 
-        if ($listingProduct->getId() === null) {
+        if ($listingProduct->isObjectCreatingState()) {
             $isChanged = true;
         }
 
@@ -56,8 +56,8 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             return;
         }
 
-        $oldStatus = $listingProduct->getOrigData('status');
-        $newStatus = $listingProduct->getData('status');
+        $oldStatus = (int)$listingProduct->getOrigData('status');
+        $newStatus = (int)$listingProduct->getData('status');
 
         $trackedStatuses = array(
             \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED,
@@ -66,15 +66,21 @@ class After extends \Ess\M2ePro\Observer\AbstractModel
             \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD,
         );
 
-        if ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses)) {
+        if (!$listingProduct->isObjectCreatingState() &&
+            ($oldStatus == $newStatus || !in_array($newStatus, $trackedStatuses))) {
             return;
         }
 
         /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
         $ebayListingProduct = $listingProduct->getChildObject();
 
-        $ebayListingProduct->setData('item_uuid', $ebayListingProduct->generateItemUUID());
-        $ebayListingProduct->getResource()->save($ebayListingProduct);
+        $childObject = $this->activeRecordFactory->getObject('Ebay\Listing\Product');
+        $childObject->addData(array(
+            'listing_product_id' => $ebayListingProduct->getId(),
+            'item_uuid'          => $ebayListingProduct->generateItemUUID()
+        ));
+
+        $ebayListingProduct->getResource()->save($childObject);
     }
 
     //########################################

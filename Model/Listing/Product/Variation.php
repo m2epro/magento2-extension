@@ -139,7 +139,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
         );
 
         if (count($options) <= 0) {
-            throw new Exception('There are no options for a variation product.',
+            throw new Exception\Logic('There are no options for a variation product.',
                 array(
                     'variation_id'       => $this->getId(),
                     'listing_product_id' => $this->getListingProductId()

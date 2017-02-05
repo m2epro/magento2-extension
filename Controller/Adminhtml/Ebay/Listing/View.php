@@ -48,7 +48,7 @@ class View extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         }
 
         $productAddIds = $listing->getChildObject()->getData('product_add_ids');
-        $productAddIds = array_filter((array)json_decode($productAddIds,true));
+        $productAddIds = array_filter((array)$this->getHelper('Data')->jsonDecode($productAddIds));
 
         if (!empty($productAddIds)) {
 

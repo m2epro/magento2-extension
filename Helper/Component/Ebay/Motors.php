@@ -36,37 +36,6 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function getEpidSupportedMarketplaces()
-    {
-        return array(
-            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS,
-        );
-    }
-
-    public function isMarketplaceSupportsEpid($marketplaceId)
-    {
-        return in_array((int)$marketplaceId, $this->getEpidSupportedMarketplaces());
-    }
-
-    // ---------------------------------------
-
-    public function getKtypeSupportedMarketplaces()
-    {
-        return array(
-            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_AU,
-            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_UK,
-            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_DE,
-            \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_IT,
-        );
-    }
-
-    public function isMarketplaceSupportsKtype($marketplaceId)
-    {
-        return in_array((int)$marketplaceId, $this->getKtypeSupportedMarketplaces());
-    }
-
-    //########################################
-
     public function getAttribute($type)
     {
         switch ($type) {

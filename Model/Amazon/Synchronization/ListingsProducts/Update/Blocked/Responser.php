@@ -127,7 +127,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
             $notReceivedItem = $existingItem;
 
-            $additionalData = json_decode($notReceivedItem['additional_data'], true);
+            $additionalData = $this->getHelper('Data')->jsonDecode($notReceivedItem['additional_data']);
             if (is_array($additionalData) && !empty($additionalData['list_date']) &&
                 $this->isProductInfoOutdated($additionalData['list_date'])
             ) {
@@ -264,7 +264,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
     protected function updateLastListingProductsSynchronization()
     {
-        $additionalData = json_decode($this->getAccount()->getAdditionalData(), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($this->getAccount()->getAdditionalData());
         $lastSynchData = array(
             'last_listing_products_synchronization' => $this->getHelper('Data')->getCurrentGmtDate()
         );

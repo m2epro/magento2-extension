@@ -43,8 +43,9 @@ class RunReviseAll extends Settings
             '/amazon/templates/revise/total/', 'last_listing_product_id', 0
         );
 
-        $this->setAjaxContent(json_encode(array(
-            'start_date' => $this->localeDate->formatDate($startDate, \IntlDateFormatter::MEDIUM))), false);
+        $this->setJsonContent(array(
+            'start_date' => $this->localeDate->formatDate($startDate, \IntlDateFormatter::MEDIUM)
+        ));
     }
 
     //########################################

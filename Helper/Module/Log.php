@@ -46,7 +46,7 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
             return $this->getHelper('Module\Translation')->__($string);
         }
 
-        $descriptionData = json_decode($string,true);
+        $descriptionData = $this->getHelper('Data')->jsonDecode($string);
         $string = $this->getHelper('Module\Translation')->__($descriptionData['string']);
 
         if (!empty($descriptionData['params'])) {
@@ -67,7 +67,7 @@ class Log extends \Ess\M2ePro\Helper\AbstractHelper
         foreach ($params as $key=>$value) {
 
             if (isset($value{0}) && $value{0} == '{') {
-                $tempValueArray = json_decode($value, true);
+                $tempValueArray = $this->getHelper('Data')->jsonDecode($value);
                 is_array($tempValueArray) && $value = $this->decodeDescription($value);
             }
 

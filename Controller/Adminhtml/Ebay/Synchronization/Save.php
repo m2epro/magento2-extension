@@ -21,7 +21,7 @@ class Save extends Settings
             (int)$this->getRequest()->getParam('templates_mode')
         );
 
-        $this->setAjaxContent(json_encode(['success' => true]), false);
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 

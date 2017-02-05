@@ -38,7 +38,7 @@ class AmazonStatus extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Abstrac
         $variationChildStatuses = $product->getData('variation_child_statuses');
 
         if ($product->getData('is_variation_parent') && !empty($variationChildStatuses)) {
-            $status = json_decode($variationChildStatuses, true);
+            $status = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
         }
 
         return $status;

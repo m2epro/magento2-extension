@@ -25,7 +25,9 @@ class DeleteAll extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Ad
             $listingProduct->delete();
         }
 
-        $listing->getChildObject()->setData('product_add_ids',json_encode([]))->save();
+        $listing->getChildObject()->setData(
+            'product_add_ids', $this->getHelper('Data')->jsonEncode([])
+        )->save();
 
         return $this->_redirect('*/*/',array('_current' => true));
     }

@@ -33,9 +33,24 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
     //########################################
 
-    public function getValue($index=null)
+    public function getValue($index = null)
     {
+        if (is_null($index)) {
+            $value = $this->getData('value');
+            return is_array($value) ? $value : array('value' => $value);
+        }
+
         return $this->getData('value', $index);
+    }
+
+    public function getEscapedValue($index = null)
+    {
+        $value = $this->getValue($index);
+        if (is_null($index)) {
+            $value = $value['value'];
+        }
+
+        return $this->escapeHtml($value);
     }
 
     //########################################
@@ -48,7 +63,7 @@ class OrderId extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Text
 
         $html = '<input type="text" name="' .
             $this->_getHtmlName() .
-            '" id="' .
+            '[value]" id="' .
             $this->_getHtmlId() .
             '" value="' .
             $this->getEscapedValue('value') .

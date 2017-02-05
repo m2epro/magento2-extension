@@ -7,9 +7,6 @@
             </td>
             <td class="value">
                 <span><?php echo $this->__('Installed'); ?></span>
-                <?php if ($this->getHelper('Client\Cache')->isApcEnabled()) : ?>
-                    <span class="red" style="font-weight: bold;"> (<?php echo $this->__('Enabled'); ?>)</span>
-                <?php endif; ?>
             </td>
         </tr>
     <?php endif; ?>

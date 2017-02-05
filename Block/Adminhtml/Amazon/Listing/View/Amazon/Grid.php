@@ -139,13 +139,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                     `alp`.`online_sale_price`,
                     `alp`.`online_price`
                 )',
-                'online_sale_price_start_date'   => 'online_sale_price_start_date',
-                'online_sale_price_end_date'     => 'online_sale_price_end_date',
-                'is_repricing'                   => 'is_repricing',
-                'is_afn_channel'                 => 'is_afn_channel',
-                'is_general_id_owner'            => 'is_general_id_owner',
-                'is_variation_parent'            => 'is_variation_parent',
-                'defected_messages'              => 'defected_messages',
+                'online_sale_price_start_date'     => 'online_sale_price_start_date',
+                'online_sale_price_end_date'       => 'online_sale_price_end_date',
+                'is_repricing'                     => 'is_repricing',
+                'is_afn_channel'                   => 'is_afn_channel',
+                'is_general_id_owner'              => 'is_general_id_owner',
+                'is_variation_parent'              => 'is_variation_parent',
+                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'variation_parent_repricing_state' => 'variation_parent_repricing_state',
+                'defected_messages'                => 'defected_messages',
             ),
             '{{table}}.variation_parent_id is NULL'
         );
@@ -597,7 +599,7 @@ HTML;
         }
 
         if (!$row->getData('is_variation_parent') && $row->getData('defected_messages')) {
-            $defectedMessages = json_decode($row->getData('defected_messages'), true);
+            $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
 
             $msg = '';
             foreach ($defectedMessages as $message) {
@@ -692,7 +694,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        $variationChildStatuses = json_decode($row->getData('variation_child_statuses'), true);
+        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
             return $this->__('N/A');
@@ -715,7 +717,7 @@ HTML;
         }
 
         $resultValue = $this->__('AFN');
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         $filter = base64_encode('online_qty[afn]=1');
 
@@ -754,7 +756,7 @@ HTML;
 
             if ($row->getData('is_variation_parent')) {
 
-                $additionalData = (array)json_decode($row->getData('additional_data'), true);
+                $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
                 $enabledCount = isset($additionalData['repricing_enabled_count'])
                     ? $additionalData['repricing_enabled_count'] : null;
@@ -951,7 +953,7 @@ HTML;
     {
         $listingProductId  = (int)$row->getData('id');
         $isVariationParent = (bool)(int)$row->getData('is_variation_parent');
-        $additionalData    = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         $html = $this->getViewLogIconHtml($listingProductId, $isVariationParent);
 
@@ -991,7 +993,7 @@ HTML;
                     $this->getLockedTag($row);
             }
 
-            $variationChildStatuses = json_decode($variationChildStatuses, true);
+            $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
 
             $sortedStatuses = array();
             if (isset($variationChildStatuses[$statusUnknown])) {
@@ -1159,21 +1161,27 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . $value['from'];
+            $where .= 'online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . $value['to'];
+            $where .= 'online_qty <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_afn_channel = ' . (int)$value['afn'];
+
+            if ((int)$value['afn'] == 1) {
+                $where .= 'is_afn_channel = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
+                $where .= "(is_afn_channel = 0 OR variation_parent_afn_state = {$partialFilter})";
+            }
         }
 
         $collection->getSelect()->where($where);
@@ -1192,25 +1200,25 @@ HTML;
         if (isset($value['from']) || isset($value['to'])) {
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'min_online_price >= \''.$value['from'].'\'';
+                $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'min_online_price <= \''.$value['to'].'\'';
+                $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ') OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'max_online_price >= \''.$value['from'].'\'';
+                $condition .= 'max_online_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'max_online_price <= \''.$value['to'].'\'';
+                $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ')';
@@ -1223,7 +1231,13 @@ HTML;
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
-            $condition .= 'is_repricing = ' . (int)$value['is_repricing'];
+
+            if ((int)$value['is_repricing'] == 1) {
+                $condition .= 'is_repricing = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
+                $condition .= "(is_repricing = 0 OR variation_parent_repricing_state = {$partialFilter})";
+            }
         }
 
         $collection->getSelect()->having($condition);
@@ -1407,7 +1421,7 @@ HTML;
 
         $suggestData = array();
         if (!is_null($searchSettingsData)) {
-            $searchSettingsData = json_decode($searchSettingsData,true);
+            $searchSettingsData = $this->getHelper('Data')->jsonDecode($searchSettingsData);
             !empty($searchSettingsData['data']) && $suggestData = $searchSettingsData['data'];
 
         }
@@ -1478,7 +1492,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = json_decode($generalIdSearchInfo, true);
+            $generalIdSearchInfo = $this->getHelper('Data')->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {
@@ -1515,7 +1529,7 @@ HTML;
         $variationChildStatuses = $row->getData('variation_child_statuses');
 
         if ($variationManager->isVariationParent() && !empty($variationChildStatuses)) {
-            $variationChildStatuses = json_decode($variationChildStatuses, true);
+            $variationChildStatuses = $this->getHelper('Data')->jsonDecode($variationChildStatuses);
             unset($variationChildStatuses[\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
 
             foreach ($variationChildStatuses as $variationChildStatus) {

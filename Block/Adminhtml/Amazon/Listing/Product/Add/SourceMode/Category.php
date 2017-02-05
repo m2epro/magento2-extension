@@ -91,6 +91,12 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             array('id' => $this->getRequest()->getParam('id'))
         ));
 
+        $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
+        $this->jsUrl->add($this->getUrl('*/' . $path, [
+            'marketplace_id' => $listing->getMarketplaceId(),
+            'is_new_asin_accepted' => 1
+        ]), $path);
+
         $this->jsTranslator->addTranslations([
             'Remove Category' => $this->__('Remove Category'),
             'Add New Rule' => $this->__('Add New Rule'),

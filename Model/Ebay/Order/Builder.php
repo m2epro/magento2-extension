@@ -509,6 +509,7 @@ class Builder extends AbstractModel
         $log = $this->activeRecordFactory->getObject('Order\Log');
         $log->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
+        /** @var \Ess\M2ePro\Model\Order $order */
         foreach ($this->relatedOrders as $order) {
             if ($order->canCancelMagentoOrder()) {
                 $description = 'Magento Order #%order_id% should be canceled '.
@@ -516,10 +517,10 @@ class Builder extends AbstractModel
                 $description = $this->getHelper('Module\Log')->encodeDescription(
                     $description, array(
                     '!order_id' => $order->getMagentoOrder()->getRealOrderId(),
-                    '!new_id' => $this->order->getData('ebay_order_id')
+                    '!new_id' => $this->order->getChildObject()->getEbayOrderId()
                 ));
 
-                $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+                $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
 
                 try {
                     $order->cancelMagentoOrder();
@@ -530,17 +531,16 @@ class Builder extends AbstractModel
                 $order->getReserve()->release();
             }
 
-            $orderId = $order->getData('ebay_order_id');
-            $order->delete();
-
             $description = 'eBay Order #%old_id% was deleted as new combined eBay order #%new_id% was created.';
             $description = $this->getHelper('Module\Log')->encodeDescription(
                 $description, array(
-                '!old_id' => $orderId,
-                '!new_id' => $this->order->getData('ebay_order_id')
+                '!old_id' => $order->getChildObject()->getEbayOrderId(),
+                '!new_id' => $this->order->getChildObject()->getEbayOrderId()
             ));
 
-            $log->addMessage(null, $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+            $log->addMessage($order->getId(), $description, \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING);
+
+            $order->delete();
         }
     }
 

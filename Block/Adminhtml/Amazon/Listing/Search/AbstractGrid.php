@@ -46,6 +46,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     abstract protected function callbackFilterTitle($collection, $column);
     abstract protected function callbackFilterOnlineSku($collection, $column);
     abstract protected function callbackFilterPrice($collection, $column);
+    abstract protected function callbackFilterQty($collection, $column);
     abstract protected function callbackFilterStatus($collection, $column);
 
     //########################################
@@ -272,7 +273,7 @@ HTML;
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
 
-        $variationChildStatuses = json_decode($row->getData('variation_child_statuses'), true);
+        $variationChildStatuses = $this->getHelper('Data')->jsonDecode($row->getData('variation_child_statuses'));
 
         if (empty($variationChildStatuses)) {
             return $this->__('N/A');
@@ -295,7 +296,7 @@ HTML;
         }
 
         $resultValue = $this->__('AFN');
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         if (!empty($additionalData['afn_count'])) {
             $resultValue = $resultValue."&nbsp;[".$additionalData['afn_count']."]";
@@ -322,7 +323,7 @@ HTML;
 
             if ($row->getData('is_variation_parent')) {
 
-                $additionalData = (array)json_decode($row->getData('additional_data'), true);
+                $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
                 $enabledCount = isset($additionalData['repricing_enabled_count'])
                     ? $additionalData['repricing_enabled_count'] : null;
@@ -543,41 +544,6 @@ HTML;
     }
 
     //########################################
-
-    protected function callbackFilterQty($collection, $column)
-    {
-        $value = $column->getFilter()->getValue();
-
-        if (empty($value)) {
-            return;
-        }
-
-        $where = '';
-
-        if (isset($value['from']) && $value['from'] != '') {
-            $quoted = $collection->getConnection()->quote($value['from']);
-            $where .= 'online_qty >= ' . $quoted;
-        }
-
-        if (isset($value['to']) && $value['to'] != '') {
-            if (isset($value['from']) && $value['from'] != '') {
-                $where .= ' AND ';
-            }
-            $quoted = $collection->getConnection()->quote($value['to']);
-            $where .= 'online_qty <= ' . $quoted;
-        }
-
-        if (isset($value['afn']) && $value['afn'] !== '') {
-            if (!empty($where)) {
-                $where = '(' . $where . ') OR ';
-            }
-            $where .= 'is_afn_channel = ' . (int)$value['afn'];
-        }
-
-        $collection->getSelect()->where($where);
-    }
-
-    //----------------------------------------
 
     public function getGridUrl()
     {

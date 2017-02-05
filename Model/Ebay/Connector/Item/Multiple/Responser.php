@@ -97,7 +97,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
     }
 
-    // todo fire event ListingProduct is changed
     protected function inspectProducts()
     {
         $listingsProductsByStatus = array(

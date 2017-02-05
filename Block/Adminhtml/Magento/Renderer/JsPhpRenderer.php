@@ -18,7 +18,7 @@ class JsPhpRenderer extends AbstractRenderer
             return '';
         }
 
-        $constants = json_encode($this->jsPhp);
+        $constants = $this->helperFactory->getObject('Data')->jsonEncode($this->jsPhp);
 
         return "M2ePro.php.add({$constants});";
     }

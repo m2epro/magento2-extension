@@ -89,7 +89,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 continue;
             }
 
-            $row['data_definition'] = (array)json_decode($row['data_definition'], true);
+            $row['data_definition'] = (array)$this->getHelper('Data')->jsonDecode($row['data_definition']);
             $row['is_desired'] = !empty($row['data_definition']['is_desired']) && $row['data_definition']['is_desired'];
 
             if ($this->onlyDesired && !$row['is_desired']) {

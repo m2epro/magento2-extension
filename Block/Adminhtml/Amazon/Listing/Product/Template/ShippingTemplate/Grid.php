@@ -86,7 +86,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'header'       => $this->__('Action'),
             'align'        => 'left',
             'type'         => 'number',
-            'width'        => '55px', //todo
             'index'        => 'id',
             'filter'       => false,
             'sortable'     => false,

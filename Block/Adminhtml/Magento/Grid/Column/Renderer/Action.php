@@ -48,6 +48,18 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
                 eval(method);
 
                 select.value = '';
+            } else if (config.confirm) {
+                CommonObj.confirm({
+                    content: config.confirm, 
+                    actions: {
+                        confirm: function () {
+                            setLocation(config.href);
+                        }.bind(this),
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });          
             } else {
                 varienGridAction.execute(select);
             }
@@ -139,5 +151,31 @@ JS
         }
 
         return $outHtml . $notGroupedOptions;
+    }
+
+    protected function _toLinkHtml($action, \Magento\Framework\DataObject $row)
+    {
+        $actionAttributes = new \Magento\Framework\DataObject();
+
+        $actionCaption = '';
+        $this->_transformActionData($action, $actionCaption, $row);
+
+        if (isset($action['confirm'])) {
+            $action['onclick'] = 'CommonObj.confirm({
+                content: \''.addslashes($this->escapeHtml($action['confirm'])).'\', 
+                actions: {
+                    confirm: function () {
+                        setLocation(this.href);
+                    }.bind(this),
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            }); return false;';
+            unset($action['confirm']);
+        }
+
+        $actionAttributes->setData($action);
+        return '<a ' . $actionAttributes->serialize() . '>' . $actionCaption . '</a>';
     }
 }

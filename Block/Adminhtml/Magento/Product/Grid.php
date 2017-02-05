@@ -30,7 +30,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
         $this->setUseAjax(true);
         // ---------------------------------------
 
-        $this->isAjax = json_encode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     //########################################
@@ -288,7 +288,7 @@ CSS
         // ---------------------------------------
 
         // ---------------------------------------
-        $isShowRuleBlock = json_encode($this->isShowRuleBlock());
+        $isShowRuleBlock = $this->getHelper('Data')->jsonEncode($this->isShowRuleBlock());
 
         $this->js->add(<<<JS
         jQuery(function()

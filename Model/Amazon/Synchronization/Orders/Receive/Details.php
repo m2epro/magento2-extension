@@ -147,7 +147,7 @@ final class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Abst
 
     private function getFromDate(\Ess\M2ePro\Model\Account $account)
     {
-        $accountAdditionalData = json_decode($account->getAdditionalData(), true);
+        $accountAdditionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
         return !empty($accountAdditionalData['amazon_last_receive_fulfillment_details_date']) ?
             $accountAdditionalData['amazon_last_receive_fulfillment_details_date']
             : $this->getHelper('Data')->getCurrentGmtDate();
@@ -157,7 +157,7 @@ final class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\Abst
     {
         $fromDate = $this->getHelper('Data')->getCurrentGmtDate();
 
-        $accountAdditionalData = json_decode($account->getAdditionalData(), true);
+        $accountAdditionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
         $accountAdditionalData['amazon_last_receive_fulfillment_details_date'] = $fromDate;
         $account->setSettings('additional_data', $accountAdditionalData)->save();
     }

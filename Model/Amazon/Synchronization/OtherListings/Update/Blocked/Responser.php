@@ -212,7 +212,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
 
     protected function updateLastOtherListingProductsSynchronization()
     {
-        $additionalData = json_decode($this->getAccount()->getAdditionalData(), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($this->getAccount()->getAdditionalData());
         $lastSynchData = array(
             'last_other_listing_products_synchronization' => $this->getHelper('Data')->getCurrentGmtDate()
         );

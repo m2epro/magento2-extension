@@ -37,7 +37,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -136,36 +136,41 @@ define([
         assign: function (templateId, shippingMode) {
             var self = this;
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_shipping/assign'), {
+                            method: 'post',
+                            parameters: {
+                                products_ids:  self.templateShippingPopup.productsIds,
+                                shipping_mode: shippingMode,
+                                template_id:   templateId
+                            },
+                            onSuccess: function (transport) {
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_shipping/assign'), {
-                method: 'post',
-                parameters: {
-                    products_ids:  self.templateShippingPopup.productsIds,
-                    shipping_mode: shippingMode,
-                    template_id:   templateId
-                },
-                onSuccess: function (transport) {
+                                if (!transport.responseText.isJSON()) {
+                                    self.alert(transport.responseText);
+                                    return;
+                                }
 
-                    if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
-                        return;
+                                self.gridHandler.unselectAllAndReload();
+
+                                var response = transport.responseText.evalJSON();
+
+                                MessageObj.clear();
+                                response.messages.each(function (msg) {
+                                    MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
+                                });
+                            }
+                        });
+
+                        self.templateShippingPopup.modal('closeModal');
+                    },
+                    cancel: function () {
+                        return false;
                     }
-
-                    self.gridHandler.unselectAllAndReload();
-
-                    var response = transport.responseText.evalJSON();
-
-                    MessageObj.clear();
-                    response.messages.each(function (msg) {
-                        MessageObj['add' + msg.type[0].toUpperCase() + msg.type.slice(1) + 'Message'](msg.text);
-                    });
                 }
             });
-
-            self.templateShippingPopup.modal('closeModal');
         },
 
         // ---------------------------------------
@@ -182,7 +187,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 

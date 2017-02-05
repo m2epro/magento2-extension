@@ -8,7 +8,7 @@ use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
 
 class Complete extends Base
 {
-    const SUPPORTED_SOURCE_VERSION = '6.5.0.8';
+    const SUPPORTED_SOURCE_VERSION = '6.5.0.9';
 
     protected $dbModifier;
 

@@ -1,9 +1,11 @@
 define([
+    'M2ePro/Plugin/Confirm',
+    'Magento_Ui/js/modal/alert',
     'prototype',
     'jquery/validate',
     'mage/backend/form',
     'mage/backend/validation'
-], function () {
+], function (confirm, alert) {
 
     window.Common = Class.create();
     Common.prototype = {
@@ -178,10 +180,16 @@ define([
 
         deleteClick: function()
         {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-            setLocation(M2ePro.url.get('deleteAction'));
+            this.confirm({
+                actions: {
+                    confirm: function () {
+                        setLocation(M2ePro.url.get('deleteAction'));
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         // ---------------------------------------
@@ -320,6 +328,25 @@ define([
             }
 
             data._offsetTop = data._placeholder.offset().top;
+        },
+
+        // ---------------------------------------
+
+        confirm: function (config)
+        {
+            confirm(config);
+        },
+
+        // ---------------------------------------
+
+        alert: function (text, callback)
+        {
+            alert({
+                actions: {
+                    cancel: callback || function() {}
+                },
+                content: text
+            });
         }
 
         // ---------------------------------------

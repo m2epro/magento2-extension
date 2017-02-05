@@ -105,7 +105,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
     // ########################################
 
-    // todo fire event ListingProduct is changed
     protected function inspectProducts()
     {
         $listingsProductsByStatus = array(

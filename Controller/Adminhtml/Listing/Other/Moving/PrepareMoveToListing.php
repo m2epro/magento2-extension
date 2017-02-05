@@ -10,7 +10,9 @@ class PrepareMoveToListing extends Listing
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');
-        $selectedProducts = (array)json_decode($this->getRequest()->getParam('selectedProducts'));
+        $selectedProducts = (array)$this->getHelper('Data')->jsonDecode(
+            $this->getRequest()->getParam('selectedProducts')
+        );
 
         $selectedProductsParts = array_chunk($selectedProducts, 1000);
 

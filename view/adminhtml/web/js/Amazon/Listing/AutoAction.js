@@ -98,9 +98,9 @@ define([
 
                     var data = transport.responseText.evalJSON(true);
 
-                    var options = '';
+                    var options = '<option></option>';
 
-                    var firstItemValue = '';
+                    var firstItem = null;
                     var currentValue = select.value;
 
                     data.each(function(item) {
@@ -110,8 +110,8 @@ define([
 
                         options += '<option value="' + key + '"' + disabled + '>' + val + '</option>\n';
 
-                        if (firstItemValue == '') {
-                            firstItemValue = key;
+                        if (!firstItem) {
+                            firstItem = item;
                         }
                     });
 
@@ -120,13 +120,12 @@ define([
 
                     if (currentValue != '') {
                         $('adding_description_template_id').value = currentValue;
-                    } else {
-                        if (typeof id !== 'undefined' && M2ePro.formData[id] > 0) {
-                            select.value = M2ePro.formData[id];
-                        } else {
-                            select.value = firstItemValue;
-                        }
+                    } else if (typeof id !== 'undefined' && M2ePro.formData[id] > 0) {
+                        select.value = M2ePro.formData[id];
+                    } else if (firstItem.is_new_asin_accepted != 0) {
+                        select.value = firstItem.id;
                     }
+
                     select.simulate('change');
                 }
             });

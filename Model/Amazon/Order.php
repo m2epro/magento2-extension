@@ -151,7 +151,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function getShippingAddress()
     {
-        $address = json_decode($this->getData('shipping_address'), true);
+        $address = $this->getHelper('Data')->jsonDecode($this->getData('shipping_address'));
 
         return $this->shippingAddressFactory->create([
             'order' => $this->getParentObject()

@@ -56,8 +56,9 @@ final class MotorsEpids extends AbstractModel
 
         $params = $this->getParams();
 
-        return $this->getHelper('Component\Ebay\Motors')
-                    ->isMarketplaceSupportsEpid($params['marketplace_id']);
+        $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $params['marketplace_id']);
+
+        return $marketplace->getChildObject()->isEpidEnabled();
     }
 
     protected function performActions()

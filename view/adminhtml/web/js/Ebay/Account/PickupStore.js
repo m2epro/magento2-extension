@@ -333,7 +333,7 @@ define([
                         $('google_map').show();
                     }
                 } else {
-                    alert('Location not found.');
+                    self.alert('Location not found.');
                 }
             });
         },

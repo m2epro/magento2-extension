@@ -255,10 +255,10 @@ HTML
         ]);
 
         $title = $this->getHelper('Data')->escapeJs($this->getHelper('Data')->escapeHtml($this->formData['title']));
-        $overrideServicesData = json_encode($this->getOverrideDictionaryData());
+        $overrideServicesData = $this->getHelper('Data')->jsonEncode($this->getOverrideDictionaryData());
 
         if ($this->formData['id'] != '') {
-            $rules = json_encode($this->formData['shipping_override_rule']);
+            $rules = $this->getHelper('Data')->jsonEncode($this->formData['shipping_override_rule']);
             $rulesRenderJs = 'AmazonTemplateShippingOverrideObj.renderRules(' . $rules . ')';
         } else {
             $rulesRenderJs = <<<JS

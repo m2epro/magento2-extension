@@ -309,6 +309,22 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         return (bool)(int)$this->getData('is_holiday_return');
     }
 
+    /**
+     * @return bool
+     */
+    public function isEpidEnabled()
+    {
+        return (bool)(int)$this->getData('is_epid');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isKtypeEnabled()
+    {
+        return (bool)(int)$this->getData('is_ktype');
+    }
+
     //########################################
 
     /**
@@ -394,10 +410,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
         $categoryShippingMethods = array();
         foreach ($shippingMethods as $shippingMethod) {
 
-            $category = json_decode($shippingMethod['category'], true);
+            $category = $this->getHelper('Data')->jsonDecode($shippingMethod['category']);
 
             if (empty($category)) {
-                $shippingMethod['data'] = json_decode($shippingMethod['data'], true);
+                $shippingMethod['data'] = $this->getHelper('Data')->jsonDecode($shippingMethod['data']);
                 $categoryShippingMethods['']['methods'][] = $shippingMethod;
                 continue;
             }
@@ -409,23 +425,23 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
                 );
             }
 
-            $shippingMethod['data'] = json_decode($shippingMethod['data'], true);
+            $shippingMethod['data'] = $this->getHelper('Data')->jsonDecode($shippingMethod['data']);
             $categoryShippingMethods[$category['ebay_id']]['methods'][] = $shippingMethod;
         }
 
         // ---------------------------------------
 
         return $this->info = array(
-            'dispatch'                   => json_decode($data['dispatch'], true),
-            'packages'                   => json_decode($data['packages'], true),
-            'return_policy'              => json_decode($data['return_policy'], true),
-            'listing_features'           => json_decode($data['listing_features'], true),
-            'payments'                   => json_decode($data['payments'], true),
-            'charities'                  => json_decode($data['charities'], true),
+            'dispatch'                   => $this->getHelper('Data')->jsonDecode($data['dispatch']),
+            'packages'                   => $this->getHelper('Data')->jsonDecode($data['packages']),
+            'return_policy'              => $this->getHelper('Data')->jsonDecode($data['return_policy']),
+            'listing_features'           => $this->getHelper('Data')->jsonDecode($data['listing_features']),
+            'payments'                   => $this->getHelper('Data')->jsonDecode($data['payments']),
+            'charities'                  => $this->getHelper('Data')->jsonDecode($data['charities']),
             'shipping'                   => $categoryShippingMethods,
-            'shipping_locations'         => json_decode($data['shipping_locations'], true),
-            'shipping_locations_exclude' => json_decode($data['shipping_locations_exclude'], true),
-            'tax_categories'             => json_decode($data['tax_categories'], true)
+            'shipping_locations'         => $this->getHelper('Data')->jsonDecode($data['shipping_locations']),
+            'shipping_locations_exclude' => $this->getHelper('Data')->jsonDecode($data['shipping_locations_exclude']),
+            'tax_categories'             => $this->getHelper('Data')->jsonDecode($data['tax_categories'])
         );
     }
 

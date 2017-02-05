@@ -243,7 +243,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
             $this->getHelper('Data')->escapeHtml($value).
             '</a><br/>ID: '.$row->getData('product_id');
 
-        $additionalData = json_decode($row->getData('additional_data'), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         if (empty($additionalData['variation_options'])) {
             return $value;
         }
@@ -263,7 +263,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Abst
 
     public function callbackColumnAttributes($value, $row, $column, $isExport)
     {
-        $additionalData = json_decode($row->getData('additional_data'), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         if (empty($additionalData['variation_options'])) {
             return '';
         }

@@ -525,7 +525,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return NULL;
         }
 
-        $data = json_decode($data, true);
+        $data = $this->getHelper('Data')->jsonDecode($data);
 
         return !isset($data[$accountId]) ? NULL : $data[$accountId];
     }
@@ -584,7 +584,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
             return NULL;
         }
 
-        $data = json_decode($data, true);
+        $data = $this->getHelper('Data')->jsonDecode($data);
 
         return !isset($data[$accountId]) ? NULL : $data[$accountId];
     }
@@ -597,7 +597,7 @@ class Shipping extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getExcludedLocations()
     {
         $excludedLocations = $this->getData('excluded_locations');
-        is_string($excludedLocations) && $excludedLocations = json_decode($excludedLocations,true);
+        is_string($excludedLocations) && $excludedLocations = $this->getHelper('Data')->jsonDecode($excludedLocations);
         return is_array($excludedLocations) ? $excludedLocations : array();
     }
 

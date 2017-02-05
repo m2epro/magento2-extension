@@ -68,8 +68,10 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     'mode'                   => (int)$post['item_specifics_mode_'.$i],
                     'attribute_title'        => $post['item_specifics_attribute_title_'.$i],
                     'value_mode'             => (int)$post['item_specifics_value_mode_'.$i],
-                    'value_ebay_recommended' => !empty($ebayRecommendedTemp) ? json_encode($ebayRecommendedTemp) : '',
-                    'value_custom_value'     => !empty($attributeValue)      ? json_encode($attributeValue)      : '',
+                    'value_ebay_recommended' => !empty($ebayRecommendedTemp)
+                        ? $this->getHelper('Data')->jsonEncode($ebayRecommendedTemp) : '',
+                    'value_custom_value'     => !empty($attributeValue)
+                        ? $this->getHelper('Data')->jsonEncode($attributeValue)      : '',
                     'value_custom_attribute' => $customAttribute
                 );
             }
@@ -104,7 +106,8 @@ abstract class Category extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
                     'attribute_title'           => $attributeTitle,
                     'value_mode'                => (int)$post['custom_item_specifics_value_mode_' . $i],
                     'value_ebay_recommended'    => '',
-                    'value_custom_value'        => !empty($attributeValue) ? json_encode($attributeValue) : '',
+                    'value_custom_value'        => !empty($attributeValue)
+                        ? $this->getHelper('Data')->jsonEncode($attributeValue) : '',
                     'value_custom_attribute'    => $customAttribute
                 );
             }

@@ -385,9 +385,9 @@ HTML;
                 if ($this->getMatcherAttributes()->isSourceAmountGreater()) {
 
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $productAttributes = json_encode($this->getProductAttributes());
-                    $destinationAttributes = json_encode($this->getDestinationAttributes());
-                    $magentoVariationSet = json_encode($magentoProductVariations['set']);
+                    $productAttributes = $this->getHelper('Data')->jsonEncode($this->getProductAttributes());
+                    $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
+                    $magentoVariationSet = $this->getHelper('Data')->jsonEncode($magentoProductVariations['set']);
 
                     $this->js->add(
 <<<JS
@@ -405,8 +405,8 @@ JS
                 } elseif ($this->getMatcherAttributes()->isDestinationAmountGreater()) {
 
                     $matchedAttriutes = json_encode($this->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                    $destinationAttributes = json_encode($this->getDestinationAttributes());
-                    $amazonVariationSet = json_encode($this->getAmazonVariationsSet());
+                    $destinationAttributes = $this->getHelper('Data')->jsonEncode($this->getDestinationAttributes());
+                    $amazonVariationSet = $this->getHelper('Data')->jsonEncode($this->getAmazonVariationsSet());
 
                     $this->js->add(
 <<<JS

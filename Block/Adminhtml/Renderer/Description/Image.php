@@ -26,7 +26,9 @@ class Image extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
     {
         if (is_null($this->imageId)) {
             $this->imageId = substr(sha1(
-                'image-' . $this->getData('index_number') . json_encode($this->getData('src'))
+                'image-'
+                . $this->getData('index_number')
+                . $this->getHelper('Data')->jsonEncode($this->getData('src'))
             ), 20);
         }
         return $this->imageId;

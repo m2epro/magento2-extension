@@ -13,7 +13,7 @@ class AddAttributes extends Main
         $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($attributes)) {
-            $attributes = json_decode($attributes, true);
+            $attributes = $this->getHelper('Data')->jsonDecode($attributes);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {

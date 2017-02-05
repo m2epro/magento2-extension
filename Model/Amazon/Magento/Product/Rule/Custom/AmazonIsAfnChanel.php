@@ -36,7 +36,17 @@ class AmazonIsAfnChanel extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        return $product->getData('is_afn_channel');
+        $isAfn = (int)$product->getData('is_afn_channel');
+        $afnState = (int)$product->getData('variation_parent_afn_state');
+
+        if (($this->filterOperator == '==' && $this->filterCondition == AmazonListingProduct::IS_AFN_CHANNEL_YES) ||
+            ($this->filterOperator == '!=' && $this->filterCondition == AmazonListingProduct::IS_AFN_CHANNEL_NO)) {
+            return $isAfn;
+        }
+
+        return (!$isAfn || $afnState == AmazonListingProduct::VARIATION_PARENT_IS_AFN_STATE_PARTIAL)
+            ? AmazonListingProduct::IS_AFN_CHANNEL_NO
+            : AmazonListingProduct::IS_AFN_CHANNEL_YES;
     }
 
     /**

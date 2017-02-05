@@ -154,7 +154,7 @@ HTML;
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
 
-            $additionalData    = (array)json_decode($row->getData('additional_data'), true);
+            $additionalData    = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
             $productAttributes = array_keys($additionalData['variations_sets']);
             $productAttributes = implode(', ', $productAttributes);
 

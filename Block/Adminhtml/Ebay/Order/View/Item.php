@@ -293,7 +293,7 @@ HTML;
             return '0%';
         }
 
-        $taxDetails = json_decode($taxDetails, true);
+        $taxDetails = $this->getHelper('Data')->jsonDecode($taxDetails);
         if (empty($taxDetails)) {
             return '0%';
         }
@@ -307,7 +307,7 @@ HTML;
 
         $taxDetails = $row->getChildObject()->getData('tax_details');
         if (!empty($taxDetails)) {
-            $taxDetails = json_decode($taxDetails, true);
+            $taxDetails = $this->getHelper('Data')->jsonDecode($taxDetails);
 
             if (!empty($taxDetails['amount'])) {
                 $total += $taxDetails['amount'];

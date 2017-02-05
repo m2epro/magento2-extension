@@ -36,7 +36,9 @@ class StepTwoDeleteProductsModeProduct extends Settings
         $listingProductAddIds = array_map('intval', $listingProductAddIds);
         $listingProductAddIds = array_diff($listingProductAddIds,$ids);
 
-        $listing->getChildObject()->setData('product_add_ids',json_encode($listingProductAddIds))->save();
+        $listing->getChildObject()->setData(
+            'product_add_ids', $this->getHelper('Data')->jsonEncode($listingProductAddIds)
+        )->save();
 
         return $this->getResult();
     }

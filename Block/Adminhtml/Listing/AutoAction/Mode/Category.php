@@ -66,7 +66,7 @@ class Category extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $groupGrid = $this->getChildBlock('group_grid');
         // ---------------------------------------
 
-        $skipConfirmation = json_encode($groupGrid->getCollection()->getSize() == 0);
+        $skipConfirmation = $this->getHelper('Data')->jsonEncode($groupGrid->getCollection()->getSize() == 0);
         $this->js->add(<<<JS
         var skipConfirmation = {$skipConfirmation};
 

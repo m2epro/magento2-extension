@@ -268,7 +268,7 @@ $variations = $this->getVariations();
                 <?php foreach ($specifics as $specific): ?>
                  <tr>
                      <td><?php echo $specific['name']; ?></td>
-                     <td><?php echo $specific['value'][0]; ?></td>
+                     <td><?php echo implode(', ', $specific['value']); ?></td>
                  </tr>
                 <?php endforeach; ?>
                 </tbody>

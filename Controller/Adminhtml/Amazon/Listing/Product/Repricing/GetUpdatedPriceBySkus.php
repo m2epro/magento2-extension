@@ -26,7 +26,7 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             return $this->getResponse()->setBody('You should provide correct parameters.');
         }
 
-        $groupedSkus = json_decode($groupedSkus, true);
+        $groupedSkus = $this->getHelper('Data')->jsonDecode($groupedSkus);
         $resultPrices = array();
 
         foreach ($groupedSkus as $accountId => $skus) {

@@ -8,8 +8,16 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord;
 
+use  Ess\M2ePro\Model\ActiveRecord\AbstractModel as ActiveRecordAbstract;
+
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
 {
+    /**
+     * Use is object new method for save of object
+     * @var bool
+     */
+    protected $_useIsObjectNew = true;
+
     protected $helperFactory;
     protected $activeRecordFactory;
     protected $parentFactory;
@@ -47,9 +55,9 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
 
     protected function _beforeSave(\Magento\Framework\Model\AbstractModel $object)
     {
-        $origData = $object->getOrigData();
+        /** @var ActiveRecordAbstract $object */
 
-        if (empty($origData)) {
+        if ($object->isObjectCreatingState()) {
             $object->setData('create_date', $this->getHelper('Data')->getCurrentGmtDate());
         }
 
@@ -68,6 +76,8 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\A
 
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
+        /** @var ActiveRecordAbstract $object */
+
         // fix for \Magento\Framework\DB\Adapter\Pdo\Mysql::prepareColumnValue
         // an empty string cannot be saved -> NULL is saved instead
         foreach ($object->getData() as $key => $value) {

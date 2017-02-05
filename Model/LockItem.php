@@ -169,7 +169,7 @@ class LockItem extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $data = $lockModel->getData('data');
         if (!empty($data)) {
-            $data = json_decode($data, true);
+            $data = $this->getHelper('Data')->jsonDecode($data);
         } else {
             $data = array();
         }
@@ -213,7 +213,7 @@ class LockItem extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return NULL;
         }
 
-        $data = json_decode($lockModel->getData('data'),true);
+        $data = $this->getHelper('Data')->jsonDecode($lockModel->getData('data'));
 
         if (is_null($key)) {
             return $data;

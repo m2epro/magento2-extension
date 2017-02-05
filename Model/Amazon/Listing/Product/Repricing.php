@@ -202,7 +202,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
             $variations = $this->getListingProduct()->getVariations(true);
             if (count($variations) <= 0) {
-                throw new Exception(
+                throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     array(
                         'listing_product_id' => $this->getId()
@@ -244,7 +244,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
             $variations = $this->getListingProduct()->getVariations(true);
             if (count($variations) <= 0) {
-                throw new Exception(
+                throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     array(
                         'listing_product_id' => $this->getId()
@@ -286,7 +286,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
             $variations = $this->getListingProduct()->getVariations(true);
             if (count($variations) <= 0) {
-                throw new Exception(
+                throw new Exception\Logic(
                     'There are no variations for a variation product.',
                     array(
                         'listing_product_id' => $this->getId()
@@ -323,7 +323,7 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return $isDisabled;
         }
 
-        if ($this->getMagentoProduct()->isSimpleType() || $this->getMagentoProduct()->isGroupedType()) {
+        if ($this->getMagentoProduct()->isSimpleType() || $this->getMagentoProduct()->isBundleType()) {
             return $isDisabled;
         }
 

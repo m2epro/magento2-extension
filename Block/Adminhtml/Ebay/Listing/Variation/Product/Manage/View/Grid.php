@@ -358,7 +358,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $html = '';
         $formHtml = '';
         $variationId = $row->getData('id');
-        $additionalData = json_decode($row->getData('additional_data'), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         $linkTitle = $this->__('Change');
         $linkContent = $this->__('Change');
 
@@ -532,7 +532,7 @@ HTML;
             )
         );
 
-        $urls = json_encode($urls);
+        $urls = $this->getHelper('Data')->jsonEncode($urls);
 
         $this->js->addRequireJs([
             'vpmvg' => 'M2ePro/Ebay/Listing/VariationProductManageVariationsGrid'

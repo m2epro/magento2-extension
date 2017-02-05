@@ -36,13 +36,17 @@ class AmazonIsRepricing extends \Ess\M2ePro\Model\Magento\Product\Rule\Custom\Ab
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        $isRepricing = (bool)(int)$product->getData('is_repricing');
-        $haveEnabledChildProducts  = (bool)(int)$product->getData('variation_repricing_enabled_count');
-        $haveDisabledChildProducts = (bool)(int)$product->getData('variation_repricing_disabled_count');
+        $isRepricing = (int)$product->getData('is_repricing');
+        $repricingState = (int)$product->getData('variation_parent_repricing_state');
 
-        return ($isRepricing || $haveEnabledChildProducts || $haveDisabledChildProducts)
-            ? AmazonListingProduct::IS_REPRICING_YES
-            : AmazonListingProduct::IS_REPRICING_NO;
+        if (($this->filterOperator == '==' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_YES) ||
+            ($this->filterOperator == '!=' && $this->filterCondition == AmazonListingProduct::IS_REPRICING_NO)) {
+            return $isRepricing;
+        }
+
+        return (!$isRepricing || $repricingState == AmazonListingProduct::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL)
+            ? AmazonListingProduct::IS_REPRICING_NO
+            : AmazonListingProduct::IS_REPRICING_YES;
     }
 
     /**

@@ -151,6 +151,8 @@ final class Receive extends AbstractModel
 
     private function processEbayOrders($account)
     {
+        /** @var \Ess\M2ePro\Model\Account $account */
+
         $fromTime = $this->prepareFromTime($account);
         $toTime   = $this->prepareToTime();
 
@@ -166,7 +168,7 @@ final class Receive extends AbstractModel
             'to_update_date'=> $toTime
         );
 
-        $jobToken = $account->getData('job_token');
+        $jobToken = $account->getChildObject()->getData('job_token');
         if (!empty($jobToken)) {
             $params['job_token'] = $jobToken;
         }

@@ -154,7 +154,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 'status'             => (int)$existingItem['status']
             );
 
-            $existingAdditionalData = json_decode($existingItem['additional_data'], true);
+            $existingAdditionalData = $this->getHelper('Data')->jsonDecode($existingItem['additional_data']);
 
             if (!empty($existingAdditionalData['last_synchronization_dates']['qty']) &&
                 !empty($this->params['request_date'])
@@ -188,6 +188,10 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                     unset($newData['online_qty'], $newData['status'], $newData['is_afn_channel']);
                     unset($existingData['online_qty'], $existingData['status'], $existingData['is_afn_channel']);
                 }
+            }
+
+            if ($existingItem['is_repricing'] && !$existingItem['is_online_disabled']) {
+                unset($newData['online_price'], $existingData['online_price']);
             }
 
             if ($newData == $existingData) {
@@ -307,6 +311,16 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $tempColumns = array('second_table.sku');
 
         if ($withData) {
+
+            $repricingTable = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
+                                                        ->getResource()->getMainTable();
+
+            $collection->getSelect()->joinLeft(
+                ['repricing' => $repricingTable],
+                'second_table.listing_product_id = repricing.listing_product_id',
+                ['is_online_disabled']
+            );
+
             $tempColumns = array(
                 'main_table.listing_id',
                 'main_table.product_id','main_table.status',
@@ -316,6 +330,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 'second_table.is_afn_channel', 'second_table.is_isbn_general_id',
                 'second_table.listing_product_id',
                 'second_table.is_variation_product', 'second_table.variation_parent_id',
+                'second_table.is_repricing', 'repricing.is_online_disabled'
             );
         }
 

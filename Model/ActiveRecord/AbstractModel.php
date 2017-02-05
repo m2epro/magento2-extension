@@ -13,6 +13,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
     //########################################
 
     protected $cacheLoading = false;
+    protected $isObjectCreatingState = false;
 
     protected $modelFactory;
     protected $activeRecordFactory;
@@ -41,6 +42,18 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $resourceCollection,
             $data
         );
+    }
+
+    //########################################
+
+    public function isObjectCreatingState($value = null)
+    {
+        if (is_null($value)) {
+            return $this->isObjectCreatingState;
+        }
+
+        $this->isObjectCreatingState = $value;
+        return $this->isObjectCreatingState;
     }
 
     //########################################
@@ -84,7 +97,14 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             $this->getHelper('Data\Cache\Permanent')->removeTagValues($this->getCacheInstancesTag());
         }
 
-        return parent::save();
+        if ($this->isObjectNew()) {
+            $this->isObjectCreatingState(true);
+        }
+
+        $result = parent::save();
+
+        $this->isObjectCreatingState(false);
+        return $result;
     }
 
     /**
@@ -323,7 +343,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
             return array();
         }
 
-        $settings = json_decode($settings, true);
+        $settings = $this->getHelper('Data')->jsonDecode($settings);
         return !empty($settings) ? $settings : array();
     }
 

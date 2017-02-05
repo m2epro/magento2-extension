@@ -3364,6 +3364,14 @@ class InstallSchema implements InstallSchemaInterface
                 'is_holiday_return', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
+            ->addColumn(
+                'is_epid', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_ktype', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
             ->addIndex('is_calculated_shipping', 'is_calculated_shipping')
             ->addIndex('is_cash_on_delivery', 'is_cash_on_delivery')
             ->addIndex('is_charity', 'is_charity')
@@ -3381,6 +3389,8 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('is_click_and_collect', 'is_click_and_collect')
             ->addIndex('is_in_store_pickup', 'is_in_store_pickup')
             ->addIndex('is_holiday_return', 'is_holiday_return')
+            ->addIndex('is_epid', 'is_epid')
+            ->addIndex('is_ktype', 'is_ktype')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -5689,6 +5699,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
+                'variation_parent_afn_state', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'default' => NULL]
+            )
+            ->addColumn(
+                'variation_parent_repricing_state', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'default' => NULL]
+            )
+            ->addColumn(
                 'defected_messages', Table::TYPE_TEXT, NULL,
                 ['default' => NULL]
             )
@@ -5711,6 +5729,8 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('template_shipping_override_id', 'template_shipping_override_id')
             ->addIndex('template_shipping_template_id', 'template_shipping_template_id')
             ->addIndex('template_description_id', 'template_description_id')
+            ->addIndex('variation_parent_afn_state', 'variation_parent_afn_state')
+            ->addIndex('variation_parent_repricing_state', 'variation_parent_repricing_state')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');

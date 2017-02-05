@@ -27,7 +27,7 @@ class StopQueue extends ActiveRecord\AbstractModel
 
     public function getDecodedItemData()
     {
-        return json_decode($this->getItemData(),true);
+        return $this->getHelper('Data')->jsonDecode($this->getItemData());
     }
 
     // ---------------------------------------

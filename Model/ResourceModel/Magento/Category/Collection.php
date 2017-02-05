@@ -8,21 +8,16 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\Magento\Category;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
 
 class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collection
 {
-    /** @var \Magento\Framework\EntityManager\EntityMetadata */
-    protected $metadata;
-
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
         \Psr\Log\LoggerInterface $logger,
@@ -37,7 +32,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
     ) {
         $this->helperFactory = $helperFactory;
-        $this->metadata = $metadataPool->getMetadata(CategoryInterface::class);
 
         parent::__construct(
             $entityFactory,
@@ -68,7 +62,11 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
             $helper->isStagedTable($table, CategoryAttributeInterface::ENTITY_TYPE_CODE) &&
             strpos($bind, 'entity_id') !== false) {
 
-            $bind = str_replace('entity_id', $this->metadata->getLinkField(), $bind);
+            $bind = str_replace(
+                'entity_id',
+                $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE),
+                $bind
+            );
         }
 
         return parent::joinTable($table, $bind, $fields, $cond, $joinType);
@@ -85,7 +83,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Category\Collectio
         if ($helper->isInstalled() && is_string($attribute) && is_string($bind)) {
             $attrArr = explode('/', $attribute);
             if (CategoryAttributeInterface::ENTITY_TYPE_CODE == $attrArr[0] && $bind == 'entity_id') {
-                $bind = $this->metadata->getLinkField();
+                $bind = $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);
             }
         }
         return parent::joinAttribute($alias, $attribute, $bind, $filter, $joinType, $storeId);

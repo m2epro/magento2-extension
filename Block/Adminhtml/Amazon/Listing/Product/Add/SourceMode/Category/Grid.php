@@ -151,7 +151,7 @@ var add_category_products = function(callback) {
                 var ids = response['ids'].join(',');
 
                 if (ids == '') {
-                    alert('{$this->__('Please select the Products you want to perform the Action on.')}');
+                    AddListingObj.alert('{$this->__('Please select the Products you want to perform the Action on.')}');
                     return false;
                 }
 

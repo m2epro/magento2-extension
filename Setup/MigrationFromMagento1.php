@@ -109,6 +109,7 @@ class MigrationFromMagento1
         $this->migrateInfrastructureUrls();
         $this->migrateInStorePickupGlobalKey();
         $this->migrateProductCustomTypes();
+        $this->migrateHealthStatus();
 
         $this->migrateProcessing();
         $this->migrateLockItem();
@@ -122,6 +123,7 @@ class MigrationFromMagento1
         $this->migrateEbayCharity();
 
         $this->migrateAmazonMarketplaces();
+        $this->migrateAmazonListingProduct();
 
         $this->removeAndBackupBuyData();
 
@@ -259,6 +261,26 @@ class MigrationFromMagento1
         $this->getConfigModifier('module')->insert(
             '/magento/product/grouped_type/', 'custom_types', '', 'Magento product custom types'
         );
+    }
+
+    private function migrateHealthStatus()
+    {
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/health_status/', 'mode', '1', '0 - disable, \r\n1 - enable'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/health_status/', 'interval', '1800', 'in seconds'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/health_status/', 'last_access', NULL, 'date of last access'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/health_status/', 'last_run', NULL, 'date of last run'
+        );
+
+        $this->getConfigModifier('module')->insert('/health_status/notification/', 'mode', 1);
+        $this->getConfigModifier('module')->insert('/health_status/notification/', 'email', '');
+        $this->getConfigModifier('module')->insert('/health_status/notification/', 'level', 40);
     }
 
     private function migrateProcessing()
@@ -654,6 +676,16 @@ class MigrationFromMagento1
         $this->getConnection()->delete($this->getFullTableName('amazon_marketplace'), [
             'marketplace_id IN (?)' => [27, 32]
         ]);
+    }
+
+    private function migrateAmazonListingProduct()
+    {
+        $this->getTableModifier('amazon_listing_product')
+            ->addColumn('variation_parent_afn_state', 'SMALLINT(5) UNSIGNED',
+                'NULL', 'is_general_id_owner', true, false)
+            ->addColumn('variation_parent_repricing_state', 'SMALLINT(5) UNSIGNED',
+                'NULL', 'variation_parent_afn_state', true, false)
+            ->commit();
     }
 
     private function removeAndBackupBuyData()

@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Model\ResourceModel\Magento\Product;
 
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
@@ -20,9 +19,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     private $isNeedToInjectPrices = false;
     private $isNeedToUseIndexerParent = false;
-
-    /** @var \Magento\Framework\EntityManager\EntityMetadata */
-    protected $metadata;
 
     /** @var \Ess\M2ePro\Helper\Factory */
     protected $helperFactory;
@@ -36,7 +32,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     //########################################
 
     public function __construct(
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
@@ -62,7 +57,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         \Magento\Framework\DB\Adapter\AdapterInterface $connection = null
     )
     {
-        $this->metadata = $metadataPool->getMetadata(ProductInterface::class);
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
@@ -427,7 +421,11 @@ SQL;
             $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE) &&
             strpos($bind, 'entity_id') !== false) {
 
-            $bind = str_replace('entity_id', $this->metadata->getLinkField(), $bind);
+            $bind = str_replace(
+                'entity_id',
+                $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE),
+                $bind
+            );
         }
 
         return parent::joinTable($table, $bind, $fields, $cond, $joinType);

@@ -261,6 +261,7 @@ class Grid extends AbstractGrid
             'filter'    => false,
             'sortable'  => false,
             'getter'    => 'getTemplateId',
+            'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
             'actions'   => array(
                 array(
                     'caption'   => $this->__('Delete'),

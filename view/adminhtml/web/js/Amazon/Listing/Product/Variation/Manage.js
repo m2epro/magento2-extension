@@ -303,31 +303,45 @@ define([
         // ---------------------------------------
 
         setGeneralIdOwner: function (value, hideConfirm) {
-            var self = this;
+            var self = this,
+                confirmAction;
 
-            if (!hideConfirm && !this.gridHandler.confirm()) {
-                return;
+            confirmAction = function () {
+                new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_manage/setGeneralIdOwner'), {
+                    method: 'post',
+                    parameters: {
+                        product_id: self.variationProductManagePopup.productId,
+                        general_id_owner: value
+                    },
+                    onSuccess: function (transport) {
+
+                        var response = self.parseResponse(transport);
+                        if (response.success) {
+                            return self.reloadVariationsGrid();
+                        }
+
+                        if (response.empty_sku) {
+                            return self.openSkuPopUp();
+                        }
+                        self.openDescriptionTemplatePopUp(response.html);
+                    }
+                });
+            };
+
+            if (hideConfirm) {
+                confirmAction();
+            } else {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
             }
-
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_manage/setGeneralIdOwner'), {
-                method: 'post',
-                parameters: {
-                    product_id: self.variationProductManagePopup.productId,
-                    general_id_owner: value
-                },
-                onSuccess: function (transport) {
-
-                    var response = self.parseResponse(transport);
-                    if (response.success) {
-                        return self.reloadVariationsGrid();
-                    }
-
-                    if (response.empty_sku) {
-                        return self.openSkuPopUp();
-                    }
-                    self.openDescriptionTemplatePopUp(response.html);
-                }
-            });
         },
 
         openSkuPopUp: function () {
@@ -837,7 +851,7 @@ define([
                         result = false;
 
                         if (attribute.value == null) {
-                            alert(M2ePro.translator.translate('duplicate_amazon_attribute_error'));
+                            self.alert(M2ePro.translator.translate('duplicate_amazon_attribute_error'));
                         }
                         selectAmazonAttr.value = '';
                     }
@@ -1102,7 +1116,7 @@ define([
                         result = false;
 
                         if (attribute.value == null) {
-                            alert(M2ePro.translator.translate('duplicate_magento_attribute_error'));
+                            self.alert(M2ePro.translator.translate('duplicate_magento_attribute_error'));
                         }
                         selectAmazonAttr.value = '';
                     }
@@ -1477,18 +1491,23 @@ define([
         removeAttributeFromVocabulary: function (el) {
             var self = this;
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/removeAttribute'), {
-                method: 'post',
-                parameters: {
-                    magento_attr: decodeHtmlentities(el.up().down('.magento-attribute-name').innerHTML),
-                    channel_attr: decodeHtmlentities(el.up().down('.channel-attribute-name').innerHTML)
-                },
-                onSuccess: function (transport) {
-                    self.reloadVocabulary();
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/removeAttribute'), {
+                            method: 'post',
+                            parameters: {
+                                magento_attr: decodeHtmlentities(el.up().down('.magento-attribute-name').innerHTML),
+                                channel_attr: decodeHtmlentities(el.up().down('.channel-attribute-name').innerHTML)
+                            },
+                            onSuccess: function (transport) {
+                                self.reloadVocabulary();
+                            }
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
                 }
             });
         },
@@ -1497,19 +1516,24 @@ define([
             var self = this,
                 optionGroupRowEl = el.up('.channel-attribute-options-group');
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/removeOption'), {
-                method: 'post',
-                parameters: {
-                    product_option: decodeHtmlentities(optionGroupRowEl.down('.product-option').innerHTML),
-                    product_options_group: decodeHtmlentities(optionGroupRowEl.down('.product-options-group').innerHTML),
-                    channel_attr: decodeHtmlentities(optionGroupRowEl.down('.channel-attribute-name').innerHTML)
-                },
-                onSuccess: function (transport) {
-                    self.reloadVocabulary();
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_vocabulary/removeOption'), {
+                            method: 'post',
+                            parameters: {
+                                product_option: decodeHtmlentities(optionGroupRowEl.down('.product-option').innerHTML),
+                                product_options_group: decodeHtmlentities(optionGroupRowEl.down('.product-options-group').innerHTML),
+                                channel_attr: decodeHtmlentities(optionGroupRowEl.down('.channel-attribute-name').innerHTML)
+                            },
+                            onSuccess: function (transport) {
+                                self.reloadVocabulary();
+                            }
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
                 }
             });
         }

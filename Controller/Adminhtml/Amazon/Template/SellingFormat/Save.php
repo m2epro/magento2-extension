@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
+use Ess\M2ePro\Helper\Component\Amazon;
 
 class Save extends Template
 {
@@ -120,7 +121,7 @@ class Save extends Template
 
         $model->addData($data)->save();
         $model->getChildObject()->addData(array_merge(
-            [$model->getResource()->getChildPrimary() => $model->getId()],
+            [$model->getResource()->getChildPrimary(Amazon::NICK) => $model->getId()],
             $data
         ));
         $model->save();

@@ -36,6 +36,10 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
 
     public function process()
     {
+        if (is_null($this->getStoredStockItem())) {
+            return;
+        }
+
         if (!$this->areThereAffectedItems()) {
             return;
         }

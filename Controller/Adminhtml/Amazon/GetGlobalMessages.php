@@ -37,7 +37,7 @@ class GetGlobalMessages extends Main
             $message = [$message->getType() => $message->getText()];
         }
 
-        $this->setAjaxContent(json_encode($messages), false);
+        $this->setJsonContent($messages);
         return $this->getResult();
     }
 

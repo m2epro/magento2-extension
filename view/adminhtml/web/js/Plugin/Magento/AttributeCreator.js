@@ -355,11 +355,8 @@ define([
                 },
                 onSuccess: function (transport) {
 
-                    if (!transport.responseText.isJSON()) {
-                        return;
-                    }
-
-                    result = transport.responseText.evalJSON();
+                    var response = transport.responseText.evalJSON();
+                    result = response.status;
                 }
             });
 

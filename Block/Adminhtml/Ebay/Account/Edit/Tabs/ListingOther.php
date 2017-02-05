@@ -24,7 +24,17 @@ class ListingOther extends AbstractForm
 
     protected function _prepareForm()
     {
-        $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
+        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
+        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+
+        $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+
+        $attributes = $magentoAttributeHelper->filterByInputTypes(
+            $generalAttributes, array(
+                'text', 'textarea', 'select'
+            )
+        );
+
         // ---------------------------------------
 
         // ---------------------------------------
@@ -48,7 +58,8 @@ class ListingOther extends AbstractForm
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         $marketplacesData = $formData['marketplaces_data'];
-        $marketplacesData = !empty($marketplacesData) ? json_decode($marketplacesData, true) : array();
+        $marketplacesData = !empty($marketplacesData)
+            ? $this->getHelper('Data')->jsonDecode($marketplacesData) : array();
 
         $marketplaces = $this->ebayFactory->getObject('Marketplace')
             ->getCollection()
@@ -67,7 +78,7 @@ class ListingOther extends AbstractForm
 
         $key = 'other_listings_mapping_settings';
         if (isset($formData[$key])) {
-            $formData[$key] = (array)json_decode($formData[$key],true);
+            $formData[$key] = (array)$this->getHelper('Data')->jsonDecode($formData[$key]);
         }
 
         $defaults = array(
@@ -209,7 +220,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-);
+        )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_sku_attribute',
@@ -271,7 +282,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-);
+    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_title_attribute',

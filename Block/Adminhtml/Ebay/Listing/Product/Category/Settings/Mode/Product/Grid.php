@@ -91,7 +91,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
 
         // ---------------------------------------
-        $productAddIds = (array)json_decode($this->listing->getChildObject()->getData('product_add_ids'), true);
+        $productAddIds = (array)$this->getHelper('Data')->jsonDecode(
+            $this->listing->getChildObject()->getData('product_add_ids')
+        );
 
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
         $collection->joinTable(
@@ -582,7 +584,7 @@ HTML;
 
         if ($this->getRequest()->isXmlHttpRequest()) {
 
-            $this->js->add(
+            $this->js->addOnReadyJs(
                 <<<JS
     EbayListingProductCategorySettingsModeProductGridObj.afterInitPage();
     EbayListingProductCategorySettingsModeProductGridObj.getGridMassActionObj().setGridIds('{$allIdsStr}');
@@ -655,7 +657,9 @@ JS
         );
         // ---------------------------------------
 
-        $getSuggested = json_encode((bool)$this->getHelper('Data\GlobalData')->getValue('get_suggested'));
+        $getSuggested = $this->getHelper('Data')->jsonEncode(
+            (bool)$this->getHelper('Data\GlobalData')->getValue('get_suggested')
+        );
 
         $this->js->addOnReadyJs(
             <<<JS

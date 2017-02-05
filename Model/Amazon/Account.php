@@ -258,7 +258,7 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function getDecodedInfo()
     {
         $tempInfo = $this->getInfo();
-        return is_null($tempInfo) ? NULL : json_decode($tempInfo,true);
+        return is_null($tempInfo) ? NULL : $this->getHelper('Data')->jsonDecode($tempInfo);
     }
 
     //########################################

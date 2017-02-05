@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\Other;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Product;
+
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGrid
 {
     //########################################
@@ -49,6 +51,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
             array('sku' => 'sku')
         );
 
+        $afnStateAllNo  = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_NO;
+        $afnStateAllYes = Product::VARIATION_PARENT_IS_AFN_STATE_ALL_YES;
+        $repricingStateAllNo = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO;
+        $repricingStateAllYes = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
+
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
         $collection->getSelect()->columns(
             array(
@@ -79,6 +86,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
 
                 'is_repricing'                 => 'second_table.is_repricing',
                 'is_repricing_disabled'        => 'second_table.is_repricing_disabled',
+
+                'variation_parent_afn_state' => new \Zend_Db_Expr("IF(
+                    second_table.is_afn_channel = 1,
+                    {$afnStateAllYes},
+                    {$afnStateAllNo}
+                )"),
+                'variation_parent_repricing_state' => new \Zend_Db_Expr("IF(
+                    second_table.is_repricing = 1,
+                    {$repricingStateAllYes},
+                    {$repricingStateAllNo}
+                )"),
             )
         );
 
@@ -210,14 +228,14 @@ HTML;
         if (isset($value['from']) || isset($value['to'])) {
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'second_table.online_price >= \'' . $value['from'] . '\'';
+                $condition = 'second_table.online_price >= \'' . (float)$value['from'] . '\'';
             }
 
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'second_table.online_price <= \'' . $value['to'] . '\'';
+                $condition .= 'second_table.online_price <= \'' . (float)$value['to'] . '\'';
             }
         }
 
@@ -225,10 +243,43 @@ HTML;
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
-            $condition .= 'second_table.is_repricing = ' . $value['is_repricing'];
+            $condition .= 'second_table.is_repricing = ' . (int)$value['is_repricing'];
         }
 
         $collection->getSelect()->where($condition);
+    }
+
+    protected function callbackFilterQty($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if (empty($value)) {
+            return;
+        }
+
+        $where = '';
+
+        if (isset($value['from']) && $value['from'] != '') {
+            $quoted = $collection->getConnection()->quote($value['from']);
+            $where .= 'second_table.online_qty >= ' . $quoted;
+        }
+
+        if (isset($value['to']) && $value['to'] != '') {
+            if (isset($value['from']) && $value['from'] != '') {
+                $where .= ' AND ';
+            }
+            $quoted = $collection->getConnection()->quote($value['to']);
+            $where .= 'second_table.online_qty <= ' . $quoted;
+        }
+
+        if (isset($value['afn']) && $value['afn'] !== '') {
+            if (!empty($where)) {
+                $where = '(' . $where . ') OR ';
+            }
+            $where .= 'second_table.is_afn_channel = ' . (int)$value['afn'];
+        }
+
+        $collection->getSelect()->where($where);
     }
 
     protected function callbackFilterStatus($collection, $column)

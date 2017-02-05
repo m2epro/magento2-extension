@@ -7,12 +7,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
     public function execute()
     {
         if (!$post = $this->getRequest()->getPost()) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
         if (!isset($post['auto_action_data'])) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
@@ -21,7 +21,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 
-        $data = json_decode($post['auto_action_data'], true);
+        $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
         if (isset($data['template_category_data'])) {
             $this->getHelper('Component\Ebay\Category')->fillCategoriesPaths(
@@ -167,7 +167,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\AutoAction
         $listing->getChildObject()->addData($listingData);
         $listing->save();
 
-        $this->setAjaxContent(json_encode(['success' => true]), false);
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 }

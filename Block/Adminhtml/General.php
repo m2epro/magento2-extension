@@ -47,12 +47,13 @@ class General extends Magento\AbstractBlock
         $this->block_notices_show = $this->getHelper('Module')
             ->getConfig()
             ->getGroupValue('/view/', 'show_block_notices');
-        $this->block_notices_disable_collapse = json_encode(
+        $this->block_notices_disable_collapse = $this->getHelper('Data')->jsonEncode(
             (bool)$this->getHelper('Module')->getConfig()->getGroupValue('/view/ebay/notice/', 'disable_collapse')
         );
 
         $this->jsTranslator->addTranslations([
             'Are you sure?' => $this->__('Are you sure?'),
+            'Confirmation'  => $this->__('Confirmation'),
             'Help'          => $this->__('Help'),
             'Hide Block'    => $this->__('Hide Block'),
             'Show Tips'     => $this->__('Show Tips'),

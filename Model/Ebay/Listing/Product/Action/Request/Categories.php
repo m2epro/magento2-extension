@@ -36,14 +36,14 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 $this->getCategoriesData()
             );
 
-            if ($this->getMotorsHelper()->isMarketplaceSupportsEpid($this->getMarketplace()->getId())) {
+            if ($this->getMarketplace()->getChildObject()->isEpidEnabled()) {
                 $tempData = $this->getMotorsData(
                     \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID
                 );
                 $tempData !== false && $data['motors_epids'] = $tempData;
             }
 
-            if ($this->getMotorsHelper()->isMarketplaceSupportsKtype($this->getMarketplace()->getId())) {
+            if ($this->getMarketplace()->getChildObject()->isKtypeEnabled()) {
                 $tempData = $this->getMotorsData(
                     \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
                 );
@@ -589,7 +589,7 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         $categoryData = $this->getEbayMarketplace()->getCategory($categoryId);
 
         $features = !empty($categoryData['features']) ?
-                    (array)json_decode($categoryData['features'], true) : array();
+                    (array)$this->getHelper('Data')->jsonDecode($categoryData['features']) : array();
 
         $attributes = !empty($features['parts_compatibility_attributes']) ?
                       $features['parts_compatibility_attributes'] : array();

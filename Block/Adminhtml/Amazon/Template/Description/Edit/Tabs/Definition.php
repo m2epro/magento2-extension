@@ -1821,10 +1821,10 @@ HTML
             // ---
 
             'target_audience_mode' => DefinitionTemplate::TARGET_AUDIENCE_MODE_NONE,
-            'target_audience'      => json_encode([]),
+            'target_audience'      => $this->getHelper('Data')->jsonEncode([]),
 
             'search_terms_mode' => DefinitionTemplate::SEARCH_TERMS_MODE_NONE,
-            'search_terms'      => json_encode([]),
+            'search_terms'      => $this->getHelper('Data')->jsonEncode([]),
 
             'image_main_mode'      => DefinitionTemplate::IMAGE_MAIN_MODE_PRODUCT,
             'image_main_attribute' => '',
@@ -1837,7 +1837,7 @@ HTML
             'gallery_images_attribute' => '',
 
             'bullet_points_mode' => DefinitionTemplate::BULLET_POINTS_MODE_NONE,
-            'bullet_points'      => json_encode([]),
+            'bullet_points'      => $this->getHelper('Data')->jsonEncode([]),
 
             'description_mode'     => DefinitionTemplate::DESCRIPTION_MODE_NONE,
             'description_template' => '',
@@ -1856,7 +1856,7 @@ HTML
                 continue;
             }
 
-            $formData[$formField] = json_decode($formData[$formField], true);
+            $formData[$formField] = $this->getHelper('Data')->jsonDecode($formData[$formField]);
         }
 
         $formData['package_weight_custom_value'] == 0  && $formData['package_weight_custom_value'] = '';

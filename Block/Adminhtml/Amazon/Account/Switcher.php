@@ -23,7 +23,7 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Account\Switcher
             $marketplaces[$account->getId()] = $account->getChildObject()->getMarketplaceId();
         }
 
-        $encodedMarketplaces = json_encode($marketplaces);
+        $encodedMarketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\Amazon\Marketplace\Switcher $marketplaceSwitcher */
         $marketplaceSwitcher = $this->createBlock('Amazon\Marketplace\Switcher')->setData([

@@ -173,10 +173,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnActions($value, $row, $column, $isExport)
     {
-        $confirmMessage = $this->__('Are you sure?');
-        $actions = '&nbsp;<a href="javascript:void(0);" onclick="confirm(\''.$confirmMessage.'\') && ';
-        $actions .= $this->getMovingHandlerJs() . '.tryToSubmit('.$row->getData('id').');">';
-        $actions .= $this->__('Move To This Listing') . '</a>';
+        $actions = <<<HTML
+&nbsp;<a href="javascript:void(0);" onclick="CommonObj.confirm({ 
+        actions: {
+            confirm: function () {
+                {$this->getMovingHandlerJs()}.tryToSubmit({$row->getData('id')});
+            }.bind(this),
+            cancel: function () {
+                return false;
+            }
+        }
+    });">{$this->__('Move To This Listing')}</a>
+HTML;
         return $actions;
     }
 

@@ -315,7 +315,7 @@ HTML;
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }
 
-        $discountDetails = json_decode($row->getChildObject()->getData('discount_details'), true);
+        $discountDetails = $this->getHelper('Data')->jsonDecode($row->getChildObject()->getData('discount_details'));
         if (empty($discountDetails['promotion']['value'])) {
             return $this->modelFactory->getObject('Currency')->formatPrice($currency, 0);
         }

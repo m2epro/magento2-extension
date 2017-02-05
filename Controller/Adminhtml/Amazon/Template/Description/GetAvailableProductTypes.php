@@ -61,7 +61,9 @@ class GetAvailableProductTypes extends Description
             $productTypeInfo['group'] = isset($allAvailableProductTypes[$nick])
                 ? $allAvailableProductTypes[$nick]['group'] : 'Other';
 
-            $productTypeInfo['required_attributes'] = (array)json_decode($productTypeInfo['required_attributes'], true);
+            $productTypeInfo['required_attributes'] = (array)$this->getHelper('Data')->jsonDecode(
+                $productTypeInfo['required_attributes']
+            );
         }
 
         $this->setJsonContent([
@@ -102,7 +104,7 @@ class GetAvailableProductTypes extends Description
                 'browsenode_id'       => $browsenodeId,
                 'product_data_nick'   => $dataNickKey,
                 'is_applicable'       => (int)$info['applicable'],
-                'required_attributes' => json_encode($info['required_attributes'])
+                'required_attributes' => $this->getHelper('Data')->jsonEncode($info['required_attributes'])
             );
         }
 

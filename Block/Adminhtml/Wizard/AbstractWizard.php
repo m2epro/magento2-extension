@@ -33,7 +33,9 @@ abstract class AbstractWizard extends AbstractContainer
         ]);
 
         $step = $this->getHelper('Module\Wizard')->getStep($this->getNick());
-        $steps = json_encode($this->getHelper('Module\Wizard')->getWizard($this->getNick())->getSteps());
+        $steps = $this->getHelper('Data')->jsonEncode(
+            $this->getHelper('Module\Wizard')->getWizard($this->getNick())->getSteps()
+        );
         $status = $this->getHelper('Module\Wizard')->getStatus($this->getNick());
 
         $this->js->add( <<<JS

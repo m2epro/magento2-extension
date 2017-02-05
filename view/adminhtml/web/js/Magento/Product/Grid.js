@@ -156,7 +156,7 @@ define([
             var selectedProducts = window[this.getGridId() + '_massactionJsObject'].checkedString;
 
             if (!selectedProducts) {
-                alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
+                this.alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
                 return false;
             }
             return selectedProducts;

@@ -26,8 +26,7 @@ define([
                     this.resetCategories(id);
                 }.bind(this),
                 removeItemAction: function (id) {
-                    var ids = id ? [id] : this.getSelectedProductsArray();
-                    this.removeItems(ids);
+                    this.removeItems(id);
                 }.bind(this)
 
             });
@@ -36,43 +35,75 @@ define([
         // ---------------------------------------
 
         getSuggestedCategories: function (id) {
-            this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
-            this.unselectAll();
+            var self = this,
+                confirmAction;
 
-            if (id && !confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            self.selectedProductsIds = id ? [id] : self.getSelectedProductsArray();
+            self.unselectAll();
 
-            EbayListingProductCategorySettingsModeProductSuggestedSearchObj.search(
-                this.selectedProductsIds.join(','), function (searchResult) {
-                    this.getGridObj().doFilter();
-                    this.selectedProductsIds = [];
+            confirmAction = function() {
+                EbayListingProductCategorySettingsModeProductSuggestedSearchObj.search(
+                    self.selectedProductsIds.join(','), function (searchResult) {
+                        self.getGridObj().doFilter();
+                        self.selectedProductsIds = [];
 
-                    MagentoMessageObj.clear();
+                        MagentoMessageObj.clear();
 
-                    if (searchResult.failed > 0) {
-                        MagentoMessageObj.addErrorMessage(
-                            M2ePro.translator.translate('eBay could not assign Categories for %product_title% Products.')
-                                .replace('%product_title%', searchResult.failed)
-                        );
-                    } else if (searchResult.succeeded > 0) {
-                        MagentoMessageObj.addSuccessMessage(
-                            M2ePro.translator.translate('Suggested Categories were successfully Received for %product_title% Product(s).')
-                                .replace('%product_title%', searchResult.succeeded)
-                        );
+                        if (searchResult.failed > 0) {
+                            MagentoMessageObj.addErrorMessage(
+                                M2ePro.translator.translate('eBay could not assign Categories for %product_title% Products.')
+                                    .replace('%product_title%', searchResult.failed)
+                            );
+                        } else if (searchResult.succeeded > 0) {
+                            MagentoMessageObj.addSuccessMessage(
+                                M2ePro.translator.translate('Suggested Categories were successfully Received for %product_title% Product(s).')
+                                    .replace('%product_title%', searchResult.succeeded)
+                            );
+                        }
                     }
-                }.bind(this)
-            );
+                );
+            };
+
+            if (id) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
+            }
         },
 
         getSuggestedCategoriesForAll: function () {
-            var gridIds = this.getGridMassActionObj().getGridIds().split(',');
-            if (gridIds.length > 100 && !confirm('Are you sure?')) {
-                return;
-            }
+            var self = this,
+                confirmAction,
+                gridIds = self.getGridMassActionObj().getGridIds().split(',');
 
-            this.getGridMassActionObj().selectAll();
-            this.getSuggestedCategories();
+            confirmAction = function() {
+                self.getGridMassActionObj().selectAll();
+                self.getSuggestedCategories();
+            };
+
+            if (gridIds.length > 100) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
+            }
         },
 
         // ---------------------------------------
@@ -113,23 +144,41 @@ define([
         // ---------------------------------------
 
         resetCategories: function (id) {
-            if (id && !confirm('Are you sure?')) {
-                return;
+            var self = this,
+                confirmAction;
+
+            confirmAction = function() {
+                self.selectedProductsIds = id ? [id] : self.getSelectedProductsArray();
+
+                new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoSuggestedReset'), {
+                    method: 'post',
+                    asynchronous: true,
+                    parameters: {
+                        products_ids: self.selectedProductsIds.join(',')
+                    },
+                    onSuccess: function (transport) {
+                        MagentoMessageObj.clear();
+
+                        self.getGridObj().doFilter();
+                        self.unselectAll();
+                    }
+                });
+            };
+
+            if (id) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
             }
-
-            this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
-
-            new Ajax.Request(M2ePro.url.get('ebay_listing_product_category_settings/stepTwoSuggestedReset'), {
-                method: 'post',
-                asynchronous: true,
-                parameters: {
-                    products_ids: this.selectedProductsIds.join(',')
-                },
-                onSuccess: function (transport) {
-                    this.getGridObj().doFilter();
-                    this.unselectAll();
-                }.bind(this)
-            });
         },
 
         // ---------------------------------------
@@ -232,26 +281,44 @@ define([
 
         // ---------------------------------------
 
-        removeItems: function (ids) {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+        removeItems: function (id) {
+            var self = this,
+                confirmAction;
 
-            var url = M2ePro.url.get('ebay_listing_product_category_settings/stepTwoDeleteProductsModeProduct');
-            new Ajax.Request(url, {
-                method: 'post',
-                parameters: {
-                    products_ids: ids.join(',')
-                },
-                onSuccess: function () {
-                    this.unselectAllAndReload();
-                }.bind(this)
-            });
+            confirmAction = function() {
+                self.selectedProductsIds = id ? [id] : self.getSelectedProductsArray();
+
+                var url = M2ePro.url.get('ebay_listing_product_category_settings/stepTwoDeleteProductsModeProduct');
+                new Ajax.Request(url, {
+                    method: 'post',
+                    parameters: {
+                        products_ids: self.selectedProductsIds.join(',')
+                    },
+                    onSuccess: function () {
+                        self.unselectAllAndReload();
+                    }
+                });
+            };
+
+            if (id) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
+            }
         },
 
         // ---------------------------------------
 
-        confirm: function ($super) {
+        confirm: function ($super, config) {
             var action = '';
 
             $$('select#' + this.gridId + '_massaction-select option').each(function (o) {
@@ -260,19 +327,7 @@ define([
                 }
             });
 
-            if (action == 'removeItem' ||
-                action == 'editCategories' ||
-                action == 'editPrimaryCategories' ||
-                action == 'editStorePrimaryCategories') {
-                return true;
-            }
-
-            var result = $super();
-            if (action == 'getSuggestedCategories' && !result) {
-                this.unselectAll();
-            }
-
-            return result;
+            $super(config);
         },
 
         // ---------------------------------------

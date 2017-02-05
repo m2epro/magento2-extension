@@ -100,11 +100,11 @@ class AfterGetToken extends InstallationAmazon
 
             'other_listings_synchronization' => AccountModel::OTHER_LISTINGS_SYNCHRONIZATION_NO,
             'other_listings_mapping_mode' => AccountModel::OTHER_LISTINGS_MAPPING_MODE_NO,
-            'other_listings_mapping_settings' => json_encode(array()),
+            'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode(array()),
             'other_listings_move_mode' => AccountModel::OTHER_LISTINGS_MOVE_TO_LISTINGS_DISABLED,
             'other_listings_move_synch' => AccountModel::OTHER_LISTINGS_MOVE_TO_LISTINGS_SYNCH_MODE_NONE,
 
-            'magento_orders_settings' => json_encode(array(
+            'magento_orders_settings' => $this->getHelper('Data')->jsonEncode(array(
                 'listing' => array(
                     'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_MODE_YES,
                     'store_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
@@ -114,7 +114,7 @@ class AfterGetToken extends InstallationAmazon
                     'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
                     'product_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => NULL,
+                    'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
                 ),
                 'number' => array(
                     'source' => AccountModel::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,

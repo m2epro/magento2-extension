@@ -100,11 +100,11 @@ class Specific extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         $uniqueId = $this->getUniqueId();
 
-        $attributes = json_encode($this->getAttributes());
+        $attributes = $this->getHelper('Data')->jsonEncode($this->getAttributes());
 
-        $dictionarySpecifics       = json_encode($this->getDictionarySpecifics());
-        $ebaySelectedSpecifics     = json_encode($this->getEbaySelectedSpecifics());
-        $customSelectedSpecifics   = json_encode($this->getCustomSelectedSpecifics());
+        $dictionarySpecifics       = $this->getHelper('Data')->jsonEncode($this->getDictionarySpecifics());
+        $ebaySelectedSpecifics     = $this->getHelper('Data')->jsonEncode($this->getEbaySelectedSpecifics());
+        $customSelectedSpecifics   = $this->getHelper('Data')->jsonEncode($this->getCustomSelectedSpecifics());
 
         $this->js->add(<<<JS
 
@@ -250,19 +250,19 @@ JS
         foreach ($specifics as $specific) {
 
             if ($specific['mode'] == \Ess\M2ePro\Model\Ebay\Template\Category\Specific::MODE_CUSTOM_ITEM_SPECIFICS) {
-                $specific['value_custom_value'] = json_decode($specific['value_custom_value'],true);
+                $specific['value_custom_value'] = $this->getHelper('Data')->jsonDecode($specific['value_custom_value']);
                 $this->_selectedSpecifics[] = $specific;
                 continue;
             }
 
             $temp = \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_EBAY_RECOMMENDED;
             if ($specific['value_mode'] == $temp) {
-                $specific['value_data'] = json_decode($specific['value_ebay_recommended'],true);
+                $specific['value_data'] = $this->getHelper('Data')->jsonDecode($specific['value_ebay_recommended']);
             }
             unset($specific['value_ebay_recommended']);
 
             if ($specific['value_mode'] == \Ess\M2ePro\Model\Ebay\Template\Category\Specific::VALUE_MODE_CUSTOM_VALUE) {
-                $specific['value_data'] = json_decode($specific['value_custom_value'],true);
+                $specific['value_data'] = $this->getHelper('Data')->jsonDecode($specific['value_custom_value']);
             }
             unset($specific['value_custom_value']);
 

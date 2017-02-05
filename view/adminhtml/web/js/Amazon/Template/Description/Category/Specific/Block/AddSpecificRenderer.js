@@ -153,7 +153,7 @@ define([
 
         openPopUp: function(html)
         {
-            var self = this
+            var self = this,
                 doneCallback = self.specificsDoneButton.bind(self);
 
             if (!M2ePro.popUp) {

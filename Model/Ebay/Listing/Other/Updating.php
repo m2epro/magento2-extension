@@ -249,7 +249,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 $logModel->addProductMessage($existObject->getId(),
                      \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                      NULL,
-                     \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_LISTING,
+                     \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
                     // M2ePro\TRANSLATIONS
                     // Item was successfully Added
                      'Item was successfully Added',

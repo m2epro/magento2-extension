@@ -14,7 +14,7 @@ class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
 
     protected function _prepareAttributes($title, $classes, $disabled)
     {
-        $magentoAttributes = json_encode($this->getMagentoAttributes());
+        $magentoAttributes = $this->helperFactory->getObject('Data')->jsonEncode($this->getMagentoAttributes());
         $selectCustomAttributes = json_encode(
             !is_null($this->getSelectCustomAttributes()) ? $this->getSelectCustomAttributes() : [],
             JSON_FORCE_OBJECT
@@ -39,7 +39,8 @@ class MagentoAttribute extends \Ess\M2ePro\Block\Adminhtml\Magento\Button
         ];
         if ($this->getDataAttribute()) {
             foreach ($this->getDataAttribute() as $key => $attr) {
-                $attributes['data-' . $key] = is_scalar($attr) ? $attr : json_encode($attr);
+                $attributes['data-' . $key] = is_scalar($attr)
+                    ? $attr : $this->helperFactory->getObject('Data')->jsonEncode($attr);
             }
         }
         return $attributes;

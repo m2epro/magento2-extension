@@ -21,17 +21,17 @@ class RefreshStatus extends \Ess\M2ePro\Controller\Adminhtml\Base
                 $this->__($e->getMessage())
             );
 
-            $this->setAjaxContent(json_encode([
+            $this->setJsonContent([
                 'success' => false,
                 'message' => $this->__($e->getMessage())
-            ]), false);
+            ]);
             return $this->getResult();
         }
 
-        $this->setAjaxContent(json_encode([
+        $this->setJsonContent([
             'success' => true,
             'message' => $this->__('The License has been successfully refreshed.')
-        ]), false);
+        ]);
         return $this->getResult();
     }
 }

@@ -26,7 +26,9 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
     {
         if (is_null($this->galleryId)) {
             $this->galleryId = substr(sha1(
-                'gallery-' . $this->getData('index_number') . json_encode($this->getGalleryImages())
+                'gallery-'
+                . $this->getData('index_number')
+                . $this->getHelper('Data')->jsonEncode($this->getGalleryImages())
             ), 20);
         }
         return $this->galleryId;

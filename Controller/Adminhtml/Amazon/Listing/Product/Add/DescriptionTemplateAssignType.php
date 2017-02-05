@@ -31,11 +31,13 @@ class DescriptionTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Ama
 
         $listing = $this->amazonFactory->getObjectLoaded('Listing', $listingId);
         $listingAdditionalData = $listing->getData('additional_data');
-        $listingAdditionalData = json_decode($listingAdditionalData, true);
+        $listingAdditionalData = $this->getHelper('Data')->jsonDecode($listingAdditionalData);
 
         $listingAdditionalData['new_asin_mode'] = $mode;
 
-        $listing->setData('additional_data', json_encode($listingAdditionalData))->save();
+        $listing->setData(
+            'additional_data', $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+        )->save();
 
         if ($mode == 'same' && !empty($descriptionTemplateId)) {
             /** @var \Ess\M2ePro\Model\Amazon\Template\Description $descriptionTemplate */
@@ -57,7 +59,9 @@ class DescriptionTemplateAssignType extends \Ess\M2ePro\Controller\Adminhtml\Ama
 
             unset($listingAdditionalData['new_asin_mode']);
 
-            $listing->setData('additional_data', json_encode($listingAdditionalData))->save();
+            $listing->setData(
+                'additional_data', $this->getHelper('Data')->jsonEncode($listingAdditionalData)
+            )->save();
 
         } else if ($mode == 'category') {
             return $this->_redirect('*/*/descriptionTemplateAssignByMagentoCategory', array(

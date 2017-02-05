@@ -82,13 +82,16 @@ class Rule extends AbstractForm
             font-weight: 600;
         }
 
-        .advanced-filter-fieldset .rule-param {
-            vertical-align: top;
-            display: inline-block;
-        }
-
         .advanced-filter-fieldset ul.rule-param-children {
             margin-top: 1em;
+        }
+
+        .advanced-filter-fieldset .data-grid {
+            overflow: hidden;
+        }
+
+        .advanced-filter-fieldset .rule-chooser {
+            margin: 20px 0;
         }
 CSS
 );

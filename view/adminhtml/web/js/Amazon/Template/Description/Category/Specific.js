@@ -248,7 +248,7 @@ define([
                     } catch (e) {
                         console.log(e.message);
                         console.log(e.stack);
-                        alert(e.name + ': ' + e.message);
+                        self.alert(e.name + ': ' + e.message);
                     }
                 }
             });
@@ -349,7 +349,7 @@ define([
             } catch (e) {
                 console.log(e.message);
                 console.log(e.stack);
-                alert(e.name + ' ' + e.message);
+                this.alert(e.name + ' ' + e.message);
             }
         },
 

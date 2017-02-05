@@ -17,7 +17,7 @@ class UpdateDiscountProfiles extends Template
         $account = $this->ebayFactory->getCachedObjectLoaded('Account', $accountId)->getChildObject();
         $account->updateShippingDiscountProfiles($marketplaceId);
 
-        $accountProfiles = json_decode($account->getData('ebay_shipping_discount_profiles'), true);
+        $accountProfiles = $this->getHelper('Data')->jsonDecode($account->getData('ebay_shipping_discount_profiles'));
 
         $profiles = array();
         if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {

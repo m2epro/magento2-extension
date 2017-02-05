@@ -14,7 +14,7 @@ class General extends AbstractForm
 
         $ebayUserId = null;
         if (empty($formData['user_id']) && isset($formData['info']) &&
-            $ebayInfo = json_decode($formData['info'], true)
+            $ebayInfo = $this->getHelper('Data')->jsonDecode($formData['info'])
         ) {
             !empty($ebayInfo['UserID']) && $formData['user_id'] = (string)$ebayInfo['UserID'];
         }

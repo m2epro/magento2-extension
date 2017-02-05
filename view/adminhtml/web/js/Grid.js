@@ -140,24 +140,19 @@ define([
 
         // ---------------------------------------
 
-        confirm: function()
-        {
-            return confirm(M2ePro.translator.translate('Are you sure?'));
-        },
-
-        // ---------------------------------------
-
         massActionSubmitClick: function()
         {
-            if (this.getSelectedProductsString() == '' || this.getSelectedProductsArray().length == 0) {
-                alert(M2ePro.translator.translate('Please select Items.'));
+            var self = this;
+
+            if (self.getSelectedProductsString() == '' || self.getSelectedProductsArray().length == 0) {
+                self.alert(M2ePro.translator.translate('Please select Items.'));
                 return;
             }
 
             var selectAction = true;
-            $$('select#'+this.gridId+'_massaction-select option').each(function(o) {
+            $$('select#'+self.gridId+'_massaction-select option').each(function(o) {
                 if (o.selected && o.value == '') {
-                    alert(M2ePro.translator.translate('Please select Action.'));
+                    self.alert(M2ePro.translator.translate('Please select Action.'));
                     selectAction = false;
                     return;
                 }
@@ -167,25 +162,31 @@ define([
                 return;
             }
 
-            this.scrollPageToTop();
+            self.scrollPageToTop();
 
-            if (!this.confirm()) {
-                return;
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        $$('select#'+self.gridId+'_massaction-select option').each(function(o) {
 
-            $$('select#'+this.gridId+'_massaction-select option').each((function(o) {
+                            if (!o.selected) {
+                                return;
+                            }
 
-                if (!o.selected) {
-                    return;
+                            if (!o.value || !self.actions[o.value + 'Action']) {
+                                self.alert(M2ePro.translator.translate('Please select Action.'));
+                                return;
+                            }
+
+                            self.actions[o.value + 'Action']();
+
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
                 }
-
-                if (!o.value || !this.actions[o.value + 'Action']) {
-                    return alert(M2ePro.translator.translate('Please select Action.'));
-                }
-
-                this.actions[o.value + 'Action']();
-
-            }).bind(this));
+            });
         },
 
         // ---------------------------------------

@@ -214,7 +214,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         if ($this->isShowReviseAll()) {
             $js .=
                 'SynchronizationObj.initReviseAllInfo(' .
-                json_encode(!is_null($reviseAllInProcessingState)) . ',\'' .
+                $this->getHelper('Data')->jsonEncode(!is_null($reviseAllInProcessingState)) . ',\'' .
                 $this->reviseAllStartDate . '\',\'' .
                 $this->reviseAllEndDate . '\',\'' .
                 \Ess\M2ePro\Helper\Component\Ebay::NICK .'\'

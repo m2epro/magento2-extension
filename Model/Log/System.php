@@ -57,7 +57,7 @@ class System extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getAdditionalData()
     {
-        return (array)json_decode($this->getData('additional_data'), true);
+        return (array)$this->getHelper('Data')->jsonDecode($this->getData('additional_data'));
     }
 
     //########################################

@@ -303,5 +303,25 @@ class Module extends Command
         $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
     }
 
+    /**
+     * @title "Process Health Status"
+     * @description "Process Health Status"
+     */
+    public function healthStatusNotificationsAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()->addSuccess('Health Status was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Health Status was performed with errors.');
+        }
+
+        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
     //########################################
 }

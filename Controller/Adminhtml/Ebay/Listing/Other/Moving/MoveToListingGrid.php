@@ -16,7 +16,7 @@ class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Ot
             'marketplaceId', $this->getRequest()->getParam('marketplaceId')
         );
         $this->getHelper('Data\GlobalData')->setValue(
-            'ignoreListings', json_decode($this->getRequest()->getParam('ignoreListings'))
+            'ignoreListings', $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
         );
 
         $block = $this->createBlock(

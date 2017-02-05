@@ -83,7 +83,7 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
         $connWrite = $resource->getConnection();
 
         $connWrite->update(
-            $resource->getChildTable(),
+            $resource->getChildTable(\Ess\M2ePro\Helper\Component\Amazon::NICK),
             array('variation_parent_need_processor' => 1),
             array(
                 'is_variation_parent = ?'   => 1,

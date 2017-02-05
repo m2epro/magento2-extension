@@ -52,22 +52,36 @@ define([
 
         deleteTableRows: function(id)
         {
-            var self = this;
-            var selectedIds = id ? id : this.getSelectedProductsString();
+            var self = this,
+                confirmAction,
+                selectedIds = id ? id : self.getSelectedProductsString();
 
-            if (id && !confirm('Are you sure?')) {
-                return;
+            confirmAction = function() {
+                new Ajax.Request(M2ePro.url.get('controlPanel/deleteTableRows'), {
+                    method:'post',
+                    parameters: {
+                        ids: selectedIds
+                    },
+                    onSuccess: function(transport) {
+                        self.unselectAllAndReload();
+                    }
+                });
+            };
+
+            if (id) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
             }
-
-            new Ajax.Request(M2ePro.url.get('controlPanel/deleteTableRows'), {
-                method:'post',
-                parameters: {
-                    ids: selectedIds
-                },
-                onSuccess: function(transport) {
-                    self.unselectAllAndReload();
-                }
-            });
         },
 
         openTableCellsPopup: function(mode)
@@ -126,7 +140,7 @@ define([
 
             if (!this.isAnySwitcherEnabled()) {
 
-                alert('You should select columns.');
+                self.alert('You should select columns.');
                 return;
             }
 
@@ -147,7 +161,7 @@ define([
 
             if (!this.isAnySwitcherEnabled()) {
 
-                alert('You should select columns.');
+                self.alert('You should select columns.');
                 return;
             }
 

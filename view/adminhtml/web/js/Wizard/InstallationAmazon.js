@@ -1,7 +1,6 @@
 define([
-    'Magento_Ui/js/modal/alert',
     'M2ePro/Plugin/Messages'
-], function (alert, MessagesObj) {
+], function (MessagesObj) {
 
     window.WizardInstallationAmazon = Class.create(Common, {
 
@@ -25,9 +24,7 @@ define([
         accountStep: function ()
         {
             if (!$('marketplace_id').value) {
-                alert({
-                    content: M2ePro.translator.translate('Please select Marketplace first.')
-                });
+                this.alert(M2ePro.translator.translate('Please select Marketplace first.'));
                 return;
             }
 

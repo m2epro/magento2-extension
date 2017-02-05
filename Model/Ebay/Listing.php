@@ -598,7 +598,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getAddedListingProductsIds()
     {
         $ids = $this->getData('product_add_ids');
-        $ids = array_filter((array)json_decode($ids, true));
+        $ids = array_filter((array)$this->getHelper('Data')->jsonDecode($ids));
         return array_values(array_unique($ids));
     }
 

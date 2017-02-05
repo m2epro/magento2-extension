@@ -192,7 +192,7 @@ class Specific extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getAttributes()
     {
         $value = $this->getData('attributes');
-        return is_string($value) ? (array)json_decode($value, true) : array();
+        return is_string($value) ? (array)$this->getHelper('Data')->jsonDecode($value) : array();
     }
 
     //########################################

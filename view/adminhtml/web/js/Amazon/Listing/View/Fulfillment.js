@@ -37,7 +37,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 

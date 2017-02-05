@@ -37,8 +37,10 @@ class IsAttributeCodeUnique extends General
             $this->getRequest()->getParam('code')
         );
 
-        $isAttributeUnique = is_null($attributeObj->getId());
-        $this->setAjaxContent(json_encode($isAttributeUnique), false);
+        $this->setJsonContent([
+            'status' => is_null($attributeObj->getId())
+        ]);
+
         return $this->getResult();
     }
 

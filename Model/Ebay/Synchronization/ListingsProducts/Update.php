@@ -172,7 +172,7 @@ final class Update extends AbstractModel
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
             $ebayListingProduct = $listingProduct->getChildObject();
 
-            if (!$ebayListingProduct->isVariationsReady()) {
+            if (!$ebayListingProduct->isVariationsReady() || empty($change['variations'])) {
                 $dataForUpdate = array_merge(
                     $dataForUpdate,
                     $this->getSimpleProductPriceChanges($listingProduct, $change)

@@ -289,7 +289,9 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
                 continue;
             }
 
-            $data = array_replace_recursive($data, json_decode($source->getPath(), true));
+            $data = array_replace_recursive(
+                $data, $this->getHelper('Data')->jsonDecode($source->getPath())
+            );
         }
 
         $this->processNotFoundAttributes('Product Specifics');

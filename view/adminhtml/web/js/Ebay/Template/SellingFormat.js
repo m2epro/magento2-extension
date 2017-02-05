@@ -1077,7 +1077,7 @@ define([
 
             if (query == '') {
                 $('query').focus();
-                alert(M2ePro.translator.translate('Please, enter the organization name or ID.'));
+                this.alert(M2ePro.translator.translate('Please, enter the organization name or ID.'));
                 return;
             }
 
@@ -1112,53 +1112,58 @@ define([
         },
 
         selectNewCharity: function (id, name) {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-
             var self = this;
 
-            var customCharities = self.charitySearchPopup.organizationEl.select('option.newCharity');
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        var customCharities = self.charitySearchPopup.organizationEl.select('option.newCharity');
 
-            if (customCharities.length > 0) {
-                customCharities[0].update(name);
-                customCharities[0].value = id;
-            } else {
-                var optgroups = self.charitySearchPopup.organizationEl.select('optgroup.customCharity');
+                        if (customCharities.length > 0) {
+                            customCharities[0].update(name);
+                            customCharities[0].value = id;
+                        } else {
+                            var optgroups = self.charitySearchPopup.organizationEl.select('optgroup.customCharity');
 
-                if (optgroups.length > 0) {
-                    optgroups[0].insert({
-                        bottom: new Element('option', {
-                            value: id,
-                            class: 'newCharity'
-                        }).update(name)
-                    });
-                } else {
-                    var optgroup = new Element('optgroup', {
-                        label: 'Custom',
-                        class: 'customCharity'
-                    }).insert({
-                        bottom: new Element('option', {
-                            value: id,
-                            class: 'newCharity'
-                        }).update(name)
-                    });
+                            if (optgroups.length > 0) {
+                                optgroups[0].insert({
+                                    bottom: new Element('option', {
+                                        value: id,
+                                        class: 'newCharity'
+                                    }).update(name)
+                                });
+                            } else {
+                                var optgroup = new Element('optgroup', {
+                                    label: 'Custom',
+                                    class: 'customCharity'
+                                }).insert({
+                                    bottom: new Element('option', {
+                                        value: id,
+                                        class: 'newCharity'
+                                    }).update(name)
+                                });
 
-                    var featuresGroups = self.charitySearchPopup.organizationEl.select('optgroup.featuredCharity');
-                    if (featuresGroups.length > 0) {
-                        featuresGroups[0].insert({
-                            before: optgroup
-                        });
-                    } else {
-                        self.charitySearchPopup.organizationEl.insert(optgroup);
+                                var featuresGroups = self.charitySearchPopup.organizationEl.select('optgroup.featuredCharity');
+                                if (featuresGroups.length > 0) {
+                                    featuresGroups[0].insert({
+                                        before: optgroup
+                                    });
+                                } else {
+                                    self.charitySearchPopup.organizationEl.insert(optgroup);
+                                }
+                            }
+                        }
+
+                        self.charitySearchPopup.organizationEl.value = id;
+                        self.charitySearchPopup.organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
+                        self.charitySearchPopup.organizationEl.simulate('change');
+                        self.charitySearchPopup.modal('closeModal');
+                    },
+                    cancel: function () {
+                        return false;
                     }
                 }
-            }
-
-            self.charitySearchPopup.organizationEl.value = id;
-            self.charitySearchPopup.organizationEl.up('.charity-row').select('input.organization_custom')[0].value = 1;
-            self.charitySearchPopup.organizationEl.simulate('change');
-            self.charitySearchPopup.modal('closeModal');
+            });
         }
 
         // ---------------------------------------

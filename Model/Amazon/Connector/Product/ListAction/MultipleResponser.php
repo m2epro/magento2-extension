@@ -29,7 +29,6 @@ class MultipleResponser extends \Ess\M2ePro\Model\Amazon\Connector\Product\Respo
 
     // ########################################
 
-    // todo fire event ListingProduct is changed
     protected function inspectProducts()
     {
         parent::inspectProducts();

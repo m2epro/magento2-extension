@@ -228,6 +228,10 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/task/servicing/', 'interval', $servicingInterval, 'in seconds');
         $moduleConfigModifier->insert('/cron/task/servicing/', 'last_access', NULL, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/servicing/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert('/cron/task/health_status/', 'mode', '1', '0 - disable, \r\n1 - enable');
+        $moduleConfigModifier->insert('/cron/task/health_status/', 'interval', '1800', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/health_status/', 'last_access', NULL, 'date of last access');
+        $moduleConfigModifier->insert('/cron/task/health_status/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert('/logs/clearing/listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/logs/clearing/listings/', 'days', '30', 'in days');
         $moduleConfigModifier->insert('/logs/clearing/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -301,6 +305,9 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/magento/product/grouped_type/', 'custom_types', '', 'Magento product custom types'
         );
+        $moduleConfigModifier->insert('/health_status/notification/', 'mode', 1);
+        $moduleConfigModifier->insert('/health_status/notification/', 'email', '');
+        $moduleConfigModifier->insert('/health_status/notification/', 'level', 40);
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
 
@@ -824,7 +831,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 2,
@@ -850,7 +859,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 3,
@@ -876,7 +887,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 1,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 4,
@@ -902,7 +915,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 1,
                 'is_in_store_pickup'                   => 1,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 5,
@@ -928,7 +943,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 6,
@@ -954,7 +971,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 7,
@@ -980,7 +999,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 8,
@@ -1006,7 +1027,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 9,
@@ -1032,7 +1055,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 1,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 10,
@@ -1058,7 +1083,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 11,
@@ -1084,7 +1111,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 12,
@@ -1110,7 +1139,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 13,
@@ -1136,7 +1167,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 14,
@@ -1162,7 +1195,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 15,
@@ -1188,7 +1223,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 16,
@@ -1214,7 +1251,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 17,
@@ -1240,7 +1279,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 18,
@@ -1266,7 +1307,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 19,
@@ -1292,7 +1335,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 1
+                'is_holiday_return'                    => 1,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 20,
@@ -1318,7 +1363,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 21,
@@ -1344,7 +1391,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ],
             [
                 'marketplace_id'                       => 22,
@@ -1370,7 +1419,9 @@ class InstallData implements InstallDataInterface
                 'is_charity'                           => 1,
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
-                'is_holiday_return'                    => 0
+                'is_holiday_return'                    => 0,
+                'is_epid'                              => 0,
+                'is_ktype'                             => 0
             ]
         ]);
     }

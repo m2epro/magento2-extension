@@ -13,7 +13,7 @@ class AddOptions extends Main
         $needAddToVocabulary  = (bool)$this->getRequest()->getParam('need_add', false);
 
         if (!empty($optionsData)) {
-            $optionsData = json_decode($optionsData, true);
+            $optionsData = $this->getHelper('Data')->jsonDecode($optionsData);
         }
 
         if (!$isRememberAutoAction && !$needAddToVocabulary) {

@@ -854,7 +854,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $fieldSet->addField('excluded_locations_hidden', 'hidden',
             [
                 'name' => 'shipping[excluded_locations]',
-                'value' => json_encode($this->formData['excluded_locations'])
+                'value' => $this->getHelper('Data')->jsonEncode($this->formData['excluded_locations'])
             ]
         );
 
@@ -1455,8 +1455,10 @@ HTML;
         $localDiscount = $template->getData('local_shipping_discount_profile_id');
         $internationalDiscount = $template->getData('international_shipping_discount_profile_id');
 
-        !is_null($localDiscount) && $localDiscount = json_decode($localDiscount, true);
-        !is_null($internationalDiscount) && $internationalDiscount = json_decode($internationalDiscount, true);
+        !is_null($localDiscount) && $localDiscount = $this->getHelper('Data')->jsonDecode($localDiscount);
+        !is_null($internationalDiscount) && $internationalDiscount = $this->getHelper('Data')->jsonDecode(
+            $internationalDiscount
+        );
 
         $accountCollection = $this->ebayFactory->getObject('Account')->getCollection();
 
@@ -1479,7 +1481,7 @@ HTML;
                 continue;
             }
 
-            $accountProfiles = json_decode($accountProfiles, true);
+            $accountProfiles = $this->getHelper('Data')->jsonDecode($accountProfiles);
             $marketplaceId = $this->getMarketplace()->getId();
 
             if (is_array($accountProfiles) && isset($accountProfiles[$marketplaceId]['profiles'])) {
@@ -1548,7 +1550,7 @@ HTML;
         }
 
         if (is_string($this->formData['excluded_locations'])) {
-            $excludedLocations = json_decode($this->formData['excluded_locations'],true);
+            $excludedLocations = $this->getHelper('Data')->jsonDecode($this->formData['excluded_locations']);
             $this->formData['excluded_locations'] = is_array($excludedLocations) ? $excludedLocations : array();
         } else {
             unset($this->formData['excluded_locations']);
@@ -1562,7 +1564,7 @@ HTML;
         $default = $this->activeRecordFactory->getObject('Ebay\Template\Shipping')
                                              ->getDefaultSettingsAdvancedMode();
 
-        $default['excluded_locations'] = json_decode($default['excluded_locations'],true);
+        $default['excluded_locations'] = $this->getHelper('Data')->jsonDecode($default['excluded_locations']);
 
         // populate address fields with the data from magento configuration
         // ---------------------------------------
@@ -2025,13 +2027,13 @@ HTML;
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Ebay\Template\Shipping\Calculated')
         );
 
-        $missingAttributes = json_encode($this->missingAttributes);
-        $services = json_encode($this->marketplaceData['services']);
-        $locations = json_encode($this->marketplaceData['locations']);
-        $discountProfiles = json_encode($this->getDiscountProfiles());
-        $originCountry = json_encode($this->marketplaceData['origin_country']);
+        $missingAttributes = $this->getHelper('Data')->jsonEncode($this->missingAttributes);
+        $services = $this->getHelper('Data')->jsonEncode($this->marketplaceData['services']);
+        $locations = $this->getHelper('Data')->jsonEncode($this->marketplaceData['locations']);
+        $discountProfiles = $this->getHelper('Data')->jsonEncode($this->getDiscountProfiles());
+        $originCountry = $this->getHelper('Data')->jsonEncode($this->marketplaceData['origin_country']);
 
-        $formDataServices = json_encode($this->formData['services']);
+        $formDataServices = $this->getHelper('Data')->jsonEncode($this->formData['services']);
 
         $this->js->addRequireJs([
             'form' => 'M2ePro/Ebay/Template/Shipping',

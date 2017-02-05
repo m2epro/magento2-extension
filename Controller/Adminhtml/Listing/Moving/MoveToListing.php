@@ -10,7 +10,9 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
     {
         $componentMode = $this->getRequest()->getParam('componentMode');
 
-        $selectedProducts = (array)json_decode($this->getRequest()->getParam('selectedProducts'));
+        $selectedProducts = (array)$this->getHelper('Data')->jsonDecode(
+            $this->getRequest()->getParam('selectedProducts')
+        );
         $listingId = (int)$this->getRequest()->getParam('listingId');
 
         /** @var \Ess\M2ePro\Model\Listing $listingInstance */
@@ -46,8 +48,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                     NULL,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                     // M2ePro_TRANSLATIONS
-                    // Item was not Moved because it is in progress state now
-                    'Item was not Moved because it is in progress state now',
+                    // Product was not Moved because it is in progress state now
+                    'Product was not Moved because it is in progress state now',
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
@@ -66,8 +68,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                     NULL,
                     \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                     // M2ePro_TRANSLATIONS
-                    // Item was not Moved
-                    'Item was not Moved',
+                    // Product was not Moved
+                    'Product was not Moved',
                     \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
                 );
@@ -84,8 +86,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 NULL,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 // M2ePro_TRANSLATIONS
-                // Item was successfully Moved
-                'Item was successfully Moved',
+                // Product was successfully Moved
+                'Product was successfully Moved',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
                 \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
@@ -98,8 +100,8 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
                 NULL,
                 \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_TO_LISTING,
                 // M2ePro_TRANSLATIONS
-                // Item was successfully Moved
-                'Item was successfully Moved',
+                // Product was successfully Moved
+                'Product was successfully Moved',
                 \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
                 \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
             );
@@ -137,9 +139,9 @@ class MoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         $variationUpdaterObject->afterMassProcessEvent();
 
         if ($errors == 0) {
-            $this->setAjaxContent(json_encode(array('result'=>'success')), false);
+            $this->setJsonContent(array('result'=>'success'));
         } else {
-            $this->setAjaxContent(json_encode(array('result'=>'error', 'errors'=>$errors)), false);
+            $this->setJsonContent(array('result'=>'error', 'errors'=>$errors));
         }
 
         return $this->getResult();

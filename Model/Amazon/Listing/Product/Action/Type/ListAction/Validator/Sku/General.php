@@ -62,7 +62,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
         ) {
             $variations = $this->getListingProduct()->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
+                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
                     array(
                         'listing_product_id' => $this->getListingProduct()->getId()
                     ));

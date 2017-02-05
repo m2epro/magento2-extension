@@ -56,8 +56,9 @@ final class MotorsKtypes extends AbstractModel
 
         $params = $this->getParams();
 
-        return $this->getHelper('Component\Ebay\Motors')
-                    ->isMarketplaceSupportsKtype($params['marketplace_id']);
+        $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $params['marketplace_id']);
+
+        return $marketplace->getChildObject()->isKtypeEnabled();
     }
 
     protected function performActions()

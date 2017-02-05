@@ -155,8 +155,9 @@ define([
 
                 if (response.error) {
                     if (self.popUp) {
-                        alert(response.error);
-                        self.closePopUp();
+                        self.alert(response.error, function () {
+                            self.closePopUp();
+                        });
                     } else {
                         MessageObj.addErrorMessage(response.error);
                     }
@@ -228,27 +229,32 @@ define([
             }
 
             if (sku == '' && productId == '') {
-                alert(M2ePro.translator.translate('Please enter correct Product ID or SKU.'));
+                self.alert(M2ePro.translator.translate('Please enter correct Product ID or SKU.'));
                 return;
             }
 
             if (((/^\s*(\d)*\s*$/i).test(productId) == false)) {
-                alert(M2ePro.translator.translate('Please enter correct Product ID.'));
+                self.alert(M2ePro.translator.translate('Please enter correct Product ID.'));
                 return;
             }
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-
-            new Ajax.Request(M2ePro.url.get('order/assignProduct'), {
-                method: 'post',
-                parameters: {
-                    product_id: productId,
-                    sku: sku,
-                    order_item_id: orderItemId
-                },
-                onSuccess: self.afterActionCallback.bind(self)
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(M2ePro.url.get('order/assignProduct'), {
+                            method: 'post',
+                            parameters: {
+                                product_id: productId,
+                                sku: sku,
+                                order_item_id: orderItemId
+                            },
+                            onSuccess: self.afterActionCallback.bind(self)
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
             });
         },
 
@@ -256,22 +262,36 @@ define([
 
         assignProductDetails: function()
         {
-            var self = this;
-            var validationResult = $$('.form-element').collect(Validation.validate);
+            var self = this,
+                confirmAction,
+                validationResult = $$('.form-element').collect(Validation.validate);
 
             if (validationResult.indexOf(false) != -1) {
                 return;
             }
 
-            if ($('save_repair') && $('save_repair').checked && !confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            confirmAction = function () {
+                new Ajax.Request(M2ePro.url.get('order/assignProductDetails'), {
+                    method: 'post',
+                    parameters: Form.serialize('mapping_product_options'),
+                    onSuccess: self.afterActionCallback.bind(self)
+                });
+            };
 
-            new Ajax.Request(M2ePro.url.get('order/assignProductDetails'), {
-                method: 'post',
-                parameters: Form.serialize('mapping_product_options'),
-                onSuccess: self.afterActionCallback.bind(self)
-            });
+            if ($('save_repair') && $('save_repair').checked) {
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            confirmAction();
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
+            } else {
+                confirmAction();
+            }
         },
 
         // ---------------------------------------
@@ -280,23 +300,28 @@ define([
         {
             var self = this;
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.gridId = gridId;
+                        self.orderItemId = orderItemId;
 
-            self.gridId = gridId;
-            self.orderItemId = orderItemId;
-
-            new Ajax.Request(M2ePro.url.get('order/unassignProduct'), {
-                method: 'post',
-                parameters: {
-                    order_item_id: orderItemId
-                },
-                onSuccess: function(transport) {
-                    self.afterActionCallback(transport);
-                    self.reloadGrid();
-                    self.gridId = null;
-                    self.orderItemId = null;
+                        new Ajax.Request(M2ePro.url.get('order/unassignProduct'), {
+                            method: 'post',
+                            parameters: {
+                                order_item_id: orderItemId
+                            },
+                            onSuccess: function(transport) {
+                                self.afterActionCallback(transport);
+                                self.reloadGrid();
+                                self.gridId = null;
+                                self.orderItemId = null;
+                            }
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
                 }
             });
         },

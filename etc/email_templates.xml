@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+
+    <template id="m2epro_health_status_notification_email_template"
+              label="Health Status Notification"
+              file="health_status/notification.html"
+              type="html"
+              module="Ess_M2ePro"
+              area="adminhtml" />
+
+</config>

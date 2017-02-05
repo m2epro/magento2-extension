@@ -13,7 +13,7 @@ class StepTwoSaveToSession extends Settings
     {
         $ids = $this->getRequestIds('products_id');
         $templateData = $this->getRequest()->getParam('template_data');
-        $templateData = (array)json_decode($templateData, true);
+        $templateData = (array)$this->getHelper('Data')->jsonDecode($templateData);
 
         $listing = $this->getListing();
 

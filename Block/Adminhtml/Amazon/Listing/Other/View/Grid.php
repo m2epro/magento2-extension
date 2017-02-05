@@ -243,7 +243,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
                       .' onclick="AmazonListingOtherGridObj.movingHandler.getGridHtml('
-                      .json_encode(array((int)$row->getData('id')))
+                      .$this->getHelper('Data')->jsonEncode(array((int)$row->getData('id')))
                       .')">'
                       .$this->__('Move')
                       .'</a>';
@@ -430,14 +430,14 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . $value['from'];
+            $where .= 'online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . $value['to'];
+            $where .= 'online_qty <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
@@ -461,14 +461,14 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_price >= ' . $value['from'];
+            $where .= 'online_price >= ' . (float)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_price <= ' . $value['to'];
+            $where .= 'online_price <= ' . (float)$value['to'];
         }
 
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&

@@ -19,7 +19,7 @@ abstract class Order extends Base
         }
 
         foreach ($optionsData as $optionId => $optionData) {
-            $optionData = json_decode($optionData, true);
+            $optionData = $this->getHelper('Data')->jsonDecode($optionData);
 
             if (!isset($optionData['value_id']) || !isset($optionData['product_ids'])) {
                 return array();

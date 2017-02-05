@@ -177,6 +177,14 @@ define([
             $super(url, tabsId, confirmText, templateNick);
         },
 
+        saveAndCloseClick: function($super, confirmText, templateNick)
+        {
+            var self = AmazonTemplateDescriptionObj;
+
+            self.specificHandler.prepareSpecificsDataToPost();
+            $super(confirmText, templateNick);
+        },
+
         //########################################
 
         onChangeMarketplace: function()
@@ -190,7 +198,8 @@ define([
             var self = AmazonTemplateDescriptionObj;
 
             if (!self.checkMarketplaceSelection()) {
-                return alert(M2ePro.translator.translate('You should select Marketplace first.'));
+                self.alert(M2ePro.translator.translate('You should select Marketplace first.'));
+                return;
             }
 
             AmazonTemplateDescriptionCategoryChooserObj.showEditCategoryPopUp();

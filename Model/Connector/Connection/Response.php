@@ -23,7 +23,7 @@ class Response extends \Ess\M2ePro\Model\AbstractModel
 
     public function initFromRawResponse($response)
     {
-        $response = json_decode($response,true);
+        $response = $this->getHelper('Data')->jsonDecode($response);
 
         if (!is_array($response) ||
             !isset($response['data']) || !is_array($response['data']) ||

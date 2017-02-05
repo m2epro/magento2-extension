@@ -113,14 +113,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                   `alp`.`online_sale_price`,
                   NULL
                 )',
-                'online_sale_price_start_date'   => 'online_sale_price_start_date',
-                'online_sale_price_end_date'     => 'online_sale_price_end_date',
-                'is_afn_channel'                 => 'is_afn_channel',
-                // todo uncomment when alp table will have is_repricing field
-                //'is_repricing'                   => 'is_repricing',
-                'is_general_id_owner'            => 'is_general_id_owner',
-                'is_variation_parent'            => 'is_variation_parent',
-                'defected_messages'              => 'defected_messages',
+                'online_sale_price_start_date'     => 'online_sale_price_start_date',
+                'online_sale_price_end_date'       => 'online_sale_price_end_date',
+                'is_afn_channel'                   => 'is_afn_channel',
+                'is_repricing'                     => 'is_repricing',
+                'is_general_id_owner'              => 'is_general_id_owner',
+                'is_variation_parent'              => 'is_variation_parent',
+                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'variation_parent_repricing_state' => 'variation_parent_repricing_state',
+                'defected_messages'                => 'defected_messages',
                 'min_online_price'                      => 'IF(
                     (`t`.`variation_min_price` IS NULL),
                     IF(
@@ -623,7 +624,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = json_decode($generalIdSearchInfo, true);
+            $generalIdSearchInfo = $this->getHelper('Data')->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {

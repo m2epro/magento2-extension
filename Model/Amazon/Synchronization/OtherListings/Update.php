@@ -111,7 +111,7 @@ final class Update extends AbstractModel
                     if (!$this->isFullItemsDataAlreadyReceived($account)) {
                         $params['full_items_data'] = true;
 
-                        $additionalData = (array)json_decode($account->getAdditionalData(), true);
+                        $additionalData = (array)$this->getHelper('Data')->jsonDecode($account->getAdditionalData());
                         $additionalData['is_amazon_other_listings_full_items_data_already_received'] = true;
                         $account->setSettings('additional_data', $additionalData)->save();
                     }
@@ -166,7 +166,7 @@ final class Update extends AbstractModel
 
     private function isFullItemsDataAlreadyReceived(\Ess\M2ePro\Model\Account $account)
     {
-        $additionalData = (array)json_decode($account->getAdditionalData(), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($account->getAdditionalData());
         return !empty($additionalData['is_amazon_other_listings_full_items_data_already_received']);
     }
 

@@ -352,31 +352,40 @@ HTML;
 
         foreach (array('Ebay', 'Amazon') as $component) {
 
+            $deletedOptions = $deletedVariations = $deletedProducts = $deletedListings = array();
+
             $collection = $this->parentFactory->getObject($component, 'Listing\Product\Variation\Option')
                                               ->getCollection();
-
-            $deletedOptions = $deletedVariations = $deletedProducts = $deletedListings = 0;
 
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
             while ($option = $collection->fetchItem()) {
 
                 try {
-                    $variation = $option->getListingProductVariation();
+                    $option->getListingProductVariation();
                 } catch (Logic $e) {
 
-                    $tempOption = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
-                                                            ->load($option->getId());
-                    if (!is_null($tempOption->getId())) {
-                        $option->getResource()->delete($option) && $deletedOptions++;
+                    if (in_array($option->getId(), $deletedOptions)) {
+                        continue;
                     }
-                    continue;
+
+                    $option->getResource()->delete($option);
+                    $deletedOptions[] = $option->getId();
                 }
+            }
+
+            $collection = $this->parentFactory->getObject($component, 'Listing\Product\Variation')
+                                              ->getCollection();
+
+            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
+            while ($variation = $collection->fetchItem()) {
 
                 try {
-                    $listingProduct = $variation->getListingProduct();
+                    $variation->getListingProduct();
+                    $variation->getOptions(true);
+
                 } catch (Logic $e) {
-                    $variation->getResource()->delete($variation) && $deletedVariations++;
-                    continue;
+                    $variation->getResource()->delete($variation);
+                    $deletedVariations[] = $variation->getId();
                 }
             }
 
@@ -387,24 +396,31 @@ HTML;
             while ($listingProduct = $collection->fetchItem()) {
 
                 try {
-                    $listing = $listingProduct->getListing();
+                    $listingProduct->getListing();
                 } catch (Logic $e) {
-                    $listingProduct->getResource()->delete($listingProduct) && $deletedProducts++;
-                    continue;
-                }
-
-                try {
-                    $account = $listing->getAccount();
-                } catch (Logic $e) {
-                    $listing->getResource()->delete($listing) && $deletedListings++;
-                    continue;
+                    $listingProduct->getResource()->delete($listingProduct);
+                    $deletedProducts[] = $listingProduct->getId();
                 }
             }
 
-            $result .= sprintf('Deleted options on %s count = %d <br/>', $component, $deletedOptions);
-            $result .= sprintf('Deleted variations on %s count = %d <br/>', $component, $deletedVariations);
-            $result .= sprintf('Deleted products on %s count = %d <br/>', $component, $deletedProducts);
-            $result .= sprintf('Deleted listings on %s count = %d <br/>', $component, $deletedListings);
+            $collection = $this->parentFactory->getObject($component, 'Listing')
+                                              ->getCollection();
+
+            /* @var $listing \Ess\M2ePro\Model\Listing */
+            while ($listing = $collection->fetchItem()) {
+
+                try {
+                    $listing->getAccount();
+                } catch (Logic $e) {
+                    $listing->getResource()->delete($listing);
+                    $deletedListings[] = $listing->getId();
+                }
+            }
+
+            $result .= sprintf('Deleted options on %s count = %d <br/>', $component, count($deletedOptions));
+            $result .= sprintf('Deleted variations on %s count = %d <br/>', $component, count($deletedVariations));
+            $result .= sprintf('Deleted products on %s count = %d <br/>', $component, count($deletedProducts));
+            $result .= sprintf('Deleted listings on %s count = %d <br/>', $component, count($deletedListings));
             $result .= '<br/>Please run repair broken tables feature.<br/>';
         }
 
@@ -565,7 +581,7 @@ HTML;
         }
 
         $result = '<h2>Response</h2><pre>';
-        $result .= json_encode(json_decode($response['response'], true), JSON_PRETTY_PRINT);
+        $result .= json_encode($this->getHelper('Data')->jsonDecode($response['response']), JSON_PRETTY_PRINT);
         $result .= '</pre>';
 
         $result .= '</pre><h2>Report</h2><pre>';

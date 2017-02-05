@@ -22,19 +22,22 @@ define([
         // ---------------------------------------
 
         continue: function () {
-            this.options.get_selected_products((function (selectedProducts) {
+            var self = this;
+
+            self.options.get_selected_products(function (selectedProducts) {
 
                 if (!selectedProducts) {
-                    return alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
+                    self.alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
+                    return;
                 }
 
-                if (this.options.show_autoaction_popup) {
-                    return this.showAutoactionPopup();
+                if (self.options.show_autoaction_popup) {
+                    return self.showAutoactionPopup();
                 }
 
-                this.add(selectedProducts);
+                self.add(selectedProducts);
 
-            }).bind(this));
+            });
         },
 
         // ---------------------------------------

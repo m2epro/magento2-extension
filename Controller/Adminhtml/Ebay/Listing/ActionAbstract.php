@@ -13,7 +13,9 @@ abstract class ActionAbstract extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
         }
 
         $params['status_changer'] = \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER;
-        $params['is_realtime'] = (bool)json_decode($this->getRequest()->getParam('is_realtime'));
+        $params['is_realtime'] = (bool)$this->getHelper('Data')->jsonDecode(
+            $this->getRequest()->getParam('is_realtime')
+        );
 
         $listingsProductsIds = explode(',', $listingsProductsIds);
 

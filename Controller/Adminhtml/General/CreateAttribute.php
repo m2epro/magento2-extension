@@ -42,7 +42,7 @@ class CreateAttribute extends General
 
         if (!isset($attributeResult['result']) || !$attributeResult['result']) {
 
-            $this->setAjaxContent(json_encode($attributeResult), false);
+            $this->setJsonContent($attributeResult);
             return $this->getResult();
         }
 
@@ -64,13 +64,13 @@ class CreateAttribute extends General
 
             if (!isset($setResult['result']) || !$setResult['result']) {
 
-                $this->setAjaxContent(json_encode($setResult), false);
+                $this->setJsonContent($setResult);
                 return $this->getResult();
             }
         }
 
         unset($attributeResult['obj']);
-        $this->setAjaxContent(json_encode($attributeResult), false);
+        $this->setJsonContent($attributeResult);
         return $this->getResult();
     }
 

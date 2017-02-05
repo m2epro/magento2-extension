@@ -132,12 +132,18 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Account')
         );
 
-        $showAutoAction = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // ---------------------------------------
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions(
             'Amazon\Listing\AutoAction', array('id' => $this->getRequest()->getParam('id'))
         ));
+
+        $path = 'amazon_listing_autoAction/getDescriptionTemplatesList';
+        $this->jsUrl->add($this->getUrl('*/' . $path, [
+            'marketplace_id' => $this->listing->getMarketplaceId(),
+            'is_new_asin_accepted' => 1
+        ]), $path);
 
         $path = 'amazon_log_listing_product/index';
         $this->jsUrl->add($this->getUrl('*/' . $path), $path);
@@ -211,12 +217,14 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $component = \Ess\M2ePro\Helper\Component\Amazon::NICK;
         $gridId = $this->getChildBlock('grid')->getId();
-        $ignoreListings = json_encode(array($this->listing['id']));
-        $marketplace = json_encode(array_merge(
+        $ignoreListings = $this->getHelper('Data')->jsonEncode(array($this->listing['id']));
+        $marketplace = $this->getHelper('Data')->jsonEncode(array_merge(
             $this->listing->getMarketplace()->getData(),
             $this->listing->getMarketplace()->getChildObject()->getData()
         ));
-        $isNewAsinAvailable = json_encode($this->listing->getMarketplace()->getChildObject()->isNewAsinAvailable());
+        $isNewAsinAvailable = $this->getHelper('Data')->jsonEncode(
+            $this->listing->getMarketplace()->getChildObject()->isNewAsinAvailable()
+        );
 
         $temp = $this->getHelper('Data\Session')->getValue('products_ids_for_list', true);
         $productsIdsForList = empty($temp) ? '' : $temp;

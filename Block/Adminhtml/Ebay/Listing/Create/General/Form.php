@@ -65,7 +65,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $marketplaceId = $this->getRequest()->getParam('marketplace_id', '');
         $marketplaceSelectionDisabled = true;
         if (!$marketplaceId && $account->getId()) {
-            $info = json_decode($account->getChildObject()->getInfo(), true);
+            $info = $this->getHelper('Data')->jsonDecode($account->getChildObject()->getInfo());
             $marketplaceId = $this->activeRecordFactory->getObject('Marketplace')->getIdByCode($info['Site']);
             $marketplaceSelectionDisabled = false;
         }
@@ -273,7 +273,7 @@ HTML
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
 
-        $marketplaces = json_encode($marketplaces);
+        $marketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);
 
         $this->js->add(<<<JS
 

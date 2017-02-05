@@ -54,6 +54,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $dataForAdd['initiator'] = $this->initiator ? $this->initiator : \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION;
         $dataForAdd['component_mode'] = $this->getComponentMode();
 
+        $this->isObjectNew(true);
+
         $this->setId(null)
             ->setData($dataForAdd)
             ->save();

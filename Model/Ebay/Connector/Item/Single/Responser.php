@@ -99,7 +99,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         }
     }
 
-    // todo fire event ListingProduct is changed
     protected function inspectProduct()
     {
         if (!$this->isSuccess && !$this->isSkipped) {
@@ -590,7 +589,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
             $this->getHelper('Module\Translation')->__(
                 'It has been detected that this Item failed to be updated on eBay because of the errors.
                 M2E Pro will automatically try to apply another solution to Revise this Item.'),
-            Message::TYPE_SUCCESS
+            Message::TYPE_WARNING
         );
 
         $this->getLogger()->logListingProductMessage($this->listingProduct, $message);
@@ -644,7 +643,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Item\Responser
         $ebayListingProduct = $this->listingProduct->getChildObject();
 
         /** @var Virtual $connector */
-        $connector = $this->modelFactory->getObject('Ebay\Connector\Item\Dispatcher')->getVirtualConnector(
+        $connector = $this->modelFactory->getObject('Ebay\Connector\Dispatcher')->getVirtualConnector(
             'item', 'get', 'info',
             array(
                 'item_id' => $ebayListingProduct->getEbayItemIdReal(),

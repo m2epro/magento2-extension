@@ -103,9 +103,9 @@ define([
                 onSuccess: function (transport) {
 
                     if (transport.responseText == 1) {
-                        alert(self.options.translator.translate('select_only_mapped_products'));
+                        self.alert(self.options.translator.translate('select_only_mapped_products'));
                     } else if (transport.responseText == 2) {
-                        alert(self.options.translator.translate('select_the_same_type_products'));
+                        self.alert(self.options.translator.translate('select_the_same_type_products'));
                     } else {
                         var response = transport.responseText.evalJSON();
 
@@ -221,20 +221,28 @@ define([
 
         offerListingCreation: function (accountId, marketplaceId, callback) {
 
-            if (!confirm(this.options.translator.translate('create_listing'))) {
-                return callback.call(this);
-            }
+            var self = this;
 
-            new Ajax.Request(this.options.url.get('createDefaultListing'), {
-                method: 'post',
-                parameters: {
-                    componentMode: this.options.customData.componentMode,
-                    accountId: accountId,
-                    marketplaceId: marketplaceId
-                },
-                onSuccess: (function (transport) {
-                    callback.call(this);
-                }).bind(this)
+            self.confirm({
+                content: self.options.translator.translate('create_listing'),
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(self.options.url.get('createDefaultListing'), {
+                            method: 'post',
+                            parameters: {
+                                componentMode: self.options.customData.componentMode,
+                                accountId: accountId,
+                                marketplaceId: marketplaceId
+                            },
+                            onSuccess: function (transport) {
+                                callback.call(self);
+                            }
+                        });
+                    },
+                    cancel: function () {
+                        return callback.call(self);
+                    }
+                }
             });
         },
 

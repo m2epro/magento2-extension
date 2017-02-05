@@ -60,7 +60,7 @@ class Save extends Account
                 : \Magento\Store\Model\Store::DEFAULT_STORE_ID;
         }
 
-        $data['marketplaces_data'] = json_encode($marketplacesData);
+        $data['marketplaces_data'] = $this->getHelper('Data')->jsonEncode($marketplacesData);
         // ---------------------------------------
 
         // Mapping
@@ -109,7 +109,7 @@ class Save extends Account
             $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
         }
 
-        $data['other_listings_mapping_settings'] = json_encode($mappingSettings);
+        $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);
         // ---------------------------------------
 
         // tab: orders
@@ -316,7 +316,7 @@ class Save extends Account
         // ---------------------------------------
 
         // ---------------------------------------
-        $data['magento_orders_settings'] = json_encode($data['magento_orders_settings']);
+        $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
         // ---------------------------------------
 
         // tab: feedbacks
@@ -336,7 +336,7 @@ class Save extends Account
         // tab: My Stores
         // ---------------------------------------
         if (isset($post['pickup_store_mode'])) {
-            $data['additional_data'] = json_encode(['bopis' => $post['pickup_store_mode']]);
+            $data['additional_data'] = $this->getHelper('Data')->jsonEncode(['bopis' => $post['pickup_store_mode']]);
         }
         // ---------------------------------------
 

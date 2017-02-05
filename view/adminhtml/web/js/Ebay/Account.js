@@ -141,7 +141,8 @@ define([
 
     saveAndClose: function()
     {
-        var url = typeof M2ePro.url.urls.formSubmit == 'undefined' ?
+        var self = this,
+            url = typeof M2ePro.url.urls.formSubmit == 'undefined' ?
                 M2ePro.url.formSubmit + 'back/'+Base64.encode('list')+'/' :
                 M2ePro.url.get('formSubmit', {'back': Base64.encode('list')});
 
@@ -158,7 +159,7 @@ define([
                 if (transport.success) {
                     window.close();
                 } else {
-                    alert(transport.message);
+                    self.alert(transport.message);
                 }
             }
         });
@@ -168,10 +169,17 @@ define([
 
     deleteClick: function()
     {
-        if (!confirm(M2ePro.translator.translate('Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. This will cause inappropriate work of all Accounts\' copies.'))) {
-            return;
-        }
-        setLocation(M2ePro.url.get('deleteAction'));
+        this.confirm({
+            content: M2ePro.translator.translate('Be attentive! By Deleting Account you delete all information on it from M2E Pro Server. This will cause inappropriate work of all Accounts\' copies.'),
+            actions: {
+                confirm: function () {
+                    setLocation(M2ePro.url.get('deleteAction'));
+                },
+                cancel: function () {
+                    return false;
+                }
+            }
+        });
     },
 
     // ---------------------------------------
@@ -288,22 +296,27 @@ define([
 
     feedbacksDeleteAction: function(id)
     {
-        if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-            return false;
-        }
+        this.confirm({
+            actions: {
+                confirm: function () {
+                    new Ajax.Request(M2ePro.url.get('ebay_account_feedback_template/delete'), {
+                        method: 'post',
+                        parameters: {
+                            id: id
+                        },
+                        onSuccess: function() {
+                            if ($('ebayAccountEditTabsFeedbackGrid').select('tbody tr').length == 1) {
+                                $('add_feedback_template_button_container').show();
+                                $('feedback_templates_grid').hide();
+                            }
 
-        new Ajax.Request(M2ePro.url.get('ebay_account_feedback_template/delete'), {
-            method: 'post',
-            parameters: {
-                id: id
-            },
-            onSuccess: function() {
-                if ($('ebayAccountEditTabsFeedbackGrid').select('tbody tr').length == 1) {
-                    $('add_feedback_template_button_container').show();
-                    $('feedback_templates_grid').hide();
+                            window['ebayAccountEditTabsFeedbackGridJsObject'].reload();
+                        }
+                    });
+                },
+                cancel: function () {
+                    return false;
                 }
-
-                window['ebayAccountEditTabsFeedbackGridJsObject'].reload();
             }
         });
     },

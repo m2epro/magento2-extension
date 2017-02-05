@@ -164,7 +164,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         $features = array();
         if (!is_null($categoryRow['features'])) {
-            $features = (array)json_decode($categoryRow['features'], true);
+            $features = (array)$this->getHelper('Data')->jsonDecode($categoryRow['features']);
         }
 
         $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey,$features,array(self::CACHE_TAG));
@@ -208,7 +208,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         if (!is_null($categoryRow['item_specifics'])) {
 
-            $specifics = (array)json_decode($categoryRow['item_specifics'],true);
+            $specifics = (array)$this->getHelper('Data')->jsonDecode($categoryRow['item_specifics']);
 
         } else {
 

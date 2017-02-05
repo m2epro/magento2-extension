@@ -130,7 +130,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     private function renderOnClickCallback($url)
     {
-        return "window.open('$url', '_blank')";
+        return "window.open('$url', '_blank'); return false;";
     }
 
     //########################################

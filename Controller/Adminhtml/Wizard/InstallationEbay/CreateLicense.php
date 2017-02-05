@@ -49,7 +49,7 @@ class CreateLicense extends InstallationEbay
         $registry = $this->activeRecordFactory->getObject('Registry');
 
         $registry->setData('key', '/wizard/license_form_data/');
-        $registry->setData('value', json_encode($licenseData));
+        $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));
         $registry->save();
 
         if ($this->getHelper('Module\License')->getKey()) {

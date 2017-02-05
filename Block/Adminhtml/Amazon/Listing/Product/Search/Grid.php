@@ -327,18 +327,18 @@ JS;
                 $magentoProductAttributesJs .= '</script>';
 
                 $magentoProductAttributesHtml .= '<div id="variations_'.$id.'" style="display: none;">'.
-                    json_encode($variations).
+                    $this->getHelper('Data')->jsonEncode($variations).
                     '</div>';
             } else {
 
                 $matchedAttributes = json_encode($this->matcherAttributes->getMatchedAttributes(), JSON_FORCE_OBJECT);
-                $destinationAttributes = json_encode($destinationAttributes);
+                $destinationAttributes = $this->getHelper('Data')->jsonEncode($destinationAttributes);
 
                 foreach ($variations['set'] as $attribute => $options) {
                     $variations['set'][$attribute] = array_values($options);
                 }
 
-                $amazonVariations = json_encode($variations);
+                $amazonVariations = $this->getHelper('Data')->jsonEncode($variations);
 
                 $magentoAttributesText = $this->__('Magento Attributes');
                 $amazonAttributesText = $this->__('Amazon Attributes');
@@ -365,9 +365,13 @@ HTML;
                 if ($this->matcherAttributes->isSourceAmountGreater()) {
                     $magentoProductVariationsSet = $this->listingProduct->getMagentoProduct()
                         ->getVariationInstance()->getVariationsTypeStandard();
-                    $magentoProductVariationsSet = json_encode($magentoProductVariationsSet['set']);
-                    $productAttributes = json_encode($this->listingProduct->getChildObject()
-                        ->getVariationManager()->getTypeModel()->getProductAttributes());
+                    $magentoProductVariationsSet = $this->getHelper('Data')->jsonEncode(
+                        $magentoProductVariationsSet['set']
+                    );
+                    $productAttributes = $this->getHelper('Data')->jsonEncode(
+                        $this->listingProduct->getChildObject()
+                        ->getVariationManager()->getTypeModel()->getProductAttributes()
+                    );
 
                     $value .= <<<HTML
 <script type="application/javascript">
@@ -492,8 +496,8 @@ JS;
 
         $specificsJs .= '</script>';
 
-        $variationAsins = json_encode($variations['asins']);
-        $variationTree = json_encode($this->getChannelVariationsTree($variations));
+        $variationAsins = $this->getHelper('Data')->jsonEncode($variations['asins']);
+        $variationTree = $this->getHelper('Data')->jsonEncode($this->getChannelVariationsTree($variations));
 
         $specificsJsonContainer = <<<HTML
 <div id="parent_asin_{$id}" style="display: none">{$generalId}</div>
@@ -736,7 +740,9 @@ HTML;
                 $return[$currentAttribute][$option] = $result;
             }
 
-            ksort($return[$currentAttribute]);
+            if ($return !== false) {
+                ksort($return[$currentAttribute]);
+            }
 
             return $return;
         }
@@ -779,7 +785,9 @@ HTML;
             return false;
         }
 
-        ksort($return[$currentAttribute]);
+        if ($return !== false) {
+            ksort($return[$currentAttribute]);
+        }
 
         return $return;
     }

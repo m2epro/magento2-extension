@@ -52,7 +52,7 @@ class Order extends AbstractForm
 
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
         $formData['magento_orders_settings'] = !empty($formData['magento_orders_settings'])
-            ? json_decode($formData['magento_orders_settings'], true) : array();
+            ? $this->getHelper('Data')->jsonDecode($formData['magento_orders_settings']) : array();
 
         $defaults = array(
             'magento_orders_settings' => array(
@@ -65,7 +65,7 @@ class Order extends AbstractForm
                     'mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
                     'product_mode' => Account::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => NULL,
+                    'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
                 ),
                 'number' => array(
                     'source' => Account::MAGENTO_ORDERS_NUMBER_SOURCE_MAGENTO,

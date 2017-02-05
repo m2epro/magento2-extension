@@ -118,16 +118,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                   `alp`.`online_sale_price`,
                   NULL
                 )',
-                'online_sale_price_start_date'  => 'online_sale_price_start_date',
-                'online_sale_price_end_date'    => 'online_sale_price_end_date',
-                'is_afn_channel'                => 'is_afn_channel',
-                'is_repricing'                  => 'is_repricing',
-                'is_general_id_owner'           => 'is_general_id_owner',
-                'is_variation_parent'           => 'is_variation_parent',
-                'variation_child_statuses'      => 'variation_child_statuses',
-                'variation_parent_id'           => 'variation_parent_id',
-                'defected_messages'             => 'defected_messages',
-                'min_online_price'              => 'IF(
+                'online_sale_price_start_date'     => 'online_sale_price_start_date',
+                'online_sale_price_end_date'       => 'online_sale_price_end_date',
+                'is_afn_channel'                   => 'is_afn_channel',
+                'is_repricing'                     => 'is_repricing',
+                'is_general_id_owner'              => 'is_general_id_owner',
+                'is_variation_parent'              => 'is_variation_parent',
+                'variation_child_statuses'         => 'variation_child_statuses',
+                'variation_parent_id'              => 'variation_parent_id',
+                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'variation_parent_repricing_state' => 'variation_parent_repricing_state',
+                'defected_messages'                => 'defected_messages',
+                'min_online_price'                 => 'IF(
                     `alp`.`online_sale_price_start_date` IS NOT NULL AND
                     `alp`.`online_sale_price_end_date` IS NOT NULL AND
                     `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
@@ -458,7 +460,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         }
 
         if ($row->getData('defected_messages')) {
-            $defectedMessages = json_decode($row->getData('defected_messages'), true);
+            $defectedMessages = $this->getHelper('Data')->jsonDecode($row->getData('defected_messages'));
 
             $msg = '';
             foreach ($defectedMessages as $message) {
@@ -793,21 +795,27 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . $value['from'];
+            $where .= 'online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . $value['to'];
+            $where .= 'online_qty <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'is_afn_channel = ' . (int)$value['afn'];
+
+            if ((int)$value['afn'] == 1) {
+                $where .= 'is_afn_channel = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
+                $where .= "(is_afn_channel = 0 OR variation_parent_afn_state = {$partialFilter})";
+            }
         }
 
         $collection->getSelect()->where($where);
@@ -824,13 +832,13 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition = 'min_online_price >= \''.$value['from'].'\'';
+            $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'min_online_price <= \''.$value['to'].'\'';
+            $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
         }
 
         if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
@@ -839,7 +847,13 @@ HTML;
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }
-            $condition .= 'is_repricing = ' . (int)$value['is_repricing'];
+
+            if ((int)$value['is_repricing'] == 1) {
+                $condition .= 'is_repricing = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
+                $condition .= "(is_repricing = 0 OR variation_parent_repricing_state = {$partialFilter})";
+            }
         }
 
         $collection->getSelect()->having($condition);

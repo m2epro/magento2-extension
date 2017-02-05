@@ -8,26 +8,17 @@
 
 namespace Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection;
 
-use Magento\Catalog\Api\Data\CategoryInterface;
 use Magento\Catalog\Api\Data\CategoryAttributeInterface;
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
 abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
 {
-    /** @var \Magento\Framework\EntityManager\EntityMetadata */
-    protected $productMetadata;
-
-    /** @var \Magento\Framework\EntityManager\EntityMetadata */
-    protected $categoryMetadata;
-
     protected $helperFactory;
     protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -38,8 +29,6 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
         \Magento\Framework\Model\ResourceModel\Db\AbstractDb $resource = null
     )
     {
-        $this->productMetadata = $metadataPool->getMetadata(ProductInterface::class);
-        $this->categoryMetadata = $metadataPool->getMetadata(CategoryInterface::class);
         $this->helperFactory = $helperFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
@@ -96,8 +85,8 @@ abstract class AbstractModel extends \Magento\Framework\Model\ResourceModel\Db\C
             strpos($cond, 'entity_id') !== false) {
 
             $linkField = $helper->isStagedTable($table, ProductAttributeInterface::ENTITY_TYPE_CODE)
-                ? $this->productMetadata->getLinkField()
-                : $this->categoryMetadata->getLinkField();
+                ? $helper->getTableLinkField(ProductAttributeInterface::ENTITY_TYPE_CODE)
+                : $helper->getTableLinkField(CategoryAttributeInterface::ENTITY_TYPE_CODE);
 
             $cond = str_replace('entity_id', $linkField, $cond);
         }

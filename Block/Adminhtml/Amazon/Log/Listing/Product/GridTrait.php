@@ -21,7 +21,6 @@ trait GridTrait
     {
         return [
             \Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT => '',
-            \Ess\M2ePro\Model\Listing\Log::ACTION_NEW_SKU_PRODUCT_ON_COMPONENT => ''
         ];
     }
 

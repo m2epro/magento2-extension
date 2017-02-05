@@ -47,7 +47,7 @@ class AfterToken extends InstallationEbay
                  'title' => $response['info']['UserID'],
                  'user_id' => $response['info']['UserID'],
                  'mode' => $accountMode,
-                 'info' => json_encode($response['info']),
+                 'info' => $this->getHelper('Data')->jsonEncode($response['info']),
                  'server_hash' => $response['hash'],
                  'token_session' => $tokenSessionId,
                  'token_expired_date' => $response['token_expired_date']
@@ -71,7 +71,7 @@ class AfterToken extends InstallationEbay
     {
         return array(
 
-            'marketplaces_data' => json_encode(array()),
+            'marketplaces_data' => $this->getHelper('Data')->jsonEncode(array()),
 
             'feedbacks_receive' => AccountModel::FEEDBACKS_RECEIVE_NO,
             'feedbacks_auto_response' => AccountModel::FEEDBACKS_AUTO_RESPONSE_NONE,
@@ -79,9 +79,9 @@ class AfterToken extends InstallationEbay
 
             'other_listings_synchronization' => AccountModel::OTHER_LISTINGS_SYNCHRONIZATION_NO,
             'other_listings_mapping_mode' => AccountModel::OTHER_LISTINGS_MAPPING_MODE_NO,
-            'other_listings_mapping_settings' => json_encode(array()),
+            'other_listings_mapping_settings' => $this->getHelper('Data')->jsonEncode(array()),
 
-            'magento_orders_settings' => json_encode(array(
+            'magento_orders_settings' => $this->getHelper('Data')->jsonEncode(array(
                 'listing' => array(
                     'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_MODE_YES,
                     'store_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_STORE_MODE_DEFAULT,
@@ -91,7 +91,7 @@ class AfterToken extends InstallationEbay
                     'mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_MODE_YES,
                     'product_mode' => AccountModel::MAGENTO_ORDERS_LISTINGS_OTHER_PRODUCT_MODE_IMPORT,
                     'product_tax_class_id' => \Ess\M2ePro\Model\Magento\Product::TAX_CLASS_ID_NONE,
-                    'store_id' => NULL,
+                    'store_id' => $this->getHelper('Magento\Store')->getDefaultStoreId(),
                 ),
                 'customer' => array(
                     'mode' => AccountModel::MAGENTO_ORDERS_CUSTOMER_MODE_GUEST,

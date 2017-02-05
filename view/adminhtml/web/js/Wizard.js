@@ -20,11 +20,17 @@ define([
 
         skip: function(url)
         {
-            if (!confirm(M2ePro.translator.translate('Note: If you close the Wizard, it never starts again. You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'))) {
-                return;
-            }
-
-            setLocation(url);
+            this.confirm({
+                content: M2ePro.translator.translate('Note: If you close the Wizard, it never starts again. You will be required to set all Settings manually. Press Cancel to continue working with Wizard.'),
+                actions: {
+                    confirm: function () {
+                        setLocation(url);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         complete: function()

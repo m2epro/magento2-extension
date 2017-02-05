@@ -303,7 +303,8 @@ define([
 
                         $('html-body').insert({bottom: response.html});
 
-                        var variationForm = jQuery('#variation_manage_form').form();
+                        var variationForm = jQuery('#variation_manage_form');
+                        self.initFormValidation(variationForm);
 
                         self.managePopup = jQuery('#variation_individual_manage_popup');
 
@@ -590,7 +591,8 @@ define([
         // ---------------------------------------
 
         manageGenerateAction: function (unique) {
-            var attributesIndexes = {};
+            var self = this,
+                attributesIndexes = {};
 
             $('variation_manage').select('th.data-grid-th').each(function (el, i) {
                 attributesIndexes[el.readAttribute('attribute').toLowerCase()] = i;
@@ -599,29 +601,30 @@ define([
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_variation_individual/generate'), {
                 method: 'post',
                 parameters: {
-                    listing_product_id: this.listingProductId,
+                    listing_product_id: self.listingProductId,
                     unique: +(unique)
                 },
-                onSuccess: (function (transport) {
+                onSuccess: function (transport) {
 
                     try {
                         var response = transport.responseText.evalJSON();
 
                         if (response.type == 'error') {
                             MessageObj.addErrorMessage(response.message);
-                            this.managePopup.modal('closeModal');
-                            return this.scrollPageToTop();
+                            self.managePopup.modal('closeModal');
+                            return self.scrollPageToTop();
                         }
 
                         if (response.text.length < 1 && Boolean(unique)) {
-                            return alert(M2ePro.translator.translate('no_variations_left'));
+                            self.alert(M2ePro.translator.translate('no_variations_left'));
+                            return;
                         }
 
                         $('variation_manage_tbody').select('tr').invoke('remove');
 
-                        response.text.each((function (attributes) {
+                        response.text.each(function (attributes) {
 
-                            this.manageAddRow();
+                            self.manageAddRow();
 
                             var tr = $('variation_manage_tbody').select('tr').last();
 
@@ -637,13 +640,13 @@ define([
                                 obj.select.value = obj.value;
                                 obj.select.simulate('change');
                             });
-                        }).bind(this));
+                        });
                     } catch (e) {
-                        this.scrollPageToTop();
-                        this.managePopup.modal('closeModal');
+                        self.scrollPageToTop();
+                        self.managePopup.modal('closeModal');
                         MessageObj.addErrorMessage('Internal Error.');
                     }
-                }).bind(this)
+                }
             });
         }
 

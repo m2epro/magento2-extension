@@ -149,8 +149,10 @@ define([
 
                     if (data.ajaxExpired && response.ajaxRedirect) {
 
-                        alert(M2ePro.translator.translate('Unauthorized! Please login again.'));
-                        setLocation(response.ajaxRedirect);
+                        self.alert(M2ePro.translator.translate('Unauthorized! Please login again.'), function() {
+                            setLocation(response.ajaxRedirect);
+                        });
+                        return;
                     }
 
                     if (data.mode == self.stateExecuting) {

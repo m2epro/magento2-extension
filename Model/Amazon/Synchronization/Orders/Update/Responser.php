@@ -49,7 +49,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
     {
         parent::failDetected($messageText);
 
-        foreach ($this->getOrders() as $order) {
+        foreach ($this->orders as $order) {
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
             $order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', array('msg' => $messageText));
         }
@@ -59,9 +59,6 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 
     protected function processResponseData()
     {
-        /** @var $orders \Ess\M2ePro\Model\Order[] */
-        $orders = $this->getOrders();
-
         $responseData = $this->getResponse()->getResponseData();
 
         // Check separate messages
@@ -88,16 +85,16 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
             $isFailed = false;
 
             foreach ($messagesSet->getEntities() as $message) {
-                $orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+                $this->orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
                 if ($message->isError()) {
                     $isFailed = true;
-                    $orders[$orderId]->addErrorLog(
+                    $this->orders[$orderId]->addErrorLog(
                         'Amazon Order status was not updated. Reason: %msg%',
                         array('msg' => $message->getText())
                     );
                 } else {
-                    $orders[$orderId]->addWarningLog($message->getText());
+                    $this->orders[$orderId]->addWarningLog($message->getText());
                 }
             }
 
@@ -119,52 +116,25 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
                 continue;
             }
 
-            $orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-            $orders[$orderId]->addSuccessLog('Amazon Order status was updated to Shipped.');
+            $this->orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+            $this->orders[$orderId]->addSuccessLog('Amazon Order status was updated to Shipped.');
 
             if (empty($requestData['tracking_number']) || empty($requestData['carrier_name'])) {
                 continue;
             }
 
-            $orders[$orderId]->addSuccessLog('Tracking number "%num%" for "%code%" has been sent to Amazon.', array(
+            $this->orders[$orderId]->addSuccessLog(
+                'Tracking number "%num%" for "%code%" has been sent to Amazon.',
+                [
                     '!num' => $requestData['tracking_number'],
                     'code' => $requestData['carrier_name']
-                )
+                ]
             );
         }
         //----------------------
     }
 
     // ########################################
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception\Logic
-     * @return \Ess\M2ePro\Model\Order[]
-     */
-    private function getOrders()
-    {
-        if (!is_null($this->orders)) {
-            return $this->orders;
-        }
-
-        $ordersIds = array();
-
-        foreach ($this->params as $update) {
-            if (!isset($update['order_id'])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
-            }
-
-            $ordersIds[] = (int)$update['order_id'];
-        }
-
-        $this->orders = $this->activeRecordFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('component_mode',\Ess\M2ePro\Helper\Component\Amazon::NICK)
-            ->addFieldToFilter('id', array('in' => $ordersIds))
-            ->getItems();
-
-        return $this->orders;
-    }
 
     private function getOrderIdByChangeId($changeId)
     {

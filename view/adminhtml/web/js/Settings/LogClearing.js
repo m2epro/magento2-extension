@@ -33,13 +33,20 @@ define([
 
         clearAllLog: function(log, el)
         {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            var self = this;
 
-            var form = el.up('form'),
-                formData = form.serialize(true);
-            SettingsObj.submitTab(M2ePro.url.get('formSubmit', {'task': 'clear_all','log': log}), formData);
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        var form = el.up('form'),
+                            formData = form.serialize(true);
+                        SettingsObj.submitTab(M2ePro.url.get('formSubmit', {'task': 'clear_all','log': log}), formData);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         // ---------------------------------------

@@ -83,6 +83,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Cron\Task\AmazonActions::NICK,
             \Ess\M2ePro\Model\Cron\Task\EbayActions::NICK,
             \Ess\M2ePro\Model\Cron\Task\Servicing::NICK,
+            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK,
             \Ess\M2ePro\Model\Cron\Task\UpdateEbayAccountsPreferences::NICK,
             \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK
         );

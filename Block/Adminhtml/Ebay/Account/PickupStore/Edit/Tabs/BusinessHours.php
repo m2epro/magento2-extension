@@ -117,7 +117,7 @@ class BusinessHours extends AbstractForm
         $data = array();
 
         if (!empty($hoursData)) {
-            $data = json_decode($hoursData, true);
+            $data = $this->getHelper('Data')->jsonDecode($hoursData);
 
             if (!isset($data[$key])) {
                 return $data;

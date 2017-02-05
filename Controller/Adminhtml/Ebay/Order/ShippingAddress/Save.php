@@ -56,7 +56,7 @@ class Save extends Order
         $shippingDetails = $order->getChildObject()->getShippingDetails();
         $shippingDetails['address'] = $data;
 
-        $order->getChildObject()->setData('shipping_details', json_encode($shippingDetails));
+        $order->getChildObject()->setData('shipping_details', $this->getHelper('Data')->jsonEncode($shippingDetails));
         $order->save();
 
         $this->getHelper('Data\GlobalData')->setValue('order', $order);

@@ -108,11 +108,15 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($this->getCategorySpecificTemplate()->isEbayRecommendedValueMode()) {
-            $valueData = json_decode($this->getCategorySpecificTemplate()->getData('value_ebay_recommended'),true);
+            $valueData = $this->getHelper('Data')->jsonDecode(
+                $this->getCategorySpecificTemplate()->getData('value_ebay_recommended')
+            );
         }
 
         if ($this->getCategorySpecificTemplate()->isCustomValueValueMode()) {
-            $valueData = json_decode($this->getCategorySpecificTemplate()->getData('value_custom_value'),true);
+            $valueData = $this->getHelper('Data')->jsonDecode(
+                $this->getCategorySpecificTemplate()->getData('value_custom_value')
+            );
         }
 
         if (!$this->getCategorySpecificTemplate()->isCustomAttributeValueMode() &&

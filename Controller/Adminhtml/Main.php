@@ -7,6 +7,7 @@ use Ess\M2ePro\Helper\Module\License;
 use Ess\M2ePro\Helper\Module\Maintenance;
 use Ess\M2ePro\Model\Servicing\Dispatcher;
 use Magento\Backend\App\Action;
+use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 abstract class Main extends Base
 {
@@ -128,8 +129,10 @@ abstract class Main extends Base
             $staticNotification = $this->addStaticContentNotification();
             $browserNotification = $this->addBrowserNotifications();
             $maintenanceNotification = $this->addMaintenanceNotifications();
+            $healthStatusNotifications = $this->addHealthStatusNotifications();
 
-            $muteMessages = $staticNotification || $browserNotification || $maintenanceNotification;
+            $muteMessages = $staticNotification || $browserNotification ||
+                            $maintenanceNotification || $healthStatusNotifications;
 
             if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
                 $this->addLicenseNotifications();
@@ -210,6 +213,38 @@ abstract class Main extends Base
         }
 
         return false;
+    }
+
+    protected function addHealthStatusNotifications()
+    {
+        $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
+        $notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
+
+        if (!$notificationSettings->isModeExtensionPages()) {
+            return false;
+        }
+
+        if ($currentStatus->get() < $notificationSettings->getLevel()) {
+            return false;
+        }
+
+        $messageBuilder = $this->modelFactory->getObject('HealthStatus\Notification\MessageBuilder');
+
+        switch ($currentStatus->get()) {
+            case Result::STATE_NOTICE:
+                $this->addExtendedNoticeMessage($messageBuilder->build(), self::GLOBAL_MESSAGES_GROUP);
+                break;
+
+            case Result::STATE_WARNING:
+                $this->addExtendedWarningMessage($messageBuilder->build(), self::GLOBAL_MESSAGES_GROUP);
+                break;
+
+            case Result::STATE_CRITICAL:
+                $this->addExtendedErrorMessage($messageBuilder->build(), self::GLOBAL_MESSAGES_GROUP);
+                break;
+        }
+
+        return true;
     }
 
     protected function addLicenseNotifications()

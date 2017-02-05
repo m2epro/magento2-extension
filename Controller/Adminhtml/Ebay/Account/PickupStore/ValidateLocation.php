@@ -46,7 +46,7 @@ class ValidateLocation extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             }
         }
 
-        $this->setAjaxContent(json_encode(['result'=>!(bool)$pickupStoreCollection->getSize()]), false);
+        $this->setJsonContent(['result'=>!(bool)$pickupStoreCollection->getSize()]);
         return $this->getResult();
     }
 

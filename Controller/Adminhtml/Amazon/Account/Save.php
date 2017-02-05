@@ -110,7 +110,7 @@ class Save extends Account
             $mappingSettings['title']['attribute'] = (string)$tempData['mapping_title_attribute'];
         }
 
-        $data['other_listings_mapping_settings'] = json_encode($mappingSettings);
+        $data['other_listings_mapping_settings'] = $this->getHelper('Data')->jsonEncode($mappingSettings);
         // ---------------------------------------
 
         // tab: orders
@@ -313,7 +313,7 @@ class Save extends Account
         // ---------------------------------------
 
         // ---------------------------------------
-        $data['magento_orders_settings'] = json_encode($data['magento_orders_settings']);
+        $data['magento_orders_settings'] = $this->getHelper('Data')->jsonEncode($data['magento_orders_settings']);
         // ---------------------------------------
 
         $isEdit = !is_null($id);

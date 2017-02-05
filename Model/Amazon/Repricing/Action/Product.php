@@ -80,7 +80,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
             return false;
         }
 
-        return json_decode($result['response'], true);
+        return $this->getHelper('Data')->jsonDecode($result['response']);
     }
 
     //########################################
@@ -113,7 +113,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
             return false;
         }
 
-        $response = json_decode($result['response'], true);
+        $response = $this->getHelper('Data')->jsonDecode($result['response']);
 
         return !empty($response['request_token']) ? $response['request_token'] : false;
     }

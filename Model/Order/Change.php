@@ -60,7 +60,7 @@ class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
      */
     public function getParams()
     {
-        $params = json_decode($this->getData('params'), true);
+        $params = $this->getHelper('Data')->jsonDecode($this->getData('params'));
 
         return is_array($params) ? $params : array();
     }

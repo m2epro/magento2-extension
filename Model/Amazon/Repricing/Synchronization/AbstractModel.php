@@ -48,7 +48,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
             return false;
         }
 
-        return json_decode($result['response'], true);
+        return $this->getHelper('Data')->jsonDecode($result['response']);
     }
 
     //########################################

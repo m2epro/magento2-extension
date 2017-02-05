@@ -200,7 +200,7 @@ define([
                     if (!transport.responseText.isJSON()) {
 
                         if (transport.responseText != '') {
-                            alert(transport.responseText);
+                            self.alert(transport.responseText);
                         }
 
                         self.progressBarObj.hide();
@@ -225,7 +225,7 @@ define([
 
                         self.sendPartsResponses = new Array();
 
-                        alert(response.message);
+                        self.alert(response.message);
 
                         return;
                     }
@@ -364,20 +364,27 @@ define([
         },
 
         stopTranslateAction: function () {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            var self = this;
 
-            var selectedProductsParts = this.gridHandler.getSelectedItemsParts(100);
-            if (selectedProductsParts.length == 0) {
-                return;
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        var selectedProductsParts = self.gridHandler.getSelectedItemsParts(100);
+                        if (selectedProductsParts.length == 0) {
+                            return;
+                        }
 
-            this.startActions(
-                this.options.text.stop_translate_selected_items_message,
-                this.options.url.get('runStopTranslateProducts'),
-                selectedProductsParts
-            );
+                        self.startActions(
+                            self.options.text.stop_translate_selected_items_message,
+                            self.options.url.get('runStopTranslateProducts'),
+                            selectedProductsParts
+                        );
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         }
 
         // ---------------------------------------

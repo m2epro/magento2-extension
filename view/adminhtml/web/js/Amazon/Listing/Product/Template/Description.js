@@ -29,41 +29,46 @@ define([
         mapToTemplateDescription: function (el, templateId, mapToGeneralId) {
             var self = this;
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
+                            method: 'post',
+                            parameters: {
+                                products_ids: self.templateDescriptionPopup.productsIds,
+                                template_id: templateId
+                            },
+                            onSuccess: function (transport) {
 
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/assign'), {
-                method: 'post',
-                parameters: {
-                    products_ids: self.templateDescriptionPopup.productsIds,
-                    template_id: templateId
-                },
-                onSuccess: function (transport) {
+                                if (!transport.responseText.isJSON()) {
+                                    self.alert(transport.responseText);
+                                    return;
+                                }
 
-                    if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
-                        return;
-                    }
+                                var response = transport.responseText.evalJSON();
 
-                    var response = transport.responseText.evalJSON();
+                                if (mapToGeneralId) {
+                                    ListingGridHandlerObj.productSearchHandler.addNewGeneralId(response.products_ids);
+                                } else {
+                                    self.gridHandler.unselectAllAndReload();
 
-                    if (mapToGeneralId) {
-                        ListingGridHandlerObj.productSearchHandler.addNewGeneralId(response.products_ids);
-                    } else {
-                        self.gridHandler.unselectAllAndReload();
+                                    if (response.messages.length > 0) {
+                                        MessageObj.clear();
+                                        response.messages.each(function (msg) {
+                                            MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](msg);
+                                        });
+                                    }
+                                }
+                            }
+                        });
 
-                        if (response.messages.length > 0) {
-                            MessageObj.clear();
-                            response.messages.each(function (msg) {
-                                MessageObj['add' + response.type[0].toUpperCase() + response.type.slice(1) + 'Message'](msg);
-                            });
-                        }
+                        self.templateDescriptionPopup.modal('closeModal');
+                    },
+                    cancel: function () {
+                        return false;
                     }
                 }
             });
-
-            self.templateDescriptionPopup.modal('closeModal');
         },
 
         // ---------------------------------------
@@ -78,7 +83,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -110,7 +115,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 

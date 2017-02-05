@@ -54,10 +54,11 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         if (!empty($ids)) {
 
             if ($this->getRequest()->isXmlHttpRequest()) {
-                return $this->getResponse()->setBody((json_encode(array(
+               $this->setJsonContent(array(
                     'ajaxExpired' => 1,
                     'ajaxRedirect' => $this->getUrl('*/*/index', array('_current' => true,'step' => 1))
-                ))));
+                ));
+                return $this->getResult();
             } else {
                 return $this->_redirect(
                     '*/ebay_listing_product_category_settings/',array('_current' => true,'step' => 1)
@@ -190,7 +191,9 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         $listingId = $this->getRequest()->getParam('id');
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing',$listingId);
 
-        $listing->getChildObject()->setData('product_add_ids',json_encode(array()))->save();
+        $listing->getChildObject()->setData(
+            'product_add_ids', $this->getHelper('Data')->jsonEncode(array())
+        )->save();
     }
 
     //########################################

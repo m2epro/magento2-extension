@@ -17,7 +17,7 @@ class PickupStore extends AbstractForm
     protected function _prepareForm()
     {
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
-        $additionalData = json_decode($account->getData('additional_data'), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($account->getData('additional_data'));
 
         $form = $this->_formFactory->create();
 

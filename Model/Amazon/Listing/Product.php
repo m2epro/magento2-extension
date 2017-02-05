@@ -19,6 +19,14 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     const IS_REPRICING_NO  = 0;
     const IS_REPRICING_YES = 1;
 
+    const VARIATION_PARENT_IS_AFN_STATE_ALL_NO  = 0;
+    const VARIATION_PARENT_IS_AFN_STATE_PARTIAL = 1;
+    const VARIATION_PARENT_IS_AFN_STATE_ALL_YES = 2;
+
+    const VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO  = 0;
+    const VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL = 1;
+    const VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES = 2;
+
     const IS_ISBN_GENERAL_ID_NO  = 0;
     const IS_ISBN_GENERAL_ID_YES = 1;
 
@@ -331,7 +339,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
             $variations = $this->getVariations(true);
             if (count($variations) <= 0) {
-                throw new \Ess\M2ePro\Model\Exception('There are no variations for a variation product.',
+                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
                                                      array(
                                                          'listing_product_id' => $this->getId()
                                                      ));
@@ -555,6 +563,50 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
     public function isGeneralIdOwner()
     {
         return (int)$this->getData('is_general_id_owner') == self::IS_GENERAL_ID_OWNER_YES;
+    }
+
+    // ---------------------------------------
+
+    public function getVariationParentAfnState()
+    {
+        return $this->getData('variation_parent_afn_state');
+    }
+
+    public function isVariationParentAfnStateNo()
+    {
+        return (int)$this->getVariationParentAfnState() == self::VARIATION_PARENT_IS_AFN_STATE_ALL_NO;
+    }
+
+    public function isVariationParentAfnStatePartial()
+    {
+        return (int)$this->getVariationParentAfnState() == self::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
+    }
+
+    public function isVariationParentAfnStateYes()
+    {
+        return (int)$this->getVariationParentAfnState() == self::VARIATION_PARENT_IS_AFN_STATE_ALL_YES;
+    }
+
+    // ---------------------------------------
+
+    public function getVariationParentRepricingState()
+    {
+        return $this->getData('variation_parent_repricing_state');
+    }
+
+    public function isVariationParentRepricingStateNo()
+    {
+        return (int)$this->getVariationParentRepricingState() == self::VARIATION_PARENT_IS_REPRICING_STATE_ALL_NO;
+    }
+
+    public function isVariationParentRepricingStatePartial()
+    {
+        return (int)$this->getVariationParentRepricingState() == self::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
+    }
+
+    public function isVariationParentRepricingStateYes()
+    {
+        return (int)$this->getVariationParentRepricingState() == self::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
     }
 
     // ---------------------------------------

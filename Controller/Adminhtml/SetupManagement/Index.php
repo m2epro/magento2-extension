@@ -14,25 +14,25 @@ class Index extends \Magento\Backend\App\Action
     const AUTHORIZATION_COOKIE_VALUE = 'secure';
 
     /** @var \Magento\Framework\App\ResourceConnection $resourceConnection */
-    private $resourceConnection;
+    protected $resourceConnection;
 
     /** @var \Magento\Framework\Module\ModuleResource $moduleResource */
-    private $moduleResource;
+    protected $moduleResource;
 
     /** @var \Magento\Framework\Module\ModuleListInterface $moduleList */
-    private $moduleList;
+    protected $moduleList;
 
     /** @var \Magento\Framework\Module\PackageInfo $packageInfo */
-    private $packageInfo;
+    protected $packageInfo;
 
     /** @var \Magento\Framework\Locale\ResolverInterface $localeResolver */
-    private $localeResolver;
+    protected $localeResolver;
 
     /** @var \Magento\Framework\View\Design\Theme\ResolverInterface $themeResolver */
-    private $themeResolver;
+    protected $themeResolver;
 
     /** @var \Magento\Framework\App\Filesystem\DirectoryList $directoryList */
-    private $directoryList;
+    protected $directoryList;
 
     /** @var \Magento\Framework\App\CacheInterface $appCache */
     protected $appCache;
@@ -47,19 +47,13 @@ class Index extends \Magento\Backend\App\Action
     protected $fileSystem;
 
     /** @var \Magento\Framework\App\DeploymentConfig $deploymentConfig */
-    private $deploymentConfig;
-
-    /** @var \Magento\Setup\Model\Cron\Queue\Reader $cronJobQueueReader */
-    private $cronJobQueueReader;
-
-    /** @var \Magento\Setup\Model\Cron\Queue $cronJobQueue */
-    private $cronJobQueue;
+    protected $deploymentConfig;
 
     /** @var \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager */
-    private $cookieManager;
+    protected $cookieManager;
 
     /** @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieManager */
-    private $cookieMetadataFactory;
+    protected $cookieMetadataFactory;
 
     //########################################
 
@@ -74,39 +68,27 @@ class Index extends \Magento\Backend\App\Action
         \Magento\Framework\App\State $appState,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
-        \Magento\Setup\Model\Cron\Queue\Reader $cronJobQueueReader,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
-        \Magento\Setup\Model\WebLogger $webLogger,
         \Magento\Backend\App\Action\Context $context
     ) {
         parent::__construct($context);
 
         $this->resourceConnection = $this->_objectManager->get('Magento\Framework\App\ResourceConnection');
-
         $this->moduleResource     = new \Magento\Framework\Module\ModuleResource($dbContext);
-        $this->moduleList         = $moduleList;
-        $this->packageInfo        = $packageInfo;
-        $this->localeResolver     = $context->getLocaleResolver();
-        $this->themeResolver      = $themeResolver;
-        $this->directoryList      = $directoryList;
-        $this->appCache           = $appCache;
-        $this->cacheState         = $cacheState;
-        $this->appState           = $appState;
-        $this->fileSystem         = $filesystem;
-        $this->deploymentConfig   = $deploymentConfig;
-        $this->cronJobQueueReader = $cronJobQueueReader;
 
+        $this->moduleList            = $moduleList;
+        $this->packageInfo           = $packageInfo;
+        $this->localeResolver        = $context->getLocaleResolver();
+        $this->themeResolver         = $themeResolver;
+        $this->directoryList         = $directoryList;
+        $this->appCache              = $appCache;
+        $this->cacheState            = $cacheState;
+        $this->appState              = $appState;
+        $this->fileSystem            = $filesystem;
+        $this->deploymentConfig      = $deploymentConfig;
         $this->cookieManager         = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
-
-        $this->_objectManager->configure([
-            'preferences' => [
-                'Zend\ServiceManager\ServiceLocatorInterface' => 'Zend\ServiceManager\ServiceManager',
-            ]
-        ]);
-
-        $this->cronJobQueue = $this->_objectManager->create('Magento\Setup\Model\Cron\Queue');
     }
 
     //########################################
@@ -458,8 +440,8 @@ HTML;
     {
         $html = '<div>';
 
-        $queue = (array)json_decode($this->cronJobQueueReader->read(), true);
-        $isExistCronStatusFile = $this->fileSystem->getDirectoryWrite(DirectoryList::VAR_DIR)
+        $queue = $this->getCronJobQueue();
+        $isExistCronStatusFile = $this->fileSystem->getDirectoryRead(DirectoryList::VAR_DIR)
                                       ->isExist(Cron\ReadinessCheck::SETUP_CRON_JOB_STATUS_FILE);
 
         if (!$isExistCronStatusFile) {
@@ -843,14 +825,34 @@ HTML;
     public function addMagentoCoreUpgradeTaskAction()
     {
         // Static Content will regenerated automatically
-        $this->cronJobQueue->addJobs(
-            [['name' => \Magento\Setup\Model\Cron\JobFactory::JOB_UPGRADE, 'params' => []]]
-        );
+        $this->addCronJobToQueue(Cron\JobFactory::JOB_UPGRADE);
 
         empty($errorMessage) ? $this->getMessageManager()->addSuccess('Task has been successfully created.')
                              : $this->getMessageManager()->addError($errorMessage);
 
         return $this->_redirect($this->_url->getUrl('*/*/*'));
+    }
+
+    private function getCronJobQueue()
+    {
+        $fileName = '.update_queue.json';
+        $directory = $this->fileSystem->getDirectoryRead(DirectoryList::VAR_DIR);
+
+        if (!$directory->isExist($fileName)) {
+            return [];
+        }
+
+        $jobs = (array)json_decode($directory->readFile($fileName), true);
+        return $jobs;
+    }
+
+    private function addCronJobToQueue($jobName, array $jobParams = [])
+    {
+        $jobs = $this->getCronJobQueue();
+        $jobs[Cron\Queue::KEY_JOBS][] = ['name' => $jobName, 'params' => $jobParams];
+
+        $directory = $this->fileSystem->getDirectoryWrite(DirectoryList::VAR_DIR);
+        $directory->writeFile('.update_queue.json', json_encode($jobs, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
     }
 
     //----------------------------------------

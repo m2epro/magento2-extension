@@ -342,7 +342,7 @@ define([
                 }
             });
 
-            if (oldValue) {
+            if (oldValue && variation.get(attr)[oldValue]) {
                 index++;
                 valid = this.validateAttributeOptions(el, variation.get(attr)[oldValue], index);
             }

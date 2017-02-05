@@ -32,7 +32,7 @@ class Other extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->buttonList->remove('edit');
         // ---------------------------------------
 
-        $this->isAjax = json_encode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     protected function _prepareLayout()

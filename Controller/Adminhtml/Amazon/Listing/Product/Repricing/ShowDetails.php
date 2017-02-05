@@ -10,6 +10,10 @@ class ShowDetails extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
         $accountId     = $this->getRequest()->getParam('account_id');
         $responseToken = $this->getRequest()->getParam('response_token');
 
+        if (empty($responseToken)) {
+            return $this->_redirect($this->getUrl('*/amazon_listing/view', ['id' => $listingId]));
+        }
+
         /** @var \Ess\M2ePro\Model\Account $account */
         $account = $this->amazonFactory->getObjectLoaded('Account', $accountId, NULL, false);
 

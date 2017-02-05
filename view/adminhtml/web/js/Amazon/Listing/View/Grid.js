@@ -156,31 +156,52 @@ define([
 
         unassignTemplateDescriptionIdActionConfrim: function (id)
         {
-            if (!this.confirm()) {
-                return;
-            }
+            var self = this;
 
-            this.templateDescriptionHandler.unassignFromTemplateDescrition(id)
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.templateDescriptionHandler.unassignFromTemplateDescrition(id);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         // ---------------------------------------
 
         unassignTemplateShippingTemplateIdActionConfrim: function (id)
         {
-            if (!this.confirm()) {
-                return;
-            }
+            var self = this;
 
-            this.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_TEMPLATE'))
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_TEMPLATE'));
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         unassignTemplateShippingOverrideIdActionConfrim: function (id)
         {
-            if (!this.confirm()) {
-                return;
-            }
+            var self = this;
 
-            this.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'))
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'));
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         }
 
         // ---------------------------------------

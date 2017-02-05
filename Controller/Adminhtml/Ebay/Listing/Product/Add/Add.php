@@ -28,7 +28,9 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
         // ---------------------------------------
         $existingIds = $listing->getChildObject()->getAddedListingProductsIds();
         $existingIds = array_values(array_unique(array_merge($existingIds,$ids)));
-        $listing->getChildObject()->setData('product_add_ids', json_encode($existingIds))->save();
+        $listing->getChildObject()->setData(
+            'product_add_ids', $this->getHelper('Data')->jsonEncode($existingIds)
+        )->save();
         // ---------------------------------------
 
         $this->setJsonContent(['success' => true]);

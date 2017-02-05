@@ -363,7 +363,7 @@ class Grid extends AbstractGrid
             return $returnString;
         }
 
-        $shippingDetails = json_decode($row->getChildObject()->getData('shipping_details'), true);
+        $shippingDetails = $this->getHelper('Data')->jsonDecode($row->getChildObject()->getData('shipping_details'));
         if (empty($shippingDetails['in_store_pickup_details'])) {
             return $returnString;
         }
@@ -641,7 +641,7 @@ HTML;
     {
         $tempGridIds = array();
         $this->getHelper('Component\Ebay')->isEnabled() && $tempGridIds[] = $this->getId();
-        $tempGridIds = json_encode($tempGridIds);
+        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
 

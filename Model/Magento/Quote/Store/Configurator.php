@@ -12,6 +12,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $taxHelper;
 
+    protected $storeConfig;
+
     protected $quote;
 
     protected $proxyOrder;
@@ -24,6 +26,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Tax\Helper $taxHelper,
+        \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
         \Magento\Tax\Model\Config $taxConfigModel,
         \Magento\Quote\Model\Quote $quote,
         \Ess\M2ePro\Model\Order\Proxy $proxyOrder,
@@ -33,10 +36,11 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->taxHelper  = $taxHelper;
-        $this->quote      = $quote;
-        $this->proxyOrder = $proxyOrder;
-        $this->taxConfig  = $taxConfig;
+        $this->taxHelper   = $taxHelper;
+        $this->storeConfig = $storeConfig;
+        $this->quote       = $quote;
+        $this->proxyOrder  = $proxyOrder;
+        $this->taxConfig   = $taxConfig;
         $this->calculation = $calculation;
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -312,12 +316,12 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     private function setStoreConfig($key, $value)
     {
-        $this->getStore()->setConfig($key, $value);
+        $this->storeConfig->setValue($key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore());
     }
 
     private function getStoreConfig($key)
     {
-        return $this->getStore()->getConfig($key);
+        return $this->storeConfig->getValue($key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore());
     }
 
     //########################################

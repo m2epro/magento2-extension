@@ -42,7 +42,7 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $listingId = $this->getRequest()->getParam('id');
         $listingProductIds = $this->getRequestIds();
         $categoryTemplateData = $post['template_category_data'];
-        $categoryTemplateData = json_decode($categoryTemplateData, true);
+        $categoryTemplateData = $this->getHelper('Data')->jsonDecode($categoryTemplateData);
         // ---------------------------------------
 
         // ---------------------------------------

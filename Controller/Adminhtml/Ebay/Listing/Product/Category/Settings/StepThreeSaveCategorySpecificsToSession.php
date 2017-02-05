@@ -12,7 +12,7 @@ class StepThreeSaveCategorySpecificsToSession extends Settings
     public function execute()
     {
         $category = $this->getRequest()->getParam('category');
-        $categorySpecificsData = json_decode($this->getRequest()->getParam('data'), true);
+        $categorySpecificsData = $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('data'));
 
         $sessionSpecificsData = $this->getSessionValue('specifics');
 

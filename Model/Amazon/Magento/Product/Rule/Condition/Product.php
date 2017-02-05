@@ -45,7 +45,10 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
 
         $customFilters = $this->getCustomFilters();
         $this->_customFiltersCache[$filterId] = $this->modelFactory->getObject(
-            'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId]
+            'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+                'filterOperator'  => $this->getData('operator'),
+                'filterCondition' => $this->getData('value')
+            ]
         );
 
         return $this->_customFiltersCache[$filterId];

@@ -45,24 +45,15 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        if (!isset($params['request_data']['items']) || !is_array($params['request_data']['items'])) {
+        if (!empty($params['orders_ids']) ||
+            !is_array($params['orders_ids'])) {
             return;
-        }
-
-        $ordersIds = array();
-
-        foreach ($params['request_data']['items'] as $update) {
-            if (!isset($update['order_id'])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
-            }
-
-            $ordersIds[] = (int)$update['order_id'];
         }
 
         /** @var \Ess\M2ePro\Model\Order[] $orders */
         $orders = $this->activeRecordFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ordersIds))
+            ->addFieldToFilter('id', array('in' => $params['orders_ids']))
             ->getItems();
 
         foreach ($orders as $order) {
@@ -76,24 +67,15 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        if (!isset($params['request_data']['items']) || !is_array($params['request_data']['items'])) {
+        if (!empty($params['orders_ids']) ||
+            !is_array($params['orders_ids'])) {
             return;
-        }
-
-        $ordersIds = array();
-
-        foreach ($params['request_data']['items'] as $update) {
-            if (!isset($update['order_id'])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
-            }
-
-            $ordersIds[] = (int)$update['order_id'];
         }
 
         /** @var \Ess\M2ePro\Model\Order $orders */
         $orders = $this->activeRecordFactory->getObject('Order')
             ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ordersIds))
+            ->addFieldToFilter('id', array('in' => $params['orders_ids']))
             ->getItems();
 
         foreach ($orders as $order) {

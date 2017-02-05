@@ -63,8 +63,8 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
         $defaultData = $this->activeRecordFactory->getObject('Ebay\Template\Description')->getDefaultSettings();
 
         $defaultData['enhancement'] = explode(',', $defaultData['enhancement']);
-        $defaultData['product_details'] = json_decode($defaultData['product_details'], true);
-        $defaultData['watermark_settings'] = json_decode($defaultData['watermark_settings'], true);
+        $defaultData['product_details'] = $this->getHelper('Data')->jsonDecode($defaultData['product_details']);
+        $defaultData['watermark_settings'] = $this->getHelper('Data')->jsonDecode($defaultData['watermark_settings']);
 
         $data = array_replace_recursive($defaultData, $data);
 

@@ -11,13 +11,14 @@ class VariationReset extends Main
         $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
 
         if (!$listingProductId) {
-            return $this->getResponse()->setBody(json_encode(array(
+            $this->setJsonContent(array(
                 'type' => 'error',
                 'message' => $this->__(
                     'For changing the Mode of working with Magento Variational Product
                      you have to choose the Specific Product.'
                 )
-            )));
+            ));
+            return $this->getResult();
         }
 
         /* @var $listingProduct \Ess\M2ePro\Model\Listing\Product */

@@ -41,7 +41,7 @@ class Search extends \Ess\M2ePro\Helper\AbstractHelper
         $response = $this->sendRequestAsGet($params);
 
         if ($response !== false) {
-            $results = (array)json_decode($response, true);
+            $results = (array)$this->getHelper('Data')->jsonDecode($response);
         }
 
         return $results;

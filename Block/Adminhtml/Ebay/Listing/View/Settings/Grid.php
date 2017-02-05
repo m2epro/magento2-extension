@@ -366,7 +366,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $row->getData('listing_product_id'));
 
         if ($listingProduct->getChildObject()->isVariationsReady()) {
-            $additionalData = (array)json_decode($row->getData('additional_data'), true);
+            $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
             $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">';
             $value .= implode(', ', array_keys($additionalData['variations_sets']));
@@ -948,7 +948,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-        $ignoreListings = json_encode(array($this->listing->getId()));
+        $ignoreListings = $this->getHelper('Data')->jsonEncode(array($this->listing->getId()));
 
         $this->js->add(
 <<<JS
@@ -973,12 +973,6 @@ JS
         );
         EbayListingViewSettingsGridObj.afterInitPage();
         EbayListingViewSettingsGridObj.movingHandler.setOptions(M2ePro);
-
-        // TODO NOT SUPPORTED FEATURES
-        // EbayListingTransferringHandlerObj = new EbayListingTransferringHandler();
-
-        // TODO NOT SUPPORTED FEATURES
-        // EbayListingTransferringPaymentHandlerObj = new EbayListingTransferringPaymentHandler();
     });
 JS
         );

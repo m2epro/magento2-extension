@@ -29,7 +29,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Developers
     {
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
@@ -38,7 +38,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Developers
             (int)$post['inspector_mode']
         );
 
-        $this->setAjaxContent(json_encode(['success' => true]), false);
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 

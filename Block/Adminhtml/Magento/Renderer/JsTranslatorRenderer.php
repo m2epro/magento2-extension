@@ -24,7 +24,7 @@ class JsTranslatorRenderer extends AbstractRenderer
             return '';
         }
 
-        $translations = json_encode($this->jsTranslations);
+        $translations = $this->helperFactory->getObject('Data')->jsonEncode($this->jsTranslations);
 
         return "M2ePro.translator.add({$translations});";
     }

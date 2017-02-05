@@ -344,7 +344,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         $logModel->addProductMessage($this->getId(),
             $logsInitiator,
             NULL,
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MAP_LISTING,
+            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MAP_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Mapped
             'Item was successfully Mapped',
@@ -366,7 +366,7 @@ class Other extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMode
         $logModel->addProductMessage($this->getId(),
             $logsInitiator,
             NULL,
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_UNMAP_LISTING,
+            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_UNMAP_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Unmapped
             'Item was successfully Unmapped',

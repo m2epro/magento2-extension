@@ -137,11 +137,10 @@ HTML;
         $tablesInfo = $this->getHelper('Module\Database\Structure')->getTablesInfo();
 
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('tables','get','diff',
-                                                               [
-                                                                   'magento_version' => 2,
-                                                                   'tables_info'     => json_encode($tablesInfo)
-                                                               ]);
+        $connectorObj = $dispatcherObject->getVirtualConnector('tables','get','diff', [
+            'magento_version' => 2,
+            'tables_info'     => $this->getHelper('Data')->jsonEncode($tablesInfo)
+        ]);
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -195,7 +194,7 @@ HTML;
                     $urlParams = array(
                         'action'      => 'fixColumn',
                         'table_name'  => $tableName,
-                        'column_info' => json_encode($resultInfo['original_data'])
+                        'column_info' => $this->getHelper('Data')->jsonEncode($resultInfo['original_data'])
                     );
 
                     if (empty($resultInfo['current_data']) ||
@@ -216,7 +215,7 @@ HTML;
 
                         $linkTitle = 'Drop';
                         $urlParams['mode'] = 'drop';
-                        $urlParams['column_info'] = json_encode($resultInfo['current_data']);
+                        $urlParams['column_info'] = $this->getHelper('Data')->jsonEncode($resultInfo['current_data']);
                     }
 
                     $url = $this->getUrl('*/*/*', $urlParams);
@@ -389,7 +388,7 @@ HTML;
     {
         $tableName  = $this->getRequest()->getParam('table_name');
         $columnInfo = $this->getRequest()->getParam('column_info');
-        $columnInfo = (array)json_decode($columnInfo, true);
+        $columnInfo = (array)$this->getHelper('Data')->jsonDecode($columnInfo);
 
         $repairMode = $this->getRequest()->getParam('mode');
 

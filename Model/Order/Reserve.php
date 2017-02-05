@@ -229,6 +229,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $productsAffectedCount++;
 
                 $this->transaction->addObject($this->stockItem->getStockItem());
+                $item->getProduct()->setStockItem($this->stockItem->getStockItem());
             }
 
             $item->setReservedProducts($products);

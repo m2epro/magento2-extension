@@ -34,7 +34,7 @@ class Registry extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     public function getValueFromJson()
     {
-        return is_null($this->getId()) ?  array() : json_decode($this->getValue(), true);
+        return is_null($this->getId()) ?  array() : $this->getHelper('Data')->jsonDecode($this->getValue());
     }
 
     //########################################

@@ -18,7 +18,6 @@ abstract class AbstractModel
     //########################################
 
     public function __construct(
-        \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -35,7 +34,6 @@ abstract class AbstractModel
         }
 
         parent::__construct(
-            $metadataPool,
             $helperFactory,
             $activeRecordFactory,
             $entityFactory,
@@ -63,15 +61,6 @@ abstract class AbstractModel
 
     //########################################
 
-    public function getResource()
-    {
-        if (is_null($this->childMode)) {
-            return parent::getResource();
-        }
-
-        return parent::getResource()->setChildMode($this->childMode);
-    }
-
     protected function _initSelect()
     {
         $temp = parent::_initSelect();
@@ -83,8 +72,8 @@ abstract class AbstractModel
         /** @var $resource \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel */
         $resource = $this->getResource();
 
-        $componentTable = $resource->getChildTable();
-        $componentPk = $resource->getChildPrimary();
+        $componentTable = $resource->getChildTable($this->childMode);
+        $componentPk = $resource->getChildPrimary($this->childMode);
 
         $this->getSelect()->join(
             array('second_table'=>$componentTable),
@@ -151,10 +140,14 @@ abstract class AbstractModel
         $data = $object->getData();
         $object->unsetData();
 
+        /** @var \Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $childObject */
         $modelName = str_replace('Ess\M2ePro\Model',ucwords($this->childMode),$this->_model);
         $childObject = $this->activeRecordFactory->getObject($modelName);
 
-        $childColumnsData = $this->getConnection()->describeTable($this->getResource()->getChildTable());
+        /** @var $resource \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Parent\AbstractModel */
+        $resource = $this->getResource();
+
+        $childColumnsData = $this->getConnection()->describeTable($resource->getChildTable($this->childMode));
         foreach($childColumnsData as $columnData) {
             if (!isset($data[$columnData['COLUMN_NAME']])) {
                 continue;

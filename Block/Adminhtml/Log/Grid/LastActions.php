@@ -45,7 +45,7 @@ abstract class LastActions extends AbstractBlock
 
     public function getEncodedRows()
     {
-        return base64_encode(json_encode($this->rows));
+        return base64_encode($this->getHelper('Data')->jsonEncode($this->rows));
     }
 
     public function getEntityId()

@@ -58,7 +58,7 @@ HTML
 
         if ($earlierFormData) {
             $earlierFormData = $earlierFormData->getValue();
-            $earlierFormData = (array)json_decode($earlierFormData, true);
+            $earlierFormData = (array)$this->getHelper('Data')->jsonDecode($earlierFormData);
             $userInfo = array_merge($userInfo, $earlierFormData);
         }
 

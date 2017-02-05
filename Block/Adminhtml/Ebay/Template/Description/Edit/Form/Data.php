@@ -1473,20 +1473,22 @@ JS
         }
 
         if (!empty($data['product_details']) && is_string($data['product_details'])) {
-            $data['product_details'] = json_decode($data['product_details'], true);
+            $data['product_details'] = $this->getHelper('Data')->jsonDecode($data['product_details']);
         } else {
             unset($data['product_details']);
         }
 
         if (!empty($data['variation_configurable_images']) && is_string($data['variation_configurable_images'])) {
-            $data['variation_configurable_images'] = json_decode($data['variation_configurable_images'], true);
+            $data['variation_configurable_images'] = $this->getHelper('Data')->jsonDecode(
+                $data['variation_configurable_images']
+            );
         } else {
             unset($data['variation_configurable_images']);
         }
 
         if (!empty($data['watermark_settings']) && is_string($data['watermark_settings'])) {
 
-            $watermarkSettings = json_decode($data['watermark_settings'], true);
+            $watermarkSettings = $this->getHelper('Data')->jsonDecode($data['watermark_settings']);
             unset($data['watermark_settings']);
 
             if (isset($watermarkSettings['position'])) {
@@ -1519,9 +1521,11 @@ JS
         $default = $this->activeRecordFactory->getObject('Ebay\Template\Description')->getDefaultSettings();
 
         $default['enhancement'] = explode(',', $default['enhancement']);
-        $default['product_details'] = json_decode($default['product_details'], true);
-        $default['variation_configurable_images'] = json_decode($default['variation_configurable_images'], true);
-        $default['watermark_settings'] = json_decode($default['watermark_settings'], true);
+        $default['product_details'] = $this->getHelper('Data')->jsonDecode($default['product_details']);
+        $default['variation_configurable_images'] = $this->getHelper('Data')->jsonDecode(
+            $default['variation_configurable_images']
+        );
+        $default['watermark_settings'] = $this->getHelper('Data')->jsonDecode($default['watermark_settings']);
 
         return $default;
     }

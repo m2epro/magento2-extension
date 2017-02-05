@@ -86,9 +86,9 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
         }
         // ---------------------------------------
 
-        $this->setAjaxContent(json_encode(
+        $this->setJsonContent(
             ['success' => true, 'messages' => $messages]
-        ), false);
+        );
         return $this->getResult();
     }
 

@@ -134,6 +134,7 @@ class Parallel extends AbstractModel
             \Ess\M2ePro\Model\Cron\Task\AmazonActions::NICK,
             \Ess\M2ePro\Model\Cron\Task\LogsClearing::NICK,
             \Ess\M2ePro\Model\Cron\Task\Servicing::NICK,
+            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK,
             \Ess\M2ePro\Model\Cron\Task\UpdateEbayAccountsPreferences::NICK,
             \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK,
         ));

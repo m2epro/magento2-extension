@@ -22,7 +22,7 @@ class GetChooserHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         $selectedCategories = array();
         if (!is_null($selectedCategoriesJson)) {
-            $selectedCategories = json_decode($selectedCategoriesJson, true);
+            $selectedCategories = $this->getHelper('Data')->jsonDecode($selectedCategoriesJson);
         }
         // ---------------------------------------
 

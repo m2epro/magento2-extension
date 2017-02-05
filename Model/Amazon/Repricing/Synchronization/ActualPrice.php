@@ -158,7 +158,7 @@ class ActualPrice extends AbstractModel
                 $this->resourceConnection->getConnection()->update(
                     $this->resourceConnection->getTableName('m2epro_amazon_listing_other'),
                     [
-                        'online_price' => $offerProductPrice['product_price'],
+                        'online_price' => $offerProductPrice,
                     ],
                     ['listing_other_id = ?' => $listingOtherId]
                 );

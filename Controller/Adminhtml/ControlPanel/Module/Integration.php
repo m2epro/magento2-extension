@@ -472,7 +472,7 @@ HTML;
                 $additionalData['ebay_product_variation_images_hash']);
 
             $affected++;
-            $listingProduct->setData('additional_data', json_encode($additionalData))
+            $listingProduct->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData))
                 ->save();
         }
 
@@ -518,7 +518,7 @@ HTML;
             $additionalData['is_eps_ebay_images_mode'] = true;
             $affected++;
 
-            $listingProduct->setData('additional_data', json_encode($additionalData))
+            $listingProduct->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData))
                 ->save();
         }
 
@@ -1223,7 +1223,7 @@ HTML;
             foreach ($shot['specifics'] as &$specific) {
                 unset($specific['id'], $specific['template_category_id']);
             }
-            $key = md5(json_encode($shot));
+            $key = md5($this->getHelper('Data')->jsonEncode($shot));
 
             if (!array_key_exists($key, $snapshots)) {
 

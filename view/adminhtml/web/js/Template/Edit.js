@@ -65,6 +65,20 @@ function(jQuery, confirm, localStorage) {
 
         // ---------------------------------------
 
+        deleteClick: function()
+        {
+            Common.prototype.confirm({
+                actions: {
+                    confirm: function () {
+                        setLocation(M2ePro.url.get('deleteAction'));
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
+        },
+
         duplicateClick: function($super, $headId, chapter_when_duplicate_text)
         {
             this.showConfirmMsg = false;

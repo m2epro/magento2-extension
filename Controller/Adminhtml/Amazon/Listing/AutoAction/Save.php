@@ -7,12 +7,12 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
     public function execute()
     {
         if (!$post = $this->getRequest()->getPost()) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
         if (!isset($post['auto_action_data'])) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
@@ -21,7 +21,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         $listing = $this->amazonFactory->getCachedObjectLoaded('Listing', $listingId);
         // ---------------------------------------
 
-        $data = json_decode($post['auto_action_data'], true);
+        $data = $this->getHelper('Data')->jsonDecode($post['auto_action_data']);
 
         $listingData = array(
             'auto_mode' => \Ess\M2ePro\Model\Listing::AUTO_MODE_NONE,
@@ -88,6 +88,18 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
 
             $group->addData(array_merge($groupData, $data));
             $group->setData('listing_id', $listing->getId());
+            if (!$group->getId()) {
+                $group->save();
+            }
+
+            if (!empty($data['adding_description_template_id'])) {
+                $group->getChildObject()->setData(
+                    'adding_description_template_id', $data['adding_description_template_id']
+                );
+            } else {
+                $group->getChildObject()->setData('adding_description_template_id', NULL);
+            }
+
             $group->save();
             $group->clearCategories();
 
@@ -104,7 +116,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\AutoAction
         $listing->getChildObject()->addData($listingData);
         $listing->save();
 
-        $this->setAjaxContent(json_encode(['success' => true]), false);
+        $this->setJsonContent(['success' => true]);
         return $this->getResult();
     }
 }

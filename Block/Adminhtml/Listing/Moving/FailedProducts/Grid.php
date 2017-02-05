@@ -45,7 +45,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $failedProducts = json_decode($this->getRequest()->getParam('failed_products'),1);
+        $failedProducts = $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('failed_products'));
 
         $collection = $this->productFactory->create()->getCollection()
             ->addAttributeToSelect('sku')

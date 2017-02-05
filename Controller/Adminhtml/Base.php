@@ -208,7 +208,7 @@ abstract class Base extends Action
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
-            $this->getRawResult()->setContents(json_encode(array(
+            $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode(array(
                 'ajaxExpired'  => 1,
                 'ajaxRedirect' => $this->_redirect->getRefererUrl()
             )));
@@ -364,7 +364,7 @@ abstract class Base extends Action
             $this->generalBlockWasAppended = true;
         }
 
-        $this->setAjaxContent(json_encode($data), false);
+        $this->setAjaxContent($this->getHelper('Data')->jsonEncode($data), false);
     }
 
     // ---------------------------------------

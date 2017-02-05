@@ -178,12 +178,19 @@ define([
         clearSearchResultsAndOpenSearchMenu: function () {
             var self = this;
 
-            if (confirm(M2ePro.translator.translate('Are you sure?'))) {
-                self.popup.modal('closeModal');
-                self.unmapFromGeneralId(self.params.productId, function () {
-                    self.openPopUp(0, self.params.title, self.params.productId);
-                });
-            }
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.popup.modal('closeModal');
+                        self.unmapFromGeneralId(self.params.productId, function () {
+                            self.openPopUp(0, self.params.title, self.params.productId);
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         // ---------------------------------------
@@ -259,27 +266,44 @@ define([
         showSearchGeneralIdAutoPrompt: function () {
             var self = this;
 
-            if (confirm(M2ePro.translator.translate('Are you sure?'))) {
-                if (self.searchMenuPopup) {
-                    self.searchMenuPopup.modal('closeModal');
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        if (self.searchMenuPopup) {
+                            self.searchMenuPopup.modal('closeModal');
+                        }
+                        self.searchGeneralIdAuto(self.params.productId);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
                 }
-                this.searchGeneralIdAuto(this.params.productId);
-            }
+            });
         },
 
         showUnmapFromGeneralIdPrompt: function (productId) {
             MessageObj.clear();
 
-            if (confirm(M2ePro.translator.translate('Are you sure?'))) {
-                this.unmapFromGeneralId(productId);
-            }
+            var self = this;
+
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.unmapFromGeneralId(productId);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
         },
 
         addNewGeneralId: function (listingProductIds) {
             var self = this;
 
             if (!M2ePro.customData.isNewAsinAvailable) {
-                return alert(M2ePro.translator.translate('new_asin_not_available').replace('%code%', M2ePro.customData.marketplace.code));
+                self.alert(M2ePro.translator.translate('new_asin_not_available').replace('%code%', M2ePro.customData.marketplace.code));
+                return;
             }
 
             listingProductIds = listingProductIds || self.params.productId;
@@ -292,7 +316,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -331,7 +355,7 @@ define([
 
             if (query == '') {
                 $('query').focus();
-                alert(M2ePro.translator.translate('enter_productSearch_query'));
+                self.alert(M2ePro.translator.translate('enter_productSearch_query'));
                 return;
             }
 
@@ -417,7 +441,7 @@ define([
                     },
                     onSuccess: function (transport) {
                         if (!transport.responseText.isJSON()) {
-                            alert(transport.responseText);
+                            self.alert(transport.responseText);
                             return;
                         }
 
@@ -477,48 +501,53 @@ define([
         mapToGeneralId: function (productId, generalId, optionsData) {
             var self = this;
 
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
-
-            if (optionsData === undefined) {
-                optionsData = '';
-            }
-
-            new Ajax.Request(M2ePro.url.get('amazon_listing/mapToAsin'), {
-                method: 'post',
-                parameters: {
-                    product_id: productId,
-                    general_id: generalId,
-                    options_data: decodeURIComponent(optionsData),
-                    search_type: $('amazon_asin_search_type').value,
-                    search_value: $('amazon_asin_search_value').value
-                },
-                onSuccess: function (transport) {
-                    if (transport.responseText.isJSON()) {
-                        var response = transport.responseText.evalJSON();
-
-                        if (response['vocabulary_attributes']) {
-                            self.openVocabularyAttributesPopUp(response['vocabulary_attributes']);
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        if (optionsData === undefined) {
+                            optionsData = '';
                         }
 
-                        if (response['vocabulary_attribute_options']) {
-                            self.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
-                        }
+                        new Ajax.Request(M2ePro.url.get('amazon_listing/mapToAsin'), {
+                            method: 'post',
+                            parameters: {
+                                product_id: productId,
+                                general_id: generalId,
+                                options_data: decodeURIComponent(optionsData),
+                                search_type: $('amazon_asin_search_type').value,
+                                search_value: $('amazon_asin_search_value').value
+                            },
+                            onSuccess: function (transport) {
+                                if (transport.responseText.isJSON()) {
+                                    var response = transport.responseText.evalJSON();
 
-                        self.gridHandler.unselectAllAndReload();
-                        return;
-                    }
+                                    if (response['vocabulary_attributes']) {
+                                        self.openVocabularyAttributesPopUp(response['vocabulary_attributes']);
+                                    }
 
-                    if (transport.responseText == 0) {
-                        self.gridHandler.unselectAllAndReload();
-                    } else {
-                        alert(transport.responseText);
+                                    if (response['vocabulary_attribute_options']) {
+                                        self.openVocabularyOptionsPopUp(response['vocabulary_attribute_options']);
+                                    }
+
+                                    self.gridHandler.unselectAllAndReload();
+                                    return;
+                                }
+
+                                if (transport.responseText == 0) {
+                                    self.gridHandler.unselectAllAndReload();
+                                } else {
+                                    self.alert(transport.responseText);
+                                }
+                            }
+                        });
+
+                        self.popup.modal('closeModal');
+                    },
+                    cancel: function () {
+                        return false;
                     }
                 }
             });
-
-            self.popup.modal('closeModal')
         },
 
         openVocabularyAttributesPopUp: function (attributes) {
@@ -695,7 +724,7 @@ define([
                 onSuccess: function (transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -878,7 +907,7 @@ define([
                     link.hide();
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 
@@ -1069,7 +1098,7 @@ define([
                         result = false;
 
                         if (attribute.value == null) {
-                            alert(M2ePro.text.duplicate_amazon_attribute_error);
+                            self.alert(M2ePro.text.duplicate_amazon_attribute_error);
                         }
                         selectAmazonAttr.value = '';
                     }
@@ -1309,7 +1338,7 @@ define([
                         result = false;
 
                         if (attribute.value == null) {
-                            alert(M2ePro.text.duplicate_magento_attribute_error);
+                            self.alert(M2ePro.text.duplicate_magento_attribute_error);
                         }
                         selectAmazonAttr.value = '';
                     }

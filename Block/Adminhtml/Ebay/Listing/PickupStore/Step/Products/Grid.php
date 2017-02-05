@@ -376,7 +376,7 @@ HTML;
             return $valueHtml;
         }
 
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         $productAttributes = array_keys($additionalData['variations_sets']);
         $valueHtml .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">';
         $valueHtml .= implode(', ', $productAttributes);
@@ -605,7 +605,7 @@ HTML;
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'min_online_price <= \''.$value['to'].'\'';
+            $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
         }
 
         $condition = '(' . $condition . ') OR (';
@@ -617,7 +617,7 @@ HTML;
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'max_online_price <= \''.$value['to'].'\'';
+            $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
         }
 
         $condition .= ')';

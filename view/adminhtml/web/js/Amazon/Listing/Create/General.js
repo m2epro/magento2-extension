@@ -1,9 +1,10 @@
 define([
     'underscore',
+    'Magento_Ui/js/modal/alert',
     'M2ePro/Amazon/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function (_) {
+], function (_, alert) {
 
     window.AmazonListingCreateGeneral = Class.create();
     AmazonListingCreateGeneral.prototype = {
@@ -76,7 +77,10 @@ define([
 
             $('save_and_next').observe('click', function() {
                 if (self.marketplaceSynchProgressObj.runningNow) {
-                    return alert(M2ePro.translator.translate('Please wait while Synchronization is finished.'));
+                    alert({
+                        content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
+                    });
+                    return;
                 }
                 jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
             });
@@ -89,6 +93,12 @@ define([
             var account_label_el = $('account_label');
             var account_select_el = $('account_id');
             var marketplace_info = $('marketplace_info');
+
+            //firefox can't simulate events for disabled elements
+            if (account_select_el.disabled) {
+                account_select_el.enable();
+                self.accountDisabled = true;
+            }
 
             new Ajax.Request(M2ePro.url.get('general/getAccounts'), {
                 method: 'get',
@@ -158,13 +168,11 @@ define([
 
                     account_select_el.setValue(self.selectedAccountId);
 
+                    account_select_el.simulate('change');
+
                     //firefox can't simulate events for disabled elements
-                    if (account_select_el.disabled) {
-                        account_select_el.enable();
-                        account_select_el.simulate('change');
+                    if (self.accountDisabled) {
                         account_select_el.disable();
-                    } else {
-                        account_select_el.simulate('change');
                     }
 
                     callback && callback();

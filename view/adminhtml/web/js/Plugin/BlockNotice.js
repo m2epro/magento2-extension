@@ -232,21 +232,26 @@ define([
 
         hideBlock: function (id) {
             var self = this;
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return false;
-            }
 
-            id = id || '';
-            if (id == '') {
-                return false;
-            }
-            var block = jQuery('#' + id);
-            block.hide(0, function(){
-                self.updateFloatingHeader();
-                block.remove();
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        id = id || '';
+                        if (id == '') {
+                            return false;
+                        }
+                        var block = jQuery('#' + id);
+                        block.hide(0, function(){
+                            self.updateFloatingHeader();
+                            block.remove();
+                        });
+                        self.setHashedStorage(id + self.storageKeys.closed);
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
             });
-            this.setHashedStorage(id + this.storageKeys.closed);
-            return true;
         },
 
         // ---------------------------------------

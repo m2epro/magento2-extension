@@ -258,7 +258,7 @@ class Form extends AbstractForm
                 )
         ]);
 
-        $storedStatuses = json_encode($this->storedStatuses);
+        $storedStatuses = $this->getHelper('Data')->jsonEncode($this->storedStatuses);
         $this->js->addOnReadyJs(<<<JS
             require([
                 'M2ePro/Marketplace',

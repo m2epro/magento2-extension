@@ -358,7 +358,7 @@ HTML;
 
         switch ($searchSettingsStatus) {
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_IN_PROGRESS:
-                $searchData = json_decode($row->getData('search_settings_data'), true);
+                $searchData = $this->getHelper('Data')->jsonDecode($row->getData('search_settings_data'));
 
                 $msg = $this->__('In Progress');
                 $tip = $this->__(
@@ -383,7 +383,7 @@ HTML;
 HTML;
             case \Ess\M2ePro\Model\Amazon\Listing\Product::SEARCH_SETTINGS_STATUS_ACTION_REQUIRED:
 
-                $searchData = json_decode($row->getData('search_settings_data'), true);
+                $searchData = $this->getHelper('Data')->jsonDecode($row->getData('search_settings_data'));
 
                 $lpId = $row->getData('id');
 
@@ -416,7 +416,7 @@ HTML;
 HTML;
         }
 
-        $searchInfo = json_decode($row->getData('general_id_search_info'), true);
+        $searchInfo = $this->getHelper('Data')->jsonDecode($row->getData('general_id_search_info'));
 
         $msg = $this->__('Completed');
         $tip = $this->__(
@@ -499,7 +499,7 @@ HTML;
     private function getGeneralIdColumnValueNotEmptyGeneralId($row)
     {
         $generalId = $row->getData('general_id');
-        $marketplaceId = $this->getHelper('Data\GlobalData')->getValue('marketplace_id');
+        $marketplaceId = $this->listing->getMarketplaceId();
 
         $url = $this->getHelper('Component\Amazon')->getItemUrl(
             $generalId,
@@ -509,7 +509,7 @@ HTML;
         $generalIdSearchInfo = $row->getData('general_id_search_info');
 
         if (!empty($generalIdSearchInfo)) {
-            $generalIdSearchInfo = json_decode($generalIdSearchInfo, true);
+            $generalIdSearchInfo = $this->getHelper('Data')->jsonDecode($generalIdSearchInfo);
         }
 
         if (!empty($generalIdSearchInfo['is_set_automatic'])) {

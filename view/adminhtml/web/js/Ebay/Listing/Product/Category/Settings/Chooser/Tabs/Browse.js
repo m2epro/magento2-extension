@@ -27,7 +27,7 @@ define([
             var self = EbayListingProductCategorySettingsChooserTabsBrowseObj;
 
             if (self.marketplaceId === null) {
-                alert('You must set Site');
+                self.alert('You must set Site');
             }
 
             return self.marketplaceId;
@@ -167,12 +167,12 @@ define([
             var self = EbayListingProductCategorySettingsChooserTabsBrowseObj;
 
             if (typeof observer != 'function') {
-                alert('Observer must be a function!');
+                self.alert('Observer must be a function!');
                 return;
             }
 
             if (typeof self.observers[event] == 'undefined') {
-                alert('Event does not supported!');
+                self.alert('Event does not supported!');
                 return;
             }
 
@@ -185,7 +185,7 @@ define([
             parameters = parameters || null;
 
             if (typeof self.observers[event] == 'undefined') {
-                alert('Event does not supported!');
+                self.alert('Event does not supported!');
                 return;
             }
 

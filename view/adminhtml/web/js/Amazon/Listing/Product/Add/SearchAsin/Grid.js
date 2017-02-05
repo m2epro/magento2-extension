@@ -41,10 +41,17 @@ define([
             this.productSearchHandler.clearSearchResultsAndOpenSearchMenu = function () {
                 var self = this;
 
-                if (confirm(M2ePro.translator.translate('Are you sure?'))) {
-                    self.popup.modal('closeModal');
-                    self.unmapFromGeneralId(self.params.productId);
-                }
+                self.confirm({
+                    actions: {
+                        confirm: function () {
+                            self.popup.modal('closeModal');
+                            self.unmapFromGeneralId(self.params.productId);
+                        },
+                        cancel: function () {
+                            return false;
+                        }
+                    }
+                });
             };
         },
 

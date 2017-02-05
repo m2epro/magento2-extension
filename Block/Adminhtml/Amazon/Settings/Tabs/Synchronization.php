@@ -225,7 +225,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         if ($this->isShowReviseAll()) {
             $js .=
                 'SynchronizationObj.initReviseAllInfo(' .
-                json_encode($this->reviseAllInProcessingState) . ',\'' .
+                $this->getHelper('Data')->jsonEncode($this->reviseAllInProcessingState) . ',\'' .
                 $this->reviseAllStartDate . '\',\'' .
                 $this->reviseAllEndDate . '\',\'' .
                 \Ess\M2ePro\Helper\Component\Amazon::NICK .'\'

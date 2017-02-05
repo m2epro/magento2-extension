@@ -275,7 +275,7 @@ abstract class Settings extends Listing
 
         foreach ($templatesData as $listingProductId => $data) {
 
-            $hash = md5(json_encode($data));
+            $hash = md5($this->getHelper('Data')->jsonEncode($data));
 
             $data['identifier'] = NULL;
 
@@ -424,7 +424,9 @@ abstract class Settings extends Listing
             }
         }
 
-        $ebayListing->setData('product_add_ids',json_encode(array()))->save();
+        $ebayListing->setData(
+            'product_add_ids', $this->getHelper('Data')->jsonEncode(array())
+        )->save();
 
         $this->clearSession();
     }

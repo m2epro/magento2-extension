@@ -12,21 +12,30 @@ class ListingOther extends AbstractForm
     {
         $form = $this->_formFactory->create();
 
-        $attributes = $this->getHelper('Magento\Attribute')->getGeneralFromAllAttributeSets();
+        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
+        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+
+        $generalAttributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+
+        $attributes = $magentoAttributeHelper->filterByInputTypes(
+            $generalAttributes, array(
+                'text', 'textarea', 'select'
+            )
+        );
 
         /** @var $account \Ess\M2ePro\Model\Account */
         $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)json_decode(
-                $formData['other_listings_mapping_settings'],true
+            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+                $formData['other_listings_mapping_settings']
             );
         }
 
         if (isset($formData['other_listings_move_settings'])) {
-            $formData['other_listings_move_settings'] = (array)json_decode(
-                $formData['other_listings_move_settings'],true
+            $formData['other_listings_move_settings'] = (array)$this->getHelper('Data')->jsonDecode(
+                $formData['other_listings_move_settings']
             );
             if (isset($formData['other_listings_move_settings']['synch'])) {
                 $formData['other_listings_move_synch'] = $formData['other_listings_move_settings']['synch'];
@@ -187,7 +196,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-);
+    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_sku_attribute',
@@ -251,7 +260,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-        );
+    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_general_id_attribute',
@@ -314,7 +323,7 @@ HTML
                                     class="input-text admin__control-text required-entry _required">
 </div>
 HTML
-        );
+    )->addCustomAttribute('allowed_attribute_types', 'text,textarea,select');
 
         $fieldset->addField(
             'mapping_title_attribute',

@@ -131,7 +131,7 @@ class Index extends Settings
             $categoryParam = $this->getRequest()->getParam('category_data');
             $categoryData = array();
             if (!empty($categoryParam)) {
-                $categoryData = json_decode($categoryParam, true);
+                $categoryData = $this->getHelper('Data')->jsonDecode($categoryParam);
             }
 
             $sessionData = $this->getHelper('Data\Session')->getValue($this->sessionKey);
@@ -320,7 +320,9 @@ class Index extends Settings
 
         // ---------------------------------------
         $listing = $this->getListing();
-        $listingProductAddIds = (array)json_decode($listing->getChildObject()->getData('product_add_ids'), true);
+        $listingProductAddIds = (array)$this->getHelper('Data')->jsonDecode(
+            $listing->getChildObject()->getData('product_add_ids')
+        );
         // ---------------------------------------
 
         // ---------------------------------------
@@ -358,7 +360,7 @@ class Index extends Settings
             $specifics = $this->getRequest()->getParam('specific_data');
 
             if ($specifics) {
-                $specifics = json_decode($specifics, true);
+                $specifics = $this->getHelper('Data')->jsonDecode($specifics);
                 $specifics = $specifics['specifics'];
             } else {
                 $specifics = array();

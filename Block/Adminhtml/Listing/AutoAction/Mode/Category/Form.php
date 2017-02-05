@@ -205,7 +205,9 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
     {
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Listing'));
 
-        $magentoCategoryIdsFromOtherGroups = json_encode($this->getCategoriesFromOtherGroups());
+        $magentoCategoryIdsFromOtherGroups = $this->getHelper('Data')->jsonEncode(
+            $this->getCategoriesFromOtherGroups()
+        );
         $this->js->add(<<<JS
             ListingAutoActionObj.magentoCategoryIdsFromOtherGroups = {$magentoCategoryIdsFromOtherGroups};
 

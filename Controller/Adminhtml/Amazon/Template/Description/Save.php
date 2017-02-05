@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 use Ess\M2ePro\Model\Amazon\Template\Description\Specific;
+use Ess\M2ePro\Helper\Component\Amazon;
 
 class Save extends Description
 {
@@ -62,7 +63,7 @@ class Save extends Description
         /** @var \Ess\M2ePro\Model\Amazon\Template\Description $amazonDescriptionTemplate */
         $amazonDescriptionTemplate = $descriptionTemplate->getChildObject();
         $amazonDescriptionTemplate->addData(array_merge(
-            [$descriptionTemplate->getResource()->getChildPrimary() => $descriptionTemplate->getId()],
+            [$descriptionTemplate->getResource()->getChildPrimary(Amazon::NICK) => $descriptionTemplate->getId()],
             $dataForAdd
         ))->save();
         // ---------------------------------------
@@ -169,9 +170,15 @@ class Save extends Description
 
         $dataForAdd['template_description_id'] = $id;
 
-        $dataForAdd['target_audience'] = json_encode(array_filter($dataForAdd['target_audience']));
-        $dataForAdd['search_terms']    = json_encode(array_filter($dataForAdd['search_terms']));
-        $dataForAdd['bullet_points']   = json_encode(array_filter($dataForAdd['bullet_points']));
+        $dataForAdd['target_audience'] = $this->getHelper('Data')->jsonEncode(
+            array_filter($dataForAdd['target_audience'])
+        );
+        $dataForAdd['search_terms']    = $this->getHelper('Data')->jsonEncode(
+            array_filter($dataForAdd['search_terms'])
+        );
+        $dataForAdd['bullet_points']   = $this->getHelper('Data')->jsonEncode(
+            array_filter($dataForAdd['bullet_points'])
+        );
 
         /* @var $descriptionDefinition \Ess\M2ePro\Model\Amazon\Template\Description\Definition */
         $descriptionDefinition = $this->activeRecordFactory->getObjectLoaded(
@@ -193,7 +200,7 @@ class Save extends Description
         }
 
         $specifics = !empty($post['specifics']['encoded_data']) ? $post['specifics']['encoded_data'] : '';
-        $specifics = (array)json_decode($specifics, true);
+        $specifics = (array)$this->getHelper('Data')->jsonDecode($specifics);
 
         $this->sortSpecifics($specifics, $post['general']['product_data_nick'], $post['general']['marketplace_id']);
 
@@ -207,7 +214,8 @@ class Save extends Description
 
             $type       = isset($specificData['type']) ? $specificData['type'] : '';
             $isRequired = isset($specificData['is_required']) ? $specificData['is_required'] : 0;
-            $attributes = isset($specificData['attributes']) ? json_encode($specificData['attributes']) : '[]';
+            $attributes = isset($specificData['attributes'])
+                ? $this->getHelper('Data')->jsonEncode($specificData['attributes']) : '[]';
 
             $recommendedValue = $specificData['mode'] == Specific::DICTIONARY_MODE_RECOMMENDED_VALUE
                 ? $specificData['recommended_value'] : '';

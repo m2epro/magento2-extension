@@ -44,7 +44,7 @@ define([
         massActionSubmitClick: function($super)
         {
             if (this.getSelectedProductsString() == '' || this.getSelectedProductsArray().length == 0) {
-                alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
+                this.alert(M2ePro.translator.translate('Please select the Products you want to perform the Action on.'));
                 return;
             }
             $super();

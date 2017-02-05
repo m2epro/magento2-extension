@@ -33,7 +33,7 @@ class ShippingAddress extends \Ess\M2ePro\Model\Order\ShippingAddress
 
     private function getBuyerEmail()
     {
-        $email = $this->order->getData('buyer_email');
+        $email = $this->order->getChildObject()->getData('buyer_email');
 
         if (stripos($email, 'Invalid Request') !== false || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $email = str_replace(' ', '-', strtolower($this->order->getChildObject()->getBuyerUserId()));

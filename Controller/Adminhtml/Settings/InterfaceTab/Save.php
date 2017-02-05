@@ -16,7 +16,7 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
     {
         $post = $this->getRequest()->getPostValue();
         if (!$post) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
+            $this->setJsonContent(['success' => false]);
             return $this->getResult();
         }
 
@@ -29,8 +29,8 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Base
             (int)$post['block_notices_show']
         );
 
-        $this->setAjaxContent(
-            json_encode(['success' => true, 'block_notices_show' => (bool)$post['block_notices_show']]), false
+        $this->setJsonContent(
+            ['success' => true, 'block_notices_show' => (bool)$post['block_notices_show']]
         );
         return $this->getResult();
     }

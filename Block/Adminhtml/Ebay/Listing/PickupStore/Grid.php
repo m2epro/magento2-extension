@@ -409,7 +409,7 @@ HTML;
             return '<div style="padding: 2px 4px;">'.$valueHtml.'</div>';
         }
 
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
         $productAttributes = array_keys($additionalData['variations_sets']);
 
         $valueHtml .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 10px 7px">';

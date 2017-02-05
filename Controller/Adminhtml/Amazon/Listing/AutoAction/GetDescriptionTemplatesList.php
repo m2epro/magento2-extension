@@ -29,7 +29,7 @@ class GetDescriptionTemplatesList extends \Ess\M2ePro\Controller\Adminhtml\Amazo
             });
         }
 
-        $this->setAjaxContent(json_encode($descriptionTemplates), false);
+        $this->setJsonContent($descriptionTemplates);
         return $this->getResult();
     }
 

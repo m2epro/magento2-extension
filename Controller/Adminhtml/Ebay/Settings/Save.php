@@ -43,31 +43,7 @@ class Save extends Settings
             }
         }
 
-        // TODO NOT SUPPORTED FEATURES
-        /*$motorsEpidsAttribute = $this->getRequest()->getParam('motors_epids_attribute');
-        $motorsKtypesAttribute = $this->getRequest()->getParam('motors_ktypes_attribute');
-
-        if (!empty($motorsKtypesAttribute) && !empty($motorsEpidsAttribute) &&
-            $motorsEpidsAttribute == $motorsKtypesAttribute
-        ) {
-            $this->_getSession()->addError(
-                $this->getHelper('Data')->__('ePIDs and kTypes Attributes can not be the same.')
-            );
-            $this->_redirectUrl($this->_getRefererUrl());
-            return;
-        }
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'epids_attribute',
-            $motorsEpidsAttribute
-        );
-
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/motors/', 'ktypes_attribute',
-            $motorsKtypesAttribute
-        );*/
-
-        $this->setAjaxContent(json_encode([
+        $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
             'success' => true
         ]), false);
         return $this->getResult();

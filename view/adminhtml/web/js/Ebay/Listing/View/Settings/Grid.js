@@ -276,9 +276,10 @@ define([
 
         // ---------------------------------------
 
-        confirm: function()
-        {
-            return true;
+        confirm: function (config) {
+            if (config.actions && config.actions.confirm) {
+                config.actions.confirm();
+            }
         },
 
         insertHelpLink: function (popUpElementId)

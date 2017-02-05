@@ -69,11 +69,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
 
         // tab: businessHours
         // ---------------------------------------
-        $data['business_hours'] = json_encode($post['business_hours']);
+        $data['business_hours'] = $this->getHelper('Data')->jsonEncode($post['business_hours']);
         $data['special_hours'] = '';
 
         if (isset($post['special_hours'])) {
-            $data['special_hours'] = json_encode($post['special_hours']);
+            $data['special_hours'] = $this->getHelper('Data')->jsonEncode($post['special_hours']);
         }
         // ---------------------------------------
 

@@ -97,4 +97,22 @@
                 type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
     </type>
 
+    <!-- Health Status System Notification -->
+
+    <type name="Magento\Framework\Notification\MessageList">
+        <arguments>
+            <argument name="messages" xsi:type="array">
+                <item name="m2epro_healthStatus_notification_magento_system_message" xsi:type="string">Ess\M2ePro\Model\HealthStatus\Notification\Magento\System\Message</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Health Status Magento Front Controller Notification -->
+
+    <type name="Magento\Framework\App\FrontControllerInterface">
+        <plugin name="m2epro_plugin_heathStatus_magento_framework_app_frontController"
+                type="Ess\M2ePro\Plugin\HealthStatus\Magento\Framework\App\FrontController"
+                sortOrder="999" />
+    </type>
+
 </config>

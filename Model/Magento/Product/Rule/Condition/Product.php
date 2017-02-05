@@ -555,7 +555,8 @@ class Product extends AbstractModel
     {
         return array(
             'is_in_stock' => 'Stock',
-            'qty' => 'Qty',
+            'qty'         => 'Qty',
+            'type_id'     => 'TypeId'
         );
     }
 
@@ -578,7 +579,10 @@ class Product extends AbstractModel
 
         if (!isset($this->_customFiltersCache[$filterId])) {
             $this->_customFiltersCache[$filterId] = $this->modelFactory->getObject(
-                'Magento\Product\Rule\Custom\\'.$customFilters[$filterId]
+                'Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+                    'filterOperator'  => $this->getData('operator'),
+                    'filterCondition' => $this->getData('value')
+                ]
             );
         }
 

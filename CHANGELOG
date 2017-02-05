@@ -1,3 +1,35 @@
+* 1.2.1 (r1821) (06/02/2017)
+
+* Added: Ability to migrate from Magento1 module v6.5.0.9
+* Added: Ability to filter Magento Products by Product Type through Advanced Filter
+* Improvement: Full Compatibility with Magento v2.0.*
+* Improvement: More log records are stored for 3rd Party Listigs Management process
+* Improvement: Unuseful Magento Attributes are hidden for 3rd Party Mapping Settings of Account Configuration
+* Improvement: [Amazon] Now you can use "Yes/No" filters in Grids for "Fulfilment" and "On Repricing" options
+* Fix: Incorrect Magento Order Tax Calculation, if Buyer Country different than Magento base Country
+* Fix: Magento Order was not created due to "Out of Stock" reason if Product Quantity was reserved earlier
+* Fix: Fatal error occured during Magento Product creation, if "Auto Add/Remove Rules" are configured for Listing
+* Fix: "Unknown Product type." exception, during synchronization, if Variation Magento Product was removed directly from database
+* Fix: Advanced Filter did not work correctly when "is not" condition was selected for any Param
+* Fix: Wrong message during Magento Order creation, if it is disabled in Account Settings
+* Fix: [eBay] Incorrect Buyer Email was shown on Magento Order Details Page
+* Fix: [eBay] Orders were not being downloaded (if there are many Orders which should be downloaded)
+* Fix: [eBay] Filter by Channel Order ID did not work correctly, if In-Store Pickup feature is enabled
+* Fix: [eBay] Incorrect Currency can be shown for "Online Price" column in 3rd Party Listings Grid
+* Fix: [eBay] Incorrect Value can be shown for "Available QTY" column in 3rd Party Listings Grid
+* Fix: [eBay] "Call to a member function process() on null" in Ess/M2ePro/Model/Ebay/Connector/Item/Single/Responser.php
+* Fix: [eBay] "Call to undefined method DateTime::toString()" in Ess/M2ePro/Helper/View/Ebay/Controller.php
+* Fix: [eBay] "Undefined index: variations" during Synchronization if the Product initially was listed as Simple and then was changed to Variational
+* Fix: [Amazon] Specifics data of Description Policy were not stored if "Save and Close" was clicked
+* Fix: [Amazon] If some Products are managed by Repricing Tool, their prices can have wrong values in the grids
+* Fix: [Amazon] If some Products are added to the Repricing Tool but they are in the disabled state, their prices can have wrong values in the grids
+* Fix: [Amazon] If Magento Product becomes Variational, some associated Listing Products may be broken as a result
+* Fix: [Amazon] Listing Products were not removed from Listings, if associated Magento Product was deleted
+* Fix: [Amazon] Incorrect Status was shown for all Variation Products in Search Grid
+* Fix: [Amazon] "Duplicate entry for key 'PRIMARY'" error during Synchronization process
+* Fix: [Amazon] Warning "Illegal string offset 'product_price'" during Synchronization process
+* Fix: [Amazon] You were unable to add new Child Product for Parent Product in Variations popup
+
 * 1.2.0 (r1731) (29/12/2016)
 
 * Added: Wizard for module Migration from Magento v1.x

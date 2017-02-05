@@ -725,7 +725,7 @@ class Data extends AbstractForm
 
             $fieldset->addClass('charity-row');
 
-            $charityData = json_decode($formData['charity'], true);
+            $charityData = $this->getHelper('Data')->jsonDecode($formData['charity']);
 
             if (!empty($charityData[$this->getMarketplaceId()])) {
                 $charityData = $charityData[$this->getMarketplaceId()];
@@ -1146,7 +1146,7 @@ class Data extends AbstractForm
         $charityRenderJs = '';
 
         if (!$this->getMarketplaceId()) {
-            $charityDictionary = json_encode($charityBlock->getCharityDictionary());
+            $charityDictionary = $this->getHelper('Data')->jsonEncode($charityBlock->getCharityDictionary());
             if (empty($formData['charity'])) {
 
                 $charityRenderJs = <<<JS
@@ -1417,7 +1417,7 @@ JS
         $data = $connection->fetchAssoc($dbSelect);
 
         foreach ($data as $key => $item) {
-            $data[$key]['charities'] = json_decode($item['charities'],true);
+            $data[$key]['charities'] = $this->getHelper('Data')->jsonDecode($item['charities']);
         }
 
         return $data;

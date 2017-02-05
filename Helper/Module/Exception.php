@@ -39,23 +39,25 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function process(\Exception $exception, $sendToServer = true)
+    public function process($throwable, $sendToServer = true)
     {
+        /**@var \Exception $throwable */
+
         try {
 
-            $type = get_class($exception);
+            $type = get_class($throwable);
 
-            $info = $this->getExceptionInfo($exception, $type);
-            $info .= $this->getExceptionStackTraceInfo($exception);
+            $info = $this->getExceptionInfo($throwable, $type);
+            $info .= $this->getExceptionStackTraceInfo($throwable);
             $info .= $this->getCurrentUserActionInfo();
             $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
 
             $this->log($info, $type);
 
             if (!$sendToServer ||
-                ($exception instanceof \Ess\M2ePro\Model\Exception && !$exception->isSendToServer()) ||
+                ($throwable instanceof \Ess\M2ePro\Model\Exception && !$throwable->isSendToServer()) ||
                 !(bool)(int)$this->moduleConfig->getGroupValue('/debug/exceptions/','send_to_server') ||
-                $this->isExceptionFiltered($info, $exception->getMessage(), $type)) {
+                $this->isExceptionFiltered($info, $throwable->getMessage(), $type)) {
                 return;
             }
 
@@ -65,7 +67,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             }
             $this->getHelper('Data\GlobalData')->setValue('send_exception_to_server', true);
 
-            $this->send($info, $exception->getMessage(), $type);
+            $this->send($info, $throwable->getMessage(), $type);
 
             $this->getHelper('Data\GlobalData')->unsetValue('send_exception_to_server');
 
@@ -155,20 +157,22 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    private function getExceptionInfo(\Exception $exception, $type)
+    private function getExceptionInfo($throwable, $type)
     {
-        $additionalData = $exception instanceof \Ess\M2ePro\Model\Exception ? $exception->getAdditionalData()
-                                                                           : '';
+        /**@var \Exception $throwable */
+
+        $additionalData = $throwable instanceof \Ess\M2ePro\Model\Exception ? $throwable->getAdditionalData()
+                                                                            : '';
 
         is_array($additionalData) && $additionalData = print_r($additionalData, true);
 
         $exceptionInfo = <<<EXCEPTION
 -------------------------------- EXCEPTION INFO ----------------------------------
 Type: {$type}
-File: {$exception->getFile()}
-Line: {$exception->getLine()}
-Code: {$exception->getCode()}
-Message: {$exception->getMessage()}
+File: {$throwable->getFile()}
+Line: {$throwable->getLine()}
+Code: {$throwable->getCode()}
+Message: {$throwable->getMessage()}
 Additional Data: {$additionalData}
 
 EXCEPTION;
@@ -176,11 +180,13 @@ EXCEPTION;
         return $exceptionInfo;
     }
 
-    private function getExceptionStackTraceInfo(\Exception $exception)
+    private function getExceptionStackTraceInfo($throwable)
     {
+        /**@var \Exception $throwable */
+
         $stackTraceInfo = <<<TRACE
 -------------------------------- STACK TRACE INFO --------------------------------
-{$exception->getTraceAsString()}
+{$throwable->getTraceAsString()}
 
 TRACE;
 

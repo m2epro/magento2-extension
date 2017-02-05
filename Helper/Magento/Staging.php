@@ -20,17 +20,22 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
     /** @var \Magento\Framework\App\DeploymentConfig */
     protected $deploymentConfig;
 
+    /** @var \Magento\Framework\App\ResourceConnection */
+    protected $resourceConnection;
+
     //########################################
 
     public function __construct(
         \Magento\Framework\Module\FullModuleList $fullModuleList,
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
         $this->fullModuleList = $fullModuleList;
         $this->deploymentConfig = $deploymentConfig;
+        $this->resourceConnection = $resourceConnection;
         parent::__construct($helperFactory, $context);
     }
 
@@ -74,6 +79,17 @@ class Staging extends \Ess\M2ePro\Helper\AbstractHelper
                    in_array($tableName, $this->getStagedTables(CategoryAttributeInterface::ENTITY_TYPE_CODE));
         }
         return in_array($tableName, $this->getStagedTables($entityType));
+    }
+
+    //########################################
+
+    public function getTableLinkField($entityType)
+    {
+        $connection = $this->resourceConnection->getConnection();
+        $tableName = $this->resourceConnection->getTableName($entityType . '_entity');
+
+        $indexList = $connection->getIndexList($tableName);
+        return $indexList[$connection->getPrimaryKeyName($tableName)]['COLUMNS_LIST'][0];
     }
 
     //########################################

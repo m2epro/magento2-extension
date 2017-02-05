@@ -15,23 +15,32 @@ define([
         // ---------------------------------------
 
         remove: function () {
-            if (!confirm(M2ePro.translator.translate('Are you sure?'))) {
-                return;
-            }
+            var self = this;
 
-            var url = M2ePro.url.get('amazon_listing_product_add/removeSessionProductsByCategory');
-            new Ajax.Request(url, {
-                parameters: {
-                    ids: this.getSelectedProductsString()
-                },
-                onSuccess: this.unselectAllAndReload.bind(this)
+            Grid.prototype.confirm({
+                actions: {
+                    confirm: function () {
+                        var url = M2ePro.url.get('amazon_listing_product_add/removeSessionProductsByCategory');
+                        new Ajax.Request(url, {
+                            parameters: {
+                                ids: self.getSelectedProductsString()
+                            },
+                            onSuccess: self.unselectAllAndReload.bind(self)
+                        });
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
             });
         },
 
         // ---------------------------------------
 
-        confirm: function () {
-            return true;
+        confirm: function (config) {
+            if (config.actions && config.actions.confirm) {
+                config.actions.confirm();
+            }
         }
 
         // ---------------------------------------

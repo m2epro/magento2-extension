@@ -105,7 +105,7 @@ class SaveListingProductsPolicy extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Te
                 continue;
             }
 
-            $templateData = json_decode(base64_decode($post["template_{$nick}"]), true);
+            $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
 
             $templateId = $templateData['id'];
             $templateMode = $templateData['mode'];

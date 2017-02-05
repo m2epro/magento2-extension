@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update;
 
+use \Ess\M2ePro\Model\Amazon\Listing\Other;
+
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsResponser
 {
     protected $resourceConnection;
@@ -154,11 +156,12 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 'status'             => (int)$existingItem['status']
             );
 
-            if (
-                is_null($receivedItem['title'])
-                || $receivedItem['title'] == \Ess\M2ePro\Model\Amazon\Listing\Other::EMPTY_TITLE_PLACEHOLDER
-            ) {
+            if (is_null($receivedItem['title']) || $receivedItem['title'] == Other::EMPTY_TITLE_PLACEHOLDER) {
                 unset($newData['title'], $existingData['title']);
+            }
+
+            if ($existingItem['is_repricing'] && !$existingItem['is_repricing_disabled']) {
+                unset($newData['online_price'], $existingData['online_price']);
             }
 
             if ($newData == $existingData) {
@@ -167,7 +170,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
             $tempLogMessages = array();
 
-            if ($newData['online_price'] != $existingData['online_price']) {
+            if (isset($newData['online_price'], $existingData['online_price']) &&
+                $newData['online_price'] != $existingData['online_price']) {
                 // M2ePro\TRANSLATIONS
                 // Item Price was successfully changed from %from% to %to%.
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
@@ -326,7 +330,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $logModel->addProductMessage($listingOtherModel->getId(),
                                          \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                                          NULL,
-                                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_LISTING,
+                                         \Ess\M2ePro\Model\Listing\Other\Log::ACTION_ADD_ITEM,
                                          // M2ePro\TRANSLATIONS
                                          // Item was successfully Added
                                          'Item was successfully Added',
@@ -396,7 +400,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                                  'second_table.sku','second_table.general_id','second_table.title',
                                  'second_table.online_price','second_table.online_qty',
                                  'second_table.is_afn_channel', 'second_table.is_isbn_general_id',
-                                 'second_table.listing_other_id');
+                                 'second_table.listing_other_id',
+                                 'second_table.is_repricing', 'second_table.is_repricing_disabled');
         }
 
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns($tempColumns);

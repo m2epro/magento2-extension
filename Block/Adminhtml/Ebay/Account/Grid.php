@@ -126,7 +126,7 @@ HTML;
 HTML;
         }
 
-        $additionalData = json_decode($row->getData('additional_data'), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         if (!empty($additionalData) && (int)$additionalData['bopis']) {
             $url = $this->getUrl('*/ebay_account_pickupStore/index', ['account_id' => $row->getData('id')]);

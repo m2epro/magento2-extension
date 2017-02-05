@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Amazon\Listing\Other;
 
 use \Ess\M2ePro\Model\Amazon\Template;
+use \Ess\M2ePro\Helper\Component\Amazon;
 
 class Moving extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -140,7 +141,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
         $listingProduct->addData($dataForUpdate)->save();
         $amazonListingProduct->addData(array_merge(
-            [$listingProduct->getResource()->getChildPrimary() => $listingProduct->getId()],
+            [$listingProduct->getResource()->getChildPrimary(Amazon::NICK) => $listingProduct->getId()],
             $dataForUpdate
         ))->save();
 
@@ -184,7 +185,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             $otherListing->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
             NULL,
-            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MOVE_LISTING,
+            \Ess\M2ePro\Model\Listing\Other\Log::ACTION_MOVE_ITEM,
             // M2ePro\TRANSLATIONS
             // Item was successfully Moved
             'Item was successfully Moved',
@@ -202,8 +203,8 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             NULL,
             \Ess\M2ePro\Model\Listing\Log::ACTION_MOVE_FROM_OTHER_LISTING,
             // M2ePro\TRANSLATIONS
-            // Item was successfully Moved
-            'Item was successfully Moved',
+            // Product was successfully Moved
+            'Product was successfully Moved',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_MEDIUM
         );
@@ -275,7 +276,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
-            [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
+            [$tempModel->getResource()->getChildPrimary(Amazon::NICK) => $tempModel->getId()],
             $dataForAdd
         ))->save();
 
@@ -378,7 +379,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
-            [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
+            [$tempModel->getResource()->getChildPrimary(Amazon::NICK) => $tempModel->getId()],
             $dataForAdd
         ))->save();
 
@@ -432,7 +433,7 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
 
         $childModel = $tempModel->getChildObject();
         $childModel->addData(array_merge(
-            [$tempModel->getResource()->getChildPrimary() => $tempModel->getId()],
+            [$tempModel->getResource()->getChildPrimary(Amazon::NICK) => $tempModel->getId()],
             $dataForAdd
         ))->save();
 

@@ -126,7 +126,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $post = $this->getRequest()->getPost();
 
             foreach ($templateNicks as $nick) {
-                $templateData = json_decode(base64_decode($post["template_{$nick}"]), true);
+                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
 
                 $this->setSessionValue("template_id_{$nick}", $templateData['id']);
                 $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);
@@ -186,7 +186,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
             foreach ($templateNicks as $nick) {
                 // ---------------------------------------
-                $templateData = json_decode(base64_decode($post["template_{$nick}"]), true);
+                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
                 // ---------------------------------------
 
                 $this->setSessionValue("template_id_{$nick}", $templateData['id']);
@@ -244,7 +244,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             $post = $this->getRequest()->getPost();
 
             foreach ($templateNicks as $nick) {
-                $templateData = json_decode(base64_decode($post["template_{$nick}"]), true);
+                $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
 
                 $this->setSessionValue("template_id_{$nick}", $templateData['id']);
                 $this->setSessionValue("template_mode_{$nick}", $templateData['mode']);

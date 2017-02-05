@@ -88,7 +88,8 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'title' => $this->__('Marketplace'),
                     'values' => $this->getMarketplaceDataToOptions(),
                     'value' => $templateData['marketplace_id'],
-                    'required' => true
+                    'required' => true,
+                    'disabled' => !empty($templateData['id'])
                 ]
             );
         }

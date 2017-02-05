@@ -372,7 +372,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             return $valueHtml;
         }
 
-        $additionalData = (array)json_decode($row->getData('additional_data'), true);
+        $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
         $productAttributes = array_keys($additionalData['variations_sets']);
 
@@ -408,7 +408,7 @@ HTML;
     {
         if ($row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED ||
             $row->getData('ebay_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
-            $additionalData = (array)json_decode($row->getData('additional_data'), true);
+            $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
             if (empty($additionalData['ebay_item_fees']['listing_fee']['fee'])) {
 
@@ -782,25 +782,25 @@ HTML;
         $condition = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition = 'min_online_price >= \''.$value['from'].'\'';
+            $condition = 'min_online_price >= \''.(float)$value['from'].'\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'min_online_price <= \''.$value['to'].'\'';
+            $condition .= 'min_online_price <= \''.(float)$value['to'].'\'';
         }
 
         $condition = '(' . $condition . ') OR (';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $condition .= 'max_online_price >= \''.$value['from'].'\'';
+            $condition .= 'max_online_price >= \''.(float)$value['from'].'\'';
         }
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $condition .= ' AND ';
             }
-            $condition .= 'max_online_price <= \''.$value['to'].'\'';
+            $condition .= 'max_online_price <= \''.(float)$value['to'].'\'';
         }
 
         $condition .= ')';
@@ -929,7 +929,7 @@ JS
         $productsIdsForList = empty($temp) ? '' : $temp;
 
         $gridId = $component . 'ListingViewGrid' . $this->listing['id'];
-        $ignoreListings = json_encode(array($this->listing['id']));
+        $ignoreListings = $this->getHelper('Data')->jsonEncode(array($this->listing['id']));
 
         $this->jsUrl->addUrls([
             'runListProducts' => $this->getUrl('*/ebay_listing/runListProducts'),
@@ -1043,7 +1043,7 @@ JS
             'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
         ]);
 
-        $showAutoAction   = json_encode((bool)$this->getRequest()->getParam('auto_actions'));
+        $showAutoAction   = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
 
         // M2ePro_TRANSLATIONS
         // Please check eBay Motors compatibility attribute.You can find it in %menu_label% > Configuration > <a target="_blank" href="%url%">General</a>.

@@ -253,22 +253,26 @@ class Data extends AbstractHelper
      */
     public function jsonEncode($data, $throwError = true)
     {
+        if ($data === false) {
+            return 'false';
+        }
+
         $encoded = @json_encode($data);
-        if (!is_null($encoded)) {
+        if ($encoded !== false) {
             return $encoded;
         }
 
         $encoded = @json_encode($this->normalizeToUtfEncoding($data));
-        if (!is_null($encoded)) {
+        if ($encoded !== false) {
             return $encoded;
         }
 
         $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
-        \Zend_Json::$useBuiltinEncoderDecoder = false;
+        \Zend_Json::$useBuiltinEncoderDecoder = true;
         $encoded = \Zend_Json::encode($data);
         \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
 
-        if (!is_null($encoded)) {
+        if ($encoded !== false) {
             return $encoded;
         }
 
@@ -279,6 +283,45 @@ class Data extends AbstractHelper
         throw new \Ess\M2ePro\Model\Exception\Logic('Unable to encode to JSON.' ,
             array(
                 'source' => serialize($data)
+            ));
+    }
+
+    /**
+     * It prevents situations when json_decode() return NULL due to unknown issue.
+     * Despite the fact that given JSON is having correct format
+     *
+     * @param $data
+     * @param bool $throwError
+     * @return null|array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function jsonDecode($data, $throwError = true)
+    {
+        if (is_null($data) || $data === '' || strtolower($data) === 'null') {
+            return NULL;
+        }
+
+        $decoded = @json_decode($data, true);
+        if (!is_null($decoded)) {
+            return $decoded;
+        }
+
+        $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
+        \Zend_Json::$useBuiltinEncoderDecoder = true;
+        $decoded = \Zend_Json::decode($data);
+        \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
+
+        if (!is_null($decoded)) {
+            return $decoded;
+        }
+
+        if (!$throwError) {
+            return NULL;
+        }
+
+        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to decode JSON.' ,
+            array(
+                'source' => $data
             ));
     }
 

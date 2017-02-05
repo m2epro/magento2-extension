@@ -79,7 +79,7 @@ class MapToAsin extends Main
             return $this->getResult();
         }
 
-        $optionsData = json_decode($optionsData, true);
+        $optionsData = $this->getHelper('Data')->jsonDecode($optionsData);
 
         if ($variationManager->isRelationParentType()) {
             if (empty($optionsData['virtual_matched_attributes'])) {

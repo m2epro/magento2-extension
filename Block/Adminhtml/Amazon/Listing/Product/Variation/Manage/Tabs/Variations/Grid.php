@@ -115,7 +115,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             array('malpr' => $alprTable),
             '(`second_table`.`listing_product_id` = `malpr`.`listing_product_id`)',
             array(
-                'is_repricing' => 'listing_product_id',
                 'is_repricing_disabled' => 'is_online_disabled',
             )
         );
@@ -352,17 +351,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         if ($this->canChangeProductVariation($row)) {
 
             $listingProductId = $row->getId();
-            $attributes = $this->getListingProduct()->getChildObject()
-                ->getVariationManager()->getTypeModel()->getProductAttributes();
-            $variationsTree = $this->getProductVariationsTree($row);
-
-            sort($attributes);
+            $attributes = array_keys($typeModel->getParentTypeModel()->getMatchedAttributes());
+            $variationsTree = $this->getProductVariationsTree($row, $attributes);
 
             $linkTitle = $this->__('Change Variation');
             $linkContent = $this->__('Change Variation');
 
-            $attributes = $this->getHelper('Data')->escapeHtml(json_encode($attributes));
-            $variationsTree = $this->getHelper('Data')->escapeHtml(json_encode($variationsTree));
+            $attributes = $this->getHelper('Data')->escapeHtml($this->getHelper('Data')->jsonEncode($attributes));
+            $variationsTree = $this->getHelper('Data')->escapeHtml(
+                $this->getHelper('Data')->jsonEncode($variationsTree)
+            );
 
             $html .= <<<HTML
 <form action="javascript:void(0);" class="product-options-edit"></form>
@@ -480,7 +478,9 @@ HTML;
         }
 
         if ($row->getChildObject()->getData('defected_messages')) {
-            $defectedMessages = json_decode($row->getChildObject()->getData('defected_messages'), true);
+            $defectedMessages = $this->getHelper('Data')->jsonDecode(
+                $row->getChildObject()->getData('defected_messages')
+            );
 
             $msg = '';
             foreach ($defectedMessages as $message) {
@@ -841,14 +841,14 @@ HTML;
         $where = '';
 
         if (isset($value['from']) && $value['from'] != '') {
-            $where .= 'online_qty >= ' . $value['from'];
+            $where .= 'online_qty >= ' . (int)$value['from'];
         }
 
         if (isset($value['to']) && $value['to'] != '') {
             if (isset($value['from']) && $value['from'] != '') {
                 $where .= ' AND ';
             }
-            $where .= 'online_qty <= ' . $value['to'];
+            $where .= 'online_qty <= ' . (int)$value['to'];
         }
 
         if (isset($value['afn']) && $value['afn'] !== '') {
@@ -874,13 +874,13 @@ HTML;
         if (isset($value['from']) || isset($value['to'])) {
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'online_price >= \''.$value['from'].'\'';
+                $condition = 'online_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_price <= \''.$value['to'].'\'';
+                $condition .= 'online_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ' AND
@@ -893,13 +893,13 @@ HTML;
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'online_sale_price >= \''.$value['from'].'\'';
+                $condition .= 'online_sale_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_sale_price <= \''.$value['to'].'\'';
+                $condition .= 'online_sale_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ' AND
@@ -920,11 +920,7 @@ HTML;
                 $condition = '(' . $condition . ') OR ';
             }
 
-            if ($value['is_repricing'] === '0') {
-                $condition .= '`malpr`.`listing_product_id` IS NULL';
-            } else {
-                $condition .= '`malpr`.`listing_product_id` IS NOT NULL';
-            }
+            $condition .= 'is_repricing = ' . (int)$value['is_repricing'];
         }
 
         $collection->getSelect()->where($condition);
@@ -1242,7 +1238,7 @@ HTML;
 
     //########################################
 
-    public function getProductVariationsTree($childProduct)
+    public function getProductVariationsTree($childProduct, $attributes)
     {
         $unusedVariations = $this->getUnusedProductVariations();
 
@@ -1254,9 +1250,15 @@ HTML;
         }
 
         $variationsSets = $this->getAttributesVariationsSets($unusedVariations);
-        $firstAttribute = key($variationsSets);
+        $variationsSetsSorted =  [];
 
-        return $this->prepareVariations($firstAttribute,$unusedVariations,$variationsSets);
+        foreach ($attributes as $attribute) {
+            $variationsSetsSorted[$attribute] = $variationsSets[$attribute];
+        }
+
+        $firstAttribute = key($variationsSetsSorted);
+
+        return $this->prepareVariations($firstAttribute,$unusedVariations,$variationsSetsSorted);
     }
 
     private function prepareVariations($currentAttribute,$unusedVariations,$variationsSets,$filters = array())
@@ -1288,7 +1290,9 @@ HTML;
                 $return[$currentAttribute][$option] = $result;
             }
 
-            ksort($return[$currentAttribute]);
+            if ($return !== false) {
+                ksort($return[$currentAttribute]);
+            }
 
             return $return;
         }
@@ -1331,7 +1335,9 @@ HTML;
             return false;
         }
 
-        ksort($return[$currentAttribute]);
+        if ($return !== false) {
+            ksort($return[$currentAttribute]);
+        }
 
         return $return;
     }
@@ -1428,8 +1434,6 @@ HTML;
                 }
             }
         }
-
-        ksort($attributesOptions);
 
         return $attributesOptions;
     }

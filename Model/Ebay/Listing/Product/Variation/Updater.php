@@ -82,7 +82,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     {
         $additionalData = $listingProduct->getData('additional_data');
         $additionalData = is_null($additionalData) ? array()
-                                                   : (array)json_decode($additionalData,true);
+                                                   : (array)$this->getHelper('Data')->jsonDecode($additionalData);
 
         if (isset($variationsData['set'])) {
             $additionalData['variations_sets'] = $variationsData['set'];

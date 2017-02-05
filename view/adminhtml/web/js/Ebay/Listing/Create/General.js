@@ -1,9 +1,10 @@
 define([
     'underscore',
+    'Magento_Ui/js/modal/alert',
     'M2ePro/Ebay/Listing/Create/General/MarketplaceSynchProgress',
     'M2ePro/Plugin/ProgressBar',
     'M2ePro/Plugin/AreaWrapper'
-], function (_) {
+], function (_, alert) {
 
     window.EbayListingCreateGeneral = Class.create();
     EbayListingCreateGeneral.prototype = {
@@ -144,7 +145,10 @@ define([
 
             $$('.next_step_button').each(function(btn) { btn.observe('click',function() {
                 if (self.marketplaceSynchProgressObj.runningNow) {
-                    return alert(M2ePro.translator.translate('Please wait while Synchronization is finished.'));
+                    alert({
+                        content: M2ePro.translator.translate('Please wait while Synchronization is finished.')
+                    });
+                    return;
                 }
                 jQuery('#edit_form').valid() && self.synchronizeMarketplace($('marketplace_id').value);
             }) });

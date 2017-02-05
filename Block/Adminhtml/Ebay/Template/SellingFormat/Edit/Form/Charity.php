@@ -70,7 +70,7 @@ class Charity extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $data = $connection->fetchAssoc($dbSelect);
 
         foreach ($data as $key => $item) {
-            $data[$key]['charities'] = json_decode($item['charities'],true);
+            $data[$key]['charities'] = $this->getHelper('Data')->jsonDecode($item['charities']);
         }
 
         return $data;

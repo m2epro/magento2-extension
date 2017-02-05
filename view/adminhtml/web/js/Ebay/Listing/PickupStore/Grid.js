@@ -46,7 +46,7 @@ define([
                     continueBtn.stopObserving().observe('click', function() {
                         var checkedIds = EbayListingPickupStoreStepProductsGridObj.getCheckedValues();
                         if (checkedIds == '') {
-                            alert('Please select Items.');
+                            self.alert('Please select Items.');
                             return;
                         }
 
@@ -96,7 +96,7 @@ define([
                             storesIds = EbayListingPickupStoreStepStoresGridObj.getCheckedValues();
 
                         if (productsIds == '' || storesIds == '') {
-                            alert('Please select Stores.');
+                            self.alert('Please select Stores.');
                             return;
                         }
 
@@ -119,7 +119,7 @@ define([
                 onSuccess: function(transport) {
 
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        self.alert(transport.responseText);
                         return;
                     }
 

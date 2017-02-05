@@ -173,7 +173,7 @@ HTML
 
             if (!empty($categoriesTreeArray)) {
 
-                $categoriesTreeArray = json_encode($categoriesTreeArray);
+                $categoriesTreeArray = $this->getHelper('Data')->jsonEncode($categoriesTreeArray);
 
                 $this->js->add(<<<JS
 require([

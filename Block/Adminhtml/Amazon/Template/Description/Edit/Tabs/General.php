@@ -534,14 +534,18 @@ HTML;
             'Recent'      => $this->__('Recent'),
         ]);
 
-        $formData = json_encode($this->formData);
+        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
         $isEdit = $this->templateModel->getId() ? 'true' : 'false';
         $isCategoryLocked = $this->isCategoryLocked() ? 'true' : 'false';
         $isMarketplaceLocked = $this->isMarketplaceLocked() ? 'true' : 'false';
-        $marketplaceForceSet = json_encode((bool)(int)$this->getRequest()->getParam('marketplace_id'));
+        $marketplaceForceSet = $this->getHelper('Data')->jsonEncode(
+            (bool)(int)$this->getRequest()->getParam('marketplace_id')
+        );
         $isLockedNewAsin = $this->isNewAsinSwitcherLocked() ? 'true' : 'false';
-        $newAsinSwitcherForceSet = json_encode((bool)(int)$this->getRequest()->getParam('is_new_asin_accepted'));
-        $allAttributes = json_encode($this->getHelper('Magento\Attribute')->getAll());
+        $newAsinSwitcherForceSet = $this->getHelper('Data')->jsonEncode(
+            (bool)(int)$this->getRequest()->getParam('is_new_asin_accepted')
+        );
+        $allAttributes = $this->getHelper('Data')->jsonEncode($this->getHelper('Magento\Attribute')->getAll());
 
         $this->js->addRequireJs([
             'jQuery' => 'jquery',

@@ -19,10 +19,14 @@ class GetAllSpecifics extends Description
         $specifics = array();
         foreach ($tempSpecifics as $tempSpecific) {
 
-            $tempSpecific['values']             = (array)json_decode($tempSpecific['values'], true);
-            $tempSpecific['recommended_values'] = (array)json_decode($tempSpecific['recommended_values'], true);
-            $tempSpecific['params']             = (array)json_decode($tempSpecific['params'], true);
-            $tempSpecific['data_definition']    = (array)json_decode($tempSpecific['data_definition'], true);
+            $tempSpecific['values']             = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['values']);
+            $tempSpecific['recommended_values'] = (array)$this->getHelper('Data')->jsonDecode(
+                $tempSpecific['recommended_values']
+            );
+            $tempSpecific['params']             = (array)$this->getHelper('Data')->jsonDecode($tempSpecific['params']);
+            $tempSpecific['data_definition']    = (array)$this->getHelper('Data')->jsonDecode(
+                $tempSpecific['data_definition']
+            );
 
             $specifics[$tempSpecific['specific_id']] = $tempSpecific;
         }

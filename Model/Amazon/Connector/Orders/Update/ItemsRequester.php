@@ -55,10 +55,21 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getProcessingParams()
     {
+        $ordersIds = array();
+
+        foreach ($this->params['items'] as $orderUpdate) {
+            if (!is_array($orderUpdate) || empty($orderUpdate['order_id'])) {
+                continue;
+            }
+
+            $ordersIds[] = $orderUpdate['order_id'];
+        }
+
         return array_merge(
             parent::getProcessingParams(),
             array(
-                'request_data' => $this->getRequestData()
+                'request_data' => $this->getRequestData(),
+                'orders_ids' => $ordersIds
             )
         );
     }

@@ -9,7 +9,9 @@ class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');
-        $selectedProducts = (array)json_decode($this->getRequest()->getParam('selectedProducts'));
+        $selectedProducts = (array)$this->getHelper('Data')->jsonDecode(
+            $this->getRequest()->getParam('selectedProducts')
+        );
         $listingId = (int)$this->getRequest()->getParam('listingId');
 
         $listingInstance = $this->parentFactory->getCachedObjectLoaded(
@@ -28,12 +30,12 @@ class TryToMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Moving
         }
 
         if (count($failedProducts) == 0) {
-            $this->setAjaxContent(json_encode(array('result' => 'success')), false);
+            $this->setJsonContent(array('result' => 'success'));
         } else {
-            $this->setAjaxContent(json_encode(array(
+            $this->setJsonContent(array(
                 'result' => 'fail',
                 'failed_products' => $failedProducts
-            )), false);
+            ));
         }
 
         return $this->getResult();

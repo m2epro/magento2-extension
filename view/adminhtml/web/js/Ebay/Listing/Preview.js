@@ -3,11 +3,13 @@ define(function () {
     window.EbayListingPreviewItems = Class.create(Common, {
 
         initialize: function () {
+            var self = this;
+
             jQuery('.price_container button').click(function () {
-                alert(M2ePro.translator.translate('This is Item Preview Mode'));
+                self.alert(M2ePro.translator.translate('This is Item Preview Mode'));
             });
 
-            this.onTabClick(jQuery('.tabs-horiz li:first'));
+            self.onTabClick(jQuery('.tabs-horiz li:first'));
         },
 
         getVariation: function(chosenOptions) {

@@ -21,6 +21,7 @@ class General extends AbstractModel
             $filters = [
                 'skus_list' => $skus,
             ];
+            $skus = array_map('strtolower', $skus);
         }
 
         $response = $this->sendRequest($filters);
@@ -47,15 +48,21 @@ class General extends AbstractModel
             )
         ));
 
+        $existedSkus = array_map('strtolower', $existedSkus);
+
         if (!is_null($skus)) {
             $existedSkus = array_intersect($skus, $existedSkus);
         }
 
-        $existedSkus = array_map('strtolower', $existedSkus);
-
         $skuIndexedResultOffersData = [];
         foreach ($response['offers'] as $offerData) {
-            $skuIndexedResultOffersData[strtolower($offerData['sku'])] = $offerData;
+
+            $offerSku = strtolower($offerData['sku']);
+            if (!is_null($skus) && !in_array($offerSku, $skus, true)) {
+                continue;
+            }
+
+            $skuIndexedResultOffersData[$offerSku] = $offerData;
         }
 
         $this->processNewOffers($skuIndexedResultOffersData, $existedSkus);
@@ -84,14 +91,15 @@ class General extends AbstractModel
 
     private function processNewOffers(array $resultOffersData, array $existedSkus)
     {
-        $newOffersSkus = array_diff(array_keys($resultOffersData), $existedSkus);
-        if (empty($newOffersSkus)) {
-            return;
+        $newOffersData = array();
+        foreach ($resultOffersData as $offerSku => $offerData) {
+            if (!in_array((string)$offerSku, $existedSkus, true)) {
+                $newOffersData[(string)$offerSku] = $offerData;
+            }
         }
 
-        $newOffersData = [];
-        foreach ($newOffersSkus as $newOfferSku) {
-            $newOffersData[$newOfferSku] = $resultOffersData[$newOfferSku];
+        if (empty($newOffersData)) {
+            return;
         }
 
         $this->addListingsProductsRepricing($newOffersData);
@@ -100,7 +108,13 @@ class General extends AbstractModel
 
     private function processRemovedOffers(array $resultOffersData, array $existedSkus)
     {
-        $removedOffersSkus = array_diff($existedSkus, array_keys($resultOffersData));
+        $removedOffersSkus = array();
+        foreach ($existedSkus as $existedSku) {
+            if (!array_key_exists((string)$existedSku, $resultOffersData)) {
+                $removedOffersSkus[] = (string)$existedSku;
+            }
+        }
+
         if (empty($removedOffersSkus)) {
             return;
         }
@@ -111,14 +125,15 @@ class General extends AbstractModel
 
     private function processUpdatedOffers(array $resultOffersData, array $existedSkus)
     {
-        $updatedOffersSkus = array_intersect($existedSkus, array_keys($resultOffersData));
-        if (empty($updatedOffersSkus)) {
-            return;
+        $updatedOffersData = array();
+        foreach ($resultOffersData as $offerSku => $offerData) {
+            if (in_array((string)$offerSku, $existedSkus, true)) {
+                $updatedOffersData[(string)$offerSku] = $offerData;
+            }
         }
 
-        $updatedOffersData = [];
-        foreach ($updatedOffersSkus as $updatedOfferSku) {
-            $updatedOffersData[$updatedOfferSku] = $resultOffersData[$updatedOfferSku];
+        if (empty($updatedOffersData)) {
+            return;
         }
 
         $this->updateListingsProductsRepricing($updatedOffersData);

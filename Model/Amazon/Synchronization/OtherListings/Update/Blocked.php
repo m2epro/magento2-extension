@@ -136,7 +136,7 @@ final class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListin
             return false;
         }
 
-        $additionalData = json_decode($account->getAdditionalData(), true);
+        $additionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
         if (!empty($additionalData['last_other_listing_products_synchronization'])) {
             return (strtotime($additionalData['last_other_listing_products_synchronization'])
                    + 86400) > $this->getHelper('Data')->getCurrentGmtDate(true);

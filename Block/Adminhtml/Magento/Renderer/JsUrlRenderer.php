@@ -28,7 +28,7 @@ class JsUrlRenderer extends AbstractRenderer
             return '';
         }
 
-        $urls = json_encode($this->jsUrls);
+        $urls = $this->helperFactory->getObject('Data')->jsonEncode($this->jsUrls);
 
         return "M2ePro.url.add({$urls});";
     }

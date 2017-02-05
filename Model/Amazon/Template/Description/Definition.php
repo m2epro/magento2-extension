@@ -547,8 +547,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getTargetAudienceTemplate()
     {
-        return !is_null($this->getData('target_audience')) ? json_decode($this->getData('target_audience'), true)
-                                                           : array();
+        return !is_null($this->getData('target_audience'))
+            ? $this->getHelper('Data')->jsonDecode($this->getData('target_audience'))
+            : array();
     }
 
     /**
@@ -616,7 +617,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getBulletPointsTemplate()
     {
-        return is_null($this->getData('bullet_points')) ? array() : json_decode($this->getData('bullet_points'),true);
+        return is_null($this->getData('bullet_points'))
+            ? array()
+            : $this->getHelper('Data')->jsonDecode($this->getData('bullet_points'));
     }
 
     /**
@@ -684,7 +687,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getSearchTermsTemplate()
     {
-        return is_null($this->getData('search_terms')) ? array() : json_decode($this->getData('search_terms'),true);
+        return is_null($this->getData('search_terms'))
+            ? array()
+            : $this->getHelper('Data')->jsonDecode($this->getData('search_terms'));
     }
 
     /**

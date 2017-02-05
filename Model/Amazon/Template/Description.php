@@ -218,7 +218,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
 
         if (!$asObjects) {
             foreach ($specifics as &$specific) {
-                $specific['attributes'] = (array)json_decode($specific['attributes'], true);
+                $specific['attributes'] = (array)$this->getHelper('Data')->jsonDecode($specific['attributes']);
             }
         }
 

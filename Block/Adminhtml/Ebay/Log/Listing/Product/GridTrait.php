@@ -23,7 +23,6 @@ trait GridTrait
             \Ess\M2ePro\Model\Listing\Log::ACTION_TRANSLATE_PRODUCT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_AND_REMOVE_PRODUCT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_DELETE_PRODUCT_FROM_COMPONENT => '',
-            \Ess\M2ePro\Model\Listing\Log::ACTION_NEW_SKU_PRODUCT_ON_COMPONENT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_AFN_ON_COMPONENT => '',
             \Ess\M2ePro\Model\Listing\Log::ACTION_SWITCH_TO_MFN_ON_COMPONENT => '',
         ];

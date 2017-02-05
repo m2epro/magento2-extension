@@ -61,7 +61,7 @@ class SaveListing extends Template
                 continue;
             }
 
-            $templateData = json_decode(base64_decode($post["template_{$nick}"]), true);
+            $templateData = $this->getHelper('Data')->jsonDecode(base64_decode($post["template_{$nick}"]));
 
             $templateId = $templateData['id'];
             $templateMode = $templateData['mode'];

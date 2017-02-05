@@ -163,10 +163,15 @@ Do not forget to press Save Button after returning back to Magento
 
                 if (($currentTimeStamp + 60*60*24*10) >= $tokenExpirationTimeStamp) {
 
+                    $expirationDate = $this->localeDate->date(strtotime($accountData['token_expired_date']));
+                    $expirationDate = $this->localeDate->formatDateTime($expirationDate,
+                                                                        \IntlDateFormatter::MEDIUM,
+                                                                        \IntlDateFormatter::SHORT);
+
                     $tempMessage = $this->getHelper('Module\Translation')->__(
                         trim($textToTranslate),
                         $this->getHelper('Data')->escapeHtml($accountData['title']),
-                        $this->localeDate->date(strtotime($accountData['token_expired_date']))->toString($format),
+                        $expirationDate,
                         $this->getHelper('View\Ebay')->getMenuRootNodeLabel(),
                             $controller->getUrl('*/ebay_account/edit', array('id' => $accountData['id']))
                         );

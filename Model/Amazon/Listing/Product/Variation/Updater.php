@@ -65,9 +65,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         $listingProduct->getChildObject()->setData('is_variation_product', 1);
-        $variationManager->setRelationParentType();
-        $variationManager->getTypeModel()->resetProductAttributes(false);
-        $variationManager->getTypeModel()->getProcessor()->process();
+        $variationManager->setIndividualType();
+        $variationManager->getTypeModel()->resetProductVariation();
 
         return true;
     }

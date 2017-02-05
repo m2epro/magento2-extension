@@ -152,7 +152,7 @@ HTML
     public function getDescriptionTemplateMode()
     {
         $listingAdditionalData = $this->listing->getData('additional_data');
-        $listingAdditionalData = json_decode($listingAdditionalData, true);
+        $listingAdditionalData = $this->getHelper('Data')->jsonDecode($listingAdditionalData);
 
         $mode = 'same';
 

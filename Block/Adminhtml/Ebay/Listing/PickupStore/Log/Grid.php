@@ -31,7 +31,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         $this->listingProductPickupStoreStateId = (int)$this->getRequest()->getParam(
             'listing_product_pickup_store_state', 0
         );
-        $this->isAjax = json_encode($this->getRequest()->isXmlHttpRequest());
+        $this->isAjax = $this->getHelper('Data')->jsonEncode($this->getRequest()->isXmlHttpRequest());
     }
 
     //########################################

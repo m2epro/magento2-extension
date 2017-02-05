@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'Magento_Ui/js/modal/alert'
+], function (alert) {
 
     window.AmazonTemplateDescriptionCategorySpecificRenderer = Class.create();
     AmazonTemplateDescriptionCategorySpecificRenderer.prototype = {
@@ -34,7 +36,9 @@ define([], function () {
             this.specific = this.dictionaryHelper.getDictionarySpecific(this.indexedXPath);
 
             if (this.specific === null) {
-                alert('Unable to load Dictionary Specific.');
+                alert({
+                    content: 'Unable to load Dictionary Specific.'
+                });
                 return false;
             }
 

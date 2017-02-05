@@ -896,7 +896,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
      */
     public function getDecodedVariationConfigurableImages()
     {
-        return json_decode($this->getData('variation_configurable_images'), true);
+        return $this->getHelper('Data')->jsonDecode($this->getData('variation_configurable_images'));
     }
 
     /**

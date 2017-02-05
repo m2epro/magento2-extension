@@ -1,4 +1,6 @@
-define([], function () {
+define([
+    'Magento_Ui/js/modal/alert'
+], function (alert) {
     window.AmazonListingAfnQty = Class.create();
     AmazonListingAfnQty.prototype = {
 
@@ -58,7 +60,9 @@ define([], function () {
                 },
                 onSuccess: function(transport) {
                     if (!transport.responseText.isJSON()) {
-                        alert(transport.responseText);
+                        alert({
+                            content: transport.responseText
+                        });
                         return;
                     }
 

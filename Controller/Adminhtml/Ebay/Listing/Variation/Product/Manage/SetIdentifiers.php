@@ -26,9 +26,11 @@ class SetIdentifiers extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         $additionalData = $variation->getAdditionalData();
         $additionalData['product_details'] = $data;
-        $variation->setData('additional_data', json_encode($additionalData))->save();
+        $variation->setData(
+            'additional_data', $this->getHelper('Data')->jsonEncode($additionalData)
+        )->save();
 
-        $this->setAjaxContent(json_encode(array('success' => true)), false);
+        $this->setJsonContent(array('success' => true));
         return $this->getResult();
     }
 }

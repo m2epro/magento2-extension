@@ -491,8 +491,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             NULL,
             \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_PRODUCT_TO_LISTING,
             // M2ePro\TRANSLATIONS
-            // Item was successfully Added
-            'Item was successfully Added',
+            // Product was successfully Added
+            'Product was successfully Added',
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW,
             $logAdditionalInfo
@@ -645,7 +645,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
 
                     $tempVariation[] = array(
                         'qty' => 0,
-                        'price' => $ebayVariation->getPrice(),
+                        'price' => $ebayVariation->getOnlinePrice(),
                         'sku' => $ebayVariation->getOnlineSku(),
                         'add' => 0,
                         'delete' => 1,
@@ -715,15 +715,13 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                 if ($variationManager->isRelationChildType()) {
                     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonParentListingProduct */
                     $amazonParentListingProduct = $variationManager->getTypeModel()->getAmazonParentListingProduct();
-
                     $listingProduct->delete();
-
                     $amazonParentListingProduct->getVariationManager()->getTypeModel()->getProcessor()->process();
+                    continue;
                 }
-            } else {
-                $listingProduct->delete();
             }
 
+            $listingProduct->delete();
         }
         // ---------------------------------------
     }

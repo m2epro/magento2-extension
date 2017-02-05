@@ -18,7 +18,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
         $storesIds = $this->getRequest()->getParam('stores_ids');
 
         if (empty($productsIds) || empty($storesIds)) {
-            $this->setAjaxContent(json_encode([
+            $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
                 'messages' => [[
                     'type' => 'error',
                     'text' => $this->__('You should provide correct parameters.')
@@ -46,7 +46,7 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\PickupStore
             );
         }
 
-        $this->setAjaxContent(json_encode([
+        $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
             'messages' => $messages
         ]), false);
         return $this->getResult();

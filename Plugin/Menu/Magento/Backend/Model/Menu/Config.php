@@ -109,7 +109,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
                 $registry->setKey(self::MENU_STATE_REGISTRY_KEY);
             }
 
-            $registry->setValue(json_encode($currentMenuState))->save();
+            $registry->setValue($this->helperFactory->getObject('Data')->jsonEncode($currentMenuState))->save();
 
             $this->helperFactory->getObject('Magento')->clearMenuCache();
         }

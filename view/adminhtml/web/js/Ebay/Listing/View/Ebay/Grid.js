@@ -90,7 +90,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response.error) {
-                        alert('Unable to receive estimated fee.');
+                        self.alert('Unable to receive estimated fee.');
                         return;
                     }
 
@@ -116,7 +116,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response.error) {
-                        alert(response.error);
+                        self.alert(response.error);
                         return;
                     }
 

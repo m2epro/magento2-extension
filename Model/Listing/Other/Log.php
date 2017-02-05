@@ -13,19 +13,19 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const ACTION_UNKNOWN = 1;
     const _ACTION_UNKNOWN = 'System';
 
-    const ACTION_ADD_LISTING = 4;
-    const _ACTION_ADD_LISTING = 'Add new Listing';
-    const ACTION_DELETE_LISTING = 5;
-    const _ACTION_DELETE_LISTING = 'Delete existing Listing';
+    const ACTION_ADD_ITEM = 4;
+    const _ACTION_ADD_ITEM = 'Add new Item';
+    const ACTION_DELETE_ITEM = 5;
+    const _ACTION_DELETE_ITEM = 'Delete existing Item';
 
-    const ACTION_MAP_LISTING = 6;
-    const _ACTION_MAP_LISTING = 'Map Listing to Magento Product';
+    const ACTION_MAP_ITEM = 6;
+    const _ACTION_MAP_ITEM = 'Map Item to Magento Product';
 
-    const ACTION_UNMAP_LISTING = 8;
-    const _ACTION_UNMAP_LISTING = 'Unmap Listing from Magento Product';
+    const ACTION_UNMAP_ITEM = 8;
+    const _ACTION_UNMAP_ITEM = 'Unmap Item from Magento Product';
 
-    const ACTION_MOVE_LISTING = 7;
-    const _ACTION_MOVE_LISTING = 'Move to existing M2E Pro Listing';
+    const ACTION_MOVE_ITEM = 7;
+    const _ACTION_MOVE_ITEM = 'Move to existing M2E Pro Listing';
 
     const ACTION_CHANNEL_CHANGE = 18;
     const _ACTION_CHANNEL_CHANGE = 'Change Item on Channel';

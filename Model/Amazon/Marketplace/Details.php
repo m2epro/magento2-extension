@@ -102,7 +102,7 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
             throw new \Ess\M2ePro\Model\Exception('Marketplace not found or not synchronized');
         }
 
-        $this->productData    = json_decode($data['product_data'], true);
+        $this->productData    = $this->getHelper('Data')->jsonDecode($data['product_data']);
     }
 
     //########################################

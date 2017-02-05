@@ -98,7 +98,7 @@ HTML;
             $i++;
         }
 
-        $productVariationsTree = json_encode($this->getProductVariationsTree());
+        $productVariationsTree = $this->getHelper('Data')->jsonEncode($this->getProductVariationsTree());
 
         $html .= <<<HTML
     <tr id="new_child_product_product_options_error_row">
@@ -195,7 +195,7 @@ HTML;
             $i++;
         }
 
-        $channelVariationsTree = json_encode($this->getChannelVariationsTree());
+        $channelVariationsTree = $this->getHelper('Data')->jsonEncode($this->getChannelVariationsTree());
 
         $html .= <<<HTML
         <tr id="new_child_product_channel_options_error_row">
@@ -560,7 +560,9 @@ CSS
                 $return[$currentAttribute][$option] = $result;
             }
 
-            ksort($return[$currentAttribute]);
+            if ($return !== false) {
+                ksort($return[$currentAttribute]);
+            }
 
             return $return;
         }
@@ -603,7 +605,9 @@ CSS
             return false;
         }
 
-        ksort($return[$currentAttribute]);
+        if ($return !== false) {
+            ksort($return[$currentAttribute]);
+        }
 
         return $return;
     }

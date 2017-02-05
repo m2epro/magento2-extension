@@ -45,44 +45,4 @@ class Cache extends AbstractHelper
     }
 
     //########################################
-
-    // todo implement
-    public function getBackend()
-    {
-        return false;
-    }
-
-    // todo implement
-    public function getFastBackend()
-    {
-        return false;
-    }
-
-    // todo implement
-    public function getSlowBackend()
-    {
-        return false;
-    }
-
-    //########################################
-
-    // todo implement
-    public function isApcEnabled()
-    {
-        return false;
-    }
-
-    // todo implement
-    public function isMemchachedEnabled()
-    {
-        return false;
-    }
-
-    // todo implement
-    public function isRedisEnabled()
-    {
-        return false;
-    }
-
-    //########################################
 }

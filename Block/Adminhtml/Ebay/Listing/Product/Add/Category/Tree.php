@@ -303,7 +303,7 @@ HTML;
 
     public function getInfoJson()
     {
-        return json_encode(array(
+        return $this->getHelper('Data')->jsonEncode(array(
             'category_products' => $this->getProductsCountForEachCategory(),
             'total_products_count' => count($this->getSelectedIds()),
             'total_categories_count' => $this->getAffectedCategoriesCount()

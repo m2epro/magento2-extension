@@ -19,7 +19,7 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Amazon
         $title = $this->getRequest()->getParam('title');
 
         if ($title == '') {
-            $this->setAjaxContent(json_encode(array('unique' => false)), false);
+            $this->setJsonContent(array('unique' => false));
             return $this->getResult();
         }
 
@@ -32,7 +32,7 @@ class IsCategoryGroupTitleUnique extends \Ess\M2ePro\Controller\Adminhtml\Amazon
             $collection->addFieldToFilter('id', array('neq' => $groupId));
         }
 
-        $this->setAjaxContent(json_encode(array('unique' => !(bool)$collection->getSize())), false);
+        $this->setJsonContent(array('unique' => !(bool)$collection->getSize()));
         return $this->getResult();
     }
 

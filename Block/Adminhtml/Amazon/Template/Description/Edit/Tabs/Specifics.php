@@ -139,7 +139,7 @@ CSS
                 this Value will be overwritten and the Value you selected will not be/cannot be used.'
         ]);
 
-        $formData = json_encode($this->formData);
+        $formData = $this->getHelper('Data')->jsonEncode($this->formData);
         $this->js->add("
             wait(
                 function() { return typeof AmazonTemplateDescriptionCategorySpecificObj != 'undefined'; },

@@ -9,7 +9,9 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Movi
     public function execute()
     {
         $componentMode = $this->getRequest()->getParam('componentMode');
-        $selectedProducts = (array)json_decode($this->getRequest()->getParam('selectedProducts'));
+        $selectedProducts = (array)$this->getHelper('Data')->jsonDecode(
+            $this->getRequest()->getParam('selectedProducts')
+        );
 
         $listingProductCollection = $this->parentFactory
             ->getObject($componentMode, 'Listing\Product')
@@ -28,10 +30,10 @@ class PrepareMoveToListing extends \Ess\M2ePro\Controller\Adminhtml\Listing\Movi
             ->query()
             ->fetchAll();
 
-        $this->setAjaxContent(json_encode(array(
+        $this->setJsonContent(array(
             'accountId' => $tempData[0]['account_id'],
             'marketplaceId' => $tempData[0]['marketplace_id'],
-        )), false);
+        ));
         return $this->getResult();
     }
 

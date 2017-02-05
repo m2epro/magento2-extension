@@ -51,8 +51,8 @@ class Preview extends AbstractBlock
     {
         $this->jsTranslator->add('This is Item Preview Mode', $this->__('This is Item Preview Mode'));
 
-        $variations = json_encode($this->getVariations());
-        $images = json_encode($this->getImages());
+        $variations = $this->getHelper('Data')->jsonEncode($this->getVariations());
+        $images = $this->getHelper('Data')->jsonEncode($this->getImages());
 
         $this->js->add(<<<JS
 

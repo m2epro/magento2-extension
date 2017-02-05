@@ -28,7 +28,7 @@ class General extends AbstractForm
         $formData = !is_null($account) ? array_merge($account->getData(), $account->getChildObject()->getData()) : [];
 
         if (isset($formData['other_listings_mapping_settings'])) {
-            $formData['other_listings_mapping_settings'] = (array)json_decode(
+            $formData['other_listings_mapping_settings'] = (array)$this->getHelper('Data')->jsonDecode(
                 $formData['other_listings_mapping_settings'],true
             );
         }

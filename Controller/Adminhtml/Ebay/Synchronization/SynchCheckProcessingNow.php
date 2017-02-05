@@ -32,9 +32,9 @@ class SynchCheckProcessingNow extends Settings
             );
         }
 
-        $this->setAjaxContent(json_encode(array(
+        $this->setJsonContent(array(
             'messages' => $warningMessages
-        ), false));
+        ));
 
         return $this->getResponse();
     }

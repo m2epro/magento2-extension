@@ -16,9 +16,9 @@ class GetRegions extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
     {
         $countryCode = $this->getRequest()->getParam('country_code');
 
-        $this->setAjaxContent(json_encode(
+        $this->setJsonContent(
             $this->getHelper('Magento')->getRegionsByCountryCode($countryCode)
-        ), false);
+        );
         return $this->getResult();
     }
 

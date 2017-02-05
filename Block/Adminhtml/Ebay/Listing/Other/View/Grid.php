@@ -89,7 +89,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'title'                 => 'second_table.title',
                 'sku'                   => 'second_table.sku',
                 'item_id'               => 'second_table.item_id',
-                'online_qty'            => new \Zend_Db_Expr(
+                'available_qty'         => new \Zend_Db_Expr(
                     '(second_table.online_qty - second_table.online_qty_sold)'
                 ),
                 'online_qty_sold'       => 'second_table.online_qty_sold',
@@ -139,12 +139,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'frame_callback' => array($this, 'callbackColumnItemId')
         ));
 
-        $this->addColumn('online_qty', array(
+        $this->addColumn('available_qty', array(
             'header' => $this->__('Available QTY'),
             'align' => 'right',
             'width' => '50px',
             'type' => 'number',
-            'index' => 'online_qty',
+            'index' => 'available_qty',
             'filter_index' => new \Zend_Db_Expr('(second_table.online_qty - second_table.online_qty_sold)'),
             'frame_callback' => array($this, 'callbackColumnOnlineAvailableQty')
         ));
@@ -286,7 +286,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $htmlValue .= '&nbsp&nbsp&nbsp<a href="javascript:void(0);"'
             .' onclick="EbayListingOtherGridObj.movingHandler.getGridHtml('
-            .json_encode(array((int)$row->getData('id')))
+            .$this->getHelper('Data')->jsonEncode(array((int)$row->getData('id')))
             .')">'
             .$this->__('Move')
             .'</a>';
@@ -338,7 +338,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnOnlineAvailableQty($value, $row, $column, $isExport)
     {
-        $value = $row->getChildObject()->getData('online_qty');
+        $value = $row->getData('available_qty');
         if (is_null($value) || $value === '') {
             return $this->__('N/A');
         }
@@ -379,7 +379,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             return '<span style="color: #f00;">0</span>';
         }
 
-        return $this->localeCurrency->getCurrency($row->getData('currency'))->toCurrency($value);
+        return $this->localeCurrency->getCurrency($row->getChildObject()->getData('currency'))->toCurrency($value);
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)

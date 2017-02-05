@@ -44,7 +44,7 @@ abstract class Account extends Main
         isset($response['hash']) && $data['server_hash'] = $response['hash'];
         isset($response['info']['UserID']) && $data['user_id'] = $response['info']['UserID'];
 
-        $data['info'] = json_encode($response['info']);
+        $data['info'] = $this->getHelper('Data')->jsonEncode($response['info']);
         $data['token_expired_date'] = $response['token_expired_date'];
         // ---------------------------------------
 

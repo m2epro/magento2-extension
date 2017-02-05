@@ -76,6 +76,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'online_sale_price_start_date' => 'online_sale_price_start_date',
                 'online_sale_price_end_date'   => 'online_sale_price_end_date',
 
+                'variation_parent_afn_state'       => 'variation_parent_afn_state',
+                'variation_parent_repricing_state' => 'variation_parent_repricing_state',
+
                 'online_current_price' => new \Zend_Db_Expr('IF(
                     alp.online_sale_price_start_date IS NOT NULL AND
                     alp.online_sale_price_end_date IS NOT NULL AND
@@ -260,7 +263,7 @@ HTML;
         $sStopped   = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
         $sBlocked   = \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED;
 
-        $generalId = $listingProduct->getGeneralId();
+        $generalId = $listingProduct->getChildObject()->getGeneralId();
         $variationsStatuses = $row->getData('variation_child_statuses');
 
         if (empty($generalId) || empty($variationsStatuses)) {
@@ -270,7 +273,7 @@ HTML;
         }
 
         $sortedStatuses     = [];
-        $variationsStatuses = json_decode($variationsStatuses, true);
+        $variationsStatuses = $this->getHelper('Data')->jsonDecode($variationsStatuses);
 
         isset($variationsStatuses[$sUnknown])   && $sortedStatuses[$sUnknown]   = $variationsStatuses[$sUnknown];
         isset($variationsStatuses[$sNotListed]) && $sortedStatuses[$sNotListed] = $variationsStatuses[$sNotListed];
@@ -476,7 +479,52 @@ HTML;
             if (!empty($where)) {
                 $where = '(' . $where . ') OR ';
             }
-            $where .= 'alp.is_repricing = ' . $cond['is_repricing'];
+
+            if ((int)$cond['is_repricing'] == 1) {
+                $where .= 'alp.is_repricing = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_REPRICING_STATE_PARTIAL;
+                $where .= "(alp.is_repricing = 0 OR alp.variation_parent_repricing_state = {$partialFilter})";
+            }
+        }
+
+        $collection->getSelect()->where($where);
+    }
+
+    protected function callbackFilterQty($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if (empty($value)) {
+            return;
+        }
+
+        $where = '';
+
+        if (isset($value['from']) && $value['from'] != '') {
+            $quoted = $collection->getConnection()->quote($value['from']);
+            $where .= 'online_qty >= ' . $quoted;
+        }
+
+        if (isset($value['to']) && $value['to'] != '') {
+            if (isset($value['from']) && $value['from'] != '') {
+                $where .= ' AND ';
+            }
+            $quoted = $collection->getConnection()->quote($value['to']);
+            $where .= 'online_qty <= ' . $quoted;
+        }
+
+        if (isset($value['afn']) && $value['afn'] !== '') {
+            if (!empty($where)) {
+                $where = '(' . $where . ') OR ';
+            }
+
+            if ((int)$value['afn'] == 1) {
+                $where .= 'is_afn_channel = 1';
+            } else {
+                $partialFilter = \Ess\M2ePro\Model\Amazon\Listing\Product::VARIATION_PARENT_IS_AFN_STATE_PARTIAL;
+                $where .= "(is_afn_channel = 0 OR variation_parent_afn_state = {$partialFilter})";
+            }
         }
 
         $collection->getSelect()->where($where);

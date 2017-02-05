@@ -113,7 +113,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $data = array();
         if ($this->object->getData('data') != '') {
-            $data = json_decode($this->object->getData('data'), true);
+            $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
         }
 
         $data[$key] = $value;
@@ -148,7 +148,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return NULL;
         }
 
-        $data = json_decode($this->object->getData('data'), true);
+        $data = $this->getHelper('Data')->jsonDecode($this->object->getData('data'));
 
         if (isset($data[$key])) {
             return $data[$key];
@@ -226,7 +226,7 @@ class OperationHistory extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
         $nick = strtoupper($this->getObject()->getData('nick'));
 
-        $contentData = (array)json_decode($this->getObject()->getData('data'), true);
+        $contentData = (array)$this->getHelper('Data')->jsonDecode($this->getObject()->getData('data'));
         $contentData = preg_replace('/^/m', "{$offset}", print_r($contentData, true));
 
         return <<<INFO

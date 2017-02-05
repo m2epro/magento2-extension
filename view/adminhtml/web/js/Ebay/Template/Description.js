@@ -1,9 +1,8 @@
 define([
-    'Magento_Ui/js/modal/alert',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Common',
     'mage/adminhtml/wysiwyg/tiny_mce/setup'
-], function (alert) {
+], function () {
 
     window.EbayTemplateDescription = Class.create(Common, {
 
@@ -696,9 +695,7 @@ define([
         openPreviewPopup: function ()
         {
             if ($('description_mode').value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::DESCRIPTION_MODE_CUSTOM') && !$('description_template').value.length) {
-                alert({
-                    content: M2ePro.translator.translate('Please enter Description Value.')
-                });
+                this.alert(M2ePro.translator.translate('Please enter Description Value.'));
                 return;
             }
 
@@ -707,6 +704,8 @@ define([
 
         selectProductIdRandomly: function ()
         {
+            var self = this;
+
             new Ajax.Request(M2ePro.url.get('ebay_template_description/getRandomMagentoProductId'), {
                 method: 'post',
                 parameters: {
@@ -718,9 +717,7 @@ define([
                     if (response.success) {
                         $('description_preview_magento_product_id').value = response.product_id;
                     } else {
-                        alert({
-                            content: response.message
-                        });
+                        self.alert(response.message);
                     }
                 }
             });

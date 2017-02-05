@@ -132,10 +132,9 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             }
 
             $tempImageLink = $mainImageLink;
-            if ($realImageAttributes[5] != 0 &&
-                $tempImage = $magentoProduct->getGalleryImageByPosition($realImageAttributes[5])) {
-
-                $tempImageLink = $tempImage->getUrl();
+            if ($realImageAttributes[5] != 0) {
+                $tempImage = $magentoProduct->getGalleryImageByPosition($realImageAttributes[5]);
+                $tempImageLink = empty($tempImage) ? '' : $tempImage->getUrl();
             }
 
             $blockObj = $this->layout->createBlock(

@@ -530,7 +530,7 @@ HTML;
         $tempGridIds = array();
         $this->getHelper('Component\Amazon')->isEnabled() && $tempGridIds[] = $this->getId();
 
-        $tempGridIds = json_encode($tempGridIds);
+        $tempGridIds = $this->getHelper('Data')->jsonEncode($tempGridIds);
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
 

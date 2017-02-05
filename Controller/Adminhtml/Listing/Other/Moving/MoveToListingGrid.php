@@ -18,7 +18,7 @@ class MoveToListingGrid extends Listing
             'marketplaceId', $this->getRequest()->getParam('marketplaceId')
         );
         $this->getHelper('Data\GlobalData')->setValue(
-            'ignoreListings', json_decode($this->getRequest()->getParam('ignoreListings'))
+            'ignoreListings', $this->getHelper('Data')->jsonDecode($this->getRequest()->getParam('ignoreListings'))
         );
 
         $component = ucfirst(strtolower($this->getRequest()->getParam('componentMode')));
