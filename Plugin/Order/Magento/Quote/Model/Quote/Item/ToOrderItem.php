@@ -26,9 +26,9 @@ class ToOrderItem extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     //########################################
 
-    public function aroundConvert($interceptor, \Closure $callback, $item)
+    public function aroundConvert($interceptor, \Closure $callback, $item, $additional)
     {
-        return $this->execute('convert', $interceptor, $callback, [$item]);
+        return $this->execute('convert', $interceptor, $callback, [$item, $additional]);
     }
 
     // ---------------------------------------
