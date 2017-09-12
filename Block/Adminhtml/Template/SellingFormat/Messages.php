@@ -130,7 +130,7 @@ class Messages extends \Ess\M2ePro\Block\Adminhtml\Template\Messages
         $template = $this->getTemplateModel();
         $template->addData($this->getTemplateData());
 
-        if (!$template->usesProductOrSpecialPrice($marketplaceCurrency)) {
+        if (!$template->usesConvertiblePrices($marketplaceCurrency)) {
             return false;
         }
 

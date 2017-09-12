@@ -10,29 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\ListAction\Validat
 
 class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Validator
 {
-    private $requestSkus = array();
-
-    private $queueOfSkus = array();
-
-    /**
-     * @param array $skus
-     * @return $this
-     */
-    public function setRequestSkus(array $skus)
-    {
-        $this->requestSkus = $skus;
-        return $this;
-    }
-
-    /**
-     * @param array $skus
-     * @return $this
-     */
-    public function setQueueOfSkus(array $skus)
-    {
-        $this->queueOfSkus = $skus;
-        return $this;
-    }
+    private $skusInProcessing = NULL;
 
     //########################################
 
@@ -130,16 +108,7 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     private function isExistInM2ePro($sku, $addMessages = false)
     {
-        if ($this->isExistInRequestSkus($sku)) {
-// M2ePro\TRANSLATIONS
-// During the Listing Process there was an Item found with the same SKU that is being Listed. Please change the SKU or enable the Option Generate Merchant SKU.
-            $addMessages && $this->addMessage('During the Listing Process there was an Item found with
-                                               the same SKU that is being Listed. Please change the SKU or enable
-                                               the Option Generate Merchant SKU.');
-            return true;
-        }
-
-        if ($this->isExistInQueueOfSkus($sku)) {
+        if ($this->isAlreadyInProcessing($sku)) {
 // M2ePro\TRANSLATIONS
 // Another Product with the same SKU is being Listed simultaneously with this one. Please change the SKU or enable the Option Generate Merchant SKU.
             $addMessages && $this->addMessage('Another Product with the same SKU is being Listed simultaneously
@@ -170,14 +139,9 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
 
     // ---------------------------------------
 
-    private function isExistInRequestSkus($sku)
+    private function isAlreadyInProcessing($sku)
     {
-        return in_array($sku, $this->requestSkus);
-    }
-
-    private function isExistInQueueOfSkus($sku)
-    {
-        return in_array($sku, $this->queueOfSkus);
+        return in_array($sku, $this->getSkusInProcessing());
     }
 
     private function isExistInM2eProListings($sku)
@@ -207,6 +171,22 @@ class Search extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valida
         $collection->addFieldToFilter('account_id',$this->getListingProduct()->getAccount()->getId());
 
         return $collection->getSize() > 0;
+    }
+
+    //########################################
+
+    private function getSkusInProcessing()
+    {
+        if (!is_null($this->skusInProcessing)) {
+            return $this->skusInProcessing;
+        }
+
+        $processingActionListSkuCollection = $this->activeRecordFactory
+                                                  ->getObject('Amazon\Processing\Action\ListAction\Sku')
+                                                  ->getCollection();
+        $processingActionListSkuCollection->addFieldToFilter('account_id', $this->getListing()->getAccountId());
+
+        return $this->skusInProcessing = $processingActionListSkuCollection->getColumnValues('sku');
     }
 
     //########################################

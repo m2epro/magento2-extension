@@ -35,9 +35,10 @@ class UnassignProduct extends Order
             );
         }
 
+        $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
+
         $orderItem->unassignProduct();
 
-        $orderItem->getOrder()->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_USER);
         $orderItem->getOrder()->addSuccessLog(
             'Item "%title%" was successfully Unmapped.',
             array(

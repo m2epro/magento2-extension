@@ -13,18 +13,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     /** @var \Ess\M2ePro\Model\Listing */
     private $listing = NULL;
 
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
 
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -54,11 +54,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        // Get collection
-        // ---------------------------------------
-        $collection = $this->productFactory->create()->getCollection()
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('name');
-        // ---------------------------------------
 
         // ---------------------------------------
         $collection->getSelect()->distinct();
@@ -281,7 +279,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 <a href="{$url}" target="_blank">
     {$productId}
     <div style="margin-top: 5px">
-        <img src="{$thumbnailUrl}" />
+        <img style="max-width: 100px; max-height: 100px;" src="{$thumbnailUrl}" />
     </div>
 </a>
 HTML;

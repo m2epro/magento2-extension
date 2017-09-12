@@ -10,11 +10,15 @@ namespace Ess\M2ePro\Model\Magento\Tax\Rule;
 
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
-    const TAX_CLASS_NAME_PRODUCT  = 'M2E Pro Product Tax Class';
-    const TAX_CLASS_NAME_CUSTOMER = 'M2E Pro Customer Tax Class';
+    const TAX_CLASS_NAME_PRODUCT   = 'M2E Pro Product Tax Class';
+    const TAX_CLASS_NAME_CUSTOMER  = 'M2E Pro Customer Tax Class';
+    const TAX_CLASS_NAME_SHIPPING  = 'M2E Pro Shipping Tax Class';
 
-    const TAX_RATE_CODE = 'M2E Pro Tax Rate';
-    const TAX_RULE_CODE = 'M2E Pro Tax Rule';
+    const TAX_RATE_CODE_PRODUCT    = 'M2E Pro Tax Rate';
+    const TAX_RULE_CODE_PRODUCT    = 'M2E Pro Tax Rule';
+
+    const TAX_RATE_CODE_SHIPPING   = 'M2E Pro Shipping Tax Rate';
+    const TAX_RULE_CODE_SHIPPING   = 'M2E Pro Shipping Tax Rule';
 
     protected $classModelFactory;
     protected $rateFactory;
@@ -47,17 +51,48 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function buildTaxRule($rate, $countryId, $customerTaxClassId = NULL)
+    public function buildProductTaxRule($rate, $countryId, $customerTaxClassId = NULL)
+    {
+        $this->buildTaxRule(
+            $rate,
+            $countryId,
+            $customerTaxClassId,
+            self::TAX_RATE_CODE_PRODUCT,
+            self::TAX_RULE_CODE_PRODUCT,
+            self::TAX_CLASS_NAME_PRODUCT
+        );
+    }
+
+    public function buildShippingTaxRule($rate, $countryId, $customerTaxClassId = NULL)
+    {
+        $this->buildTaxRule(
+            $rate,
+            $countryId,
+            $customerTaxClassId,
+            self::TAX_RATE_CODE_SHIPPING,
+            self::TAX_RULE_CODE_SHIPPING,
+            self::TAX_CLASS_NAME_SHIPPING
+        );
+    }
+
+    private function buildTaxRule(
+        $rate,
+        $countryId,
+        $customerTaxClassId = NULL,
+        $taxRateCode,
+        $taxRuleCode,
+        $taxClassName
+    )
     {
         // Init product tax class
         // ---------------------------------------
         $productTaxClass = $this->classModelFactory->create()->getCollection()
-            ->addFieldToFilter('class_name', self::TAX_CLASS_NAME_PRODUCT)
+            ->addFieldToFilter('class_name', $taxClassName)
             ->addFieldToFilter('class_type', \Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT)
             ->getFirstItem();
 
         if (is_null($productTaxClass->getId())) {
-            $productTaxClass->setClassName(self::TAX_CLASS_NAME_PRODUCT)
+            $productTaxClass->setClassName($taxClassName)
                 ->setClassType(\Magento\Tax\Model\ClassModel::TAX_CLASS_TYPE_PRODUCT);
             $productTaxClass->save();
         }
@@ -83,9 +118,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         // Init tax rate
         // ---------------------------------------
-        $taxCalculationRate = $this->rateFactory->create()->load(self::TAX_RATE_CODE, 'code');
+        $taxCalculationRate = $this->rateFactory->create()->load($taxRateCode, 'code');
 
-        $taxCalculationRate->setCode(self::TAX_RATE_CODE)
+        $taxCalculationRate->setCode($taxRateCode)
             ->setRate((float)$rate)
             ->setTaxCountryId((string)$countryId)
             ->setTaxPostcode('*')
@@ -95,9 +130,9 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
         // Combine tax classes and tax rate in tax rule
         // ---------------------------------------
-        $this->rule = $this->ruleFactory->create()->load(self::TAX_RULE_CODE, 'code');
+        $this->rule = $this->ruleFactory->create()->load($taxRuleCode, 'code');
 
-        $this->rule->setCode(self::TAX_RULE_CODE)
+        $this->rule->setCode($taxRuleCode)
             ->setCustomerTaxClassIds([$customerTaxClassId])
             ->setProductTaxClassIds([$productTaxClass->getId()])
             ->setTaxRateIds([$taxCalculationRate->getId()])

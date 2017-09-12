@@ -146,6 +146,7 @@ class Form extends AbstractForm
                 'values' => $attributeSets,
                 'value' => $values,
                 'required' => true,
+                'style' => 'width: 70%',
                 'field_extra_attributes' => $this->applyToAll() ? 'style="display: none;"' : ''
             ]
         );

@@ -170,6 +170,12 @@ define([
 
             //$('amazonAccountEditTabs_listingOther').removeClassName('changed');
 
+            if ($('is_vat_calculation_service_enabled')) {
+                $('is_vat_calculation_service_enabled')
+                    .observe('change', AmazonAccountObj.vatCalculationModeChange)
+                    .simulate('change');
+            }
+
             //tab order
             $('magento_orders_listings_mode').observe('change', AmazonAccountObj.magentoOrdersListingsModeChange).simulate('change');
             $('magento_orders_listings_store_mode').observe('change', AmazonAccountObj.magentoOrdersListingsStoreModeChange).simulate('change');
@@ -538,6 +544,15 @@ define([
                 $('magento_block_amazon_accounts_magento_orders_status_mapping-wrapper').show();
                 $('magento_block_amazon_accounts_magento_orders_tax-wrapper').show();
                 $('magento_block_amazon_accounts_magento_orders_rules-wrapper').show();
+            }
+        },
+
+        vatCalculationModeChange: function()
+        {
+            $('is_magento_invoice_creation_disabled_tr').hide();
+
+            if ($('is_vat_calculation_service_enabled').value == 1) {
+                $('is_magento_invoice_creation_disabled_tr').show();
             }
         },
 

@@ -73,10 +73,6 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
             // -----------------------
 
         } catch (\Exception $exception) {
-
-            if ($this->isAllowedToPrintToStdErr()) {
-                echo $exception->__toString();
-            }
             $this->logger->error($exception, ['source' => 'Uninstall']);
         }
     }
@@ -90,18 +86,6 @@ class Uninstall implements \Magento\Framework\Setup\UninstallInterface
             ->from($this->installer->getTable('m2epro_module_config'), 'value')
             ->where('`group` = ?', '/uninstall/')
             ->where('`key` = ?', 'can_remove_data');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
-    }
-
-    private function isAllowedToPrintToStdErr()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
 
         return (bool)$this->installer->getConnection()->fetchOne($select);
     }

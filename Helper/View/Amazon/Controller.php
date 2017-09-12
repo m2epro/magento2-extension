@@ -30,37 +30,12 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function addMessages(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
     {
-        if ($this->getHelper('Module')->isReadyToWork() &&
-            $this->getHelper('Module\Cron')->isLastRunMoreThan(1,true) &&
-            !$this->getHelper('Module')->isDevelopmentEnvironment()) {
-
-            $this->addCronErrorMessage($controller);
-        }
-
         if ($this->getHelper('View\Amazon')->isInstallationWizardFinished()) {
             $this->addMarketplacesNotUpdatedNotificationMessage($controller);
         }
     }
 
     //########################################
-
-    private function addCronErrorMessage(\Ess\M2ePro\Controller\Adminhtml\Base $controller)
-    {
-        $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl(
-            '692955-why-cron-service-is-not-working-in-my-magento'
-        );
-
-        // M2ePro_TRANSLATIONS
-        // Attention! AUTOMATIC Synchronization is not running at the moment.<br/>Please check this <a href="%url% target="_blank">article</a> to learn why it is required.
-        $message = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
-        $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a> ';
-        $message .= 'to learn why it is required.';
-        $message = $this->getHelper('Module\Translation')->__($message, $url);
-
-        $controller->getMessageManager()->addError(
-            $message, \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
-        );
-    }
 
     private function addMarketplacesNotUpdatedNotificationMessage(
                                 \Ess\M2ePro\Controller\Adminhtml\Base $controller)

@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\ShippingTemplate\Edit;
 
+use Ess\M2ePro\Model\Amazon\Template\ShippingTemplate;
+
 class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     protected $formData;
@@ -26,7 +28,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $default = array(
             'title'         => '',
-            'template_name' => '',
+
+            'template_name_mode' => '',
+            'template_name_value' => '',
+            'template_name_attribute' => '',
         );
 
         $this->formData = array_merge($default, $this->formData);
@@ -40,6 +45,13 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'admin__scope-old'
             ]
         ]);
+
+        /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
+        $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
+        $attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+        $attributesByInputTypes = array(
+            'text_select' => $magentoAttributeHelper->filterByInputTypes($attributes, ['text', 'select'])
+        );
 
         $fieldset = $form->addFieldset(
             'magento_block_amazon_template_shipping_template_general',
@@ -70,15 +82,59 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        $fieldset->addField(
-            'template_name',
+        $preparedAttributes = [];
+        foreach ($attributesByInputTypes['text_select'] as $attribute) {
+            $attrs = ['attribute_code' => $attribute['code']];
+            if (
+                $this->formData['template_name_mode'] == ShippingTemplate::TEMPLATE_NAME_ATTRIBUTE
+                && $this->formData['template_name_attribute'] == $attribute['code']
+            ) {
+                $attrs['selected'] = 'selected';
+            }
+            $preparedAttributes[] = [
+                'attrs' => $attrs,
+                'value' => ShippingTemplate::TEMPLATE_NAME_ATTRIBUTE,
+                'label' => $attribute['label'],
+            ];
+        }
+
+        $fieldset->addField('template_name_mode',
+            self::SELECT,
+            [
+                'container_id' => 'template_name_mode_tr',
+                'label'        => $this->__('Template Name'),
+                'class'        => 'select-main',
+                'name'         => 'template_name_mode',
+                'values' => [
+                    ShippingTemplate::TEMPLATE_NAME_VALUE => $this->__('Custom Value'),
+                    [
+                        'label' => $this->__('Magento Attributes'),
+                        'value' => $preparedAttributes,
+                        'attrs' => [
+                            'is_magento_attribute' => true
+                        ]
+                    ]
+                ],
+                'create_magento_attribute' => true,
+                'tooltip' => $this->__('Template Name which you would like to be used.')
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,select');
+
+        $fieldset->addField('template_name_attribute',
+            'hidden',
+            [
+                'name' => 'template_name_attribute',
+            ]
+        );
+
+        $fieldset->addField('template_name_value',
             'text',
             [
-                'name' => 'template_name',
-                'label' => $this->__('Template Name'),
-                'value' => $this->formData['template_name'],
-                'tooltip' => $this->__('Template Name which you would like to be used.'),
-                'required' => true,
+                'container_id' => 'template_name_custom_value_tr',
+                'label'        => $this->__('Template Name Value'),
+                'name'         => 'template_name_value',
+                'value'        => $this->formData['template_name_value'],
+                'required'     => true
             ]
         );
 
@@ -109,6 +165,10 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon')
         );
 
+        $this->jsPhp->addConstants(
+            $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Amazon\Template\ShippingTemplate')
+        );
+
         $this->jsUrl->addUrls([
             'formSubmit' => $this->getUrl('*/amazon_template_shippingTemplate/save', [
                 '_current' => $this->getRequest()->getParam('id'),
@@ -136,6 +196,7 @@ M2ePro.formData.title = '{$title}';
 
 require(['M2ePro/Amazon/Template/ShippingTemplate'], function() {
     window.AmazonTemplateShippingTemplateObj = new AmazonTemplateShippingTemplate();
+    window.AmazonTemplateShippingTemplateObj.initObservers();
 });
 JS
         );

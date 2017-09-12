@@ -149,7 +149,10 @@ define([
 
         checkMessages: function(templateNick)
         {
-            if (!this.checkAttributesAvailability && templateNick != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Manager::TEMPLATE_SELLING_FORMAT')) {
+            if (!this.checkAttributesAvailability &&
+                templateNick != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Manager::TEMPLATE_SELLING_FORMAT') &&
+                templateNick != M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Manager::TEMPLATE_SHIPPING')
+            ) {
                 return;
             }
 
@@ -403,6 +406,7 @@ define([
                                             EbayListingTemplateSwitcherObj.updateButtonsVisibility(template.nick);
                                             EbayListingTemplateSwitcherObj.updateEditVisibility(template.nick);
                                             EbayListingTemplateSwitcherObj.updateTemplateLabelVisibility(template.nick);
+                                            EbayListingTemplateSwitcherHandlerObj.checkMessages(template.nick);
                                         });
                                     }.bind(this)
                                 });

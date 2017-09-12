@@ -106,8 +106,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'general_id'        => 'general_id',
                 'amazon_sku'        => 'sku',
                 'online_qty'        => 'online_qty',
-                'online_price'      => 'online_price',
-                'online_sale_price' => 'online_sale_price',
+                'online_regular_price'      => 'online_regular_price',
+                'online_regular_sale_price' => 'online_regular_sale_price',
                 'is_afn_channel'    => 'is_afn_channel'
             ),
             NULL,

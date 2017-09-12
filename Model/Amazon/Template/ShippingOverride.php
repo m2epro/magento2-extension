@@ -6,11 +6,11 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Amazon\Template;
+
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingOverride getResource()
  */
-namespace Ess\M2ePro\Model\Amazon\Template;
-
 class ShippingOverride extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     /**

@@ -116,7 +116,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
         $responseData = $this->getPreparedResponseData();
 
         $parentIdsForProcessing = array();
-        $listingsProductsIdsForActionSkipping = array();
+        $listingsProductsIdsForNeedSynchRulesCheck = array();
 
         while ($existingItem = $stmtTemp->fetch()) {
 
@@ -127,11 +127,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $receivedItem = $responseData['data'][$existingItem['sku']];
 
             $newData = array(
-                'general_id'         => (string)$receivedItem['identifiers']['general_id'],
-                'online_price'       => (float)$receivedItem['price'],
-                'online_qty'         => (int)$receivedItem['qty'],
-                'is_afn_channel'     => (bool)$receivedItem['channel']['is_afn'],
-                'is_isbn_general_id' => (bool)$receivedItem['identifiers']['is_isbn']
+                'general_id'           => (string)$receivedItem['identifiers']['general_id'],
+                'online_regular_price' => !empty($receivedItem['price']) ? (float)$receivedItem['price'] : NULL,
+                'online_qty'           => (int)$receivedItem['qty'],
+                'is_afn_channel'       => (bool)$receivedItem['channel']['is_afn'],
+                'is_isbn_general_id'   => (bool)$receivedItem['identifiers']['is_isbn']
             );
 
             if ($newData['is_afn_channel']) {
@@ -146,12 +146,13 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             }
 
             $existingData = array(
-                'general_id'         => (string)$existingItem['general_id'],
-                'online_price'       => (float)$existingItem['online_price'],
-                'online_qty'         => (int)$existingItem['online_qty'],
-                'is_afn_channel'     => (bool)$existingItem['is_afn_channel'],
-                'is_isbn_general_id' => (bool)$existingItem['is_isbn_general_id'],
-                'status'             => (int)$existingItem['status']
+                'general_id'           => (string)$existingItem['general_id'],
+                'online_regular_price' => !empty($existingItem['online_regular_price'])
+                    ? (float)$existingItem['online_regular_price'] : NULL,
+                'online_qty'           => (int)$existingItem['online_qty'],
+                'is_afn_channel'       => (bool)$existingItem['is_afn_channel'],
+                'is_isbn_general_id'   => (bool)$existingItem['is_isbn_general_id'],
+                'status'               => (int)$existingItem['status']
             );
 
             $existingAdditionalData = $this->getHelper('Data')->jsonDecode($existingItem['additional_data']);
@@ -173,8 +174,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 $lastPriceSynchDate = $existingAdditionalData['last_synchronization_dates']['price'];
 
                 if ($this->isProductInfoOutdated($lastPriceSynchDate)) {
-                    unset($newData['online_price']);
-                    unset($existingData['online_price']);
+                    unset($newData['online_regular_price']);
+                    unset($existingData['online_regular_price']);
                 }
             }
 
@@ -191,7 +192,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             }
 
             if ($existingItem['is_repricing'] && !$existingItem['is_online_disabled']) {
-                unset($newData['online_price'], $existingData['online_price']);
+                unset($newData['online_regular_price'], $existingData['online_regular_price']);
             }
 
             if ($newData == $existingData) {
@@ -205,7 +206,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
 
             if ($this->isDataChanged($existingData, $newData, 'status') ||
                 $this->isDataChanged($existingData, $newData, 'online_qty') ||
-                $this->isDataChanged($existingData, $newData, 'online_price')
+                $this->isDataChanged($existingData, $newData, 'online_regular_price')
             ) {
                 $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
                     $existingItem['product_id'], \Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
@@ -219,19 +220,23 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                     ($this->isDataChanged($existingData, $newData, 'status') ||
                      $this->isDataChanged($existingData, $newData, 'online_qty'))
                 ) {
-                    $listingsProductsIdsForActionSkipping[] = $listingProduct->getId();
+                    $listingsProductsIdsForNeedSynchRulesCheck[] = $listingProduct->getId();
                 }
             }
 
             $tempLogMessages = array();
 
-            if (isset($newData['online_price']) && $newData['online_price'] != $existingData['online_price']) {
+            if (
+                isset($newData['online_regular_price'])
+                && $newData['online_regular_price']
+                != $existingData['online_regular_price']
+            ) {
                 // M2ePro\TRANSLATIONS
                 // Item Price was successfully changed from %from% to %to% .
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
                     'Item Price was successfully changed from %from% to %to% .',
-                    $existingData['online_price'],
-                    $newData['online_price']
+                    (float)$existingData['online_regular_price'],
+                    (float)$newData['online_regular_price']
                 );
             }
 
@@ -240,8 +245,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 // Item QTY was successfully changed from %from% to %to% .
                 $tempLogMessages[] = $this->getHelper('Module\Translation')->__(
                     'Item QTY was successfully changed from %from% to %to% .',
-                    $existingData['online_qty'],
-                    $newData['online_qty']
+                    (int)$existingData['online_qty'],
+                    (int)$newData['online_qty']
                 );
             }
 
@@ -288,9 +293,9 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             $this->processParentProcessors($parentIdsForProcessing);
         }
 
-        if (!empty($listingsProductsIdsForActionSkipping)) {
-            $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')
-                ->getResource()->markAsSkippedProductAction(array_unique($listingsProductsIdsForActionSkipping));
+        if (!empty($listingsProductsIdsForNeedSynchRulesCheck)) {
+            $this->activeRecordFactory->getObject('Listing\Product')
+                ->getResource()->setNeedSynchRulesCheck(array_unique($listingsProductsIdsForNeedSynchRulesCheck));
         }
     }
 
@@ -326,7 +331,7 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
                 'main_table.product_id','main_table.status',
                 'main_table.additional_data',
                 'second_table.sku','second_table.general_id',
-                'second_table.online_price','second_table.online_qty',
+                'second_table.online_regular_price','second_table.online_qty',
                 'second_table.is_afn_channel', 'second_table.is_isbn_general_id',
                 'second_table.listing_product_id',
                 'second_table.is_variation_product', 'second_table.variation_parent_id',
@@ -391,7 +396,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\ItemsRe
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
+                                          ->getResource()->getNextActionId();
     }
 
     protected function getSynchronizationLog()

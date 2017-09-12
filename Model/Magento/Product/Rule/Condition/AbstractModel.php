@@ -36,8 +36,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected $_arrayInputTypes = array();
 
-    protected $modelFactory;
-    protected $helperFactory;
     protected $_assetRepo;
     protected $_localeDate;
     protected $_layout;
@@ -51,8 +49,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         array $data = []
     )
     {
-        $this->modelFactory = $modelFactory;
-        $this->helperFactory = $helperFactory;
         $this->_assetRepo = $context->getAssetRepository();
         $this->_localeDate = $context->getLocaleDate();
         $this->_layout = $context->getLayout();
@@ -685,7 +681,12 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             if ($strict) {
                 $validatePattern = '^' . $validatePattern . '$';
             }
-            return (bool)preg_match('~' . $validatePattern . '~iu', $value);
+            try {
+                $result = (bool)preg_match('~' . $validatePattern . '~iu', $value);
+            } catch (\Exception $e) {
+                return false;
+            }
+            return $result;
         }
     }
 

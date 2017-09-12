@@ -10,6 +10,8 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
+    const INITIALIZATION_TRANSACTIONAL_LOCK_NICK = 'cron_strategy_initialization';
+
     protected $activeRecordFactory;
 
     private $initiator = null;
@@ -72,20 +74,22 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->allowedTasks = array(
-            \Ess\M2ePro\Model\Cron\Task\RepricingInspectProducts::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RepricingUpdateSettings::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationGeneral::NICK,
-            \Ess\M2ePro\Model\Cron\Task\RepricingSynchronizationActualPrice::NICK,
+            \Ess\M2ePro\Model\Cron\Task\IssuesResolver::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingInspectProducts::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingUpdateSettings::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationGeneral::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Amazon\RepricingSynchronizationActualPrice::NICK,
             \Ess\M2ePro\Model\Cron\Task\RequestPendingSingle::NICK,
             \Ess\M2ePro\Model\Cron\Task\RequestPendingPartial::NICK,
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingSingle::NICK,
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingPartial::NICK,
-            \Ess\M2ePro\Model\Cron\Task\AmazonActions::NICK,
-            \Ess\M2ePro\Model\Cron\Task\EbayActions::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Amazon\Actions::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Ebay\Actions::NICK,
             \Ess\M2ePro\Model\Cron\Task\Servicing::NICK,
             \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK,
-            \Ess\M2ePro\Model\Cron\Task\UpdateEbayAccountsPreferences::NICK,
-            \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK
+            \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK,
+            \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK,
+            \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
         );
     }
 
@@ -150,8 +154,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getTaskObject($taskNick)
     {
-        $taskNick = str_replace('_', ' ', $taskNick);
-        $taskNick = str_replace(' ', '', ucwords($taskNick));
+        $taskNick = ucwords($taskNick, "/_");
+        $taskNick = str_replace('_', '', $taskNick);
+        $taskNick = str_replace('/', '\\', $taskNick);
 
         /** @var $task \Ess\M2ePro\Model\Cron\Task\AbstractModel **/
         $task = $this->modelFactory->getObject('Cron\Task\\'.trim($taskNick));

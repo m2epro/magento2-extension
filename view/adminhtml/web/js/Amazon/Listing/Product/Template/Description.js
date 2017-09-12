@@ -72,7 +72,7 @@ define([
         },
 
         // ---------------------------------------
-        unassignFromTemplateDescrition: function (productsIds) {
+        unassignFromTemplateDescription: function (productsIds) {
             var self = this;
 
             new Ajax.Request(M2ePro.url.get('amazon_listing_product_template_description/unassign'), {

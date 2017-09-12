@@ -6,14 +6,17 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Ebay;
+
 /**
  * @method \Ess\M2ePro\Model\Listing getParentObject()
  */
-namespace Ess\M2ePro\Model\Ebay;
-
 class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const ADDING_MODE_ADD_AND_ASSIGN_CATEGORY = 2;
+
+    const PARTS_COMPATIBILITY_MODE_EPIDS  = 'epids';
+    const PARTS_COMPATIBILITY_MODE_KTYPES = 'ktypes';
 
     /**
      * @var \Ess\M2ePro\Model\Ebay\Template\Category
@@ -496,14 +499,31 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
     //########################################
 
-    public function convertPriceFromStoreToMarketplace($price)
+    public function gePartsCompatibilityMode()
     {
-        return $this->modelFactory->getObject('Currency')->convertPrice(
-            $price,
-            $this->getEbayMarketplace()->getCurrency(),
-            $this->getParentObject()->getStoreId()
-        );
+        return $this->getData('parts_compatibility_mode');
     }
+
+    public function isPartsCompatibilityModeKtypes()
+    {
+        if ($this->getEbayMarketplace()->isMultiMotorsEnabled()) {
+            return $this->gePartsCompatibilityMode() == self::PARTS_COMPATIBILITY_MODE_KTYPES ||
+                is_null($this->gePartsCompatibilityMode());
+        }
+
+        return $this->getEbayMarketplace()->isKtypeEnabled();
+    }
+
+    public function isPartsCompatibilityModeEpids()
+    {
+        if ($this->getEbayMarketplace()->isMultiMotorsEnabled()) {
+            return $this->gePartsCompatibilityMode() == self::PARTS_COMPATIBILITY_MODE_EPIDS;
+        }
+
+        return $this->getEbayMarketplace()->isEpidEnabled();
+    }
+
+    //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct

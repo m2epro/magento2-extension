@@ -11,6 +11,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     const TEMPLATE_SHIPPING_OVERRIDE = 'shipping_override';
     const TEMPLATE_SHIPPING_TEMPLATE = 'shipping_template';
     const TEMPLATE_DESCRIPTION       = 'description';
+    const TEMPLATE_PRODUCT_TAX_CODE  = 'product_tax_code';
 
     protected $customCollectionFactory;
     protected $amazonFactory;
@@ -169,16 +170,40 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
+        // Prepare description collection
+        // ---------------------------------------
+        $collectionProductTaxCode = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')
+            ->getCollection();
+
+        $collectionProductTaxCode->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collectionProductTaxCode->getSelect()->columns(
+            array(
+                'id as template_id',
+                'title',
+                new \Zend_Db_Expr('\'' . self::TEMPLATE_PRODUCT_TAX_CODE . '\' as `type`'),
+                new \Zend_Db_Expr('\'0\' as `marketplace_id`'),
+                'create_date',
+                'update_date',
+                new \Zend_Db_Expr('NULL as `category_path`'),
+                new \Zend_Db_Expr('NULL as `browsenode_id`'),
+                new \Zend_Db_Expr('NULL as `is_new_asin_accepted`')
+            )
+        );
+        // ---------------------------------------
+
         // Prepare union select
         // ---------------------------------------
-        $unionSelect = $this->resourceConnection->getConnection()->select();
-        $unionSelect->union(array(
+        $collectionsArray = array(
             $collectionSellingFormat->getSelect(),
             $collectionSynchronization->getSelect(),
             $collectionDescription->getSelect(),
             $collectionShippingOverride->getSelect(),
-            $collectionShippingTemplate->getSelect()
-        ));
+            $collectionShippingTemplate->getSelect(),
+            $collectionProductTaxCode->getSelect()
+        );
+
+        $unionSelect = $this->resourceConnection->getConnection()->select();
+        $unionSelect->union($collectionsArray);
         // ---------------------------------------
 
         // Prepare result collection
@@ -281,8 +306,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'actions',
             'filter'    => false,
             'sortable'  => false,
-            'getter'    => 'getTemplateId',
             'renderer'  => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Renderer\Action',
+            'getter'    => 'getTemplateId',
             'actions'   => array(
                 array(
                     'caption'   => $this->__('Delete'),
@@ -293,7 +318,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                             'type' => '$type'
                         )
                     ),
-                    'field'     => 'id',
+                    'field'    => 'id',
                     'confirm'  => $this->__('Are you sure?')
                 )
             )
@@ -307,6 +332,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             self::TEMPLATE_SYNCHRONIZATION   => $this->__('Synchronization'),
             self::TEMPLATE_SHIPPING_TEMPLATE => $this->__('Shipping Template'),
             self::TEMPLATE_SHIPPING_OVERRIDE => $this->__('Shipping Override'),
+            self::TEMPLATE_PRODUCT_TAX_CODE  => $this->__('Product Tax Code'),
         );
 
         $this->getColumn('type')->setData('options', $options);

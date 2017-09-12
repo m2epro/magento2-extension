@@ -10,16 +10,17 @@ namespace Ess\M2ePro\Model\Template;
 
 class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
-    const PRICE_NONE      = 0;
-    const PRICE_PRODUCT   = 1;
-    const PRICE_SPECIAL   = 2;
-    const PRICE_ATTRIBUTE = 3;
-
     const QTY_MODE_PRODUCT       = 1;
     const QTY_MODE_SINGLE        = 2;
     const QTY_MODE_NUMBER        = 3;
     const QTY_MODE_ATTRIBUTE     = 4;
     const QTY_MODE_PRODUCT_FIXED = 5;
+
+    const PRICE_MODE_NONE      = 0;
+    const PRICE_MODE_PRODUCT   = 1;
+    const PRICE_MODE_SPECIAL   = 2;
+    const PRICE_MODE_ATTRIBUTE = 3;
+    const PRICE_MODE_TIER      = 4;
 
     //########################################
 

@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model\Listing\Product;
 
 use Ess\M2ePro\Model\Exception;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product\Variation getResource()
+ */
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     /**
@@ -51,7 +54,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
             return false;
         }
 
-        $options = $this->getOptions(true);
+        $options = $this->getOptions(true, [], true, false);
         foreach ($options as $option) {
             $option->delete();
         }
@@ -121,10 +124,12 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
      * @param bool $asObjects
      * @param array $filters
      * @param bool $tryToGetFromStorage
+     * @param bool $throwExceptionIfNoOptions
      * @return \Ess\M2ePro\Model\Listing\Product\Variation\Option[]
      * @throws \Ess\M2ePro\Model\Exception
      */
-    public function getOptions($asObjects = false, array $filters = array(), $tryToGetFromStorage = true)
+    public function getOptions($asObjects = false, array $filters = array(),
+                               $tryToGetFromStorage = true, $throwExceptionIfNoOptions = true)
     {
         $storageKey = "listing_product_{$this->getListingProductId()}_variation_{$this->getId()}_options_" .
             md5((string)$asObjects . $this->getHelper('Data')->jsonEncode($filters));
@@ -138,7 +143,7 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Abstract
             'Listing\Product\Variation\Option','listing_product_variation_id',$asObjects,$filters
         );
 
-        if (count($options) <= 0) {
+        if ($throwExceptionIfNoOptions && count($options) <= 0) {
             throw new Exception\Logic('There are no options for a variation product.',
                 array(
                     'variation_id'       => $this->getId(),

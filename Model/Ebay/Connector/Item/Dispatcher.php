@@ -43,7 +43,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_UNKNOWN
         ), $params);
 
-        $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+        $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
         $params['logs_action_id'] = $this->logsActionId;
 
         $isRealTime = !empty($params['is_realtime']);
@@ -85,11 +85,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
                 try {
 
-                    if ($action == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
-                        $result = $this->processMultiple($products, $action, $isRealTime, $params);
-                    } else {
-                        $result = $this->processSingle($products, $action, $isRealTime, $params);
-                    }
+                    $result = $this->processProducts($products, $action, $isRealTime, $params);
 
                 } catch (\Exception $exception) {
 
@@ -113,10 +109,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     // ########################################
 
-    protected function processSingle(array $products, $action, $isRealTime = false, array $params = array())
+    protected function processProducts(array $products, $action, $isRealTime = false, array $params = array())
     {
         $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorName = 'Ebay\Connector\Item\\'.$this->getActionNick($action).'\SingleRequester';
+        $connectorName = 'Ebay\Connector\Item\\'.$this->getActionNick($action).'\Requester';
 
         $results = array();
 
@@ -125,6 +121,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
             try {
 
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Requester $connector */
                 $connector = $dispatcher->getCustomConnector($connectorName, $params);
                 $connector->setIsRealTime($isRealTime);
                 $connector->setListingProduct($product);
@@ -136,7 +133,9 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
                 if (is_array($logsActionId)) {
                     $this->logsActionId = max($logsActionId);
-                    $result = $this->activeRecordFactory->getObject('Listing\Log')->getStatusByActionId(
+                    $listingLog = $this->activeRecordFactory->getObject('Listing\Log');
+                    $result = $listingLog->getResource()->getStatusByActionId(
+                        $listingLog,
                         $this->logsActionId
                     );
                 } else {
@@ -153,50 +152,6 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
             $results[] = $result;
         }
-
-        return $this->getHelper('Data')->getMainStatus($results);
-    }
-
-    protected function processMultiple(array $products, $action, $isRealTime = false, array $params = array())
-    {
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorName = 'Ebay\Connector\Item\\'.$this->getActionNick($action).'\MultipleRequester';
-
-        $results = array();
-
-        do {
-
-            /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Multiple\Requester $connector */
-            $connector = $dispatcher->getCustomConnector($connectorName, $params);
-            $connector->setIsRealTime($isRealTime);
-
-            $productsPack = array_slice($products, 0, $connector->getMaxProductsCount());
-
-            try {
-
-                $connector->setListingsProducts($productsPack);
-                $dispatcher->process($connector);
-
-                $result = $connector->getStatus();
-
-            } catch (\Exception $exception) {
-
-                foreach ($productsPack as $product) {
-                    /** @var \Ess\M2ePro\Model\Listing\Product $product */
-
-                    $this->logListingProductException($product, $exception, $action, $params);
-                }
-
-                $this->getHelper('Module\Exception')->process($exception);
-
-                $result = \Ess\M2ePro\Helper\Data::STATUS_ERROR;
-            }
-
-            $results[] = $result;
-
-            $products = array_slice($products, count($productsPack));
-
-        } while (!empty($products));
 
         return $this->getHelper('Data')->getMainStatus($results);
     }

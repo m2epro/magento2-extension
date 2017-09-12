@@ -81,30 +81,9 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
     //########################################
 
-    public function getCurrencies()
-    {
-        return $this->getData('currency');
-    }
-
     public function getCurrency()
     {
-        $currency = (string)$this->getData('currency');
-
-        if (strpos($currency,',') === false) {
-            return $currency;
-        }
-
-        $currency = explode(',', $currency);
-
-        if (!is_null($setting = $this->moduleConfig->getGroupValue(
-                '/ebay/selling/currency/',
-                $this->getParentObject()->getCode()
-            )) && in_array($setting, $currency)) {
-
-            return $setting;
-        }
-
-        return array_shift($currency);
+        return $this->getData('currency');
     }
 
     public function getOriginCountry()
@@ -155,14 +134,6 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function isTranslationServiceModeBoth()
     {
         return $this->getTranslationServiceMode() == self::TRANSLATION_SERVICE_YES_BOTH;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMultiCurrencyEnabled()
-    {
-        return (bool)(int)$this->getData('is_multi_currency');
     }
 
     /**
@@ -323,6 +294,14 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     public function isKtypeEnabled()
     {
         return (bool)(int)$this->getData('is_ktype');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMultiMotorsEnabled()
+    {
+        return $this->isEpidEnabled() && $this->isKtypeEnabled();
     }
 
     //########################################

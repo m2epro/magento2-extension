@@ -17,7 +17,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Connector\Protocol */
     protected $protocol = NULL;
 
-    /** @var \Ess\M2ePro\Model\Connector\Connection $connection */
+    /** @var \Ess\M2ePro\Model\Connector\Connection\Single $connection */
     protected $connection = NULL;
 
     // ########################################
@@ -69,7 +69,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function buildConnectionInstance()
     {
-        $connection = $this->modelFactory->getObject('Connector\Connection');
+        $connection = $this->modelFactory->getObject('Connector\Connection\Single');
         $connection->setRequest($this->buildRequestInstance());
 
         return $connection;

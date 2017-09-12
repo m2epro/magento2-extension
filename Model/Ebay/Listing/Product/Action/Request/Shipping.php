@@ -256,11 +256,12 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
 
             if ($this->getShippingTemplate()->isLocalShippingFlatEnabled()) {
 
+                $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
-                                                  ->getCost();
+                                                  ->getCost($store);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
-                                                             ->getCostAdditional();
+                                                             ->getCostAdditional($store);
 
                 if (!$this->getShippingTemplate()->isLocalShippingRateTableEnabled() &&
                     in_array($this->getShippingTemplate()->getMarketplaceId(), array(
@@ -269,7 +270,7 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
                     )) && preg_match('/(FedEx|UPS)/', $service->getShippingValue())) {
 
                     $tempDataMethod['cost_surcharge'] = $service->getSource($this->getMagentoProduct())
-                                                                ->getCostSurcharge();
+                                                                ->getCostSurcharge($store);
                 }
             }
 
@@ -349,11 +350,12 @@ class Shipping extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abs
 
             if ($this->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
 
+                $store = $this->getListing()->getStoreId();
                 $tempDataMethod['cost'] = $service->getSource($this->getMagentoProduct())
-                                                  ->getCost();
+                                                  ->getCost($store);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->getMagentoProduct())
-                                                             ->getCostAdditional();
+                                                             ->getCostAdditional($store);
             }
 
             $services[] = $tempDataMethod;

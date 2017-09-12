@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Synchronization\Log getResource()
+ */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const TASK_UNKNOWN = 0;
@@ -91,27 +94,18 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function getActionTitle($type)
-    {
-        return $this->getActionTitleByClass(__CLASS__,$type);
-    }
-
-    public function getActionsTitles()
-    {
-        return $this->getActionsTitlesByClass(__CLASS__,'TASK_');
-    }
-
-    // ---------------------------------------
-
     public function clearMessages($task = NULL)
     {
-        $columnName = !is_null($task) ? 'task' : NULL;
-        $this->clearMessagesByTable('Synchronization\Log',$columnName,$task);
-    }
+        $filters = array();
 
-    public function getLastActionIdConfigKey()
-    {
-        return 'synchronization';
+        if (!is_null($task)) {
+            $filters['task'] = $task;
+        }
+        if (!is_null($this->componentMode)) {
+            $filters['component_mode'] = $this->componentMode;
+        }
+
+        $this->getResource()->clearMessages($filters);
     }
 
     //########################################

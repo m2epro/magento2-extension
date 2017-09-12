@@ -213,15 +213,15 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\LockItem $object
+     * @param \Ess\M2ePro\Model\Lock\Item\Manager $object
      */
-    public function setParentLockItem(\Ess\M2ePro\Model\LockItem $object)
+    public function setParentLockItem(\Ess\M2ePro\Model\Lock\Item\Manager $object)
     {
         $this->parentLockItem = $object;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\LockItem
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager
      */
     public function getParentLockItem()
     {
@@ -321,12 +321,12 @@ final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\Synchronization\LockItem
+     * @return \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager
      */
     protected function getLockItem()
     {
         if (is_null($this->lockItem)) {
-            $this->lockItem = $this->activeRecordFactory->getObject('Synchronization\LockItem');
+            $this->lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
         }
         return $this->lockItem;
     }

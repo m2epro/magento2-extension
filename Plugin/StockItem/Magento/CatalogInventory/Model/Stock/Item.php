@@ -26,17 +26,16 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     //########################################
 
-    public function aroundBeforeSave($interceptor, \Closure $callback)
+    public function aroundBeforeSave($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('beforeSave', $interceptor, $callback);
-
+        return $this->execute('beforeSave', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processBeforeSave($interceptor, \Closure $callback)
+    protected function processBeforeSave($interceptor, \Closure $callback, array $arguments)
     {
-        $result = $callback();
+        $result = $callback(...$arguments);
 
         $this->eventManager->dispatch(
             'cataloginventory_stock_item_save_before',

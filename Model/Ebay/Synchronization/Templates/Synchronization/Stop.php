@@ -218,7 +218,7 @@ final class Stop extends AbstractModel
             return;
         }
 
-        $configurator->setPartialMode();
+        $configurator->reset();
         $configurator->allowQty();
         $configurator->allowVariations();
     }

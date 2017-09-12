@@ -6,12 +6,12 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * @method Ess\M2ePro\Model\Order getParentObject()
- * @method Ess\M2ePro\Model\ResourceModel\Ebay\Order getResource()
- */
 namespace Ess\M2ePro\Model\Ebay;
 
+/**
+ * @method \Ess\M2ePro\Model\Order getParentObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Order getResource()
+ */
 class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const ORDER_STATUS_ACTIVE     = 0;
@@ -294,6 +294,22 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
     // ---------------------------------------
 
+    public function getWasteRecyclingFee()
+    {
+        $resultFee = 0.0;
+
+        foreach ($this->getParentObject()->getItemsCollection() as $item) {
+            /** @var \Ess\M2ePro\Model\Ebay\Order\Item $ebayItem */
+            $ebayItem = $item->getChildObject();
+
+            $resultFee += $ebayItem->getWasteRecyclingFee();
+        }
+
+        return $resultFee;
+    }
+
+    // ---------------------------------------
+
     /**
      * @return array
      * @throws \Ess\M2ePro\Model\Exception\Logic
@@ -331,6 +347,16 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     }
 
     /**
+     * @return float
+     */
+    public function getCashOnDeliveryCost()
+    {
+        $shippingDetails = $this->getShippingDetails();
+        return isset($shippingDetails['cash_on_delivery_cost'])
+            ? (float)$shippingDetails['cash_on_delivery_cost'] : 0.0;
+    }
+
+    /**
      * @return \Ess\M2ePro\Model\Ebay\Order\ShippingAddress
      */
     public function getShippingAddress()
@@ -354,6 +380,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         $trackingDetails = array();
         foreach ($items as $item) {
             $trackingDetails = array_merge($trackingDetails, $item->getChildObject()->getTrackingDetails());
+        }
+
+        $existedTrackingNumbers = array();
+
+        foreach ($trackingDetails as $key => $trackingDetail) {
+            if (in_array($trackingDetail['number'], $existedTrackingNumbers)) {
+                unset($trackingDetails[$key]);
+                continue;
+            }
+
+            $existedTrackingNumbers[] = $trackingDetail['number'];
         }
 
         return $trackingDetails;
@@ -599,6 +636,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             $this->grandTotalPrice = $this->getSubtotalPrice();
             $this->grandTotalPrice += round((float)$this->getShippingPrice(), 2);
             $this->grandTotalPrice += round((float)$this->getTaxAmount(), 2);
+            $this->grandTotalPrice += round((float)$this->getWasteRecyclingFee(), 2);
         }
 
         return $this->grandTotalPrice;
@@ -942,7 +980,16 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         if (!$this->canUpdatePaymentStatus()) {
             return false;
         }
-        return $this->processConnector(\Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY, $params);
+
+        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT;
+        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
+        $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
+
+        $this->activeRecordFactory->getObject('Order\Change')->create(
+            $this->getId(), $action, $creator, $component, $params
+        );
+
+        return true;
     }
 
     // ---------------------------------------
@@ -975,11 +1022,13 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function updateShippingStatus(array $trackingDetails = array())
     {
+        if (!$this->canUpdateShippingStatus($trackingDetails)) {
+            return false;
+        }
+
         $params = array();
-        $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP;
 
         if (!empty($trackingDetails['tracking_number'])) {
-            $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK;
 
             // Prepare tracking information
             // ---------------------------------------
@@ -993,7 +1042,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
             // ---------------------------------------
         }
 
-        return $this->processConnector($action, $params);
+        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
+        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
+        $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
+
+        $params = array('tracking_details' => $trackingDetails);
+
+        $this->activeRecordFactory->getObject('Order\Change')->create(
+            $this->getId(), $action, $creator, $component, $params
+        );
+
+        return true;
     }
 
     //########################################

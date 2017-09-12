@@ -32,15 +32,15 @@ class RunReviseAll extends Settings
 
     public function execute()
     {
-        $startDate = $this->getHelper('M2ePro')->getCurrentGmtDate();
+        $startDate = $this->getHelper('Data')->getCurrentGmtDate();
 
         $synchConfig = $this->modelFactory->getObject('Config\Manager\Synchronization');
 
         $synchConfig->setGroupValue(
-            '/ebay/templates/revise/total/', 'start_date', $startDate
+            '/ebay/templates/synchronization/revise/total/', 'start_date', $startDate
         );
         $synchConfig->setGroupValue(
-            '/ebay/templates/revise/total/', 'last_listing_product_id', 0
+            '/ebay/templates/synchronization/revise/total/', 'last_listing_product_id', 0
         );
 
         $this->setJsonContent(array(

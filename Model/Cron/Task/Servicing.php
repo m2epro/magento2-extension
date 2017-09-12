@@ -28,7 +28,9 @@ final class Servicing extends AbstractModel
 
     protected function performActions()
     {
-        return $this->modelFactory->getObject('Servicing\Dispatcher')->process();
+        $dispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
+        $dispatcher->setInitiator($this->getInitiator());
+        $dispatcher->process();
     }
 
     //########################################

@@ -124,7 +124,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $this->addColumn('online_price', $priceColumn);
 
-        $this->addColumn('status', array(
+        $statusColumn = array(
             'header' => $this->__('Status'),
             'width' => '125px',
             'index' => 'status',
@@ -139,7 +139,17 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
                 \Ess\M2ePro\Model\Listing\Product::STATUS_BLOCKED => $this->__('Inactive (Blocked)')
             ),
             'frame_callback' => array($this, 'callbackColumnStatus')
-        ));
+        );
+
+        $listingType = $this->getRequest()->getParam(
+            'listing_type', \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_M2E_PRO
+        );
+
+        if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
+            unset($statusColumn['options'][\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
+        }
+
+        $this->addColumn('status', $statusColumn);
 
         $this->addColumn('goto_listing_item', array(
             'header'    => $this->__('Manage'),
@@ -188,7 +198,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $imageUrlResizedUrl = $imageUrlResized->getUrl();
 
-        $imageHtml = $productId.'<div style="margin-top: 5px;"><img src="'.$imageUrlResizedUrl.'" /></div>';
+        $imageHtml = $productId.'<div style="margin-top: 5px;">'.
+           '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
         $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
 
         return $withImageHtml;
@@ -302,7 +313,10 @@ HTML;
             $resultValue = $resultValue."&nbsp;[".$additionalData['afn_count']."]";
         }
 
-        return $value . '<br/>' . $resultValue;
+        return <<<HTML
+    <div>{$value}</div>
+    <div>{$resultValue}</div>
+HTML;
     }
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
@@ -406,9 +420,10 @@ HTML;
             }
         }
 
-        $currentOnlinePrice = $row->getData('online_current_price');
+        $currentOnlinePrice = (float)$row->getData('online_current_price');
+        $onlineBusinessPrice = (float)$row->getData('online_business_price');
 
-        if (is_null($currentOnlinePrice) || $currentOnlinePrice === '') {
+        if ((is_null($currentOnlinePrice) || $currentOnlinePrice === '') && empty($onlineBusinessPrice)) {
             if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
@@ -424,8 +439,9 @@ HTML;
             ->getChildObject()
             ->getDefaultCurrency();
 
+        $onlineBusinessPrice = $row->getData('online_business_price');
+
         if ($row->getData('is_variation_parent')) {
-            $currentOnlinePrice = $this->localeCurrency->getCurrency($currency)->toCurrency($currentOnlinePrice);
             $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
 
             $priceHtml = <<<HTML
@@ -435,12 +451,22 @@ HTML;
         {$noticeText}
     </div>
 </div>
-<div style="display: inline;">{$currentOnlinePrice}</div>
 HTML;
+
+            if (!empty($currentOnlinePrice)) {
+                $currentOnlinePrice = $this->localeCurrency->getCurrency($currency)->toCurrency($currentOnlinePrice);
+                $priceHtml .= "<span>{$currentOnlinePrice}</span><br />";
+            }
+
+            if (!empty($onlineBusinessPrice)) {
+                $priceHtml .= '<strong>B2B:</strong> '
+                              .$this->localeCurrency->getCurrency($currency)->toCurrency($onlineBusinessPrice);
+            }
+
             return $priceHtml . $repricingHtml;
         }
 
-        $onlinePrice = $row->getData('online_price');
+        $onlinePrice = $row->getData('online_regular_price');
         if ((float)$onlinePrice <= 0) {
             $priceValue = '<span style="color: #f00;">0</span>';
         } else {
@@ -466,19 +492,19 @@ HTML;
 
         $resultHtml = '';
 
-        $salePrice = $row->getData('online_sale_price');
+        $salePrice = $row->getData('online_regular_sale_price');
         if (!$row->getData('is_variation_parent') && (float)$salePrice > 0 && !$row->getData('is_repricing')) {
             $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
 
-            $startDateTimestamp = strtotime($row->getData('online_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($row->getData('online_sale_price_end_date'));
+            $startDateTimestamp = strtotime($row->getData('online_regular_sale_price_start_date'));
+            $endDateTimestamp   = strtotime($row->getData('online_regular_sale_price_end_date'));
 
             if ($currentTimestamp <= $endDateTimestamp) {
                 $fromDate = $this->_localeDate->formatDate(
-                    $row->getData('online_sale_price_start_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_start_date'), \IntlDateFormatter::MEDIUM
                 );
                 $toDate = $this->_localeDate->formatDate(
-                    $row->getData('online_sale_price_end_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_end_date'), \IntlDateFormatter::MEDIUM
                 );
 
                 $intervalHtml = <<<HTML
@@ -512,6 +538,29 @@ HTML;
 
         if (empty($resultHtml)) {
             $resultHtml = $priceValue . $repricingHtml;
+        }
+
+        if ((float)$onlineBusinessPrice > 0) {
+            $businessPriceValue = '<strong>B2B:</strong> '
+                                  .$this->localeCurrency->getCurrency($currency)->toCurrency($onlineBusinessPrice);
+
+            $businessDiscounts = $row->getData('online_business_discounts');
+            if (!empty($businessDiscounts) && $businessDiscounts = json_decode($businessDiscounts, true)) {
+                $discountsHtml = '';
+
+                foreach ($businessDiscounts as $qty => $price) {
+                    $price = $this->localeCurrency->getCurrency($currency)->toCurrency($price);
+                    $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
+                }
+
+                $businessPriceValue .= $this->getTooltipHtml($discountsHtml);
+            }
+
+            if (!empty($resultHtml)) {
+                $businessPriceValue = '<br />'.$businessPriceValue;
+            }
+
+            $resultHtml .= $businessPriceValue;
         }
 
         return $resultHtml;

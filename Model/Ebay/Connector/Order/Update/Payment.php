@@ -35,7 +35,6 @@ class Payment extends \Ess\M2ePro\Model\Ebay\Connector\Order\Update\AbstractMode
 
         $this->activeRecordFactory->getObject('Order\Change')->getResource()
             ->deleteByOrderAction($this->order->getId(),\Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT);
-
     }
 
     // ########################################

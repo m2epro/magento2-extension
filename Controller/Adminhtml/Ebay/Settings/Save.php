@@ -34,18 +34,10 @@ class Save extends Settings
             (int)$this->getRequest()->getParam('upload_images_mode')
         );
 
-        $sellingCurrency = $this->getRequest()->getParam('selling_currency');
-        if (!empty($sellingCurrency)) {
-            foreach ($sellingCurrency as $code => $value) {
-                $this->getHelper('Module')->getConfig()->setGroupValue(
-                    '/ebay/selling/currency/', $code, (string)$value
-                );
-            }
-        }
-
         $this->setAjaxContent($this->getHelper('Data')->jsonEncode([
             'success' => true
         ]), false);
+
         return $this->getResult();
     }
 

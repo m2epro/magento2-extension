@@ -3,6 +3,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Synchronization;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
+use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
 class Save extends Template
@@ -65,6 +66,7 @@ class Save extends Template
             'revise_change_selling_format_template',
             'revise_change_description_template',
             'revise_change_shipping_template',
+            'revise_change_product_tax_code_template',
             'revise_change_listing'
         );
         foreach ($keys as $key) {
@@ -128,21 +130,27 @@ class Save extends Template
         // Add or update model
         // ---------------------------------------
         $model = $this->amazonFactory->getObject('Template\Synchronization');
+
+        $oldData = [];
+
         if ($id) {
             $model->load($id);
-            $model->addData($data);
-            $model->getChildObject()->addData($data);
-        } else {
-            $model->setData($data);
+
+            $oldData = array_merge(
+                $model->getDataSnapshot(),
+                $model->getChildObject()->getDataSnapshot()
+            );
         }
 
-        $oldData = $model->getDataSnapshot();
-        if ($id) {
-            $oldData = array_merge($oldData, $model->getChildObject()->getDataSnapshot());
-        }
+        $model->addData($data)->save();
+        $model->getChildObject()->addData(array_merge(
+            [$model->getResource()->getChildPrimary(Amazon::NICK) => $model->getId()],
+            $data
+        ));
+
         $model->save();
-        $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
 
+        $newData = array_merge($model->getDataSnapshot(), $model->getChildObject()->getDataSnapshot());
         $model->getChildObject()->setSynchStatusNeed($newData,$oldData);
 
         if ($this->isAjax()) {

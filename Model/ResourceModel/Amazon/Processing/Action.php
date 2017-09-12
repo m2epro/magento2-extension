@@ -19,20 +19,24 @@ class Action extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
 
     // ########################################
 
-    public function getIdsWithFullyCompletedItems()
+    public function markAsInProgress(array $itemIds, \Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle)
     {
-        $mapaiTable = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')
-            ->getResource()->getMainTable();
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            array(
+                'request_pending_single_id' => $requestPendingSingle->getId(),
+            ),
+            array('id IN (?)' => $itemIds)
+        );
+    }
 
-        $select = $this->getConnection()->select()
-            ->from(array('mapa' => $this->getMainTable()), 'id')
-            ->joinLeft(
-                array('mapai' => $mapaiTable),
-                'mapa.id = mapai.action_id AND mapai.is_completed = 0',
-                array()
-            )
-            ->group('mapa.id')
-            ->having(new \Zend_Db_Expr('count(mapai.id) = 0'));
+    public function getUniqueRequestPendingSingleIds()
+    {
+        $select = $this->getConnection()
+            ->select()
+            ->from($this->getMainTable(), new \Zend_Db_Expr('DISTINCT `request_pending_single_id`'))
+            ->where('request_pending_single_id IS NOT NULL')
+            ->distinct(true);
 
         return $this->getConnection()->fetchCol($select);
     }

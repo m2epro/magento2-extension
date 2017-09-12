@@ -19,7 +19,7 @@ define([
             parameters += '&store_id=' + encodeURIComponent(storeId);
             parameters += '&marketplace_id=' + encodeURIComponent(marketplaceId);
             parameters += '&check_attributes_availability=' + encodeURIComponent(checkAttributesAvailability);
-            parameters += data;
+            parameters += '&'+ data;
 
             new Ajax.Request(M2ePro.url.get('templateCheckMessages'), {
                 method: 'post',

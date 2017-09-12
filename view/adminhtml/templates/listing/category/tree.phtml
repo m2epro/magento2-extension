@@ -15,7 +15,7 @@
 </div>
 <div class="categories-side-col">
     <div class="tree-holder">
-        <div id="tree-div" style="width: 100%; overflow: auto;" class="admin__scope-old"></div>
+        <div id="tree-div-auto-action" style="width: 100%; overflow: auto;" class="admin__scope-old"></div>
     </div>
 </div>
 
@@ -45,7 +45,7 @@
         <?php } ?>
 
         function init() {
-            window.tree = new Ext.tree.TreePanel('tree-div', {
+            window.tree = new Ext.tree.TreePanel('tree-div-auto-action', {
                 animate: true,
                 enableDD: false,
                 containerScroll: true,

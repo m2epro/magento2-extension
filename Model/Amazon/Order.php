@@ -349,6 +349,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         return (bool)$this->getData('is_prime');
     }
 
+    /**
+     * @return bool
+     */
+    public function isBusiness()
+    {
+        return (bool)$this->getData('is_business');
+    }
+
     //########################################
 
     /**
@@ -430,6 +438,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             $this->grandTotalPrice = $this->getSubtotalPrice();
             $this->grandTotalPrice += $this->getProductPriceTaxAmount();
             $this->grandTotalPrice += $this->getShippingPrice();
+            $this->grandTotalPrice += $this->getShippingPriceTaxAmount();
             $this->grandTotalPrice += $this->getGiftPriceTaxAmount();
             $this->grandTotalPrice -= $this->getPromotionDiscountAmount();
             $this->grandTotalPrice -= $this->getShippingDiscountAmount();
@@ -554,6 +563,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function canCreateInvoice()
     {
+        if ($this->getAmazonAccount()->isMagentoInvoiceCreationDisabled()) {
+            return false;
+        }
+
         if (!$this->getAmazonAccount()->isMagentoOrdersInvoiceEnabled()) {
             return false;
         }
@@ -800,6 +813,17 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         if ($this->isShipped() || $this->isPartiallyShipped() || count($items) != $totalItemsCount ||
             $this->isSetProcessingLock('update_shipping_status') || $changeCollection->getSize() > 0
         ) {
+            if (empty($items)) {
+                $this->getParentObject()->addErrorLog(
+                    'Amazon Order was not refunded. Reason: %msg%',
+                    array('msg' => 'Refund request was not submitted.
+                                    To be processed through Amazon API, the refund must be applied to certain products
+                                    in an order. Please indicate the number of each line item, that need to be refunded,
+                                    in Credit Memo form.')
+                );
+                return false;
+            }
+
             $action = \Ess\M2ePro\Model\Order\Change::ACTION_REFUND;
         }
 

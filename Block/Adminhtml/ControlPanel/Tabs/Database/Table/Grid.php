@@ -9,7 +9,6 @@
 namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
-use Ess\M2ePro\Model\Exception;
 use \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel as ParentAbstractModel;
 
 class Grid extends AbstractGrid
@@ -107,7 +106,7 @@ class Grid extends AbstractGrid
                 'header'         => $header,
                 'align'          => 'left',
                 'type'           => $this->getColumnType($column),
-                'string_limit'   => 15000,
+                'string_limit'   => 65000,
                 'index'          => strtolower($column['name']),
                 'filter_index'   => $filterIndex,
                 'frame_callback' => array($this, 'callbackColumnData'),
@@ -269,6 +268,26 @@ HTML;
     <span>delete</span>
 </a>
 HTML;
+
+        if ($this->tableModel->getTableName() == 'm2epro_operation_history') {
+
+            $urlUp = $this->getUrl(
+                '*/*/showOperationHistoryExecutionTreeUp', ['operation_history_id' => $row->getId()]
+            );
+            $urlDown = $this->getUrl(
+                '*/*/showOperationHistoryExecutionTreeDown', ['operation_history_id' => $row->getId()]
+            );
+            $html .= <<<HTML
+<br/>
+<a style="color: green;" href="{$urlUp}" target="_blank">
+    <span>exec.&nbsp;tree&nbsp;&uarr;</span>
+</a>
+<br/>
+<a style="color: green;" href="{$urlDown}" target="_blank">
+    <span>exec.&nbsp;tree&nbsp;&darr;</span>
+</a>
+HTML;
+        }
         $helper = $this->getHelper('Module\Database\Structure');
         $componentMode = $row->getData('component_mode');
 

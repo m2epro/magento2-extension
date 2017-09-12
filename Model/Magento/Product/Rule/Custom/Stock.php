@@ -32,7 +32,7 @@ class Stock extends AbstractModel
     {
         $stockItem = $this->stockItemFactory->create();
         $stockItem->getResource()->loadByProductId(
-            $stockItem, $product->getId(), $stockItem->getWebsiteId()
+            $stockItem, $product->getId(), $stockItem->getStockId()
         );
 
         return $stockItem->getIsInStock();

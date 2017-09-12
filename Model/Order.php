@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Amazon\Order getChildObject()
+ */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -29,6 +32,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     private $storeManager;
 
     private $orderFactory;
+
+    private $resourceConnection;
 
     private $account = NULL;
 
@@ -59,6 +64,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Magento\Store\Model\StoreManager $storeManager,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         ActiveRecord\Component\Parent\Factory $parentFactory,
+        \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
@@ -70,6 +76,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         $this->storeManager = $storeManager;
         $this->orderFactory = $orderFactory;
+        $this->resourceConnection = $resourceConnection;
 
         parent::__construct(
             $parentFactory,
@@ -574,6 +581,24 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         try {
 
+            // Check if we are wrapped by an another MySql transaction
+            // ---------------------------------------
+            $connection = $this->resourceConnection->getConnection();
+            if ($transactionLevel = $connection->getTransactionLevel()) {
+
+                $this->getHelper('Module\Logger')->process(
+                    array(
+                        'transaction_level' => $transactionLevel
+                    ),
+                    'MySql Transaction Level Problem'
+                );
+
+                while ($connection->getTransactionLevel()) {
+                    $connection->rollBack();
+                }
+            }
+            // ---------------------------------------
+
             // Store must be initialized before products
             // ---------------------------------------
             $this->associateWithStore();
@@ -599,6 +624,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->magentoOrder = $magentoOrderBuilder->getOrder();
 
             $this->setData('magento_order_id', $this->magentoOrder->getId());
+            $this->setMagentoOrder($this->magentoOrder);
+
             $this->save();
 
             $this->afterCreateMagentoOrder();
@@ -609,9 +636,32 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         } catch (\Exception $e) {
 
+            /**
+             * \Magento\CatalogInventory\Model\StockManagement::registerProductsSale()
+             * could open an transaction and may does not
+             * close it in case of Exception. So all the next changes may be lost.
+             */
+            $connection = $this->resourceConnection->getConnection();
+            if ($transactionLevel = $connection->getTransactionLevel()) {
+
+                $this->getHelper('Module\Logger')->process(
+                    array(
+                        'transaction_level' => $transactionLevel,
+                        'error'             => $e->getMessage(),
+                        'trace'             => $e->getTraceAsString()
+                    ),
+                    'MySql Transaction Level Problem'
+                );
+
+                while ($connection->getTransactionLevel()) {
+                    $connection->rollBack();
+                }
+            }
+
             $this->_eventManager->dispatch('m2epro_order_place_failure', array('order' => $this));
 
             $this->addErrorLog('Magento Order was not created. Reason: %msg%', array('msg' => $e->getMessage()));
+            $this->helperFactory->getObject('Module\Exception')->process($e, false);
 
             // reserve qty back only if it was canceled before the order creation process started
             // ---------------------------------------

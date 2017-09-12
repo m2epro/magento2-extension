@@ -36,22 +36,31 @@ class Product extends \Ess\M2ePro\Model\Magento\Product\Rule\Condition\Product
      * @param $filterId
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
-    protected function getCustomFilterInstance($filterId)
+    protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
     {
         $parentFilters = parent::getCustomFilters();
         if (isset($parentFilters[$filterId])) {
-            return parent::getCustomFilterInstance($filterId);
+            return parent::getCustomFilterInstance($filterId, $isReadyToCache);
         }
 
         $customFilters = $this->getCustomFilters();
-        $this->_customFiltersCache[$filterId] = $this->modelFactory->getObject(
+        if (!isset($customFilters[$filterId])) {
+            return null;
+        }
+
+        if (isset($this->_customFiltersCache[$filterId])) {
+            return $this->_customFiltersCache[$filterId];
+        }
+
+        $model = $this->modelFactory->getObject(
             'Amazon\Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
                 'filterOperator'  => $this->getData('operator'),
                 'filterCondition' => $this->getData('value')
             ]
         );
 
-        return $this->_customFiltersCache[$filterId];
+        $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
+        return $model;
     }
 
     /**

@@ -6,14 +6,14 @@
  * @license    Commercial use is forbidden
  */
 
-/**
- * @method \Ess\M2ePro\Model\Template\Description getParentObject()
- * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description getResource()
- */
 namespace Ess\M2ePro\Model\Amazon\Template;
 
 use \Ess\M2ePro\Model\Amazon\Template\Description\Definition;
 
+/**
+ * @method \Ess\M2ePro\Model\Template\Description getParentObject()
+ * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description getResource()
+ */
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     const WORLDWIDE_ID_MODE_NONE             = 0;
@@ -89,13 +89,15 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         $lockedListingProductsIds = $processingLockCollection->getColumnValues('object_id');
 
         $mysqlIds = implode(',', array_map('intval', $lockedListingProductsIds));
-        $statusNotListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
+        $notListed = \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED;
 
-        $collection->getSelect()->where(
-            "(`is_variation_parent` = 0 AND `status` = {$statusNotListed} AND `id` IN ({$mysqlIds})) OR
-             (`is_variation_parent` = 1 AND `general_id` IS NULL AND `id` IN ({$mysqlIds})) OR
-             (`is_variation_parent` = 1 AND `general_id` IS NOT NULL)"
-        );
+        $whereConditions = ['(`is_variation_parent` = 1 AND `general_id` IS NOT NULL)'];
+        if (!empty($mysqlIds)) {
+            $whereConditions[] = "(`is_variation_parent` = 0 AND `status` = {$notListed} AND `id` IN ({$mysqlIds}))";
+            $whereConditions[] = "(`is_variation_parent` = 1 AND `general_id` IS NULL AND `id` IN ({$mysqlIds}))";
+        }
+
+        $collection->getSelect()->where(implode(' OR ', $whereConditions));
 
         return (bool)$collection->getSize();
     }
@@ -446,6 +448,11 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function isCacheEnabled()
     {
         return true;
+    }
+
+    public function getCacheGroupTags()
+    {
+        return array_merge(parent::getCacheGroupTags(), ['template']);
     }
 
     //########################################

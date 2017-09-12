@@ -863,7 +863,8 @@ CSS
     public function showGeneralIdActions()
     {
         return !$this->getListingProduct()->getMagentoProduct()->isBundleType() &&
-               !$this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions();
+               !$this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() &&
+               !$this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
     // ---------------------------------------
@@ -1123,7 +1124,7 @@ HTML;
     {
         $variations = $this->getCurrentChannelVariations();
 
-        if (is_null($variations)) {
+        if (empty($variations)) {
             return false;
         }
 

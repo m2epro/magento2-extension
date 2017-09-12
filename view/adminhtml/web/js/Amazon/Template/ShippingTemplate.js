@@ -13,6 +13,13 @@ define([
             );
         },
 
+        initObservers: function()
+        {
+            $('template_name_mode')
+                .observe('change', this.templateNameModeChange)
+                .simulate('change');
+        },
+
         // ---------------------------------------
 
         duplicateClick: function($headId)
@@ -23,10 +30,23 @@ define([
             );
 
             CommonObj.duplicateClick($headId, M2ePro.translator.translate('Add Shipping Template Policy'));
-        }
+        },
 
         // ---------------------------------------
 
+        templateNameModeChange: function()
+        {
+            $('template_name_custom_value_tr').hide();
+            $('template_name_attribute').value = '';
+
+            if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Template_ShippingTemplate::TEMPLATE_NAME_VALUE')) {
+                $('template_name_custom_value_tr').show();
+            } else if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Template_ShippingTemplate::TEMPLATE_NAME_ATTRIBUTE')) {
+                CommonObj.updateHiddenValue(this, $('template_name_attribute'));
+            }
+        }
+
+        // ---------------------------------------
     });
 
 });

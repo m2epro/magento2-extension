@@ -53,58 +53,83 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->results = [];
         $this->keys = [];
+
+        $this->worstState = Result::STATE_SUCCESS;
     }
 
     //########################################
 
     /**
      * @param string $taskType
+     * @param bool $skipHiddenResults
      * @return Result[]
      */
-    public function getByType($taskType)
+    public function getByType($taskType, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['type'][$taskType]) ? $this->keys['type'][$taskType] : [];
-        return $this->getByKeys($affectedKeys);
+        return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param string $tabKey
+     * @param bool $skipHiddenResults
      * @return Result[]
      */
-    public function getByTab($tabKey)
+    public function getByTab($tabKey, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['tab'][$tabKey]) ? $this->keys['tab'][$tabKey] : [];
-        return $this->getByKeys($affectedKeys);
+        return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param string $fieldSetKey
+     * @param bool $skipHiddenResults
      * @return Result[]
      */
-    public function getByFieldSet($fieldSetKey)
+    public function getByFieldSet($fieldSetKey, $skipHiddenResults = true)
     {
         $affectedKeys = isset($this->keys['fieldset'][$fieldSetKey]) ? $this->keys['fieldset'][$fieldSetKey] : [];
-        return $this->getByKeys($affectedKeys);
+        return $this->getByKeys($affectedKeys, $skipHiddenResults);
     }
 
     /**
      * @param array|NULL $affectedKeys
+     * @param bool $skipHiddenResults
      * @return Result[]
      */
-    public function getByKeys($affectedKeys = null)
+    public function getByKeys($affectedKeys = null, $skipHiddenResults = true)
     {
-        if (is_null($affectedKeys)) {
-            return $this->results;
-        }
+        is_null($affectedKeys) && $affectedKeys = $this->getAllKeys();
 
         $results = [];
         foreach ($affectedKeys as $affectedKey) {
-            if (isset($this->results[$affectedKey])) {
-                $results[$affectedKey] = $this->results[$affectedKey];
+
+            if (!isset($this->results[$affectedKey])) {
+                continue;
             }
+
+            $temp = $this->results[$affectedKey];
+            if ($skipHiddenResults && $temp->isSuccess() && !$temp->isTaskMustBeShowIfSuccess()) {
+                continue;
+            }
+
+            $results[$affectedKey] = $temp;
         }
 
         return $results;
+    }
+
+    public function getAllKeys()
+    {
+        if (!isset($this->keys['type'])) {
+            return [];
+        }
+
+        $keys = [];
+        foreach ($this->keys['type'] as $type => $typeKeys) {
+            $keys = array_merge($keys, $typeKeys);
+        }
+        return $keys;
     }
 
     //########################################

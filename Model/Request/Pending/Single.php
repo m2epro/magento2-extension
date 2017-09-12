@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Request\Pending;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Request\Pending\Single getResource()
+ */
 class Single extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //####################################

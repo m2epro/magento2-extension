@@ -24,7 +24,7 @@ class SwitchToAFN extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Produc
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator $configurator */
             $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
-            $configurator->setPartialMode();
+            $configurator->reset();
             $configurator->allowQty();
 
             $listingProduct->setActionConfigurator($configurator);

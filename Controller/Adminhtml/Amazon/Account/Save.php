@@ -330,6 +330,23 @@ class Save extends Account
         }
         // ---------------------------------------
 
+        // tab: vat calculation service
+        // ---------------------------------------
+        $keys = array(
+            'is_vat_calculation_service_enabled',
+            'is_magento_invoice_creation_disabled',
+        );
+        foreach ($keys as $key) {
+            if (isset($post[$key])) {
+                $data[$key] = $post[$key];
+            }
+        }
+
+        if (empty($data['is_vat_calculation_service_enabled'])) {
+            $data['is_magento_invoice_creation_disabled'] = false;
+        }
+        // ---------------------------------------
+
         // Add or update model
         // ---------------------------------------
         $model = $this->amazonFactory->getObject('Account');
@@ -355,7 +372,7 @@ class Save extends Account
 
         // Repricing
         // ---------------------------------------
-        if (!empty($post['repricing'])) {
+        if (!empty($post['repricing']) && $model->getChildObject()->isRepricing()) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Account\Repricing $repricingModel */
             $repricingModel = $model->getChildObject()->getRepricing();

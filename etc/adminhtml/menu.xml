@@ -38,7 +38,7 @@
         <add id="Ess_M2ePro::ebay_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_knowledge_base" />
         <add id="Ess_M2ePro::ebay_help_center_ideas_workshop" title="Ideas Workshop" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_ideas_workshop" />
         <add id="Ess_M2ePro::ebay_help_center_community_forum" title="Community Forum" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::ebay_help_center" resource="Ess_M2ePro::ebay_help_center_community_forum" />
-        <add id="Ess_M2ePro::ebay_help_center_for_developers" title="For Developers" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::ebay_help_center" action="m2epro/developers/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_for_developers" />
+        <add id="Ess_M2ePro::ebay_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::ebay_help_center" action="m2epro/healthStatus/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_health_status" />
         <add id="Ess_M2ePro::ebay_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::ebay_help_center" action="m2epro/support/index/referrer/ebay" resource="Ess_M2ePro::ebay_help_center_contact_us" />
 
         <!-- amazon menu -->
@@ -74,7 +74,7 @@
         <add id="Ess_M2ePro::amazon_help_center_knowledge_base" title="Knowledge Base" module="Ess_M2ePro" sortOrder="20" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_knowledge_base" />
         <add id="Ess_M2ePro::amazon_help_center_ideas_workshop" title="Ideas Workshop" module="Ess_M2ePro" sortOrder="30" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_ideas_workshop" />
         <add id="Ess_M2ePro::amazon_help_center_community_forum" title="Community Forum" module="Ess_M2ePro" sortOrder="40" parent="Ess_M2ePro::amazon_help_center" resource="Ess_M2ePro::amazon_help_center_community_forum" />
-        <add id="Ess_M2ePro::amazon_help_center_for_developers" title="For Developers" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::amazon_help_center" action="m2epro/developers/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_for_developers" />
+        <add id="Ess_M2ePro::amazon_help_center_health_status" title="Health Status" module="Ess_M2ePro" sortOrder="50" parent="Ess_M2ePro::amazon_help_center" action="m2epro/healthStatus/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_health_status" />
         <add id="Ess_M2ePro::amazon_help_center_contact_us" title="Contact Us" module="Ess_M2ePro" sortOrder="60" parent="Ess_M2ePro::amazon_help_center" action="m2epro/support/index/referrer/amazon" resource="Ess_M2ePro::amazon_help_center_contact_us" />
 
     </menu>

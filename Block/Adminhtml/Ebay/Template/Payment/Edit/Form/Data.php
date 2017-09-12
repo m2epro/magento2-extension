@@ -53,7 +53,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         $form->addField('payment_title', 'hidden',
             [
                 'name' => 'payment[title]',
-                'value' => $this->getHelper('Data')->escapeHtml($this->getTitle())
+                'value' => $this->getTitle()
             ]
         );
 
@@ -90,7 +90,7 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'payment[pay_pal_email_address]',
                 'label' => $this->__('Email'),
                 'value' => $this->formData['pay_pal_email_address'],
-                'class' => 'input-text M2ePro-validate-email',
+                'class' => 'input-text M2ePro-validate-ebay-payment-email',
                 'field_extra_attributes' => 'id="pay_pal_email_address_container" style="display: none;"',
                 'required' => true
             ]

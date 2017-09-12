@@ -55,21 +55,13 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getProcessingParams()
     {
-        $ordersIds = array();
-
-        foreach ($this->params['items'] as $orderUpdate) {
-            if (!is_array($orderUpdate) || empty($orderUpdate['order_id'])) {
-                continue;
-            }
-
-            $ordersIds[] = $orderUpdate['order_id'];
-        }
-
         return array_merge(
             parent::getProcessingParams(),
             array(
                 'request_data' => $this->getRequestData(),
-                'orders_ids' => $ordersIds
+                'order_id'     => $this->params['order']['order_id'],
+                'change_id'    => $this->params['order']['change_id'],
+                'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
             )
         );
     }
@@ -78,42 +70,28 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getRequestData()
     {
-        if (!isset($this->params['items']) || !is_array($this->params['items'])) {
-            return array('items' => array());
+        $fulfillmentDate = new \DateTime($this->params['order']['fulfillment_date'], new \DateTimeZone('UTC'));
+
+        $order = array(
+            'id'               => $this->params['order']['change_id'],
+            'order_id'         => $this->params['order']['amazon_order_id'],
+            'tracking_number'  => $this->params['order']['tracking_number'],
+            'carrier_name'     => $this->params['order']['carrier_name'],
+            'fulfillment_date' => $fulfillmentDate->format('c'),
+            'shipping_method'  => isset($orderUpdate['shipping_method']) ? $orderUpdate['shipping_method'] : null,
+            'items'            => array()
+        );
+
+        if (isset($this->params['order']['items']) && is_array($this->params['order']['items'])) {
+            foreach ($this->params['order']['items'] as $item) {
+                $order['items'][] = array(
+                    'item_code' => $item['amazon_order_item_id'],
+                    'qty'       => (int)$item['qty']
+                );
+            }
         }
 
-        $orders = array();
-
-        foreach ($this->params['items'] as $orderUpdate) {
-            if (!is_array($orderUpdate)) {
-                continue;
-            }
-
-            $fulfillmentDate = new \DateTime($orderUpdate['fulfillment_date'], new \DateTimeZone('UTC'));
-
-            $order = array(
-                'id'               => $orderUpdate['change_id'],
-                'order_id'         => $orderUpdate['amazon_order_id'],
-                'tracking_number'  => $orderUpdate['tracking_number'],
-                'carrier_name'     => $orderUpdate['carrier_name'],
-                'fulfillment_date' => $fulfillmentDate->format('c'),
-                'shipping_method'  => isset($orderUpdate['shipping_method']) ? $orderUpdate['shipping_method'] : null,
-                'items'            => array()
-            );
-
-            if (isset($orderUpdate['items']) && is_array($orderUpdate['items'])) {
-                foreach ($orderUpdate['items'] as $item) {
-                    $order['items'][] = array(
-                        'item_code' => $item['amazon_order_item_id'],
-                        'qty'       => (int)$item['qty']
-                    );
-                }
-            }
-
-            $orders[$orderUpdate['change_id']] = $order;
-        }
-
-        return array('items' => $orders);
+        return $order;
     }
 
     // ########################################

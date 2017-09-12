@@ -29,10 +29,11 @@ class Synchronization extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compo
         }
 
         $settings = array(
-            'listing'               => 'revise_change_listing',
-            'sellingFormatTemplate' => 'revise_change_selling_format_template',
-            'descriptionTemplate'   => 'revise_change_description_template',
-            'shippingTemplate'      => 'revise_change_shipping_template'
+            'listing'                => 'revise_change_listing',
+            'sellingFormatTemplate'  => 'revise_change_selling_format_template',
+            'descriptionTemplate'    => 'revise_change_description_template',
+            'shippingTemplate'       => 'revise_change_shipping_template',
+            'productTaxCodeTemplate' => 'revise_change_product_tax_code_template',
         );
 
         $settings = $this->getEnabledReviseSettings($newData, $oldData, $settings);

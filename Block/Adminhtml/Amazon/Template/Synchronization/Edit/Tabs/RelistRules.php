@@ -50,7 +50,7 @@ class RelistRules extends AbstractForm
                     by Amazon), M2E Pro will attempt to relist the Item again only if there is a change of
                     Product Status, Stock Availability or Quantity in Magento.</p><br>
                     <p>More detailed information about how to work with this Page you can find
-                    <a href="%url%" class="external-link">here</a>.</p>
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                 ,
                 $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/SQItAQ')

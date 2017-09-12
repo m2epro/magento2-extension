@@ -81,6 +81,37 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             }
         }
 
+        if ($this->getAmazonListingProduct()->isAfnChannel()) {
+
+            if ($this->getConfigurator()->isShippingOverrideAllowed() &&
+                $this->getAmazonAccount()->isShippingModeOverride() &&
+                $this->getAmazonListingProduct()->isExistShippingOverrideTemplate()) {
+
+                $this->getConfigurator()->disallowShippingOverride();
+
+                // M2ePro_TRANSLATIONS
+                // The Shipping Override Settings will not be sent for this Product because it is an FBA Item. Amazon will handle the delivery of the Order.
+                $this->addMessage(
+                    'The Shipping Override Settings will not be sent for this Product because it is an FBA Item.
+                    Amazon will handle the delivery of the Order.',
+                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+                );
+            } elseif ($this->getConfigurator()->isShippingTemplateAllowed() &&
+                $this->getAmazonAccount()->isShippingModeTemplate() &&
+                $this->getAmazonListingProduct()->isExistShippingTemplateTemplate()) {
+
+                $this->getConfigurator()->disallowShippingTemplate();
+
+                // M2ePro_TRANSLATIONS
+                // The Shipping Template Settings will not be sent for this Product because it is an FBA Item. Amazon will handle the delivery of the Order.
+                $this->addMessage(
+                    'The Shipping Template Settings will not be sent for this Product because it is an FBA Item.
+                    Amazon will handle the delivery of the Order.',
+                    \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_WARNING
+                );
+            }
+        }
+
         if ($this->getVariationManager()->isPhysicalUnit() && !$this->validatePhysicalUnitMatching()) {
             return false;
         }
@@ -104,7 +135,7 @@ class Validator extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Val
             return false;
         }
 
-        if (!$this->validatePrice()) {
+        if (!$this->validateRegularPrice() || !$this->validateBusinessPrice()) {
             return false;
         }
 

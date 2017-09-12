@@ -159,7 +159,7 @@ CSS
         return <<<HTML
 <a href="{$url}" target="_blank">
     {$productId}
-    <div style="margin-top: 5px"><img src="{$thumbnailUrl}" /></div>
+    <div style="margin-top: 5px"><img style="max-width: 100px; max-height: 100px;" src="{$thumbnailUrl}" /></div>
 </a>
 HTML;
     }

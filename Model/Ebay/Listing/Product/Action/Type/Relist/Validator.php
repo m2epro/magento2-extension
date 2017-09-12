@@ -23,6 +23,10 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return false;
         }
 
+        if (!$this->validateIsVariationProductWithoutVariations()) {
+            return false;
+        }
+
         if (!$this->validateCategory()) {
             return false;
         }

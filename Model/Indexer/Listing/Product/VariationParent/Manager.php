@@ -13,45 +13,25 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     const INDEXER_LIFETIME = 1800;
 
     /** @var \Ess\M2ePro\Model\Listing */
-    private $listing = null;
+    protected $listing;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Listing $listing,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     )
     {
+        $this->listing = $listing;
         $this->activeRecordFactory = $activeRecordFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);
-    }
-
-    //########################################
-
-    public function setListing($value)
-    {
-        if (!($value instanceof \Ess\M2ePro\Model\Listing)) {
-            $value = $this->activeRecordFactory->getCachedObjectLoaded('Listing', $value);
-        }
-        $this->listing = $value;
-        return $this;
-    }
-
-    //########################################
-
-    public static function getTrackedFields()
-    {
-        return [
-            'online_price',
-            'online_sale_price',
-            'online_sale_price_start_date',
-            'online_sale_price_end_date'
-        ];
     }
 
     //########################################
@@ -64,10 +44,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
         /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resourceModel */
         $resourceModel = $this->activeRecordFactory->getObject(
-            'Indexer\Listing\Product\VariationParent'
+            ucfirst($this->listing->getComponentMode()) . '\Indexer\Listing\Product\VariationParent'
         )->getResource();
         $resourceModel->clear($this->listing->getId());
-        $resourceModel->build($this->listing->getId(), $this->listing->getComponentMode());
+        $resourceModel->build($this->listing);
 
         $this->markAsIsUpToDate();
     }

@@ -23,4 +23,64 @@ class Collection
     }
 
     // ########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Account[] $accounts
+     * @return $this
+     */
+    public function setAccountsFilter(array $accounts)
+    {
+        $accountIds = array();
+        foreach ($accounts as $account) {
+            $accountIds[] = $account->getId();
+        }
+
+        $this->addFieldToFilter('account_id', array('in' => $accountIds));
+
+        return $this;
+    }
+
+    /**
+     * @param string $actionType
+     * @return $this
+     */
+    public function setActionTypeFilter($actionType)
+    {
+        $this->addFieldToFilter('type', $actionType);
+        return $this;
+    }
+
+    public function setRequestPendingSingleIdFilter($requestPendingSingleIds)
+    {
+        if (!is_array($requestPendingSingleIds)) {
+            $requestPendingSingleIds = array($requestPendingSingleIds);
+        }
+
+        $this->addFieldToFilter('request_pending_single_id', array('in' => $requestPendingSingleIds));
+        return $this;
+    }
+
+    public function setNotProcessedFilter()
+    {
+        $this->addFieldToFilter('request_pending_single_id', array('null' => true));
+        return $this;
+    }
+
+    public function setInProgressFilter()
+    {
+        $this->addFieldToFilter('request_pending_single_id', array('notnull' => true));
+        return $this;
+    }
+
+    public function setStartedBeforeFilter($minutes)
+    {
+        $dateTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $dateTime->modify('- '.(int)$minutes.' minutes');
+
+        $this->addFieldToFilter('start_date', array('lt' => $dateTime->format('Y-m-d H:i:s')));
+
+        return $this;
+    }
+
+    // ########################################
 }

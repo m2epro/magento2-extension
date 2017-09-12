@@ -1,0 +1,11 @@
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the selected ePID(s)/kType(s).
+        In case you do not need some of them, you can Choose the appropriate
+        Option from the mass actions bulk to Remove the ePID(s)/kType(s).
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $block->getChildHtml('view_item_grid'); ?>
+</div>

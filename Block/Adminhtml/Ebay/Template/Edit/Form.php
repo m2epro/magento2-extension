@@ -175,17 +175,11 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     protected function _toHtml()
     {
-        $attributeSets = $this->getHelper('Magento\AttributeSet')->getAll(
-            \Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS
-        );
-        $templateData = $this->getTemplateData();
-
         $nick = $this->getTemplateNick();
         $this->jsUrl->addUrls([
             'ebay_template/getTemplateHtml' => $this->getUrl('*/ebay_template/getTemplateHtml',
                 [
                     'account_id' => NULL,
-                    'attribute_sets' => implode(',', $attributeSets),
                     'id' => $this->getTemplateId(),
                     'nick' => $nick,
                     'mode' => \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_TEMPLATE,

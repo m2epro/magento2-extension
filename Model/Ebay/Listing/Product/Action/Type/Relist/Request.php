@@ -27,6 +27,15 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $this->getListingProduct()->save();
     }
 
+    protected function afterBuildDataEvent(array $data)
+    {
+        $this->getConfigurator()->setPriority(
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_RELIST
+        );
+
+        parent::afterBuildDataEvent($data);
+    }
+
     //########################################
 
     /**

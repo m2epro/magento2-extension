@@ -19,24 +19,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         /** @var \Ess\M2ePro\Model\Amazon\Processing\Action $processingAction */
         $processingAction = $this->activeRecordFactory->getObject('Amazon\Processing\Action');
         $processingAction->setData(array(
-            'processing_id' => $this->getProcessingObject()->getId(),
             'account_id'    => $params['account_id'],
+            'processing_id' => $this->getProcessingObject()->getId(),
+            'related_id'    => $params['change_id'],
             'type'          => \Ess\M2ePro\Model\Amazon\Processing\Action::TYPE_ORDER_REFUND,
+            'request_data'  => $this->getHelper('Data')->jsonEncode($params['request_data']),
+            'start_date'    => $params['start_date'],
         ));
-
         $processingAction->save();
-
-        foreach ($params['request_data']['orders'] as $changeId => $orderData) {
-            /** @var \Ess\M2ePro\Model\Amazon\Processing\Action\Item $processingActionItem */
-            $processingActionItem = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item');
-            $processingActionItem->setData(array(
-                'action_id'  => $processingAction->getId(),
-                'related_id' => $changeId,
-                'input_data' => $this->getHelper('Data')->jsonEncode($orderData),
-            ));
-
-            $processingActionItem->save();
-        }
     }
 
     protected function setLocks()
@@ -45,15 +35,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        /** @var \Ess\M2ePro\Model\Order[] $orders */
-        $orders = $this->activeRecordFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('id', array('in' => $params['orders_ids']))
-            ->getItems();
-
-        foreach ($orders as $order) {
-            $order->addProcessingLock('refund_order', $this->getProcessingObject()->getId());
-        }
+        /** @var \Ess\M2ePro\Model\Order $order */
+        $order = $this->activeRecordFactory->getObjectLoaded('Order', $params['order_id']);
+        $order->addProcessingLock('refund_order', $this->getProcessingObject()->getId());
     }
 
     protected function unsetLocks()
@@ -62,15 +46,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        /** @var \Ess\M2ePro\Model\Order $orders */
-        $orders = $this->activeRecordFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('id', array('in' => $params['orders_ids']))
-            ->getItems();
-
-        foreach ($orders as $order) {
-            $order->deleteProcessingLocks('refund_order', $this->getProcessingObject()->getId());
-        }
+        /** @var \Ess\M2ePro\Model\Order $order */
+        $order = $this->activeRecordFactory->getObjectLoaded('Order', $params['order_id']);
+        $order->deleteProcessingLocks('refund_order', $this->getProcessingObject()->getId());
     }
 
     // ########################################

@@ -66,6 +66,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
     // ---------------------------------------
 
+    public function hasChildObjectLoaded()
+    {
+        return !is_null($this->childObject);
+    }
+
     public function setChildObject(\Ess\M2ePro\Model\ActiveRecord\Component\Child\AbstractModel $object)
     {
         if (is_null($object->getId())) {

@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Listing\Other;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Listing\Other\Log getResource()
+ */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const ACTION_UNKNOWN = 1;
@@ -61,27 +64,18 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     //########################################
 
-    public function getActionTitle($type)
-    {
-        return $this->getActionTitleByClass(__CLASS__,$type);
-    }
-
-    public function getActionsTitles()
-    {
-        return $this->getActionsTitlesByClass(__CLASS__,'ACTION_');
-    }
-
-    // ---------------------------------------
-
     public function clearMessages($listingOtherId = NULL)
     {
-        $columnName = !is_null($listingOtherId) ? 'listing_other_id' : NULL;
-        $this->clearMessagesByTable('Listing\Other\Log',$columnName,$listingOtherId);
-    }
+        $filters = array();
 
-    public function getLastActionIdConfigKey()
-    {
-        return 'other_listings';
+        if (!is_null($listingOtherId)) {
+            $filters['listing_other_id'] = $listingOtherId;
+        }
+        if (!is_null($this->componentMode)) {
+            $filters['component_mode'] = $this->componentMode;
+        }
+
+        $this->getResource()->clearMessages($filters);
     }
 
     //########################################
@@ -135,7 +129,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         if (!is_null($actionId)) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
-            $dataForAdd['action_id'] = $this->getNextActionId();
+            $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
         }
 
         if (!is_null($action)) {

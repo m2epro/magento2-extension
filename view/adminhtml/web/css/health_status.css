@@ -5,20 +5,27 @@
     padding-top: 2rem !important;
 }
 
+#healthStatus_tab_container .field-submit_button_container > div {
+    margin-left: 35% !important;
+}
+
 #healthStatus .health-status-tab-critical {
     color: orangered;
-    background: url(../images/health_status/error-16-icon.png) no-repeat right;
-    background-position-x: 95%;
+    background-image: url(../images/health_status/error-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
 }
 #healthStatus .health-status-tab-warning {
     color: darkorange;
-    background: url(../images/health_status/warning-16-icon.png) no-repeat right;
-    background-position-x: 95%;
+    background-image: url(../images/health_status/warning-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
 }
 #healthStatus .health-status-tab-notice {
     color: darkgrey;
-    background: url(../images/health_status/notice-16-icon.png) no-repeat right;
-    background-position-x: 95%;
+    background-image: url(../images/health_status/notice-16-icon.png);
+    background-repeat: no-repeat;
+    background-position: 95% 50%;
 }
 
 #healthStatus_tab_container .health-status-message-critical-mark { color: orangered;}

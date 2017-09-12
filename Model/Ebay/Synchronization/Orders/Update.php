@@ -153,7 +153,10 @@ final class Update extends AbstractModel
 
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->ebayFactory->getObjectLoaded('Order', $change->getOrderId());
-            $order->getId() && $order->getChildObject()->updatePaymentStatus();
+            if ($order->getId()) {
+                $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
+                $dispatcher->process(\Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY, array($order));
+            }
 
             return;
         }
@@ -162,7 +165,9 @@ final class Update extends AbstractModel
             $changeParams = $change->getParams();
             $params = array();
 
+            $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP;
             if (!empty($changeParams['tracking_details'])) {
+                $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK;
                 $params = $changeParams['tracking_details'];
             }
 
@@ -170,12 +175,20 @@ final class Update extends AbstractModel
 
                 /** @var \Ess\M2ePro\Model\Order\Item $item */
                 $item = $this->ebayFactory->getObjectLoaded('Order\Item', $changeParams['item_id']);
-                $item->getId() && $item->getChildObject()->updateShippingStatus($params);
+
+                if ($item->getId()) {
+                    $dispatcher = $this->modelFactory->getObject('Ebay\Connector\OrderItem\Dispatcher');
+                    $dispatcher->process($action, array($item), $params);
+                }
             } else {
 
                 /** @var \Ess\M2ePro\Model\Order $order */
                 $order = $this->ebayFactory->getObjectLoaded('Order', $change->getOrderId());
-                $order->getId() && $order->getChildObject()->updateShippingStatus($params);
+
+                if ($order->getId()) {
+                    $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
+                    $dispatcher->process($action, array($order), $params);
+                }
             }
         }
     }

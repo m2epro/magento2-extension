@@ -53,7 +53,8 @@ class UpgradeData implements UpgradeDataInterface
         '1.0.0' => ['1.1.0'],
         '1.1.0' => ['1.2.0'],
         '1.2.0' => ['1.3.0'],
-        '1.3.0' => ['1.3.1']
+        '1.3.0' => ['1.3.1'],
+        '1.3.1' => ['1.3.2']
     ];
 
     //########################################
@@ -145,10 +146,6 @@ class UpgradeData implements UpgradeDataInterface
             }
 
         } catch (\Exception $exception) {
-
-            if ($this->isAllowedToPrintToStdErr()) {
-                echo $exception->__toString();
-            }
 
             $this->logger->error($exception, ['source' => 'UpgradeData']);
             $this->helperFactory->getObject('Module\Exception')->process($exception);
@@ -300,18 +297,6 @@ class UpgradeData implements UpgradeDataInterface
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', 'm2epro/setup/allow_rollback_from_backup');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
-    }
-
-    private function isAllowedToPrintToStdErr()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
 
         return (bool)$this->installer->getConnection()->fetchOne($select);
     }

@@ -148,9 +148,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             }
         }
 
+        $childObject->isObjectNew(true);
         $childObject->save();
-        $childObject->setParentObject($object);
 
+        $childObject->setParentObject($object);
         $object->setChildObject($childObject);
 
         if ($object->getData('reload_on_create')) {

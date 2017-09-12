@@ -26,14 +26,32 @@ abstract class Inspector extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    abstract public function isMeetListRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct);
-    abstract public function isMeetRelistRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct);
-    abstract public function isMeetStopRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct);
+    abstract public function isMeetListRequirements(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    );
+
+    abstract public function isMeetRelistRequirements(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    );
+
+    abstract public function isMeetStopRequirements(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    );
 
     // ---------------------------------------
 
-    abstract public function isMeetReviseQtyRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct);
-    abstract public function isMeetRevisePriceRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct);
+    abstract public function isMeetReviseQtyRequirements(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    );
+
+    abstract public function isMeetRevisePriceRequirements(
+        \Ess\M2ePro\Model\Listing\Product $listingProduct,
+        $needSynchRulesCheckIfLocked = true
+    );
 
     //########################################
 

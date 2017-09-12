@@ -8,6 +8,7 @@ define([
     'M2ePro/Amazon/Listing/Product/Search',
     'M2ePro/Amazon/Listing/Product/Template/Description',
     'M2ePro/Amazon/Listing/Product/Template/Shipping',
+    'M2ePro/Amazon/Listing/Product/Template/ProductTaxCode',
     'M2ePro/Amazon/Listing/Product/Variation/Manage'
 ], function (MessageObj) {
 
@@ -43,7 +44,6 @@ define([
                 reviseAction: this.actionHandler.reviseAction.bind(this.actionHandler),
                 stopAction: this.actionHandler.stopAction.bind(this.actionHandler),
                 stopAndRemoveAction: this.actionHandler.stopAndRemoveAction.bind(this.actionHandler),
-                removeAction: this.actionHandler.removeAction.bind(this.actionHandler),
                 previewItemsAction: this.actionHandler.previewItemsAction.bind(this.actionHandler),
                 startTranslateAction: this.actionHandler.startTranslateAction.bind(this.actionHandler),
                 stopTranslateAction: this.actionHandler.stopTranslateAction.bind(this.actionHandler)
@@ -51,9 +51,11 @@ define([
 
             this.movingHandler = new ListingMoving(this);
             this.productSearchHandler = new AmazonListingProductSearch(this);
-            this.templateDescriptionHandler = new AmazonListingProductTemplateDescription(this);
 
-            this.templateShippingHandler = new AmazonListingProductTemplateShipping(this);
+            this.templateDescriptionHandler    = new AmazonListingProductTemplateDescription(this);
+            this.templateShippingHandler       = new AmazonListingProductTemplateShipping(this);
+            this.templateProductTaxCodeHandler = new AmazonListingProductTemplateProductTaxCode(this);
+
             this.variationProductManageHandler = new AmazonListingProductVariationManage(this);
             this.fulfillmentHandler = new AmazonListingViewFulfillment(this);
             this.repricingHandler = new AmazonListingProductRepricing(this);
@@ -69,7 +71,7 @@ define([
                 }).bind(this),
                 unassignTemplateDescriptionIdAction: (function(id) {
                     id = id || this.getSelectedProductsString();
-                    this.templateDescriptionHandler.unassignFromTemplateDescrition(id)
+                    this.templateDescriptionHandler.unassignFromTemplateDescription(id)
                 }).bind(this),
 
                 assignTemplateShippingTemplateIdAction: (function(id) {
@@ -88,6 +90,15 @@ define([
                 unassignTemplateShippingOverrideIdAction: (function(id) {
                     id = id || this.getSelectedProductsString();
                     this.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'))
+                }).bind(this),
+
+                assignTemplateProductTaxCodeIdAction: (function(id) {
+                    id = id || this.getSelectedProductsString();
+                    this.templateProductTaxCodeHandler.openPopUp(id)
+                }).bind(this),
+                unassignTemplateProductTaxCodeIdAction: (function(id) {
+                    id = id || this.getSelectedProductsString();
+                    this.templateProductTaxCodeHandler.unassign(id)
                 }).bind(this),
 
                 switchToAfnAction: (function(id) {
@@ -161,7 +172,7 @@ define([
             self.confirm({
                 actions: {
                     confirm: function () {
-                        self.templateDescriptionHandler.unassignFromTemplateDescrition(id);
+                        self.templateDescriptionHandler.unassignFromTemplateDescription(id);
                     },
                     cancel: function () {
                         return false;
@@ -196,6 +207,22 @@ define([
                 actions: {
                     confirm: function () {
                         self.templateShippingHandler.unassign(id, M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'));
+                    },
+                    cancel: function () {
+                        return false;
+                    }
+                }
+            });
+        },
+
+        unassignTemplateProductTaxCodeIdActionConfrim: function (id)
+        {
+            var self = this;
+
+            self.confirm({
+                actions: {
+                    confirm: function () {
+                        self.templateProductTaxCodeHandler.unassign(id);
                     },
                     cancel: function () {
                         return false;

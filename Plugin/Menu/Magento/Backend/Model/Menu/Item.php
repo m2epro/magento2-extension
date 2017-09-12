@@ -44,14 +44,14 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param \Closure $callback
      * @return string
      */
-    public function aroundGetClickCallback($interceptor, \Closure $callback)
+    public function aroundGetClickCallback($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('getClickCallback', $interceptor, $callback);
+        return $this->execute('getClickCallback', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processGetClickCallback($interceptor, \Closure $callback)
+    protected function processGetClickCallback($interceptor, \Closure $callback, array $arguments)
     {
         $id = $interceptor->getId();
         $urls = $this->getUrls();
@@ -60,7 +60,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             return $this->renderOnClickCallback($urls[$id]);
         }
 
-        return $callback();
+        return $callback(...$arguments);
     }
 
     //########################################
@@ -71,14 +71,14 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
      * @param \Closure $callback
      * @return string
      */
-    public function aroundGetTitle($interceptor, \Closure $callback)
+    public function aroundGetTitle($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('getTitle', $interceptor, $callback);
+        return $this->execute('getTitle', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processGetTitle($interceptor, \Closure $callback)
+    protected function processGetTitle($interceptor, \Closure $callback, array $arguments)
     {
         if (
             $interceptor->getId() == View\Ebay::MENU_ROOT_NODE_NICK
@@ -108,7 +108,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             }
         }
 
-        return $callback();
+        return $callback(...$arguments);
     }
 
     //########################################

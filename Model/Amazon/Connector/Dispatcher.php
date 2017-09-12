@@ -86,15 +86,25 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                                         array $requestData = array(),
                                         $responseDataKey = NULL, $account = NULL)
     {
-        $virtualConnector = $this->modelFactory->getObject('Connector\Command\RealTime\Virtual');
+        return $this->getCustomVirtualConnector(
+            'Connector\Command\RealTime\Virtual',
+            $entity, $type, $name,
+            $requestData, $responseDataKey, $account
+        );
+    }
+
+    public function getCustomVirtualConnector($modelName, $entity, $type, $name,
+                                              array $requestData = array(),
+                                              $responseDataKey = NULL, $account = NULL)
+    {
+        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $virtualConnector */
+        $virtualConnector = $this->modelFactory->getObject($modelName);
         $virtualConnector->setProtocol($this->getProtocol());
         $virtualConnector->setCommand(array($entity, $type, $name));
         $virtualConnector->setResponseDataKey($responseDataKey);
 
         if (is_int($account) || is_string($account)) {
-            $account = $this->amazonFactory->getCachedObjectLoaded(
-                'Account', (int)$account
-            );
+            $account = $this->amazonFactory->getCachedObjectLoaded('Account', (int)$account);
         }
 
         if ($account instanceof \Ess\M2ePro\Model\Account) {

@@ -21,6 +21,7 @@ class Builder extends AbstractModel
     const UPDATE_COMPLETED_SHIPPING = 'completed_shipping';
     const UPDATE_BUYER_MESSAGE      = 'buyer_message';
     const UPDATE_PAYMENT_DATA       = 'payment_data';
+    const UPDATE_SHIPPING_TAX_DATA  = 'shipping_tax_data';
     const UPDATE_EMAIL              = 'email';
 
     //########################################
@@ -564,6 +565,9 @@ class Builder extends AbstractModel
         if ($this->hasUpdatedPaymentData()) {
             $this->updates[] = self::UPDATE_PAYMENT_DATA;
         }
+        if ($this->hasUpdatedShippingTaxData()) {
+            $this->updates[] = self::UPDATE_SHIPPING_TAX_DATA;
+        }
         if ($this->hasUpdatedCompletedShipping()) {
             $this->updates[] = self::UPDATE_COMPLETED_SHIPPING;
         }
@@ -643,6 +647,34 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    private function hasUpdatedShippingTaxData()
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        /** @var $ebayOrder \Ess\M2ePro\Model\Ebay\Order */
+        $ebayOrder = $this->order->getChildObject();
+        $shippingDetails = $this->getData('shipping_details');
+        $taxDetails      = $this->getData('tax_details');
+
+        if (!empty($shippingDetails['price']) && $shippingDetails['price'] != $ebayOrder->getShippingPrice() ||
+            !empty($shippingDetails['service']) && $shippingDetails['service'] != $ebayOrder->getShippingService())
+        {
+            return true;
+        }
+
+        if ((!empty($taxDetails['rate']) && $taxDetails['rate'] != $ebayOrder->getTaxRate()) ||
+            (!empty($taxDetails['amount']) && $taxDetails['amount'] != $ebayOrder->getTaxAmount()))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    // ---------------------------------------
+
     private function hasUpdatedEmail()
     {
         if (!$this->isUpdated()) {
@@ -690,6 +722,13 @@ class Builder extends AbstractModel
         if ($this->hasUpdate(self::UPDATE_COMPLETED_SHIPPING)) {
             $this->order->addSuccessLog('Shipping status was updated to Shipped on eBay.');
             $this->order->setStatusUpdateRequired(true);
+        }
+
+        if ($this->hasUpdate(self::UPDATE_SHIPPING_TAX_DATA) && $this->order->getMagentoOrderId()) {
+
+            $message  = 'Attention! Shipping/Tax details have been modified on the channel.';
+            $message .= 'Magento order is already created and cannot be updated to reflect these changes.';
+            $this->order->addWarningLog($message);
         }
     }
 

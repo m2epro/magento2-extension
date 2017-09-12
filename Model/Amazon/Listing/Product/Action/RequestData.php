@@ -102,7 +102,7 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return bool
      */
-    public function hasPrice()
+    public function hasRegularPrice()
     {
         return isset($this->getData()['price']);
     }
@@ -110,9 +110,21 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return bool
      */
-    public function hasSalePrice()
+    public function hasRegularSalePrice()
     {
         return isset($this->getData()['sale_price']);
+    }
+
+    // ---------------------------------------
+
+    public function hasBusinessPrice()
+    {
+        return isset($this->getData()['business_price']);
+    }
+
+    public function hasBusinessDiscounts()
+    {
+        return isset($this->getData()['business_discounts']);
     }
 
     // ---------------------------------------
@@ -277,33 +289,51 @@ class RequestData extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @return float|null
      */
-    public function getPrice()
+    public function getRegularPrice()
     {
-        return $this->hasPrice() ? $this->getData('price') : NULL;
+        return $this->hasRegularPrice() ? $this->getData('price') : NULL;
     }
 
     /**
      * @return float|null
      */
-    public function getSalePrice()
+    public function getRegularSalePrice()
     {
-        return $this->hasSalePrice() ? $this->getData('sale_price') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price') : NULL;
     }
 
     /**
      * @return string|null
      */
-    public function getSalePriceStartDate()
+    public function getRegularSalePriceStartDate()
     {
-        return $this->hasSalePrice() ? $this->getData('sale_price_start_date') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price_start_date') : NULL;
     }
 
     /**
      * @return string|null
      */
-    public function getSalePriceEndDate()
+    public function getRegularSalePriceEndDate()
     {
-        return $this->hasSalePrice() ? $this->getData('sale_price_end_date') : NULL;
+        return $this->hasRegularSalePrice() ? $this->getData('sale_price_end_date') : NULL;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return float|null
+     */
+    public function getBusinessPrice()
+    {
+        return $this->hasBusinessPrice() ? $this->getData('business_price') : NULL;
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getBusinessDiscounts()
+    {
+        return $this->hasBusinessDiscounts() ? $this->getData('business_discounts') : NULL;
     }
 
     // ---------------------------------------

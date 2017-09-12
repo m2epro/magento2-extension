@@ -48,7 +48,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
             $this->logsActionId = (int)$params['logs_action_id'];
             unset($params['logs_action_id']);
         } else {
-            $this->logsActionId = $activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+            $this->logsActionId = $activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
         }
 
         $this->activeRecordFactory = $activeRecordFactory;
@@ -264,7 +264,7 @@ class MultipleRequester extends \Ess\M2ePro\Model\Translation\Connector\Command\
 
             /** @var $product \Ess\M2ePro\Model\Listing\Product */
 
-            $lockItem = $this->modelFactory->getObject('LockItem');
+            $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
             $lockItem->setNick(\Ess\M2ePro\Helper\Component\Ebay::NICK.'_listing_product_'.$product->getId());
 
             if (!$lockItem->isExist()) {

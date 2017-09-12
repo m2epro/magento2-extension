@@ -165,7 +165,12 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getLocale()
     {
-        $localeComponents = explode('_' , $this->localeResolver->getLocale());
+        return $this->localeResolver->getLocale();
+    }
+
+    public function getLocaleCode()
+    {
+        $localeComponents = explode('_' , $this->getLocale());
         return strtolower(array_shift($localeComponents));
     }
 
@@ -234,7 +239,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         );
 
         $basePath = $this->getThemePath() . DIRECTORY_SEPARATOR
-                    . $this->getDefaultLocale() . DIRECTORY_SEPARATOR;
+                    . $this->getLocale() . DIRECTORY_SEPARATOR;
 
         if (!is_null($path)) {
             $basePath .= $path;

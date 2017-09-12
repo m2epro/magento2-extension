@@ -91,6 +91,7 @@ HTML
                 'name' => 'email',
                 'label' => $this->__('Email'),
                 'value' => $this->getUserInfoValue('email'),
+                'class' => 'M2ePro-validate-email',
                 'required' => true,
                 'disabled' => $this->getData('isLicenseStepFinished')
             ]

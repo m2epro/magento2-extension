@@ -103,6 +103,8 @@ class Customer extends AbstractModel
         $addressModel->updateData($customerAddress);
         $addressModel->setCustomer($this->customer);
         $addressModel->save();
+
+        $this->customer->addAddress($addressModel);
         // ---------------------------------------
     }
 
@@ -119,6 +121,7 @@ class Customer extends AbstractModel
             $attributeBuilder->setEntityTypeId(
                 $this->customerFactory->create()->getEntityType()->getId()
             );
+            $attributeBuilder->setParams(['default_value' => '']);
 
             $result = $attributeBuilder->save();
             if (!$result['result']) {

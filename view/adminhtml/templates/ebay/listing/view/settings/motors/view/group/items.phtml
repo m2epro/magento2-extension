@@ -1,0 +1,30 @@
+<div class="admin__data-grid-wrap admin__data-grid-wrap-static">
+    <table class="data-grid">
+        <thead>
+        <tr>
+            <th class="data-grid-th" style="width: 75px;"><?php echo $block->getItemTitle()?></th>
+            <th class="data-grid-th"><?php echo $block->__('Note')?></th>
+            <th class="data-grid-th no-link" style="width: 20px;">&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($block->getGroup()->getItems() as $item) { ?>
+            <tr>
+                <td>
+                    <?php echo $item['id']?>
+                </td>
+                <td>
+                    <?php echo $item['note']?>
+                </td>
+                <td>
+                    <a title="<?php echo $block->__('Remove') ?>"
+                       href="javascript:void(0)"
+                       class="ebay-listing-view-icon ebay-listing-view-remove"
+                       onclick="EbayListingViewSettingsMotorsAddGroupGridObj.removeItemFromGroup(this, <?php echo $item['id']?>, <?php echo $block->getGroupId() ?>)">
+                    </a>
+                </td>
+            </tr>
+        <?php } ?>
+        </tbody>
+    </table>
+</div>

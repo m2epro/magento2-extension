@@ -73,7 +73,7 @@ define([
                 params['allowed_attribute_types'] = self.selectObj.getAttribute('allowed_attribute_types');
             }
 
-            if (self.selectObj && self.selectObj.getAttribute('apply_to_all_attribute_sets') == '0') {
+            if (self.selectObj && self.selectObj.getAttribute('apply_to_all_attribute_sets') == 'false') {
                 params['apply_to_all_attribute_sets'] = '0';
             }
 
@@ -301,6 +301,10 @@ define([
         {
             var self = this;
 
+            if (self.selectObj.getAttribute('option_injected')) {
+                return;
+            }
+
             // -- if select is empty -> inject each one empty option
             if ($$('select[id="' + self.selectObj.id + '"] option').length == 0) {
 
@@ -332,6 +336,8 @@ define([
                     ? self.showPopup()
                     : self.setSelectIndexBeforeCreation(this.selectedIndex);
             });
+
+            self.selectObj.setAttribute('option_injected' , '1');
         },
 
         validateAttributeCode: function (value, el)
@@ -395,16 +401,11 @@ define([
                     store_label: label
                 },
                 onSuccess: function (transport) {
-
-                    if (!transport.responseText.isJSON()) {
-                        return;
-                    }
-
                     if ($('code').hasClassName('changed-by-user')) {
                         return;
                     }
 
-                    $('code').value = transport.responseText.evalJSON();
+                    $('code').value = transport.responseText;
                 }
             });
         },

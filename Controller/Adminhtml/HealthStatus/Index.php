@@ -46,11 +46,16 @@ class Index extends HealthStatus
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('HealthStatus'));
 
-        //TODO LINK
-        //$this->setPageHelpLink('x/fwItAQ');
+        $referrer = $this->getRequest()->getParam('referrer', false);
+
+        if ($referrer == 'ebay') {
+            $this->setPageHelpLink('x/fwItAQ');
+        } else {
+            $this->setPageHelpLink('x/XAQtAQ');
+        }
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));
-        $this->getResult()->getConfig()->getTitle()->prepend($this->__('Health Status Center'));
+        $this->getResult()->getConfig()->getTitle()->prepend($this->__('Health Status'));
 
         return $this->getResult();
     }

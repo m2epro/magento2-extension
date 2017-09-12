@@ -92,11 +92,6 @@
                 type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
     </type>
 
-    <type name="Ess\M2ePro\Helper\Module\Translation">
-        <plugin name="m2epro_plugin_functionGetArgsFix_helper_module_translation"
-                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
-    </type>
-
     <!-- Health Status System Notification -->
 
     <type name="Magento\Framework\Notification\MessageList">

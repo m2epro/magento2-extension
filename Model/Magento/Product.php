@@ -541,15 +541,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $hasOptions = false;
         foreach ($this->getProduct()->getOptions() as $option) {
-            if ((int)$option->getData('is_require')) {
-                $hasOptions = true;
-                break;
+            if ((int)$option->getData('is_require') &&
+                in_array($option->getData('type'), array('drop_down', 'radio', 'multiple', 'checkbox'))) {
+                return true;
             }
         }
 
-        return $hasOptions;
+        return false;
     }
 
     /**
@@ -562,6 +561,42 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return !$this->isSimpleTypeWithCustomOptions();
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isDownloadableType()
+    {
+        return $this->getHelper('Magento\Product')->isDownloadableType($this->getTypeId());
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function isDownloadableTypeWithSeparatedLinks()
+    {
+        if (!$this->isDownloadableType()) {
+            return false;
+        }
+
+        return (bool)$this->getProduct()->getData('links_purchased_separately');
+    }
+
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    public function isDownloadableTypeWithoutSeparatedLinks()
+    {
+        if (!$this->isDownloadableType()) {
+            return false;
+        }
+
+        return !$this->isDownloadableTypeWithSeparatedLinks();
     }
 
     // ---------------------------------------
@@ -684,7 +719,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isProductWithoutVariations()
     {
-        return $this->isSimpleTypeWithoutCustomOptions();
+        return $this->isSimpleTypeWithoutCustomOptions() || $this->isDownloadableTypeWithoutSeparatedLinks();
     }
 
     /**
@@ -768,6 +803,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     public function getPrice()
     {
         // for bundle with dynamic price and grouped always returns 0
+        // for configurable product always returns 0
         return (float)$this->getProduct()->getPrice();
     }
 
@@ -864,6 +900,43 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $toDate;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @param null $websiteId
+     * @param null $customerGroupId
+     * @return array
+     */
+    public function getTierPrice($websiteId = NULL, $customerGroupId = NULL)
+    {
+        $attribute = $this->getProduct()->getResource()->getAttribute('tier_price');
+        $attribute->getBackend()->afterLoad($this->getProduct());
+
+        $prices = $this->getProduct()->getData('tier_price');
+        if (empty($prices)) {
+            return array();
+        }
+
+        $resultPrices = array();
+
+        foreach ($prices as $priceValue) {
+            if (!is_null($websiteId) && !empty($priceValue['website_id']) && $websiteId != $priceValue['website_id']) {
+                continue;
+            }
+
+            if (!is_null($customerGroupId) &&
+                $priceValue['cust_group'] != \Magento\Customer\Model\Group::CUST_GROUP_ALL &&
+                $customerGroupId != $priceValue['cust_group']
+            ) {
+                continue;
+            }
+
+            $resultPrices[(int)$priceValue['price_qty']] = $priceValue['website_price'];
+        }
+
+        return $resultPrices;
     }
 
     //########################################
@@ -1181,7 +1254,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         // PRICE
         }  else if ($attribute->getFrontendInput() == 'price') {
-            $value = (string)number_format($value, 2);
+            $value = (string)number_format($value, 2, '.', '');
 
         // MEDIA IMAGE
         }  else if ($attribute->getFrontendInput() == 'media_image') {
@@ -1482,23 +1555,6 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     }
 
     //########################################
-
-    /**
-     * @return bool
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    public function hasRequiredOptions()
-    {
-        if ($this->isGroupedType()) {
-            return true;
-        }
-
-        $product = $this->getProduct();
-
-        return $this->getTypeInstance()->hasRequiredOptions($product);
-    }
-
-    // ---------------------------------------
 
     public function getVariationInstance()
     {

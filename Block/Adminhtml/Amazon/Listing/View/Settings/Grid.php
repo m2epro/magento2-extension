@@ -98,6 +98,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'template_shipping_template_id'  => 'template_shipping_template_id',
                 'template_shipping_override_id'  => 'template_shipping_override_id',
                 'template_description_id'        => 'template_description_id',
+                'template_product_tax_code_id'   => 'template_product_tax_code_id',
                 'general_id'                     => 'general_id',
                 'general_id_search_info'         => 'general_id_search_info',
                 'search_settings_status'         => 'search_settings_status',
@@ -105,89 +106,25 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
-                'online_price'                   => 'online_price',
-                'online_sale_price'              => 'IF(
-                  `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                  `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                  `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                  `alp`.`online_sale_price`,
+                'online_regular_price'           => 'online_regular_price',
+                 'online_regular_sale_price'      => 'IF(
+                  `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                  `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                  `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                  `alp`.`online_regular_sale_price`,
                   NULL
                 )',
-                'online_sale_price_start_date'     => 'online_sale_price_start_date',
-                'online_sale_price_end_date'       => 'online_sale_price_end_date',
+                'online_regular_sale_price_start_date'   => 'online_regular_sale_price_start_date',
+                'online_regular_sale_price_end_date'     => 'online_regular_sale_price_end_date',
                 'is_afn_channel'                   => 'is_afn_channel',
                 'is_repricing'                     => 'is_repricing',
                 'is_general_id_owner'              => 'is_general_id_owner',
                 'is_variation_parent'              => 'is_variation_parent',
                 'variation_parent_afn_state'       => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
-                'defected_messages'                => 'defected_messages',
-                'min_online_price'                      => 'IF(
-                    (`t`.`variation_min_price` IS NULL),
-                    IF(
-                      `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                      `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                      `alp`.`online_sale_price`,
-                      `alp`.`online_price`
-                    ),
-                    `t`.`variation_min_price`
-                )',
-                'max_online_price'                      => 'IF(
-                    (`t`.`variation_max_price` IS NULL),
-                    IF(
-                      `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                      `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                      `alp`.`online_sale_price`,
-                      `alp`.`online_price`
-                    ),
-                    `t`.`variation_max_price`
-                )'
+                'defected_messages'                => 'defected_messages'
             ),
             '{{table}}.variation_parent_id is NULL'
-        );
-
-        $collection->getSelect()->joinLeft(
-            new \Zend_Db_Expr('(
-                SELECT
-                    `malp`.`variation_parent_id`,
-                    MIN(
-                        IF(
-                            `malp`.`online_sale_price_start_date` IS NOT NULL AND
-                            `malp`.`online_sale_price_end_date` IS NOT NULL AND
-                            `malp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                            `malp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                            `malp`.`online_sale_price`,
-                            `malp`.`online_price`
-                        )
-                    ) as variation_min_price,
-                    MAX(
-                        IF(
-                            `malp`.`online_sale_price_start_date` IS NOT NULL AND
-                            `malp`.`online_sale_price_end_date` IS NOT NULL AND
-                            `malp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                            `malp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                            `malp`.`online_sale_price`,
-                            `malp`.`online_price`
-                        )
-                    ) as variation_max_price
-                FROM `'. $alpTable .'` as malp
-                INNER JOIN `'. $lpTable .'` AS `mlp`
-                    ON (`malp`.`listing_product_id` = `mlp`.`id`)
-                WHERE `mlp`.`status` IN (
-                    ' . \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED . ',
-                    ' . \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED . '
-                ) AND `malp`.`variation_parent_id` IS NOT NULL
-                GROUP BY `malp`.`variation_parent_id`
-            )'),
-            'alp.listing_product_id=t.variation_parent_id',
-            array(
-                'variation_min_price' => 'variation_min_price',
-                'variation_max_price' => 'variation_max_price',
-            )
         );
 
         $tdTable = $this->activeRecordFactory->getObject('Template\Description')->getResource()->getMainTable();
@@ -224,6 +161,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             null,
             'left'
         );
+
+        $amazonAccount = $this->listing->getAccount()->getChildObject();
+
+        if ($amazonAccount->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+            $amazonAccount->isVatCalculationServiceEnabled()
+        ) {
+            $ptcTable = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')
+                ->getResource()->getMainTable();
+            $collection->joinTable(
+                array('tptc' => $ptcTable),
+                'id=template_product_tax_code_id',
+                array(
+                    'template_product_tax_code_title' => 'title'
+                ),
+                null,
+                'left'
+            );
+        }
+
+        if ($collection->isNeedUseIndexerParent()) {
+            $collection->joinIndexerParent();
+        }
 
         // ---------------------------------------
 
@@ -302,6 +261,20 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'frame_callback' => array($this, 'callbackColumnTemplateShipping')
         ));
 
+        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+            $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
+        ) {
+            $this->addColumn('product_tax_code_template', array(
+                'header' => $this->__('Product Tax Code Policy'),
+                'align' => 'left',
+                'width' => '170px',
+                'type' => 'text',
+                'index' => 'template_product_tax_code_title',
+                'filter_index' => 'template_product_tax_code_title',
+                'frame_callback' => array($this, 'callbackColumnTemplateProductTaxCode')
+            ));
+        }
+
         $this->addColumn('actions', array(
             'header'    => $this->__('Actions'),
             'align'     => 'left',
@@ -330,6 +303,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         if ($this->listing->getAccount()->getChildObject()->isShippingModeTemplate()) {
             $groups['edit_template_shipping'] = $this->__('Shipping Template Policy');
+        }
+
+        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+            $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
+        ) {
+            $groups['edit_template_product_tax_code'] = $this->__('Product Tax Code Policy');
         }
 
         return $groups;
@@ -387,6 +366,24 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             );
         }
 
+        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+            $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
+        ) {
+            $actions['assignTemplateProductTaxCode'] = array(
+                'caption' => $this->__('Assign'),
+                'group'   => 'edit_template_product_tax_code',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.actions[\'assignTemplateProductTaxCodeIdAction\']'
+            );
+
+            $actions['unassignTemplateProductTaxCode'] = array(
+                'caption' => $this->__('Unassign'),
+                'group'   => 'edit_template_product_tax_code',
+                'field'   => 'id',
+                'onclick_action' => 'ListingGridHandlerObj.unassignTemplateProductTaxCodeIdActionConfrim'
+            );
+        }
+
         return $actions;
     }
 
@@ -405,6 +402,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $groups = array(
             'description_policy' => $this->__('Description Policy'),
             'shipping_policy' => $this->__('Shipping Override Policy'),
+            'edit_template_product_tax_code' => $this->__('Product Tax Code Policy'),
             'other'              => $this->__('Other'),
         );
 
@@ -454,6 +452,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'url'     => '',
                 'confirm' => $this->__('Are you sure?')
             ), 'shipping_policy');
+        }
+
+        if ($this->listing->getMarketplace()->getChildObject()->isProductTaxCodePolicyAvailable() &&
+            $this->listing->getAccount()->getChildObject()->isVatCalculationServiceEnabled()
+        ) {
+            $this->getMassactionBlock()->addItem('assignTemplateProductTaxCodeId', array(
+                'label'   => $this->__('Assign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'edit_template_product_tax_code');
+
+            $this->getMassactionBlock()->addItem('unassignTemplateProductTaxCodeId', array(
+                'label'   => $this->__('Unassign'),
+                'url'     => '',
+                'confirm' => $this->__('Are you sure?')
+            ), 'edit_template_product_tax_code');
         }
 
         $this->getMassactionBlock()->addItem('moving', array(
@@ -701,6 +715,26 @@ HTML;
             ));
 
             $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_shipping_template_title'));
+
+            return <<<HTML
+<a target="_blank" href="{$url}">{$templateTitle}</a>
+HTML;
+        }
+
+        return $html;
+    }
+
+    public function callbackColumnTemplateProductTaxCode($value, $row, $column, $isExport)
+    {
+        $html = $this->__('N/A');
+
+        if ($row->getData('template_product_tax_code_id')) {
+
+            $url = $this->getUrl('*/amazon_template_productTaxCode/edit', array(
+                'id' => $row->getData('template_product_tax_code_id')
+            ));
+
+            $templateTitle = $this->getHelper('Data')->escapeHtml($row->getData('template_product_tax_code_title'));
 
             return <<<HTML
 <a target="_blank" href="{$url}">{$templateTitle}</a>

@@ -123,24 +123,18 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
-                'online_price'                   => 'online_price',
-                'online_sale_price'              => 'IF(
-                  `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                  `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                  `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                  `alp`.`online_sale_price`,
+                'online_regular_price'           => 'online_regular_price',
+                'online_regular_sale_price'      => 'IF(
+                  `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                  `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                  `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                  `alp`.`online_regular_sale_price`,
                   NULL
                 )',
-                'current_online_price'           => 'IF(
-                    `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                    `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                    `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                    `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                    `alp`.`online_sale_price`,
-                    `alp`.`online_price`
-                )',
-                'online_sale_price_start_date'     => 'online_sale_price_start_date',
-                'online_sale_price_end_date'       => 'online_sale_price_end_date',
+                'online_regular_sale_price_start_date'   => 'online_regular_sale_price_start_date',
+                'online_regular_sale_price_end_date'     => 'online_regular_sale_price_end_date',
+                'online_business_price'            => 'online_business_price',
+                'online_business_discounts'        => 'online_business_discounts',
                 'is_repricing'                     => 'is_repricing',
                 'is_afn_channel'                   => 'is_afn_channel',
                 'is_general_id_owner'              => 'is_general_id_owner',
@@ -344,12 +338,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ), 'asin_isbn');
-
-        $this->getMassactionBlock()->addItem('remove', array(
-            'label'    => $this->__('Remove from Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
-        ), 'other');
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -736,7 +724,10 @@ HTML;
                             {$listingProductId}, '{$vpmt}', '{$filter}'
                         )\">[".$afnCountWord."]</a>";
 
-        return $value . '<br/>' . $resultValue;
+        return <<<HTML
+    <div>{$value}</div>
+    <div>{$resultValue}</div>
+HTML;
     }
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
@@ -849,10 +840,13 @@ HTML;
             }
         }
 
-        $onlineMinPrice = $row->getData('min_online_price');
-        $onlineMaxPrice = $row->getData('max_online_price');
+        $onlineMinRegularPrice = (float)$row->getData('min_online_regular_price');
+        $onlineMaxRegularPrice = (float)$row->getData('max_online_regular_price');
 
-        if (is_null($onlineMinPrice) || $onlineMinPrice === '') {
+        $onlineMinBusinessPrice = (float)$row->getData('min_online_business_price');
+        $onlineMaxBusinessPrice = (float)$row->getData('max_online_business_price');
+
+        if (empty($onlineMinRegularPrice) && empty($onlineMinBusinessPrice)) {
             if ($row->getData('amazon_status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED ||
                 $row->getData('is_variation_parent')
             ) {
@@ -865,17 +859,33 @@ HTML;
         $currency = $this->listing->getMarketplace()->getChildObject()->getDefaultCurrency();
 
         if ($row->getData('is_variation_parent')) {
-            $onlineMinPriceStr = $this->convertAndFormatPriceCurrency($onlineMinPrice, $currency);
-            $onlineMaxPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxPrice, $currency);
 
-            return $onlineMinPriceStr.(($onlineMinPrice != $onlineMaxPrice)?' - '.$onlineMaxPriceStr:'').$repricingHtml;
+            $onlineRegularPriceStr = '<span style="color: #f00;">0</span>';
+            if (!empty($onlineMinRegularPrice) && !empty($onlineMaxRegularPrice)) {
+                $onlineMinRegularPriceStr = $this->convertAndFormatPriceCurrency($onlineMinRegularPrice, $currency);
+                $onlineMaxRegularPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxRegularPrice, $currency);
+
+                $onlineRegularPriceStr = $onlineMinRegularPriceStr
+                    .(($onlineMinRegularPrice != $onlineMaxRegularPrice)?' - '.$onlineMaxRegularPriceStr:'');
+            }
+
+            $onlineBusinessPriceStr = '';
+            if (!empty($onlineMinBusinessPrice) && !empty($onlineMaxBusinessPrice)) {
+                $onlineMinBusinessPriceStr = $this->convertAndFormatPriceCurrency($onlineMinBusinessPrice, $currency);
+                $onlineMaxBusinessPriceStr = $this->convertAndFormatPriceCurrency($onlineMaxBusinessPrice, $currency);
+
+                $onlineBusinessPriceStr = '<br /><strong>B2B: </strong>'.$onlineMinBusinessPriceStr
+                    .(($onlineMinBusinessPrice != $onlineMaxBusinessPrice)?' - '.$onlineMaxBusinessPriceStr:'');
+            }
+
+            return $onlineRegularPriceStr.$onlineBusinessPriceStr.$repricingHtml;
         }
 
-        $onlinePrice = $row->getData('online_price');
-        if ((float)$onlinePrice <= 0) {
-            $priceValue = '<span style="color: #f00;">0</span>';
+        $onlineRegularPrice = $row->getData('online_regular_price');
+        if ((float)$onlineRegularPrice <= 0) {
+            $regularPriceValue = '<span style="color: #f00;">0</span>';
         } else {
-            $priceValue = $this->convertAndFormatPriceCurrency($onlinePrice, $currency);
+            $regularPriceValue = $this->convertAndFormatPriceCurrency($onlineRegularPrice, $currency);
         }
 
         if ($row->getData('is_repricing') &&
@@ -885,57 +895,52 @@ HTML;
             $accountId = $this->listing['account_id'];
             $sku = $row->getData('amazon_sku');
 
-            $priceValue =<<<HTML
+            $regularPriceValue =<<<HTML
 <a id="m2epro_repricing_price_value_{$sku}"
    class="m2epro-repricing-price-value"
    sku="{$sku}"
    account_id="{$accountId}"
    href="javascript:void(0)"
-   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$priceValue}</a>
+   onclick="AmazonListingProductRepricingPriceObj.showRepricingPrice()">{$regularPriceValue}</a>
 HTML;
         }
 
         $resultHtml = '';
 
-        $salePrice = $row->getData('online_sale_price');
+        $salePrice = $row->getData('online_regular_sale_price');
         if (!$row->getData('is_variation_parent') && (float)$salePrice > 0) {
             $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
 
-            $startDateTimestamp = strtotime($row->getData('online_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($row->getData('online_sale_price_end_date'));
+            $startDateTimestamp = strtotime($row->getData('online_regular_sale_price_start_date'));
+            $endDateTimestamp   = strtotime($row->getData('online_regular_sale_price_end_date'));
 
             if ($currentTimestamp <= $endDateTimestamp) {
                 $fromDate = $this->_localeDate->formatDate(
-                    $row->getData('online_sale_price_start_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_start_date'), \IntlDateFormatter::MEDIUM
                 );
 
                 $toDate = $this->_localeDate->formatDate(
-                    $row->getData('online_sale_price_end_date'), \IntlDateFormatter::MEDIUM
+                    $row->getData('online_regular_sale_price_end_date'), \IntlDateFormatter::MEDIUM
                 );
 
                 $intervalHtml = <<<HTML
-<div class="m2epro-field-tooltip m2epro-field-tooltip-price-info admin__field-tooltip">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content">
-        <span style="color:gray;">
-            <strong>From:</strong> {$fromDate}<br/>
-            <strong>To:</strong> {$toDate}
-        </span>
-    </div>
-</div>
+<span style="color: gray;">
+    <strong>From:</strong> {$fromDate}<br/>
+    <strong>To:</strong> {$toDate}
+</span>
 HTML;
-
+                $intervalHtml = $this->getTooltipHtml($intervalHtml, '', ['m2epro-field-tooltip-price-info']);
                 $salePriceValue = $this->convertAndFormatPriceCurrency($salePrice, $currency);
 
                 if ($currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&
-                    $salePrice < (float)$onlinePrice
+                    $salePrice < (float)$onlineRegularPrice
                 ) {
-                    $resultHtml .= '<span style="color: grey; text-decoration: line-through;">'.$priceValue.'</span>' .
-                                    $repricingHtml;
+                    $resultHtml .= '<span style="color: grey; text-decoration: line-through;">'.
+                                    $regularPriceValue.'</span>'.$repricingHtml;
                     $resultHtml .= '<br/>'.$intervalHtml.'&nbsp;'.$salePriceValue;
                 } else {
-                    $resultHtml .= $priceValue . $repricingHtml;
+                    $resultHtml .= $regularPriceValue . $repricingHtml;
                     $resultHtml .= '<br/>'.$intervalHtml.
                         '<span style="color:gray;">'.'&nbsp;'.$salePriceValue.'</span>';
                 }
@@ -943,7 +948,32 @@ HTML;
         }
 
         if (empty($resultHtml)) {
-            $resultHtml = $priceValue . $repricingHtml;
+            $resultHtml = $regularPriceValue . $repricingHtml;
+        }
+
+        $onlineBusinessPrice = $row->getData('online_business_price');
+        if ((float)$onlineBusinessPrice > 0) {
+            $businessPriceValue = '<strong>B2B:</strong> '.
+                                  $this->convertAndFormatPriceCurrency($onlineBusinessPrice, $currency);
+
+            $businessDiscounts = $row->getData('online_business_discounts');
+            if (!empty($businessDiscounts) && $businessDiscounts = json_decode($businessDiscounts, true)) {
+                $discountsHtml = '';
+
+                foreach ($businessDiscounts as $qty => $price) {
+                    $price = $this->convertAndFormatPriceCurrency($price, $currency);
+                    $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
+                }
+
+                $discountsHtml = $this->getTooltipHtml($discountsHtml, '', ['m2epro-field-tooltip-price-info']);
+                $businessPriceValue = $discountsHtml .'&nbsp;'. $businessPriceValue;
+            }
+
+            if (!empty($resultHtml)) {
+                $businessPriceValue = '<br />'.$businessPriceValue;
+            }
+
+            $resultHtml .= $businessPriceValue;
         }
 
         return $resultHtml;
@@ -1327,15 +1357,17 @@ HTML;
 
     //########################################
 
-    public function getTooltipHtml($content, $id = '')
+    public function getTooltipHtml($content, $id = '', $classes = [])
     {
+        $classes = implode(' ', $classes);
+
         return <<<HTML
-<div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content" style="">
-        {$content}
+    <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip {$classes}">
+        <a class="admin__field-tooltip-action" href="javascript://"></a>
+        <div class="admin__field-tooltip-content" style="">
+            {$content}
+        </div>
     </div>
-</div>
 HTML;
     }
 

@@ -8,6 +8,13 @@
 
 namespace Ess\M2ePro\Model\Listing;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Listing\Log getResource()
+ */
+
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Listing\Log\Collection getCollection()
+ */
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
     const ACTION_UNKNOWN = 1;
@@ -66,6 +73,9 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 
     const ACTION_CHANGE_CUSTOM_ATTRIBUTE = 18;
     const _ACTION_CHANGE_CUSTOM_ATTRIBUTE = 'Change of Product Custom Attribute in Magento Store';
+
+    const ACTION_CHANGE_PRODUCT_TIER_PRICE = 31;
+    const _ACTION_CHANGE_PRODUCT_TIER_PRICE = 'Change of Product Tier Price in Magento Store';
 
     const ACTION_MOVE_TO_LISTING = 21;
     const _ACTION_MOVE_TO_LISTING = 'Move to another Listing';
@@ -137,61 +147,20 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         $this->createMessage($dataForAdd);
     }
 
-    //########################################
-
-    public function updateListingTitle($listingId , $title)
-    {
-        if ($title == '') {
-             return false;
-        }
-
-        $this->getResource()->getConnection()->update(
-            $this->getResource()->getMainTable(),
-            array('listing_title'=>$title),
-            array('listing_id = ?'=>(int)$listingId)
-        );
-
-        return true;
-    }
-
-    public function updateProductTitle($productId , $title)
-    {
-        if ($title == '') {
-            return false;
-        }
-
-        $this->getResource()->getConnection()->update(
-            $this->getResource()->getMainTable(),
-            array('product_title'=>$title),
-            array('product_id = ?'=>(int)$productId)
-        );
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    public function getActionTitle($type)
-    {
-        return $this->getActionTitleByClass(__CLASS__,$type);
-    }
-
-    public function getActionsTitles()
-    {
-        return $this->getActionsTitlesByClass(__CLASS__,'ACTION_');
-    }
-
     // ---------------------------------------
 
     public function clearMessages($listingId = NULL)
     {
-        $columnName = !is_null($listingId) ? 'listing_id' : NULL;
-        $this->clearMessagesByTable('Listing\Log',$columnName,$listingId);
-    }
+        $filters = array();
 
-    public function getLastActionIdConfigKey()
-    {
-        return 'listings';
+        if (!is_null($listingId)) {
+            $filters['listing_id'] = $listingId;
+        }
+        if (!is_null($this->componentMode)) {
+            $filters['component_mode'] = $this->componentMode;
+        }
+
+        $this->getResource()->clearMessages($filters);
     }
 
     //########################################
@@ -253,7 +222,7 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
         if (!is_null($actionId)) {
             $dataForAdd['action_id'] = (int)$actionId;
         } else {
-            $dataForAdd['action_id'] = $this->getNextActionId();
+            $dataForAdd['action_id'] = $this->getResource()->getNextActionId();
         }
 
         if (!is_null($action)) {

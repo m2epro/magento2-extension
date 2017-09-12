@@ -18,7 +18,7 @@ final class Update extends AbstractModel
 
     private $listingsProductsLockStatus = array();
 
-    private $listingsProductsIdsForActionSkipping = array();
+    private $listingsProductsIdsForNeedSynchRulesCheck = array();
 
     //########################################
 
@@ -117,10 +117,10 @@ final class Update extends AbstractModel
             $iteration++;
         }
 
-        if (!empty($this->listingsProductsIdsForActionSkipping)) {
-            $this->activeRecordFactory->getObject('Ebay\Processing\Action\Item')->getResource()
-                ->markAsSkipped(
-                    array_unique($this->listingsProductsIdsForActionSkipping)
+        if (!empty($this->listingsProductsIdsForNeedSynchRulesCheck)) {
+            $this->activeRecordFactory->getObject('Listing\Product')->getResource()
+                ->setNeedSynchRulesCheck(
+                    array_unique($this->listingsProductsIdsForNeedSynchRulesCheck)
                 );
         }
     }
@@ -154,6 +154,16 @@ final class Update extends AbstractModel
                 continue;
             }
 
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+            $ebayListingProduct = $listingProduct->getChildObject();
+
+            $isVariationOnChannel = !empty($change['variations']);
+            $isVariationInMagento = $ebayListingProduct->isVariationsReady();
+
+            if ($isVariationOnChannel != $isVariationInMagento) {
+                continue;
+            }
+
             // Listing product isn't listed and it child must have another item_id
             if ($listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED &&
                 $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN) {
@@ -169,10 +179,7 @@ final class Update extends AbstractModel
                 $this->getProductQtyChanges($listingProduct, $change)
             );
 
-            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-            $ebayListingProduct = $listingProduct->getChildObject();
-
-            if (!$ebayListingProduct->isVariationsReady() || empty($change['variations'])) {
+            if (!$isVariationOnChannel || !$isVariationInMagento) {
                 $dataForUpdate = array_merge(
                     $dataForUpdate,
                     $this->getSimpleProductPriceChanges($listingProduct, $change)
@@ -315,85 +322,6 @@ final class Update extends AbstractModel
 
     //########################################
 
-    private function getProductPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
-    {
-        $data = array();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        if ($ebayListingProduct->isVariationsReady()) {
-            return $data;
-        }
-
-        $data['online_current_price'] = (float)$change['currentPrice'] < 0 ? 0 : (float)$change['currentPrice'];
-        $this->processPriceChanges($listingProduct, $change, $data);
-
-        return $data;
-    }
-
-    private function getListingProductVariationsPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct,
-                                                             array $change)
-    {
-        $data = array();
-
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        if (!$ebayListingProduct->isVariationsReady()) {
-            return $data;
-        }
-
-        $onlineCurrentPrice  = NULL;
-        $calculateWithoutQty = $ebayListingProduct->isOutOfStockControlEnabled();
-
-        foreach ($listingProduct->getVariations() as $variationData) {
-
-            if ($variationData['delete']) {
-                continue;
-            }
-
-            if (!$calculateWithoutQty && (int)$variationData['online_qty'] <= 0) {
-                continue;
-            }
-
-            if (!is_null($onlineCurrentPrice) && (float)$variationData['online_price'] >= $onlineCurrentPrice) {
-                continue;
-            }
-
-            $onlineCurrentPrice = (float)$variationData['online_price'];
-        }
-
-        $data['online_current_price'] = $onlineCurrentPrice;
-        $this->processPriceChanges($listingProduct, $change, $data);
-
-        return $data;
-    }
-
-    private function processPriceChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change, array $data)
-    {
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
-        $ebayListingProduct = $listingProduct->getChildObject();
-
-        $listingType = $this->getActualListingType($listingProduct, $change);
-        if ($listingType == \Ess\M2ePro\Model\Ebay\Template\SellingFormat::LISTING_TYPE_FIXED) {
-
-            if ($ebayListingProduct->getOnlineCurrentPrice() != $data['online_current_price']) {
-                // M2ePro\TRANSLATIONS
-                // Item Price was successfully changed from %from% to %to% .
-                $this->logReportChange($listingProduct, $this->getHelper('Module\Translation')->__(
-                    'Item Price was successfully changed from %from% to %to% .',
-                    $ebayListingProduct->getOnlineCurrentPrice(),
-                    $data['online_current_price']
-                ));
-
-                $this->activeRecordFactory->getObject('ProductChange')->addUpdateAction(
-                    $listingProduct->getProductId(),\Ess\M2ePro\Model\ProductChange::INITIATOR_SYNCHRONIZATION
-                );
-            }
-        }
-    }
-
     private function getProductDatesChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
         return array(
@@ -411,6 +339,7 @@ final class Update extends AbstractModel
 
         if (($change['listingStatus'] == self::EBAY_STATUS_COMPLETED ||
              $change['listingStatus'] == self::EBAY_STATUS_ENDED) &&
+             $listingProduct->getStatus() != \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN &&
              $qty == $qtySold) {
 
             $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_SOLD;
@@ -478,7 +407,7 @@ final class Update extends AbstractModel
         );
 
         if ($this->listingsProductsLockStatus[$listingProduct->getId()]) {
-            $this->listingsProductsIdsForActionSkipping[] = $listingProduct->getId();
+            $this->listingsProductsIdsForNeedSynchRulesCheck[] = $listingProduct->getId();
         }
 
         return $data;
@@ -519,7 +448,7 @@ final class Update extends AbstractModel
             );
 
             if ($this->listingsProductsLockStatus[$listingProduct->getId()]) {
-                $this->listingsProductsIdsForActionSkipping[] = $listingProduct->getId();
+                $this->listingsProductsIdsForNeedSynchRulesCheck[] = $listingProduct->getId();
             }
         }
 
@@ -615,7 +544,7 @@ final class Update extends AbstractModel
         foreach ($changeVariations as $changeVariation) {
             foreach ($variationsSnapshot as $variationSnapshot) {
 
-                if (!$this->isVariationEqualWithChange($changeVariation,$variationSnapshot)) {
+                if (!$this->isVariationEqualWithChange($listingProduct,$changeVariation,$variationSnapshot)) {
                     continue;
                 }
 
@@ -633,7 +562,7 @@ final class Update extends AbstractModel
                     ($ebayVariation->getOnlineQty() != $updateData['online_qty'] ||
                         $ebayVariation->getOnlineQtySold() != $updateData['online_qty_sold'])
                 ) {
-                    $this->listingsProductsIdsForActionSkipping[] = $listingProduct->getId();
+                    $this->listingsProductsIdsForNeedSynchRulesCheck[] = $listingProduct->getId();
                 }
 
                 $isVariationChanged = false;
@@ -713,20 +642,34 @@ final class Update extends AbstractModel
         return $snapshot;
     }
 
-    private function isVariationEqualWithChange(array $changeVariation, array $variationSnapshot)
+    private function isVariationEqualWithChange(\Ess\M2ePro\Model\Listing\Product $listingProduct,
+                                                array $changeVariation, array $variationSnapshot)
     {
         if (count($variationSnapshot['options']) != count($changeVariation['specifics'])) {
             return false;
         }
 
+        $specificsReplacements = $listingProduct->getSetting(
+            'additional_data', 'variations_specifics_replacements', array()
+        );
+
         foreach ($variationSnapshot['options'] as $variationSnapshotOption) {
+            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $variationSnapshotOption */
+
+            $variationSnapshotOptionName  = $variationSnapshotOption->getData('attribute');
+            $variationSnapshotOptionValue = $variationSnapshotOption->getData('option');
+
+            if (array_key_exists($variationSnapshotOptionName, $specificsReplacements)) {
+                $variationSnapshotOptionName = $specificsReplacements[$variationSnapshotOptionName];
+            }
 
             $haveOption = false;
 
             foreach ($changeVariation['specifics'] as $changeVariationOption=>$changeVariationValue) {
 
-                if ($variationSnapshotOption->getData('attribute') == $changeVariationOption &&
-                    $variationSnapshotOption->getData('option') == $changeVariationValue) {
+                if ($variationSnapshotOptionName == $changeVariationOption &&
+                    $variationSnapshotOptionValue == $changeVariationValue)
+                {
                     $haveOption = true;
                     break;
                 }
@@ -760,7 +703,8 @@ final class Update extends AbstractModel
     private function getLogsActionId()
     {
         if (is_null($this->logsActionId)) {
-            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
+                                       ->getResource()->getNextActionId();
         }
         return $this->logsActionId;
     }

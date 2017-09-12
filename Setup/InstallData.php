@@ -81,10 +81,6 @@ class InstallData implements InstallDataInterface
             $this->installAmazon();
         } catch (\Exception $exception) {
 
-            if ($this->isAllowedToPrintToStdErr()) {
-                echo $exception->__toString();
-            }
-
             $this->logger->error($exception, ['source' => 'InstallData']);
             $this->helperFactory->getObject('Data\GlobalData')->setValue('is_setup_failed', true);
 
@@ -179,47 +175,53 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/cron/task/connector_requester_pending_partial/', 'last_run', NULL, 'date of last run'
         );
-        $moduleConfigModifier->insert('/cron/task/amazon_actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/amazon_actions/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/amazon_actions/', 'last_access', NULL, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/amazon_actions/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
+        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'interval', '60', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_access', NULL, 'date of last access');
+        $moduleConfigModifier->insert('/cron/task/amazon/actions/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_update_settings/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_update_settings/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/cron/task/repricing_update_settings/', 'interval', '3600', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/amazon/repricing_update_settings/', 'interval', '3600', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_update_settings/', 'last_access', NULL, 'date of last access'
-        );
-        $moduleConfigModifier->insert('/cron/task/repricing_update_settings/', 'last_run', NULL, 'date of last run');
-        $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_actual_price/', 'mode', 1, '0 - disable,\r\n1 - enable'
+            '/cron/task/amazon/repricing_update_settings/', 'last_access', NULL, 'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_actual_price/', 'interval', 3600, 'in seconds'
+            '/cron/task/amazon/repricing_update_settings/', 'last_run', NULL, 'date of last run'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_actual_price/', 'last_run', NULL, 'date of last access'
+            '/cron/task/amazon/repricing_synchronization_actual_price/', 'mode', 1, '0 - disable,\r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_general/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_synchronization_actual_price/', 'interval', 3600, 'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_general/', 'interval', '86400', 'in seconds'
+            '/cron/task/amazon/repricing_synchronization_actual_price/', 'last_run', NULL, 'date of last access'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_general/', 'last_access', NULL, 'date of last access'
+            '/cron/task/amazon/repricing_synchronization_general/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_synchronization_general/', 'last_run', NULL, 'date of last run'
+            '/cron/task/amazon/repricing_synchronization_general/', 'interval', '86400', 'in seconds'
         );
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_inspect_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+            '/cron/task/amazon/repricing_synchronization_general/', 'last_access', NULL, 'date of last access'
         );
-        $moduleConfigModifier->insert('/cron/task/repricing_inspect_products/', 'interval', '3600', 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/repricing_inspect_products/', 'last_access', NULL, 'date of last access'
+            '/cron/task/amazon/repricing_synchronization_general/', 'last_run', NULL, 'date of last run'
         );
-        $moduleConfigModifier->insert('/cron/task/repricing_inspect_products/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert(
+            '/cron/task/amazon/repricing_inspect_products/', 'mode', '1', '0 - disable, \r\n1 - enable'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/amazon/repricing_inspect_products/', 'interval', '3600', 'in seconds'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/amazon/repricing_inspect_products/', 'last_access', NULL, 'date of last access'
+        );
+        $moduleConfigModifier->insert(
+            '/cron/task/amazon/repricing_inspect_products/', 'last_run', NULL, 'date of last run'
+        );
         $moduleConfigModifier->insert('/cron/task/synchronization/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/task/synchronization/', 'interval', '300', 'in seconds');
         $moduleConfigModifier->insert('/cron/task/synchronization/', 'last_access', NULL, 'date of last access');
@@ -229,9 +231,21 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/cron/task/servicing/', 'last_access', NULL, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/servicing/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert('/cron/task/health_status/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/health_status/', 'interval', '1800', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/health_status/', 'interval', '3600', 'in seconds');
         $moduleConfigModifier->insert('/cron/task/health_status/', 'last_access', NULL, 'date of last access');
         $moduleConfigModifier->insert('/cron/task/health_status/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert(
+            '/cron/task/archive_orders_entities/', 'mode', '1', '0 - disable, \r\n1 - enable'
+        );
+        $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'interval', '3600', 'in seconds');
+        $moduleConfigModifier->insert(
+            '/cron/task/archive_orders_entities/', 'last_access', NULL, 'date of last access'
+        );
+        $moduleConfigModifier->insert('/cron/task/archive_orders_entities/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'mode', '1', '0 - disable, \r\n1 - enable');
+        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'interval', '3600', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'last_access', NULL, 'date of last access');
+        $moduleConfigModifier->insert('/cron/task/issues_resolver/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert('/logs/clearing/listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/logs/clearing/listings/', 'days', '30', 'in days');
         $moduleConfigModifier->insert('/logs/clearing/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
@@ -255,10 +269,10 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/support/', 'contact_email', 'support@m2epro.com', NULL);
         $moduleConfigModifier->insert('/view/', 'show_block_notices', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/view/', 'show_products_thumbnails', '1', 'Visibility thumbnails into grid');
+        $moduleConfigModifier->insert('/magento/attribute/','price_type_converting','0','0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert(
             '/view/products_grid/', 'use_alternative_mysql_select', '0', '0 - disable, \r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/view/requirements/popup/', 'closed', '0', '0 - false, - true');
         $moduleConfigModifier->insert(
             '/view/synchronization/revise_total/', 'show', '0', '0 - disable, \r\n1 - enable'
         );
@@ -275,7 +289,6 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/view/ebay/motors_epids_attribute/', 'listing_notification_shown', '0', NULL);
         $moduleConfigModifier->insert('/view/ebay/multi_currency_marketplace_2/', 'notification_shown', '0', NULL);
         $moduleConfigModifier->insert('/view/ebay/multi_currency_marketplace_19/', 'notification_shown', '0', NULL);
-        $moduleConfigModifier->insert('/view/ebay/terapeak/', 'mode', '1', NULL);
         $moduleConfigModifier->insert('/debug/exceptions/', 'send_to_server', '1', '0 - disable,\r\n1 - enable');
         $moduleConfigModifier->insert('/debug/exceptions/', 'filters_mode', '0', '0 - disable,\r\n1 - enable');
         $moduleConfigModifier->insert('/debug/fatal_error/', 'send_to_server', '1', '0 - disable,\r\n1 - enable');
@@ -295,6 +308,9 @@ class InstallData implements InstallDataInterface
         );
         $moduleConfigModifier->insert(
             '/magento/product/simple_type/', 'custom_types', '', 'Magento product custom types'
+        );
+        $moduleConfigModifier->insert(
+            '/magento/product/downloadable_type/', 'custom_types', '', 'Magento product custom types'
         );
         $moduleConfigModifier->insert(
             '/magento/product/configurable_type/', 'custom_types', '', 'Magento product custom types'
@@ -356,6 +372,25 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert('/global/stop_queue/', 'interval', '3600', 'in seconds');
         $synchronizationConfigModifier->insert('/global/stop_queue/', 'last_time', NULL, 'Last check time');
 
+        $synchronizationConfigModifier->insert(
+            '/ebay/templates/synchronization/list/immediately_not_checked/', 'items_limit', '200', NULL
+        );
+        $synchronizationConfigModifier->insert(
+            '/ebay/templates/synchronization/revise/total/', 'items_limit', '200', NULL
+        );
+        $synchronizationConfigModifier->insert(
+            '/ebay/templates/synchronization/revise/need_synch/', 'items_limit', '200', NULL
+        );
+        $synchronizationConfigModifier->insert(
+            '/amazon/templates/synchronization/list/immediately_not_checked/', 'items_limit', '200', NULL
+        );
+        $synchronizationConfigModifier->insert(
+            '/amazon/templates/synchronization/revise/total/', 'items_limit', '200', NULL
+        );
+        $synchronizationConfigModifier->insert(
+            '/amazon/templates/synchronization/revise/need_synch/', 'items_limit', '200', NULL
+        );
+
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), [
             [
                 'nick'     => 'migrationFromMagento1',
@@ -398,23 +433,25 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/view/ebay/template/category/', 'use_last_specifics', '0', '0 - false, \r\n1 - true'
         );
-        $moduleConfigModifier->insert('/ebay/motors/', 'epids_attribute', NULL, NULL);
+        $moduleConfigModifier->insert('/ebay/motors/', 'epids_motor_attribute', NULL, NULL);
+        $moduleConfigModifier->insert('/ebay/motors/', 'epids_uk_attribute', NULL, NULL);
+        $moduleConfigModifier->insert('/ebay/motors/', 'epids_de_attribute', NULL, NULL);
         $moduleConfigModifier->insert('/ebay/motors/', 'ktypes_attribute', NULL, NULL);
         $moduleConfigModifier->insert('/ebay/sell_on_another_marketplace/', 'tutorial_shown', '0', NULL);
         $moduleConfigModifier->insert('/ebay/translation_services/gold/', 'avg_cost', '7.21', NULL);
         $moduleConfigModifier->insert('/ebay/translation_services/silver/', 'avg_cost', '1.21', NULL);
         $moduleConfigModifier->insert('/ebay/translation_services/platinum/', 'avg_cost', '17.51', NULL);
         $moduleConfigModifier->insert('/ebay/description/', 'upload_images_mode', 2, NULL);
-        $moduleConfigModifier->insert('/cron/task/ebay_actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
-        $moduleConfigModifier->insert('/cron/task/ebay_actions/', 'interval', '60', 'in seconds');
-        $moduleConfigModifier->insert('/cron/task/ebay_actions/', 'last_access', NULL, 'date of last access');
-        $moduleConfigModifier->insert('/cron/task/ebay_actions/', 'last_run', NULL, 'date of last run');
+        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
+        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'interval', '60', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_access', NULL, 'date of last access');
+        $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_run', NULL, 'date of last run');
         $moduleConfigModifier->insert(
-            '/cron/task/update_ebay_accounts_preferences/', 'mode', 1, '0 - disable,\r\n1 - enable'
+            '/cron/task/ebay/update_accounts_preferences/', 'mode', 1, '0 - disable,\r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/cron/task/update_ebay_accounts_preferences/', 'interval', 86400, 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/ebay/update_accounts_preferences/', 'interval', 86400, 'in seconds');
         $moduleConfigModifier->insert(
-            '/cron/task/update_ebay_accounts_preferences/', 'last_run', NULL, 'date of last run'
+            '/cron/task/ebay/update_accounts_preferences/', 'last_run', NULL, 'date of last run'
         );
         $moduleConfigModifier->insert('/ebay/in_store_pickup/', 'mode', 0, '0 - disable,\r\n1 - enable');
 
@@ -487,6 +524,7 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert(
             '/ebay/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
+        $synchronizationConfigModifier->insert('/ebay/other_listings/update/', 'interval', '3600', 'in seconds');
         $synchronizationConfigModifier->insert('/ebay/other_listings/sku/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert('/ebay/templates/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
@@ -813,7 +851,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'us',
                 'language_code'                        => 'en_US',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -837,11 +874,10 @@ class InstallData implements InstallDataInterface
             ],
             [
                 'marketplace_id'                       => 2,
-                'currency'                             => 'CAD,USD',
+                'currency'                             => 'CAD',
                 'origin_country'                       => 'ca',
                 'language_code'                        => 'en_CA',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 1,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -869,7 +905,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'gb',
                 'language_code'                        => 'en_GB',
                 'translation_service_mode'             => 3,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 0,
@@ -888,7 +923,7 @@ class InstallData implements InstallDataInterface
                 'is_click_and_collect'                 => 1,
                 'is_in_store_pickup'                   => 1,
                 'is_holiday_return'                    => 1,
-                'is_epid'                              => 0,
+                'is_epid'                              => 1,
                 'is_ktype'                             => 1
             ],
             [
@@ -897,7 +932,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'au',
                 'language_code'                        => 'en_AU',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -925,7 +959,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'at',
                 'language_code'                        => 'de_AT',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -953,7 +986,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'be',
                 'language_code'                        => 'nl_BE',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -981,7 +1013,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'fr',
                 'language_code'                        => 'fr_FR',
                 'translation_service_mode'             => 1,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1009,7 +1040,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'de',
                 'language_code'                        => 'de_DE',
                 'translation_service_mode'             => 3,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1028,7 +1058,7 @@ class InstallData implements InstallDataInterface
                 'is_click_and_collect'                 => 0,
                 'is_in_store_pickup'                   => 0,
                 'is_holiday_return'                    => 1,
-                'is_epid'                              => 0,
+                'is_epid'                              => 1,
                 'is_ktype'                             => 1
             ],
             [
@@ -1037,7 +1067,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'us',
                 'language_code'                        => 'en_US',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 1,
@@ -1065,7 +1094,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'it',
                 'language_code'                        => 'it_IT',
                 'translation_service_mode'             => 1,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1093,7 +1121,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'be',
                 'language_code'                        => 'fr_BE',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1121,7 +1148,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'nl',
                 'language_code'                        => 'nl_NL',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1149,7 +1175,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'es',
                 'language_code'                        => 'es_ES',
                 'translation_service_mode'             => 1,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1169,7 +1194,7 @@ class InstallData implements InstallDataInterface
                 'is_in_store_pickup'                   => 0,
                 'is_holiday_return'                    => 0,
                 'is_epid'                              => 0,
-                'is_ktype'                             => 0
+                'is_ktype'                             => 1
             ],
             [
                 'marketplace_id'                       => 14,
@@ -1177,7 +1202,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'ch',
                 'language_code'                        => 'fr_CH',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1205,7 +1229,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'hk',
                 'language_code'                        => 'zh_HK',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1233,7 +1256,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'in',
                 'language_code'                        => 'hi_IN',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1261,7 +1283,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'ie',
                 'language_code'                        => 'en_IE',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1289,7 +1310,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'my',
                 'language_code'                        => 'ms_MY',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1313,11 +1333,10 @@ class InstallData implements InstallDataInterface
             ],
             [
                 'marketplace_id'                       => 19,
-                'currency'                             => 'CAD,USD',
+                'currency'                             => 'CAD',
                 'origin_country'                       => 'ca',
                 'language_code'                        => 'fr_CA',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 1,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 1,
                 'is_calculated_shipping'               => 1,
@@ -1345,7 +1364,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'ph',
                 'language_code'                        => 'fil_PH',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 1,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1373,7 +1391,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'pl',
                 'language_code'                        => 'pl_PL',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1401,7 +1418,6 @@ class InstallData implements InstallDataInterface
                 'origin_country'                       => 'sg',
                 'language_code'                        => 'zh_SG',
                 'translation_service_mode'             => 0,
-                'is_multi_currency'                    => 0,
                 'is_multivariation'                    => 0,
                 'is_freight_shipping'                  => 0,
                 'is_calculated_shipping'               => 0,
@@ -1443,6 +1459,8 @@ class InstallData implements InstallDataInterface
             'base_url', 'https://repricer.m2epro.com/connector/m2epro/',
             'Repricing Tool base url'
         );
+
+        $moduleConfigModifier->insert('/amazon/business/', 'mode', '0', '0 - disable, \r\n1 - enable');
 
         $synchronizationConfigModifier = $this->getConfigModifier('synchronization');
 
@@ -1657,49 +1675,70 @@ class InstallData implements InstallDataInterface
                 'developer_key'                     => '8636-1433-4377',
                 'default_currency'                  => 'CAD',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 0
+                'is_merchant_fulfillment_available' => 0,
+                'is_business_available'             => 0,
+                'is_vat_calculation_service_available' => 0,
+                'is_product_tax_code_policy_available' => 0,
             ],
             [
                 'marketplace_id'                    => 25,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 1
+                'is_merchant_fulfillment_available' => 1,
+                'is_business_available'             => 1,
+                'is_vat_calculation_service_available' => 1,
+                'is_product_tax_code_policy_available' => 1,
             ],
             [
                 'marketplace_id'                    => 26,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 0
+                'is_merchant_fulfillment_available' => 0,
+                'is_business_available'             => 0,
+                'is_vat_calculation_service_available' => 1,
+                'is_product_tax_code_policy_available' => 0,
             ],
             [
                 'marketplace_id'                    => 28,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'GBP',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 1
+                'is_merchant_fulfillment_available' => 1,
+                'is_business_available'             => 1,
+                'is_vat_calculation_service_available' => 1,
+                'is_product_tax_code_policy_available' => 1,
             ],
             [
                 'marketplace_id'                    => 29,
                 'developer_key'                     => '8636-1433-4377',
                 'default_currency'                  => 'USD',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 1
+                'is_merchant_fulfillment_available' => 1,
+                'is_business_available'             => 1,
+                'is_vat_calculation_service_available' => 0,
+                'is_product_tax_code_policy_available' => 0,
             ],
             [
                 'marketplace_id'                    => 30,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 0
+                'is_merchant_fulfillment_available' => 0,
+                'is_business_available'             => 0,
+                'is_vat_calculation_service_available' => 1,
+                'is_product_tax_code_policy_available' => 0,
             ],
             [
                 'marketplace_id'                    => 31,
                 'developer_key'                     => '7078-7205-1944',
                 'default_currency'                  => 'EUR',
                 'is_new_asin_available'             => 1,
-                'is_merchant_fulfillment_available' => 0
+                'is_merchant_fulfillment_available' => 0,
+                'is_business_available'             => 0,
+                'is_vat_calculation_service_available' => 1,
+                'is_product_tax_code_policy_available' => 0,
             ]
         ]);
     }
@@ -1750,20 +1789,6 @@ class InstallData implements InstallDataInterface
     {
         $this->moduleResource->setDbVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
         $this->moduleResource->setDataVersion(\Ess\M2ePro\Helper\Module::IDENTIFIER, $version);
-    }
-
-    // ---------------------------------------
-
-    private function isAllowedToPrintToStdErr()
-    {
-        $select = $this->installer->getConnection()
-            ->select()
-            ->from($this->installer->getTable('core_config_data'), 'value')
-            ->where('scope = ?', 'default')
-            ->where('scope_id = ?', 0)
-            ->where('path = ?', 'm2epro/setup/allow_print_to_stderr');
-
-        return (bool)$this->installer->getConnection()->fetchOne($select);
     }
 
     //########################################

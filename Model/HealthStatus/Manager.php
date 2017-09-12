@@ -62,16 +62,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
             case InfoType::TYPE:
                 return $this->getInfoTasks();
-                break;
 
             case IssueType::TYPE:
                 return $this->getIssueTasks();
-                break;
 
             case NULL:
             default:
                 return array_merge($this->getInfoTasks(), $this->getIssueTasks());
-                break;
         }
     }
 
@@ -84,6 +81,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         return [
             'Database\MysqlInfo\CrashedTables',
+            'Database\MysqlInfo\TablesStructure',
+
+            'Server\Status\GmtTime',
+            'Server\Status\SystemLogs',
+
+            'Orders\IntervalToTheLatest\Ebay',
+            'Orders\IntervalToTheLatest\Amazon',
         ];
     }
 

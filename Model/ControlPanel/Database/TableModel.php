@@ -89,10 +89,12 @@ class TableModel extends \Magento\Framework\DataObject
 
     public function getColumns()
     {
+        $prefix = $this->helperFactory->getObject('Magento')->getDatabaseTablesPrefix();
         $helper = $this->helperFactory->getObject('Module\Database\Structure');
 
         $tableName = $this->activeRecordFactory->getObject($this->modelName)
                                                ->getResource()->getMainTable();
+        $tableName = str_replace($prefix, '', $tableName);
 
         $resultColumns = $helper->getTableInfo($tableName);
         $isParent = $this->isMergeModeEnabled && $helper->isTableHorizontalParent($tableName);
@@ -107,6 +109,7 @@ class TableModel extends \Magento\Framework\DataObject
 
             $mergeTableName = $this->activeRecordFactory->getObject($this->getMergeModelName())
                                                         ->getResource()->getMainTable();
+            $mergeTableName = str_replace($prefix, '', $mergeTableName);
 
             $columns  = $helper->getTableInfo($mergeTableName);
             $isParent = $helper->isTableHorizontalParent($mergeTableName);
@@ -140,13 +143,16 @@ class TableModel extends \Magento\Framework\DataObject
         $modelInstance = $this->getModel();
 
         $idFieldName = $modelInstance->getIdFieldName();
-        $isIdAutoIncrement = $helper->isIdColumnAutoIncrement($modelInstance->getResource()->getMainTable());
+        $isIdAutoIncrement = $helper->isIdColumnAutoIncrement($this->tableName);
         if ($isIdAutoIncrement) {
             unset($data[$idFieldName]);
         }
 
         $modelInstance->setData($data);
+
+        $modelInstance->isObjectCreatingState(true);
         $modelInstance->getResource()->save($modelInstance);
+        $modelInstance->isObjectCreatingState(false);
     }
 
     public function deleteEntries(array $ids)
@@ -174,7 +180,7 @@ class TableModel extends \Magento\Framework\DataObject
         $collection->addFieldToFilter($modelInstance->getIdFieldName(), array('in' => $ids));
 
         $idFieldName = $modelInstance->getIdFieldName();
-        $isIdAutoIncrement = $helper->isIdColumnAutoIncrement($modelInstance->getResource()->getMainTable());
+        $isIdAutoIncrement = $helper->isIdColumnAutoIncrement($this->tableName);
         if ($isIdAutoIncrement) {
             unset($data[$idFieldName]);
         }
@@ -191,6 +197,8 @@ class TableModel extends \Magento\Framework\DataObject
         }
 
         foreach ($collection->getItems() as $item) {
+            /** @var \Ess\M2ePro\Model\ActiveRecord\AbstractModel $item */
+
             foreach ($data as $field => $value) {
 
                 if ($field == $idFieldName && !$isIdAutoIncrement) {
@@ -210,7 +218,7 @@ class TableModel extends \Magento\Framework\DataObject
             }
 
             $item->getResource()->save($item);
-            if ($this->getIsMergeModeEnabled() && $item instanceof ParentAbstractModel) {
+            if ($item instanceof ParentAbstractModel && $item->hasChildObjectLoaded()) {
                 $item->getChildObject()->getResource()->save($item->getChildObject());
             }
         }

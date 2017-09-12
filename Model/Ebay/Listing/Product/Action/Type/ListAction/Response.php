@@ -14,6 +14,8 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
     public function processSuccess(array $response, array $responseParams = array())
     {
+        $this->prepareMetadata();
+
         $data = array(
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
             'ebay_item_id' => $this->createEbayItem($response['ebay_item_id'])->getId(),
@@ -35,6 +37,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $data = $this->appendSpecificsReplacementValues($data);
         $data = $this->appendWithoutVariationMpnIssueFlag($data);
         $data = $this->appendIsVariationMpnFilledValue($data);
+
+        $data = $this->appendIsVariationValue($data);
+        $data = $this->appendIsAuctionType($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);
@@ -62,12 +67,12 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
         $tempKey = 'variations_specifics_replacements';
         unset($data['additional_data'][$tempKey]);
 
-        $requestData = $this->getRequestData()->getData();
-        if (!isset($requestData[$tempKey])) {
+        $requestMetaData = $this->getRequestMetaData();
+        if (!isset($requestMetaData[$tempKey])) {
             return $data;
         }
 
-        $data['additional_data'][$tempKey] = $requestData[$tempKey];
+        $data['additional_data'][$tempKey] = $requestMetaData[$tempKey];
         return $data;
     }
 

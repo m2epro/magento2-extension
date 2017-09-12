@@ -12,6 +12,17 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 {
     //########################################
 
+    protected function afterBuildDataEvent(array $data)
+    {
+        $this->getConfigurator()->setPriority(
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_STOP
+        );
+
+        parent::afterBuildDataEvent($data);
+    }
+
+    //########################################
+
     /**
      * @return array
      */

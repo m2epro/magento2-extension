@@ -491,7 +491,7 @@ CSS
             );
 
             if (empty($unusedVariations)) {
-                $this->channelVariationsTree = new stdClass();
+                $this->channelVariationsTree = new \stdClass();
 
                 return $this->channelVariationsTree;
             }

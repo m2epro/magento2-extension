@@ -4,6 +4,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Ebay\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
 use Ess\M2ePro\Model\Ebay\Account;
+use Magento\Framework\Message\MessageInterface;
 
 class Order extends AbstractForm
 {
@@ -120,12 +121,14 @@ class Order extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>Specify how M2E Pro should manage the imported from eBay Orders for the Items listed using
-M2E Pro or other tools.</p><br>
-<p><strong>Note:</strong> If an eBay Order is received, Magento Product QTY decreases only if a
-Magento Order is created.</p><br>
-<p>More detailed information about how to work with this
-Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+<p>Specify how M2E Pro should manage the Orders imported from eBay.</p><br/>
+<p>You are able to configure the different rules of <strong>Magento Order Creation</strong> considering whether the
+Item was listed via M2E Pro or by some other software.</p><br/>
+<p>Once eBay Order is imported, the <strong>Reserve Quantity</strong> feature will hold the Stock if Magento Order
+could not be created immediately in accordance with provided settings.</p><br/>
+<p>Besides, you can configure the <strong>Tax, Order Number</strong> and <strong>Order Status Mapping</strong> Settings
+for your Magento Orders as well as specify the automatic creation of invoices and shipment notifications.</p><br/>
+<p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/LgItAQ'))
@@ -445,6 +448,23 @@ HTML
             [
                 'legend' => $this->__('Order Creation Rules'),
                 'collapsable' => true,
+            ]
+        );
+
+        $fieldset->addField('magento_orders_creation_mode_immediately_warning',
+            self::MESSAGES,
+            [
+                'messages' => [
+                    [
+                        'type' => MessageInterface::TYPE_WARNING,
+                        'content' => $this->__(
+                            'Please note that Immediate Magento order creation sets certain limits to the update of
+                            the later order changes. If the shipping or tax details are modified after checkout is
+                            completed, these changes will not be reflected in Magento order.'
+                        )
+                    ],
+                ],
+                'style' => 'display: none'
             ]
         );
 

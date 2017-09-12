@@ -72,6 +72,7 @@ define([
             var attributeEl = row.down('.shipping-override-cost-custom-attribute');
             attributeEl.addClassName('M2ePro-custom-attribute-can-be-created');
             attributeEl.id = 'shipping_override_cost_custom_attribute_' + this.rulesIndex;
+            attributeEl.setAttribute('allowed_attribute_types', 'text,price,select');
 
             var handlerObj = new AttributeCreator('shipping_override_cost_custom_attribute_' + this.rulesIndex);
             handlerObj.setSelectObj(attributeEl);

@@ -16,9 +16,14 @@
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
             <strong class="admin__collapsible-title">
                 <span>
-                    <?php echo $block->__('Amazon Order');?> # <?php echo $block->order->getChildObject()->getData('amazon_order_id'); ?>
+                    <span>
+                        <?php echo $block->__('Amazon Order');?> # <?php echo $block->order->getChildObject()->getData('amazon_order_id'); ?>
+                    </span>
                     <?php if ($block->order->getChildObject()->isPrime()): ?>
-                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/prime.png'); ?>" />
+                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/prime.png'); ?>" style="margin-left: 5px; vertical-align: middle;"/>
+                    <?php endif; ?>
+                    <?php if ($block->order->getChildObject()->isBusiness()): ?>
+                        <img src="<?php echo $block->getViewFileUrl('Ess_M2ePro::images/amazon-business.png'); ?>" style="margin-left: 5px; vertical-align: middle;" />
                     <?php endif; ?>
                 </span>
             </strong>
@@ -349,7 +354,7 @@
 
                 <tr>
                     <td class="label"><?php echo $block->__('Tax'); ?></td>
-                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getProductPriceTaxAmount()); ?></span></td>
+                    <td><span class="price"><?php echo $block->formatPrice($currency, $block->order->getChildObject()->getProductPriceTaxAmount() + $block->order->getChildObject()->getShippingPriceTaxAmount()); ?></span></td>
                 </tr>
 
             </tbody>

@@ -81,13 +81,18 @@ class Order extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         ));
 
         $collection->addFieldToFilter('purchase_create_date', array(
-            'from' => $startDate->format('Y-m-d 00:00:00'),
-            'to'   => $endDate->format('Y-m-d 23:59:59')
+            'from' => $startDate->format('Y-m-d H:i:s'),
+            'to'   => $endDate->format('Y-m-d H:i:s')
         ));
 
         $collection->setOrder('id', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
-        return $collection->getColumnValues('ebay_order_id');
+        $ebayOrdersIds = array();
+        foreach ($collection->getItems() as $order) {
+            $ebayOrdersIds[] = $order->getChildObject()->getEbayOrderId();
+        }
+
+        return $ebayOrdersIds;
     }
 
     //########################################

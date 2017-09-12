@@ -10,6 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\System\Config\General;
 
 class Fieldset extends \Magento\Config\Block\System\Config\Form\Fieldset
 {
+    private $helperFactory = NULL;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Backend\Block\Context $context,
+        \Magento\Backend\Model\Auth\Session $authSession,
+        \Magento\Framework\View\Helper\Js $jsHelper,
+        array $data = []
+    )
+    {
+        $this->helperFactory = $helperFactory;
+        parent::__construct($context, $authSession, $jsHelper, $data);
+    }
+
     /**
      * Return header title part of html for fieldset
      *
@@ -67,7 +81,7 @@ HTML
             <p>You can enable/disable Amazon Integration.</p><br>
 
             <p>Once the Integration is disabled, its menu is not available in Magento panel.
-            Automatic data synchronization for eBay channel will not be running
+            Automatic data synchronization for Amazon channel will not be running
             (even if you did not remove the data from M2E Pro).</p>
 HTML
             );
@@ -84,10 +98,11 @@ HTML
             );
         } elseif (strpos($htmlId, 'advanced') !== false) {
 
+            $url = $this->helperFactory->getObject('Module\Support')->getDocumentationArticleUrl("x/EgA9AQ");
             $content = __(<<<HTML
             <p>This page contains additional functionality for M2E Pro Module’s management such as ability to
-            enable/disable the Module and Automatic Synchronization in it, ability to
-            start the Migration Wizard, etc</p>
+            enable/disable the Module and Automatic Synchronization in it,
+            ability to start the <a href="{$url}" target="_blank">Migration Wizard</a>, etc.</p>
 HTML
             );
         }

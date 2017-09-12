@@ -38,20 +38,33 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _prepareLayout()
     {
         $content = $this->__('
-            In this Section you can Create, Edit and Delete "Price, Quantity and Format", "Shipping Override",
-            "Description" and "Synchronization" Policies.<br/><br/>
-            <strong>Price, Quantity and Format Policies</strong> are used to work with values related
-            to the offer part of the Listings, such as
-            Price, Quantity and similar parameters.<br/><br/>
-            <strong>Shipping Override Policies</strong> are used to specify Settings for Shipping Services,
+            In this Section you can Create, Edit and Delete the Price, Quantity and Format Policy,
+            Synchronization Policy, Description Policy, Shipping Template Policy,
+            Shipping Override Policy, Product Tax Code Policy.<br/><br/>
+
+            <strong>Price, Quantity and Format Policy</strong> is used to work with values related
+            to the formation of your Channel Offers such as Price, Quantity, etc.<br/><br/>
+
+            In the <strong>Synchronization Policy</strong>, you can set the Rules under which the dynamic data
+            exchange between Channel and Magento will be performed.<br/><br/>
+
+            <strong>Description Policy</strong> is used to provide necessary settings for Creating new ASIN/ISBN in
+            Amazon Catalog or Update the Product Information of the existing Amazon Item.<br/><br/>
+
+            <strong>Shipping Template Policy</strong> is used to apply the Amazon Shipping Templates to your
+            Products within M2E Pro Listings.<br/><br/>
+
+            <strong>Shipping Override Policy</strong> is used to specify settings for Shipping Services,
             Locale and Shipping Cost.<br/><br/>
-            <strong>Description Policies</strong> are used to provide necessary Settings
-            for Creating new ASIN/ISBN in Amazon Catalog
-            or Update the Product Information of the existing Amazon Item.<br/><br/>
-            In the <strong>Synchronization Policy</strong> you can set the Rules
-            under which the dynamic data Synchronization between
-            Channel and Magento will be performed.
-        ');
+
+            <strong>Product Tax Code Policy</strong> allows applying the Amazon Tax Codes to your
+            Products within M2E Pro Listings.<br/><br/>
+
+            More detailed information about Policy configuration can be found
+            <a href="%url%" target="_blank" class="external-link">here</a>.',
+
+            $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/8gEtAQ')
+        );
 
         $this->appendHelpBlock([
             'content' => $content
@@ -94,6 +107,10 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
             Grid::TEMPLATE_SHIPPING_OVERRIDE => [
                 'label' => $this->__('Shipping Override'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SHIPPING_OVERRIDE) . "')",
+            ],
+            Grid::TEMPLATE_PRODUCT_TAX_CODE => [
+                'label' => $this->__('Product Tax Code'),
+                'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_PRODUCT_TAX_CODE) . "')",
             ]
         ];
 

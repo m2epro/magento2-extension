@@ -552,10 +552,12 @@ define([
         var creationMode = $('magento_orders_creation_mode').value;
 
         if (creationMode == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Account::MAGENTO_ORDERS_CREATE_IMMEDIATELY')) {
+            $('magento_orders_creation_mode_immediately_warning').show();
             $('magento_orders_creation_reservation_days_container').show();
             $('magento_orders_qty_reservation_days').value = 1;
             $('magento_orders_qty_reservation_days_container').hide();
         } else {
+            $('magento_orders_creation_mode_immediately_warning').hide();
             $('magento_orders_creation_reservation_days').value = 0;
             $('magento_orders_creation_reservation_days_container').hide();
             $('magento_orders_qty_reservation_days_container').show();

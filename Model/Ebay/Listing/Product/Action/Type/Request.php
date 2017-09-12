@@ -64,6 +64,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         $this->collectMetadata();
 
         $data = $this->prepareFinalData($data);
+
+        $this->afterBuildDataEvent($data);
         $this->collectRequestsWarningMessages();
 
         return $data;
@@ -86,16 +88,32 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
 
     protected function initializeVariations()
     {
-        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation\Updater $variationUpdater */
-        $variationUpdater = $this->modelFactory->getObject('Ebay\Listing\Product\Variation\Updater');
-        $variationUpdater->process($this->getListingProduct());
-        $variationUpdater->afterMassProcessEvent();
-
-        $isVariationItem = $this->getEbayListingProduct()->isVariationsReady();
-        $this->setIsVariationItem($isVariationItem);
+        $this->setIsVariationItem($this->getEbayListingProduct()->isVariationsReady());
     }
 
     protected function beforeBuildDataEvent() {}
+
+    protected function afterBuildDataEvent(array $data)
+    {
+        if ($this->getIsVariationItem() || isset($data['price_fixed'])) {
+
+            $isListingTypeFixed = true;
+
+        } elseif (isset($data['price_start'])) {
+
+            $isListingTypeFixed = false;
+
+        } elseif (!is_null($this->getEbayListingProduct()->isOnlineAuctionType())) {
+
+            $isListingTypeFixed = !$this->getEbayListingProduct()->isOnlineAuctionType();
+
+        } else {
+
+            $isListingTypeFixed = $this->getEbayListingProduct()->isListingTypeFixed();
+        }
+
+        $this->addMetaData('is_listing_type_fixed', $isListingTypeFixed);
+    }
 
     // ---------------------------------------
 
@@ -141,6 +159,8 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
         }
 
         $data = $this->doReplaceVariationSpecifics($data, $additionalData['variations_specifics_replacements']);
+        $this->addMetaData('variations_specifics_replacements', $additionalData['variations_specifics_replacements']);
+
         return $data;
     }
 

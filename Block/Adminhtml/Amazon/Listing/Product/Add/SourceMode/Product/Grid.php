@@ -12,7 +12,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 {
     private $listing;
 
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
     protected $type;
     protected $visibility;
     protected $status;
@@ -21,7 +21,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
@@ -31,7 +31,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         array $data = []
     )
     {
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         $this->visibility = $visibility;
         $this->status = $status;
@@ -68,21 +68,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareCollection()
     {
-        $collection = $this->productFactory->create()->getCollection()
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
-        $collection->joinTable(
-            array('cisi' => 'cataloginventory_stock_item'),
-            'product_id=entity_id',
-            array(
-                'qty' => 'qty',
-                'is_in_stock' => 'is_in_stock'
-            ),
-            '{{table}}.stock_id=1',
-            'left'
-        );
+        $collection->joinStockItem(array(
+            'qty'         => 'qty',
+            'is_in_stock' => 'is_in_stock'
+        ));
 
         // ---------------------------------------
         $collection->getSelect()->distinct();

@@ -371,18 +371,24 @@ HTML;
 <a href="{$url}">[change]</a><br>
 HTML;
 
-        $isAllowedToPrintToStderr = (bool)$this->getMagentoCoreConfigValue('m2epro/setup/allow_print_to_stderr');
-        $className = $isAllowedToPrintToStderr ? 'feature-enabled feature-enabled-word'
-                                               : 'feature-disabled feature-disabled-word';
+        $migrationM1Status = $this->getMagentoCoreConfigValue('m2epro/migrationFromMagento1/status');
+        if (!empty($migrationM1Status)) {
+            $className = 'feature-enabled';
+        } else {
+            $migrationM1Status = 'none';
+            $className = 'feature-disabled';
+        }
+
         $url = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreConfigValue',
                                              '_query' => [
-                                                 'config_path'  => 'm2epro/setup/allow_print_to_stderr',
-                                                 'config_value' => (int)!$isAllowedToPrintToStderr
+                                                 'config_path'  => 'm2epro/migrationFromMagento1/status',
+                                                 'config_value' => 'prepared'
                                              ]]);
 
         $html .= <<<HTML
-<span>Allowed to print exceptions to stdErr: <span class="{$className}"></span></span>&nbsp;
-<a href="{$url}">[change]</a><br>
+<br>
+<span>Migration from M1 status: <span class="{$className}">{$migrationM1Status}</span></span>&nbsp;
+<a href="{$url}">[set-prepared]</a><br>
 HTML;
 
         $html .= "</div>";
@@ -751,16 +757,17 @@ HTML;
     public function setMagentoCoreConfigValueAction()
     {
         $path  = $this->getRequest()->getParam('config_path');
-        $value = (int)$this->getRequest()->getParam('config_value');
+        $value = $this->getRequest()->getParam('config_value');
 
         if (!in_array($path, [
             'm2epro/general/maintenance',
             'm2epro/setup/ignore_maintenace',
             'm2epro/setup/allow_rollback_from_backup',
-            'm2epro/setup/allow_print_to_stderr'
+
+            'm2epro/migrationFromMagento1/status'
         ])) {
 
-            $this->messageManager->addError("This config path is not supported [{$path}].");
+            $this->messageManager->addErrorMessage("This config path is not supported [{$path}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
@@ -800,7 +807,7 @@ HTML;
 
         if (!$version) {
 
-            $this->messageManager->addError('Version is not provided.');
+            $this->messageManager->addErrorMessage('Version is not provided.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
@@ -827,8 +834,8 @@ HTML;
         // Static Content will regenerated automatically
         $this->addCronJobToQueue(Cron\JobFactory::JOB_UPGRADE);
 
-        empty($errorMessage) ? $this->getMessageManager()->addSuccess('Task has been successfully created.')
-                             : $this->getMessageManager()->addError($errorMessage);
+        empty($errorMessage) ? $this->getMessageManager()->addSuccessMessage('Task has been successfully created.')
+                             : $this->getMessageManager()->addErrorMessage($errorMessage);
 
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
@@ -864,14 +871,14 @@ HTML;
 
         if (strpos($tableName, $tablesPrefix.'m2epro_') !== 0) {
 
-            $this->getMessageManager()->addError("Only M2E Pro tables are supported. Table: [{$tableName}].");
+            $this->getMessageManager()->addErrorMessage("Only M2E Pro tables are supported. Table: [{$tableName}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
         $this->resourceConnection->getConnection()
              ->truncateTable($tableName);
 
-        $this->getMessageManager()->addSuccess("Successfully truncated [{$tableName}].");
+        $this->getMessageManager()->addSuccessMessage("Successfully truncated [{$tableName}].");
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
@@ -882,14 +889,14 @@ HTML;
 
         if (strpos($tableName, $tablesPrefix.'m2epro_') !== 0) {
 
-            $this->getMessageManager()->addError("Only M2E Pro tables are supported. Table: [{$tableName}].");
+            $this->getMessageManager()->addErrorMessage("Only M2E Pro tables are supported. Table: [{$tableName}].");
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
         $this->resourceConnection->getConnection()
              ->dropTable($tableName);
 
-        $this->getMessageManager()->addSuccess("Successfully dropped [{$tableName}].");
+        $this->getMessageManager()->addSuccessMessage("Successfully dropped [{$tableName}].");
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
@@ -899,7 +906,7 @@ HTML;
     {
         if (!$id = $this->getRequest()->getParam('id')) {
 
-            $this->getMessageManager()->addError('Row id is not specified.');
+            $this->getMessageManager()->addErrorMessage('Row id is not specified.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
@@ -907,7 +914,7 @@ HTML;
              ->delete($this->resourceConnection->getTableName('m2epro_setup'),
                       ['id = ?' => (int)$id]);
 
-        $this->getMessageManager()->addSuccess('Successfully removed.');
+        $this->getMessageManager()->addSuccessMessage('Successfully removed.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
@@ -919,7 +926,7 @@ HTML;
 
         if (!$id || is_null($column) || is_null($value)) {
 
-            $this->getMessageManager()->addError('Some required data is not specified.');
+            $this->getMessageManager()->addErrorMessage('Some required data is not specified.');
             return $this->_redirect($this->_url->getUrl('*/*/*'));
         }
 
@@ -928,7 +935,7 @@ HTML;
                      [$column => $value],
                      ['id = ?' => (int)$id]);
 
-        $this->getMessageManager()->addSuccess('Successfully updated.');
+        $this->getMessageManager()->addSuccessMessage('Successfully updated.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
@@ -961,6 +968,8 @@ HTML;
         $this->getResponse()->setContent('<pre>' . $output);
     }
 
+    //----------------------------------------
+
     public function downloadSetupLogFileAction()
     {
         $filePath = $this->fileSystem->getDirectoryWrite(DirectoryList::LOG)->getAbsolutePath() .
@@ -970,10 +979,7 @@ HTML;
         $this->getResponse()->setHeader('Content-length', filesize($filePath));
         $this->getResponse()->setHeader('Content-Disposition', 'attachment' . '; filename=' .basename($filePath));
 
-        $this->getResponse()->sendHeaders ();
-
-        readfile($filePath);
-        die;
+        $this->getResponse()->setContent(file_get_contents($filePath));
     }
 
     public function removeSetupLogFileAction()
@@ -981,7 +987,7 @@ HTML;
         $directory = $this->fileSystem->getDirectoryWrite(DirectoryList::LOG);
         $directory->delete('m2epro' .DIRECTORY_SEPARATOR. LoggerFactory::LOGFILE_NAME);
 
-        $this->getMessageManager()->addSuccess('Successfully removed.');
+        $this->getMessageManager()->addSuccessMessage('Successfully removed.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 
@@ -991,7 +997,7 @@ HTML;
     {
         $this->appCache->clean();
 
-        $this->messageManager->addSuccess('Cache has been successfully cleared.');
+        $this->messageManager->addSuccessMessage('Cache has been successfully cleared.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
     }
 

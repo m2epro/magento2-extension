@@ -943,6 +943,24 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     //########################################
 
+    /**
+     * @return bool
+     */
+    public function isVatCalculationServiceEnabled()
+    {
+        return (bool)$this->getData('is_vat_calculation_service_enabled');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMagentoInvoiceCreationDisabled()
+    {
+        return (bool)$this->getData('is_magento_invoice_creation_disabled');
+    }
+
+    //########################################
+
     public function isCacheEnabled()
     {
         return true;

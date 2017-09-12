@@ -288,7 +288,8 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Inventory\Get\Blocked
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
+                                          ->getResource()->getNextActionId();
     }
 
     protected function getSynchronizationLog()

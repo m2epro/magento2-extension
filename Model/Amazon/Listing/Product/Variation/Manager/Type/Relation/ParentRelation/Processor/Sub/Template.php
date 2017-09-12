@@ -19,6 +19,7 @@ class Template extends AbstractModel
         $descriptionTemplateId      = $this->getProcessor()->getAmazonListingProduct()->getTemplateDescriptionId();
         $shippingTemplateTemplateId = $this->getProcessor()->getAmazonListingProduct()->getTemplateShippingTemplateId();
         $shippingOverrideTemplateId = $this->getProcessor()->getAmazonListingProduct()->getTemplateShippingOverrideId();
+        $productTaxCodeTemplateId   = $this->getProcessor()->getAmazonListingProduct()->getTemplateProductTaxCodeId();
 
         foreach ($this->getProcessor()->getTypeModel()->getChildListingsProducts() as $listingProduct) {
 
@@ -33,12 +34,17 @@ class Template extends AbstractModel
             }
 
             if ($amazonListingProduct->getTemplateShippingTemplateId() != $shippingTemplateTemplateId) {
-                $listingProduct->setData('template_shipping_template_id', $shippingTemplateTemplateId);
+                $amazonListingProduct->setData('template_shipping_template_id', $shippingTemplateTemplateId);
                 $needSave = true;
             }
 
             if ($amazonListingProduct->getTemplateShippingOverrideId() != $shippingOverrideTemplateId) {
                 $amazonListingProduct->setData('template_shipping_override_id', $shippingOverrideTemplateId);
+                $needSave = true;
+            }
+
+            if ($amazonListingProduct->getTemplateProductTaxCodeId() != $productTaxCodeTemplateId) {
+                $amazonListingProduct->setData('template_product_tax_code_id', $productTaxCodeTemplateId);
                 $needSave = true;
             }
 

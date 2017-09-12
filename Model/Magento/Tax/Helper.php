@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Magento\Tax;
 
+use Ess\M2ePro\Model\Magento\Tax\Rule\Builder;
+
 class Helper extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $calculationRateFactory;
@@ -40,7 +42,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         return $this->calculationRateFactory->create()
             ->getCollection()
             ->addFieldToFilter('tax_country_id', $countryId)
-            ->addFieldToFilter('code', array('neq' => \Ess\M2ePro\Model\Magento\Tax\Rule\Builder::TAX_RATE_CODE))
+            ->addFieldToFilter('code', array('neq' => Builder::TAX_RATE_CODE_PRODUCT))
+            ->addFieldToFilter('code', array('neq' => Builder::TAX_RATE_CODE_SHIPPING))
             ->addFieldToFilter('code', array('neq' => 'eBay Tax Rate')) // backward compatibility with m2e 3.x.x
             ->getSize();
     }

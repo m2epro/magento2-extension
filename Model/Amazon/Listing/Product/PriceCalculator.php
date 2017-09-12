@@ -83,4 +83,11 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     }
 
     //########################################
+
+    protected function getCurrencyForPriceConvert()
+    {
+        return $this->getComponentListing()->getAmazonMarketplace()->getDefaultCurrency();
+    }
+
+    //########################################
 }

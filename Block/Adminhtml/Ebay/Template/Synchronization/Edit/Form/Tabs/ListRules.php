@@ -27,7 +27,7 @@ class ListRules extends AbstractTab
             'hidden',
             [
                 'name' => 'synchronization[title]',
-                'value' => $this->getHelper('Data')->escapeHtml($this->getTitle())
+                'value' => $this->getTitle()
             ]
         );
 

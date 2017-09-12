@@ -8,9 +8,20 @@
 
 namespace Ess\M2ePro\Model\Amazon\Template;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Amazon\Template\ShippingTemplate getResource()
+ */
 class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 {
     protected $amazonFactory;
+
+    const TEMPLATE_NAME_VALUE     = 1;
+    const TEMPLATE_NAME_ATTRIBUTE = 2;
+
+    /**
+     * @var \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate\Source[]
+     */
+    private $shippingTemplateSourceModels = [];
 
     //########################################
 
@@ -68,14 +79,62 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     * @return \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate\Source
+     */
+    public function getSource(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    {
+        $id = $magentoProduct->getProductId();
+
+        if (!empty($this->shippingTemplateSourceModels[$id])) {
+            return $this->shippingTemplateSourceModels[$id];
+        }
+
+        $this->shippingTemplateSourceModels[$id] = $this->modelFactory->getObject(
+            'Amazon\Template\ShippingTemplate\Source'
+        );
+
+        $this->shippingTemplateSourceModels[$id]->setMagentoProduct($magentoProduct);
+        $this->shippingTemplateSourceModels[$id]->setShippingTemplate($this);
+
+        return $this->shippingTemplateSourceModels[$id];
+    }
+
+    //########################################
+
     public function getTitle()
     {
         return $this->getData('title');
     }
 
-    public function getTemplateName()
+    // ---------------------------------------
+
+    public function getTemplateNameMode()
     {
-        return $this->getData('template_name');
+        return (int)$this->getData('template_name_mode');
+    }
+
+    public function isTemplateNameModeValue()
+    {
+        return $this->getTemplateNameMode() == self::TEMPLATE_NAME_VALUE;
+    }
+
+    public function isTemplateNameModeAttribute()
+    {
+        return $this->getTemplateNameMode() == self::TEMPLATE_NAME_ATTRIBUTE;
+    }
+
+    // ---------------------------------------
+
+    public function getTemplateNameValue()
+    {
+        return $this->getData('template_name_value');
+    }
+
+    public function getTemplateNameAttribute()
+    {
+        return $this->getData('template_name_attribute');
     }
 
     // ---------------------------------------
@@ -88,6 +147,39 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function getUpdateDate()
     {
         return $this->getData('update_date');
+    }
+
+    //########################################
+
+    public function getTemplateNameAttributes()
+    {
+        $attributes = array();
+
+        if ($this->isTemplateNameModeAttribute()) {
+            $attributes[] = $this->getTemplateNameAttribute();
+        }
+
+        return $attributes;
+    }
+
+    //########################################
+
+    /**
+     * @return array
+     */
+    public function getTrackingAttributes()
+    {
+        return $this->getUsedAttributes();
+    }
+
+    /**
+     * @return array
+     */
+    public function getUsedAttributes()
+    {
+        return array_unique(
+            $this->getTemplateNameAttributes()
+        );
     }
 
     //########################################
@@ -146,6 +238,11 @@ class ShippingTemplate extends \Ess\M2ePro\Model\ActiveRecord\Component\Abstract
     public function isCacheEnabled()
     {
         return true;
+    }
+
+    public function getCacheGroupTags()
+    {
+        return array_merge(parent::getCacheGroupTags(), ['template']);
     }
 
     //########################################

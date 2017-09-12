@@ -157,10 +157,10 @@ define([
 
         openMotorsPopup: function(id)
         {
-            EbayMotorsHandlerObj.savedNotes = {};
+            EbayListingViewSettingsMotorsObj.savedNotes = {};
 
             this.selectedProductsIds = id ? [id] : this.getSelectedProductsArray();
-            EbayMotorsHandlerObj.openAddPopUp(this.selectedProductsIds);
+            EbayListingViewSettingsMotorsObj.openAddPopUp(this.selectedProductsIds);
         },
 
         // ---------------------------------------

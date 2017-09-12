@@ -12,39 +12,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Refund\ItemsRe
 {
     // ########################################
 
-    protected function getResponserParams()
-    {
-        $params = array();
-
-        foreach ($this->params['items'] as $item) {
-            if (!is_array($item)) {
-                continue;
-            }
-
-            $params[$item['change_id']] = $item;
-        }
-
-        return $params;
-    }
-
-    // ########################################
-
-    public function eventBeforeExecuting()
-    {
-        parent::eventBeforeExecuting();
-
-        $changeIds = array();
-
-        foreach ($this->params['items'] as $orderRefund) {
-            if (!is_array($orderRefund)) {
-                continue;
-            }
-
-            $changeIds[] = $orderRefund['change_id'];
-        }
-
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByIds($changeIds);
-    }
-
     // ########################################
 }

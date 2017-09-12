@@ -10,8 +10,10 @@ namespace Ess\M2ePro\Model\Cron\Strategy;
 
 class Serial extends AbstractModel
 {
+    const LOCK_ITEM_NICK = 'cron_strategy_serial';
+
     /**
-     * @var \Ess\M2ePro\Model\LockItem
+     * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
     private $lockItem = NULL;
 
@@ -24,17 +26,6 @@ class Serial extends AbstractModel
 
     //########################################
 
-    public function process()
-    {
-        if ($this->getLockItem()->isExist()) {
-            return true;
-        }
-
-        return parent::process();
-    }
-
-    // ---------------------------------------
-
     /**
      * @param $taskNick
      * @return \Ess\M2ePro\Model\Cron\Task\AbstractModel
@@ -46,6 +37,33 @@ class Serial extends AbstractModel
     }
 
     protected function processTasks()
+    {
+        $result = true;
+
+        /** @var \Ess\M2ePro\Model\Lock\Transactional\Manager $transactionalManager */
+        $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
+        $transactionalManager->setNick(self::INITIALIZATION_TRANSACTIONAL_LOCK_NICK);
+
+        $transactionalManager->lock();
+
+        if ($this->getLockItem()->isExist() || $this->isParallelStrategyInProgress()) {
+            $transactionalManager->unlock();
+            return $result;
+        }
+
+        $this->getLockItem()->create();
+        $this->getLockItem()->makeShutdownFunction();
+
+        $transactionalManager->unlock();
+
+        $result = $this->processAllTasks();
+
+        $this->getLockItem()->remove();
+
+        return $result;
+    }
+
+    private function processAllTasks()
     {
         $result = true;
 
@@ -65,7 +83,7 @@ class Serial extends AbstractModel
 
                 $result = false;
 
-                $this->getOperationHistory()->addContentData('exception', array(
+                $this->getOperationHistory()->addContentData('exceptions', array(
                     'message' => $exception->getMessage(),
                     'file'    => $exception->getFile(),
                     'line'    => $exception->getLine(),
@@ -81,25 +99,8 @@ class Serial extends AbstractModel
 
     //########################################
 
-    protected function beforeStart()
-    {
-        $this->getLockItem()->create();
-        $this->getLockItem()->makeShutdownFunction();
-
-        parent::beforeStart();
-    }
-
-    protected function afterEnd()
-    {
-        parent::afterEnd();
-
-        $this->getLockItem()->remove();
-    }
-
-    //########################################
-
     /**
-     * @return \Ess\M2ePro\Model\LockItem
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager
      */
     protected function getLockItem()
     {
@@ -107,10 +108,27 @@ class Serial extends AbstractModel
             return $this->lockItem;
         }
 
-        $this->lockItem = $this->activeRecordFactory->getObject('LockItem');
-        $this->lockItem->setNick('cron_strategy_serial');
+        $this->lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $this->lockItem->setNick(self::LOCK_ITEM_NICK);
 
         return $this->lockItem;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isParallelStrategyInProgress()
+    {
+        for ($i = 1; $i <= Parallel::MAX_PARALLEL_EXECUTED_CRONS_COUNT; $i++) {
+            $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+            $lockItem->setNick(Parallel::GENERAL_LOCK_ITEM_PREFIX.$i);
+
+            if ($lockItem->isExist()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     //########################################

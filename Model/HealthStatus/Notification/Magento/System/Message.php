@@ -37,11 +37,19 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
 
     public function getIdentity()
     {
+        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+            return 'm2epro-health-status-notification';
+        }
+
         return md5('m2epro-health-status-' . $this->notificationSettings->getLevel());
     }
 
     public function isDisplayed()
     {
+        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+            return false;
+        }
+
         if (!$this->notificationSettings->isModeMagentoSystemNotification()) {
             return false;
         }

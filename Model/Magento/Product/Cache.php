@@ -200,13 +200,6 @@ class Cache extends \Ess\M2ePro\Model\Magento\Product
 
     //########################################
 
-    public function hasRequiredOptions()
-    {
-        return $this->getMethodData(__FUNCTION__);
-    }
-
-    // ---------------------------------------
-
     public function getVariationInstance()
     {
         if (!is_null($this->_variationInstance)) {

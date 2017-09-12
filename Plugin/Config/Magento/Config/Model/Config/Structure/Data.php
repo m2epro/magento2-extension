@@ -36,16 +36,16 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
         return true;
     }
 
-    public function aroundGet($interceptor, \Closure $callback)
+    public function aroundGet($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('get', $interceptor, $callback);
+        return $this->execute('get', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processGet($interceptor, \Closure $callback)
+    protected function processGet($interceptor, \Closure $callback, array $arguments)
     {
-        $result = $callback();
+        $result = $callback(...$arguments);
 
         if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() ||
             (
@@ -59,6 +59,9 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::BUY_SECTION_COMPONENT]);
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_COMPONENT]);
 
+            unset($result['sections']['payment']['children']['m2epropayment']);
+            unset($result['sections']['carriers']['children']['m2eproshipping']);
+
         } elseif ($this->helperFactory->getObject('Module')->isDisabled()) {
 
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT]);
@@ -68,6 +71,9 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
                 $result['sections'][\Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_COMPONENT]
                     ['children']['migration_from_magento1']
             );
+
+            unset($result['sections']['payment']['children']['m2epropayment']);
+            unset($result['sections']['carriers']['children']['m2eproshipping']);
         }
 
         if (!$this->isMigrationFromMagento1InProgress()) {

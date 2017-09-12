@@ -149,6 +149,10 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             $statusColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Ebay\Grid\Column\Filter\Status';
         }
 
+        if ($listingType == \Ess\M2ePro\Block\Adminhtml\Listing\Search\TypeSwitcher::LISTING_TYPE_LISTING_OTHER) {
+            unset($statusColumn['options'][\Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED]);
+        }
+
         $this->addColumn('status', $statusColumn);
 
         $this->addColumn('goto_listing_item', array(
@@ -196,7 +200,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
 
         $imageUrlResizedUrl = $imageUrlResized->getUrl();
 
-        $imageHtml = $productId.'<div style="margin-top: 5px;"><img src="'.$imageUrlResizedUrl.'" /></div>';
+        $imageHtml = $productId.'<div style="margin-top: 5px;">'.
+            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
         $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
 
         return $withImageHtml;
@@ -361,9 +366,31 @@ HTML;
             return $resultHtml;
         }
 
-        $onlineCurrentPriceStr = $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice);
+        $noticeHtml = '';
+        if ($listingProductId = $row->getData('listing_product_id')) {
 
-        return '<span class="product-price-value">' . $onlineCurrentPriceStr . '</span>';
+            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+            $listingProduct = $this->ebayFactory->getObjectLoaded('Listing\Product', $listingProductId);
+            if ($listingProduct->getChildObject()->isVariationsReady()) {
+
+                $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
+                $noticeHtml = <<<HTML
+<div class="m2epro-field-tooltip admin__field-tooltip" style="display: inline;">
+    <a class="admin__field-tooltip-action" href="javascript://" style="margin-left: 0;"></a>
+    <div class="admin__field-tooltip-content">
+        {$noticeText}
+    </div>
+</div>
+HTML;
+            }
+        }
+
+        return $noticeHtml .
+               '<div style="display: inline;">' .
+                   '<span class="product-price-value">' .
+                        $this->localeCurrency->getCurrency($currency)->toCurrency($onlineCurrentPrice) .
+                   '</span>' .
+               '</div>';
     }
 
     public function callbackColumnStatus($value, $row, $column, $isExport)

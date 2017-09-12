@@ -127,7 +127,7 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
         $taxRuleBuilder = $this->modelFactory->getObject('Magento\Tax\Rule\Builder');
-        $taxRuleBuilder->buildTaxRule(
+        $taxRuleBuilder->buildProductTaxRule(
             $itemTaxRate,
             $this->quote->getShippingAddress()->getCountryId(),
             $this->quote->getCustomerTaxClassId()
@@ -164,7 +164,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         $request->setQty($this->proxyItem->getQty());
 
         // grouped and downloadable products doesn't have options
-        if ($this->proxyItem->getMagentoProduct()->isGroupedType()) {
+        if ($this->proxyItem->getMagentoProduct()->isGroupedType() ||
+            $this->proxyItem->getMagentoProduct()->isDownloadableType()) {
             return $request;
         }
 
@@ -182,6 +183,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
             $request->setBundleOption($options);
         } else if ($magentoProduct->isConfigurableType()) {
             $request->setSuperAttribute($options);
+        } else if ($magentoProduct->isDownloadableType()) {
+            $request->setLinks($options);
         }
 
         return $request;

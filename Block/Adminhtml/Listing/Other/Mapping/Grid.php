@@ -10,20 +10,20 @@ namespace Ess\M2ePro\Block\Adminhtml\Listing\Other\Mapping;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
     protected $type;
 
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -49,22 +49,16 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareCollection()
     {
-        $collection = $this->productFactory->create()->getCollection()
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
-            ->addAttributeToSelect('type_id')
-            ->joinField('qty',
-                        'cataloginventory_stock_item',
-                        'qty',
-                        'product_id=entity_id',
-                        '{{table}}.stock_id=1',
-                        'left')
-            ->joinField('is_in_stock',
-                        'cataloginventory_stock_item',
-                        'is_in_stock',
-                        'product_id=entity_id',
-                        '{{table}}.stock_id=1',
-                        'left');
+            ->addAttributeToSelect('type_id');
+
+        $collection->joinStockItem(array(
+            'qty'         => 'qty',
+            'is_in_stock' => 'is_in_stock'
+        ));
 
         $collection->addFieldToFilter(
             array(array(
@@ -74,7 +68,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
 
         $this->setCollection($collection);
-
         return parent::_prepareCollection();
     }
 
@@ -163,7 +156,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $imageUrlResizedUrl = $imageUrlResized->getUrl();
 
-        $imageHtml = $productId.'<div style="margin-top: 5px"><img src="'.$imageUrlResizedUrl.'" /></div>';
+        $imageHtml = $productId.'<div style="margin-top: 5px">'.
+            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageUrlResizedUrl. '" /></div>';
         $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
 
         return $withImageHtml;

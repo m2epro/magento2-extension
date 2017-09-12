@@ -69,7 +69,7 @@ class AssignProduct extends Order
 
         $this->setJsonContent(array(
             'success'  => $this->__('Order Item was successfully Mapped.'),
-            'continue' => $orderItem->getMagentoProduct()->hasRequiredOptions()
+            'continue' => $orderItem->getMagentoProduct()->isProductWithVariations()
         ));
 
         return $this->getResult();

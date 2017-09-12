@@ -78,6 +78,7 @@ class Builder extends AbstractModel
         $this->setData('status', $this->modelFactory->getObject('Amazon\Order\Helper')->getStatus($data['status']));
         $this->setData('is_afn_channel', $data['is_afn_channel']);
         $this->setData('is_prime', $data['is_prime']);
+        $this->setData('is_business', $data['is_business']);
 
         $this->setData('purchase_update_date', $data['purchase_update_date']);
         $this->setData('purchase_create_date', $data['purchase_create_date']);
@@ -373,10 +374,10 @@ class Builder extends AbstractModel
         $logger = $this->activeRecordFactory->getObject('Listing\Log');
         $logger->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+        $logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
 
         $parentsForProcessing = array();
-        $listingsProductsIdsForActionSkipping = array();
+        $listingsProductsIdsForNeedSynchRulesCheck = array();
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
@@ -427,7 +428,7 @@ class Builder extends AbstractModel
                 );
 
                 if ($listingProduct->isSetProcessingLock('in_action')) {
-                    $listingsProductsIdsForActionSkipping[] = $listingProduct->getId();
+                    $listingsProductsIdsForNeedSynchRulesCheck[] = $listingProduct->getId();
                 }
 
                 if ($currentOnlineQty > $orderItem['qty_purchased']) {
@@ -511,11 +512,11 @@ class Builder extends AbstractModel
             $massProcessor->execute();
         }
 
-        if (!empty($listingsProductsIdsForActionSkipping)) {
-            $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')
+        if (!empty($listingsProductsIdsForNeedSynchRulesCheck)) {
+            $this->activeRecordFactory->getObject('Listing\Product')
                                       ->getResource()
-                                      ->markAsSkippedProductAction(
-                                          array_unique($listingsProductsIdsForActionSkipping)
+                                      ->setNeedSynchRulesCheck(
+                                          array_unique($listingsProductsIdsForNeedSynchRulesCheck)
                                       );
         }
     }
@@ -525,7 +526,7 @@ class Builder extends AbstractModel
         $logger = $this->activeRecordFactory->getObject('Listing\Other\Log');
         $logger->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
 
-        $logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')->getNextActionId();
+        $logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')->getResource()->getNextActionId();
 
         foreach ($this->items as $orderItem) {
             /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingOtherCollection */

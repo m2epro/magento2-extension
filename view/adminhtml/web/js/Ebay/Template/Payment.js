@@ -19,9 +19,9 @@ define([
                 });
             }, M2ePro.translator.translate('Payment method should be specified.'));
 
-            jQuery.validator.addMethod('M2ePro-validate-email', function(value, el) {
+            jQuery.validator.addMethod('M2ePro-validate-ebay-payment-email', function(value, el) {
 
-                var advice = Validation.getAdvice('M2ePro-validate-email',el);
+                var advice = Validation.getAdvice('M2ePro-validate-ebay-payment-email',el);
                 advice && advice.remove();
 
                 if (!Validation.get('M2ePro-required-when-visible').test(value,el)) {

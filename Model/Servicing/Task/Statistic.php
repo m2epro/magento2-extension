@@ -122,23 +122,27 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        $requestData['statistics'] = array();
-
-        try {
-
-            $requestData['statistics']['server']    = $this->getServerRequestPart();
-            $requestData['statistics']['magento']   = $this->getMagentoRequestPart();
-            $requestData['statistics']['extension'] = $this->getExtensionRequestPart();
-
-        } catch (\Exception $e) {
-            $this->getHelper('Module\Exception')->process($e);
-            return $requestData;
-        }
-
-        return $requestData;
+        return $requestData['statistics'] = array(
+            'server'    => $this->getServerRequestPart(),
+            'magento'   => $this->getMagentoRequestPart(),
+            'extension' => $this->getExtensionRequestPart(),
+        );
     }
 
     public function processResponseData(array $data) {}
+
+    //########################################
+
+    private function fillUpDataByMethod(array &$data, $method)
+    {
+        try {
+            if (is_callable(array($this, $method))) {
+                $this->$method($data);
+            }
+        } catch (\Exception $e) {
+            $this->getHelper('Module\Exception')->process($e);
+        }
+    }
 
     //########################################
 
@@ -146,44 +150,40 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $data = array();
 
-        $data['name'] = $this->getHelper('Client')->getSystem();
-
-        $data = $this->appendPhpInfo($data);
-        $data = $this->appendMysqlInfo($data);
+        $this->fillUpDataByMethod($data, 'appendServerSystemInfo');
+        $this->fillUpDataByMethod($data, 'appendServerPhpInfo');
+        $this->fillUpDataByMethod($data, 'appendServerMysqlInfo');
 
         return $data;
     }
 
     // ---------------------------------------
 
-    private function appendPhpInfo($data)
+    private function appendServerSystemInfo(&$data)
     {
-        $data['php'] = array();
-
-        $phpSettings = $this->getHelper('Client')->getPhpSettings();
-
-        $data['php']['version'] = $this->getHelper('Client')->getPhpVersion();
-        $data['php']['server_api'] = $this->getHelper('Client')->getPhpApiName();
-        $data['php']['memory_limit'] = $phpSettings['memory_limit'];
-        $data['php']['max_execution_time'] = $phpSettings['max_execution_time'];
-
-        return $data;
+        $data['name'] = $this->getHelper('Client')->getSystem();
     }
 
-    private function appendMysqlInfo($data)
+    private function appendServerPhpInfo(&$data)
     {
-        $data['mysql'] = array();
+        $phpSettings = $this->getHelper('Client')->getPhpSettings();
 
+        $data['php']['version']            = $this->getHelper('Client')->getPhpVersion();
+        $data['php']['server_api']         = $this->getHelper('Client')->getPhpApiName();
+        $data['php']['memory_limit']       = $phpSettings['memory_limit'];
+        $data['php']['max_execution_time'] = $phpSettings['max_execution_time'];
+    }
+
+    private function appendServerMysqlInfo(&$data)
+    {
         $mySqlSettings = $this->getHelper('Client')->getMysqlSettings();
 
-        $data['mysql']['version'] = $this->getHelper('Client')->getMysqlVersion();
-        $data['mysql']['api'] = $this->getHelper('Client')->getMysqlApiName();
-        $data['mysql']['database_name'] = $this->getHelper('Magento')->getDatabaseName();
-        $data['mysql']['table_prefix'] = $this->getHelper('Magento')->getDatabaseTablesPrefix();
+        $data['mysql']['version']         = $this->getHelper('Client')->getMysqlVersion();
+        $data['mysql']['api']             = $this->getHelper('Client')->getMysqlApiName();
+        $data['mysql']['database_name']   = $this->getHelper('Magento')->getDatabaseName();
+        $data['mysql']['table_prefix']    = $this->getHelper('Magento')->getDatabaseTablesPrefix();
         $data['mysql']['connect_timeout'] = $mySqlSettings['connect_timeout'];
-        $data['mysql']['wait_timeout'] = $mySqlSettings['wait_timeout'];
-
-        return $data;
+        $data['mysql']['wait_timeout']    = $mySqlSettings['wait_timeout'];
     }
 
     //########################################
@@ -192,29 +192,32 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $data = array();
 
-        $data['info']['edition'] = $this->getHelper('Magento')->getEditionName();
-        $data['info']['version'] = $this->getHelper('Magento')->getVersion();
+        $this->fillUpDataByMethod($data, 'appendMagentoSystemInfo');
 
-        $data['settings']['compilation'] = defined('COMPILER_INCLUDE_PATH');
-        //$data['settings']['cache_backend'] = $this->getHelper('Client\Cache')->getBackend();
-        $data['settings']['secret_key'] = $this->getHelper('Magento')->isSecretKeyToUrl();
+        $this->fillUpDataByMethod($data, 'appendMagentoModulesInfo');
+        $this->fillUpDataByMethod($data, 'appendMagentoStoresInfo');
 
-        $data = $this->appendModulesInfo($data);
-        $data = $this->appendStoresInfo($data);
-
-        $data = $this->appendAttributesInfo($data);
-        $data = $this->appendProductsInfo($data);
-        $data = $this->appendOrdersInfo($data);
+        $this->fillUpDataByMethod($data, 'appendMagentoAttributesInfo');
+        $this->fillUpDataByMethod($data, 'appendMagentoProductsInfo');
+        $this->fillUpDataByMethod($data, 'appendMagentoOrdersInfo');
 
         return $data;
     }
 
     // ---------------------------------------
 
-    private function appendModulesInfo($data)
+    private function appendMagentoSystemInfo(&$data)
     {
-        $data['modules'] = array();
+        $data['info']['edition'] = $this->getHelper('Magento')->getEditionName();
+        $data['info']['version'] = $this->getHelper('Magento')->getVersion();
 
+        $data['settings']['compilation']   = defined('COMPILER_INCLUDE_PATH');
+        //$data['settings']['cache_backend'] = $this->getHelper('Client\Cache')->getBackend();
+        $data['settings']['secret_key']    = $this->getHelper('Magento')->isSecretKeyToUrl();
+    }
+
+    private function appendMagentoModulesInfo(&$data)
+    {
         foreach ($this->moduleList->getAll() as $module => $moduleData) {
 
             $data['modules'][$module] = array(
@@ -223,27 +226,20 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 'status'  => (int) $this->moduleManager->isEnabled($module)
             );
         }
-
-        return $data;
     }
 
-    private function appendStoresInfo($data)
+    private function appendMagentoStoresInfo(&$data)
     {
-        $data['stores'] = array();
-
         foreach ($this->storeManager->getWebsites() as $website) {
             foreach ($website->getGroups() as $group) {
                 foreach ($group->getStores() as $store) {
-
                     $data['stores'][$website->getName()][$group->getName()][] = $store->getName();
                 }
             }
         }
-
-        return $data;
     }
 
-    private function appendAttributesInfo($data)
+    private function appendMagentoAttributesInfo(&$data)
     {
         $collection = $this->attributeCollection->create()->addVisibleFilter();
         $data['attributes']['amount'] = $collection->getSize();
@@ -256,11 +252,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $collection = $this->categoryFactory->create()->getCollection();
         $data['categories']['amount'] = $collection->getSize();
-
-        return $data;
     }
 
-    private function appendProductsInfo($data)
+    private function appendMagentoProductsInfo(&$data)
     {
         // Count of Products
         $queryStmt = $this->resource->getConnection()
@@ -336,11 +330,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data['products']['price']['max'] = round($result['max_price'], 2);
         $data['products']['price']['avg'] = round($result['avg_price'], 2);
         // ---------------------------------------
-
-        return $data;
     }
 
-    private function appendOrdersInfo($data)
+    private function appendMagentoOrdersInfo(&$data)
     {
         // Count of Orders
         $queryStmt = $this->resource->getConnection()
@@ -373,8 +365,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $collection = $this->transactionCollectionFactory->create();
         $data['transactions']['amount'] = $collection->getSize();
-
-        return $data;
     }
 
     //########################################
@@ -383,31 +373,35 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $data = array();
 
-        $data['info']['version'] = $this->getHelper('Module')->getPublicVersion();
+        $this->fillUpDataByMethod($data, 'appendExtensionSystemInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionM2eProUpdaterModuleInfo');
 
-        $data = $this->appendM2eProUpdaterModuleInfo($data);
+        $this->fillUpDataByMethod($data, 'appendExtensionTablesInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionSettingsInfo');
 
-        $data = $this->appendTablesInfo($data);
-        $data = $this->appendSettingsInfo($data);
+        $this->fillUpDataByMethod($data, 'appendExtensionMarketplacesInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionAccountsInfo');
 
-        $data = $this->appendMarketplacesInfo($data);
-        $data = $this->appendAccountsInfo($data);
+        $this->fillUpDataByMethod($data, 'appendExtensionListingsInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionListingsProductsInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionListingsOtherInfo');
 
-        $data = $this->appendListingsInfo($data);
-        $data = $this->appendListingsProductsInfo($data);
-        $data = $this->appendListingsOtherInfo($data);
+        $this->fillUpDataByMethod($data, 'appendExtensionPoliciesInfo');
+        $this->fillUpDataByMethod($data, 'appendExtensionOrdersInfo');
 
-        $data = $this->appendPoliciesInfo($data);
-        $data = $this->appendExtensionOrdersInfo($data);
-
-        $data = $this->appendLogsInfo($data);
+        $this->fillUpDataByMethod($data, 'appendExtensionLogsInfo');
 
         return $data;
     }
 
     // ---------------------------------------
 
-    private function appendM2eProUpdaterModuleInfo($data)
+    private function appendExtensionSystemInfo(&$data)
+    {
+        $data['info']['version'] = $this->getHelper('Module')->getPublicVersion();
+    }
+
+    private function appendExtensionM2eProUpdaterModuleInfo(&$data)
     {
         $updaterModule = (array)$this->moduleList->getOne('Ess_M2eProUpdater');
 
@@ -419,13 +413,11 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         }
 
         $data['info']['m2eproupdater_module'] = $updaterData;
-
-        return $data;
     }
 
     // ---------------------------------------
 
-    private function appendTablesInfo($data)
+    private function appendExtensionTablesInfo(&$data)
     {
         $helper = $this->getHelper('Module\Database\Structure');
         $data['info']['tables'] = array();
@@ -437,11 +429,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
                 'amount' => $helper->getCountOfRecords($tableName),
             );
         }
-
-        return $data;
     }
 
-    private function appendSettingsInfo($data)
+    private function appendExtensionSettingsInfo(&$data)
     {
         $config = $this->getHelper('Module')->getConfig();
 
@@ -468,11 +458,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
             $data['settings']['channels'][$componentNick] = $tempInfo;
         }
-
-        return $data;
     }
 
-    private function appendMarketplacesInfo($data)
+    private function appendExtensionMarketplacesInfo(&$data)
     {
         $data['marketplaces'] = array();
 
@@ -485,11 +473,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
             $data['marketplaces'][$item->getComponentMode()][$item->getNativeId()] = $item->getTitle();
         }
-
-        return $data;
     }
 
-    private function appendAccountsInfo($data)
+    private function appendExtensionAccountsInfo(&$data)
     {
         $data['accounts'] = array();
 
@@ -518,11 +504,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
             $data['accounts'][$item->getComponentMode()][$item->getTitle()] = $tempInfo;
         }
-
-        return $data;
     }
 
-    private function appendListingsInfo($data)
+    private function appendExtensionListingsInfo(&$data)
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
@@ -584,11 +568,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['listings'][$row['component']]['accounts'][$accountTitle] += (int)$row['count'];
             $data['listings']['stores'][$storePath] += (int)$row['count'];
         }
-
-        return $data;
     }
 
-    private function appendListingsProductsInfo($data)
+    private function appendExtensionListingsProductsInfo(&$data)
     {
         $tableListingProduct       = $this->resource->getTableName('m2epro_listing_product');
         $tableAmazonListingProduct = $this->resource->getTableName('m2epro_amazon_listing_product');
@@ -690,11 +672,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['listings_products'][$row['component']]['marketplaces'][$markTitle] += (int)$row['products_count'];
             $data['listings_products'][$row['component']]['accounts'][$accountTitle] += (int)$row['products_count'];
         }
-
-        return $data;
     }
 
-    private function appendListingsOtherInfo($data)
+    private function appendExtensionListingsOtherInfo(&$data)
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
@@ -747,11 +727,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['listings_other'][$row['component']]['marketplaces'][$markTitle] += (int)$row['count'];
             $data['listings_other'][$row['component']]['accounts'][$accountTitle] += (int)$row['count'];
         }
-
-        return $data;
     }
 
-    private function appendPoliciesInfo($data)
+    private function appendExtensionPoliciesInfo(&$data)
     {
         $data = $this->_appendGeneralPolicyInfoByType('selling_format', 'm2epro_template_selling_format', $data);
         $data = $this->_appendGeneralPolicyInfoByType('synchronization', 'm2epro_template_synchronization', $data);
@@ -764,7 +742,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         return $data;
     }
 
-    private function appendExtensionOrdersInfo($data)
+    private function appendExtensionOrdersInfo(&$data)
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
@@ -884,11 +862,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['orders']['amazon']['types'][$status] += (int)$row['count'];
         }
         // ---------------------------------------
-
-        return $data;
     }
 
-    private function appendLogsInfo($data)
+    private function appendExtensionLogsInfo(&$data)
     {
         $data['logs']['total'] = 0;
 
@@ -900,8 +876,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         $data = $this->_appendLogsInfoByType('synchronization', 'm2epro_synchronization_log', $data);
         $data = $this->_appendLogsInfoByType('orders', 'm2epro_order_log', $data);
         $data = $this->_appendLogsInfoByType('other_listings', 'm2epro_listing_other_log', $data);
-
-        return $data;
     }
 
     //########################################

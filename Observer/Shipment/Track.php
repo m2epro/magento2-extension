@@ -25,6 +25,7 @@ class Track extends \Ess\M2ePro\Observer\AbstractModel
             $track = $this->getEvent()->getTrack();
 
             $shipment = $track->getShipment();
+
             $magentoOrderId = $shipment->getOrderId();
 
             try {

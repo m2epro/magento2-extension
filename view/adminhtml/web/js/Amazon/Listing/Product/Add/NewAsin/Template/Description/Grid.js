@@ -154,7 +154,7 @@ define([
                     var response = transport.responseText.evalJSON();
 
                     if (response.type == 'success') {
-                        self.templateDescriptionHandler.unassignFromTemplateDescrition(productsIds);
+                        self.templateDescriptionHandler.unassignFromTemplateDescription(productsIds);
                     }
                 }
             });

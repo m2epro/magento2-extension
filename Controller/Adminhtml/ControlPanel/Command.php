@@ -2,9 +2,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel;
 
-use Ess\M2ePro\Helper\Module;
-use Magento\Backend\App\Action;
-
 abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -38,7 +35,15 @@ abstract class Command extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     //########################################
 
-    protected function postDispatch(\Magento\Framework\App\RequestInterface $request) {}
+    /**
+     * It will allow to use control panel features even if extension is disabled, etc.
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @return bool
+     */
+    protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
+    {
+        return true;
+    }
 
     //########################################
 

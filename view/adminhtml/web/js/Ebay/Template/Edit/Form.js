@@ -128,8 +128,10 @@ function(jQuery) {
                 //EbayTemplateSynchronizationHandlerObj.checkVirtualTabValidation();
             }
 
-            if ($('title')) {
-                $$('input[name="'+EbayTemplateEditObj.templateNick+'[title]"]')[0].value = $('title').value;
+            var titleInput = $$('input[name="'+EbayTemplateEditObj.templateNick+'[title]"]')[0];
+
+            if (titleInput) {
+                titleInput.value = $('title').value;
             }
 
             return validationResult;

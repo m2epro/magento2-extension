@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
+use Ess\M2ePro\Model\Exception;
+
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     private $initiator = \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
@@ -19,11 +21,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected $resource;
 
     /**
-     * @var \Ess\M2ePro\Model\LockItem
+     * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
     private $lockItem       = NULL;
     /**
-     * @var \Ess\M2ePro\Model\LockItem
+     * @var \Ess\M2ePro\Model\Lock\Item\Manager
      */
     private $parentLockItem = NULL;
 
@@ -122,17 +124,17 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\LockItem $object
+     * @param \Ess\M2ePro\Model\Lock\Item\Manager $object
      * @return $this
      */
-    public function setParentLockItem(\Ess\M2ePro\Model\LockItem $object)
+    public function setParentLockItem(\Ess\M2ePro\Model\Lock\Item\Manager $object)
     {
         $this->parentLockItem = $object;
         return $this;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\LockItem
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager
      */
     public function getParentLockItem()
     {
@@ -199,13 +201,18 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function beforeStart()
     {
-        $parentId = $this->getParentLockItem() ? $this->getParentLockItem()->getId() : null;
+        if ($this->getLockItem()->isExist()) {
+            throw new Exception('Lock item "'.$this->getLockItem()->getNick().'" already exists.');
+        }
+
+        $parentId = $this->getParentLockItem() ? $this->getParentLockItem()->getRealId() : null;
         $this->getLockItem()->create($parentId);
         $this->getLockItem()->makeShutdownFunction();
 
         $parentId = $this->getParentOperationHistory()
             ? $this->getParentOperationHistory()->getObject()->getId() : null;
-        $this->getOperationHistory()->start('cron_task_'.$this->getNick(), $parentId, $this->getInitiator());
+        $nick = str_replace("/", "_", $this->getNick());
+        $this->getOperationHistory()->start('cron_task_'.$nick, $parentId, $this->getInitiator());
         $this->getOperationHistory()->makeShutdownFunction();
     }
 
@@ -218,7 +225,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return \Ess\M2ePro\Model\LockItem
+     * @return \Ess\M2ePro\Model\Lock\Item\Manager
      */
     protected function getLockItem()
     {
@@ -226,8 +233,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             return $this->lockItem;
         }
 
-        $this->lockItem = $this->activeRecordFactory->getObject('LockItem');
-        $this->lockItem->setNick('cron_task_'.$this->getNick());
+        $this->lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
+        $this->lockItem->setNick('cron_task_'.str_replace("/", "_", $this->getNick()));
 
         return $this->lockItem;
     }

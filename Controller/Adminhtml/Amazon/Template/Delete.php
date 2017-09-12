@@ -23,18 +23,10 @@ class Delete extends Template
             return $this->_redirect('*/*/index');
         }
 
-        $type = $this->prepareTemplateType($type);
-
         $deleted = $locked = 0;
-
         foreach ($ids as $id) {
-            if ($type === 'ShippingOverride') {
-                $template = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')->load($id);
-            } elseif ($type === 'ShippingTemplate') {
-                $template = $this->activeRecordFactory->getObject('Amazon\Template\ShippingTemplate')->load($id);
-            } else {
-                $template = $this->amazonFactory->getObjectLoaded('Template\\' . $type, $id);
-            }
+
+            $template = $this->getTemplateObject($type, $id);
 
             if ($template->isLocked()) {
                 $locked++;
@@ -56,21 +48,34 @@ class Delete extends Template
 
     //########################################
 
-    private function prepareTemplateType($type)
+    private function getTemplateObject($type, $id)
     {
-        if ($type == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT) {
-            return 'SellingFormat';
+        switch ($type) {
+
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE:
+                $model = $this->activeRecordFactory->getObject('Amazon\Template\ShippingOverride')->load($id);
+                break;
+
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_TEMPLATE:
+                $model = $this->activeRecordFactory->getObject('Amazon\Template\ShippingTemplate')->load($id);
+                break;
+
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE:
+                $model = $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')->load($id);
+                break;
+
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SELLING_FORMAT:
+                $model = $this->amazonFactory->getObjectLoaded('Amazon\Template\SellingFormat', $id);
+                break;
+
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SYNCHRONIZATION:
+            case \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_DESCRIPTION:
+            default:
+                $model = $this->amazonFactory->getObjectLoaded('Template\\' . $type, $id);
+                break;
         }
 
-        if ($type == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_OVERRIDE) {
-            return 'ShippingOverride';
-        }
-
-        if ($type == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_SHIPPING_TEMPLATE) {
-            return 'ShippingTemplate';
-        }
-
-        return ucfirst($type);
+        return $model;
     }
 
     //########################################

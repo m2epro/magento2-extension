@@ -71,6 +71,7 @@ class Create extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'email',
                 'label' => $this->__('Email'),
                 'title' => $this->__('Email'),
+                'class' => 'M2ePro-validate-email',
                 'value' => isset($licenseFormData['email']) ? $licenseFormData['email'] : '',
                 'required' => true,
             ]

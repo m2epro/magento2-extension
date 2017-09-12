@@ -68,8 +68,11 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_system_log',
 
             'm2epro_registry',
+            'm2epro_archived_entity',
 
             'm2epro_lock_item',
+            'm2epro_lock_transactional',
+
             'm2epro_product_change',
             'm2epro_operation_history',
             'm2epro_processing',
@@ -105,8 +108,6 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_listing_product_variation',
             'm2epro_listing_product_variation_option',
 
-            'm2epro_indexer_listing_product_variation_parent',
-
             'm2epro_order',
             'm2epro_order_change',
             'm2epro_order_item',
@@ -133,6 +134,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_ebay_listing_product_pickup_store',
             'm2epro_ebay_listing_product_variation',
             'm2epro_ebay_listing_product_variation_option',
+            'm2epro_ebay_indexer_listing_product_variation_parent',
             'm2epro_ebay_marketplace',
             'm2epro_ebay_motor_filter',
             'm2epro_ebay_motor_group',
@@ -141,7 +143,6 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_ebay_order_item',
             'm2epro_ebay_order_external_transaction',
             'm2epro_ebay_processing_action',
-            'm2epro_ebay_processing_action_item',
             'm2epro_ebay_template_category',
             'm2epro_ebay_template_category_specific',
             'm2epro_ebay_template_description',
@@ -169,20 +170,23 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_amazon_listing_product_repricing',
             'm2epro_amazon_listing_product_variation',
             'm2epro_amazon_listing_product_variation_option',
+            'm2epro_amazon_indexer_listing_product_variation_parent',
             'm2epro_amazon_marketplace',
             'm2epro_amazon_order',
             'm2epro_amazon_order_item',
             'm2epro_amazon_processing_action',
-            'm2epro_amazon_processing_action_item',
+            'm2epro_amazon_processing_action_list_sku',
             'm2epro_amazon_template_description',
             'm2epro_amazon_template_description_definition',
             'm2epro_amazon_template_description_specific',
             'm2epro_amazon_template_selling_format',
+            'm2epro_amazon_template_selling_format_business_discount',
             'm2epro_amazon_template_synchronization',
             'm2epro_amazon_dictionary_shipping_override',
             'm2epro_amazon_template_shipping_template',
             'm2epro_amazon_template_shipping_override',
-            'm2epro_amazon_template_shipping_override_service'
+            'm2epro_amazon_template_shipping_override_service',
+            'm2epro_amazon_template_product_tax_code'
         );
     }
 
@@ -354,11 +358,12 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $databaseName = $this->getHelper('Magento')->getDatabaseName();
         $tableName = $this->resourceConnection->getTableName($tableName);
 
-        $dataLength = $connection->select()->from('information_schema.tables', array('data_length'))
-                               ->where('`table_name` = ?', $tableName)
-                               ->where('`table_schema` = ?', $databaseName)
-                               ->query()
-                               ->fetchColumn();
+        $dataLength = $connection->select()
+                     ->from('information_schema.tables', array(new \Zend_Db_Expr('data_length + index_length')))
+                     ->where('`table_name` = ?', $tableName)
+                     ->where('`table_schema` = ?', $databaseName)
+                     ->query()
+                     ->fetchColumn();
 
         return round($dataLength / 1024 / 1024, 2);
     }

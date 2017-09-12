@@ -33,7 +33,6 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
 
     private $productFactory;
     private $stockRegistry;
-    private $stockRegistryStorage;
 
     private $observerProductSaveBeforeFactory;
     private $observerProductSaveAfterFactory;
@@ -48,7 +47,6 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
     public function __construct(
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
-        \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage,
         \Ess\M2ePro\Observer\Product\AddUpdate\BeforeFactory $observerProductSaveBeforeFactory,
         \Ess\M2ePro\Observer\Product\AddUpdate\AfterFactory $observerProductSaveAfterFactory,
         \Ess\M2ePro\Observer\StockItem\Save\BeforeFactory $observerStockItemSaveBeforeFactory,
@@ -59,7 +57,6 @@ class ObjectChange extends \Ess\M2ePro\Model\AbstractModel
     ) {
         $this->productFactory       = $productFactory;
         $this->stockRegistry        = $stockRegistry;
-        $this->stockRegistryStorage = $stockRegistryStorage;
 
         $this->observerProductSaveBeforeFactory   = $observerProductSaveBeforeFactory;
         $this->observerProductSaveAfterFactory    = $observerProductSaveAfterFactory;

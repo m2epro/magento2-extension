@@ -148,15 +148,11 @@ abstract class Base extends Action
 
     public function dispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        $this->publicVersionsChecker->doCheck();
-
-        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
-            return $this->_redirect('*/maintenance');
-        }
-
         if (($preDispatchResult = $this->preDispatch($request)) !== true) {
             return $preDispatchResult;
         }
+
+        $this->publicVersionsChecker->doCheck();
 
         $this->getHelper('Module\Exception')->setFatalErrorHandler();
 
@@ -165,9 +161,9 @@ abstract class Base extends Action
             $result = parent::dispatch($request);
 
         } catch (\Exception $exception) {
-            if ($request->getControllerName() ==
-                $this->getHelper('Module\Support')->getPageControllerName()
-            ) {
+
+            if ($request->getControllerName() == $this->getHelper('Module\Support')->getPageControllerName()) {
+
                 $this->getRawResult()->setContents($exception->getMessage());
                 return $this->getRawResult();
             }
@@ -207,6 +203,16 @@ abstract class Base extends Action
 
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
+        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
+            return $this->_redirect('*/maintenance');
+        }
+
+        if (empty($this->getHelper('Component')->getEnabledComponents()) ||
+            $this->getHelper('Module')->isDisabled()) {
+
+            return $this->_redirect('admin/dashboard');
+        }
+
         if ($this->isAjax($request) && !$this->_auth->isLoggedIn()) {
             $this->getRawResult()->setContents($this->getHelper('Data')->jsonEncode(array(
                 'ajaxExpired'  => 1,
@@ -320,8 +326,8 @@ abstract class Base extends Action
         }
 
         $this->initResultPage();
-        $this->appendGeneralBlock();
         $this->beforeAddLeftEvent();
+        $this->appendGeneralBlock();
 
         return $this->_addLeft($block);
     }
@@ -329,8 +335,8 @@ abstract class Base extends Action
     protected function addContent(\Magento\Framework\View\Element\AbstractBlock $block)
     {
         $this->initResultPage();
-        $this->appendGeneralBlock();
         $this->beforeAddContentEvent();
+        $this->appendGeneralBlock();
 
         return $this->_addContent($block);
     }

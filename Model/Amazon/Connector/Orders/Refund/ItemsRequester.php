@@ -55,16 +55,13 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getProcessingParams()
     {
-        $ordersIds = array();
-        foreach ($this->params['items'] as $itemData) {
-            $ordersIds[] = $itemData['order_id'];
-        }
-
         return array_merge(
             parent::getProcessingParams(),
             array(
                 'request_data' => $this->getRequestData(),
-                'orders_ids'   => array_unique($ordersIds),
+                'order_id'     => $this->params['order']['order_id'],
+                'change_id'    => $this->params['order']['change_id'],
+                'start_date'   => $this->getHelper('Data')->getCurrentGmtDate(),
             )
         );
     }
@@ -73,26 +70,12 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getRequestData()
     {
-        if (!isset($this->params['items']) || !is_array($this->params['items'])) {
-            return array('orders' => array());
-        }
-
-        $orders = array();
-
-        foreach ($this->params['items'] as $orderRefund) {
-            if (!is_array($orderRefund)) {
-                continue;
-            }
-
-            $orders[$orderRefund['change_id']] = array(
-                'order_id' => $orderRefund['amazon_order_id'],
-                'currency' => $orderRefund['currency'],
-                'type'     => 'Refund',
-                'items'    => $orderRefund['items'],
-            );
-        }
-
-        return array('orders' => $orders);
+        return array(
+            'order_id' => $this->params['order']['amazon_order_id'],
+            'currency' => $this->params['order']['currency'],
+            'type'     => 'Refund',
+            'items'    => $this->params['order']['items'],
+        );
     }
 
     // ########################################

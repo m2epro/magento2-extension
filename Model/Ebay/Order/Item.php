@@ -163,6 +163,14 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
     }
 
     /**
+     * @return float
+     */
+    public function getWasteRecyclingFee()
+    {
+        return (float)$this->getData('waste_recycling_fee');
+    }
+
+    /**
      * @return int
      */
     public function getQtyPurchased()
@@ -459,6 +467,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
      */
     public function updateShippingStatus(array $trackingDetails = array())
     {
+        if (!$this->getEbayOrder()->canUpdateShippingStatus($trackingDetails)) {
+            return false;
+        }
+
         $params = array();
 
         if (isset($trackingDetails['tracking_number'])) {
@@ -471,11 +483,20 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             $params['carrier_code'] = str_replace(array('\'', '"', '+', '(', ')'), array(), $params['carrier_code']);
         }
 
-        /** @var $dispatcher \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher */
-        $dispatcher = $this->modelFactory->getObject('Ebay\Connector\OrderItem\Dispatcher');
-        $action = \Ess\M2ePro\Model\Ebay\Connector\OrderItem\Dispatcher::ACTION_UPDATE_STATUS;
+        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
+        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
+        $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
 
-        return $dispatcher->process($action, $this->getParentObject(), $params);
+        $params = array(
+            'tracking_details' => $params,
+            'item_id'          => $this->getId(),
+        );
+
+        $this->activeRecordFactory->getObject('Order\Change')->create(
+            $this->getId(), $action, $creator, $component, $params
+        );
+
+        return true;
     }
 
     //########################################

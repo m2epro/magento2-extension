@@ -8,9 +8,10 @@ define([
 
         initialize: function()
         {
+            var self = this;
             jQuery.validator.addMethod('M2ePro-validate-qty', function(value, el) {
 
-                if (!el.up('.admin__field').visible()) {
+                if (self.isElementHiddenFromPage(el)) {
                     return true;
                 }
 

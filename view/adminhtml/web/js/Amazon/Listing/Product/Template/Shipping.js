@@ -68,13 +68,14 @@ define([
 
                     self.templateShippingPopup = jQuery(popupElId);
 
-                    var title = (shippingMode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'))
-                        ? M2ePro.translator.translate('templateShippingOverridePopupTitle')
-                        : M2ePro.translator.translate('templateShippingTemplatePopupTitle');
+                    var title             = M2ePro.translator.translate('templateShippingTemplatePopupTitle');
+                    var addNewPolicyTitle = M2ePro.translator.translate('Add New Shipping Template Policy');
 
-                    var addNewPolicyTitle = (shippingMode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE'))
-                        ? M2ePro.translator.translate('Add New Shipping Override Policy')
-                        : M2ePro.translator.translate('Add New Shipping Template Policy');
+                    if (shippingMode == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account::SHIPPING_MODE_OVERRIDE')) {
+
+                        title             = M2ePro.translator.translate('templateShippingOverridePopupTitle');
+                        addNewPolicyTitle = M2ePro.translator.translate('Add New Shipping Override Policy');
+                    }
 
                     modal({
                         title: title,

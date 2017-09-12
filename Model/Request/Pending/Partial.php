@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Request\Pending;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Request\Pending\Partial getResource()
+ */
 class Partial extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     //####################################

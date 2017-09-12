@@ -8,11 +8,6 @@ define([
         {
             this.initFormValidation();
 
-            jQuery.validator.addMethod('M2ePro-validate-email', function(value, el) {
-                this.error = Validation.get('validate-email').error;
-                return Validation.get('validate-email').test(value,el);
-            }, M2ePro.translator.translate('Email is not valid.'));
-
             $('more_attachments_container').hide();
         },
 

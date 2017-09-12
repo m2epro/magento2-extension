@@ -74,7 +74,7 @@ class InterfaceTab extends AbstractTab
 
         $data = array(
             'id' => 'restore_block_notices',
-            'label'   => $this->__('Restore Help Blocks'),
+            'label'   => $this->__('Restore All Helps & Remembered Choices'),
             'class' => 'primary'
         );
         $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
@@ -102,16 +102,17 @@ class InterfaceTab extends AbstractTab
             $this->getUrl('*/settings_interfaceTab/save'),
             \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_INTERFACE
         );
+        $this->jsUrl->add(
+            $this->getUrl('*/settings_interfaceTab/restoreRememberedChoices'),
+            'settings_interface/restoreRememberedChoices'
+        );
 
         $this->jsTranslator->add(
             'Help Blocks have been successfully restored.', $this->__('Help Blocks have been successfully restored.')
         );
 
         $this->js->addRequireJs([
-            'jQuery' => 'jquery',
-            'modal' => 'Magento_Ui/js/modal/modal',
-            'MessageObj' => 'M2ePro/Plugin/Messages',
-            'bn' => 'M2ePro/Plugin/BlockNotice',
+            'jQuery' => 'jquery'
         ], <<<JS
 
         $('block_notices_show').observe('change', function() {
@@ -123,38 +124,7 @@ class InterfaceTab extends AbstractTab
         }).simulate('change');
 
         $('restore_block_notices').observe('click', function() {
-            var modalDialogMessage = $('modal_interface_dialog');
-
-            if (!modalDialogMessage) {
-                modalDialogMessage = new Element('div', {
-                    id: 'modal_interface_dialog'
-                });
-            }
-
-            jQuery(modalDialogMessage).confirm({
-                title: M2ePro.translator.translate('Are you sure?'),
-                actions: {
-                    confirm: function() {
-                        BlockNoticeObj.deleteAllHashedStorage();
-                        MessageObj.addSuccessMessage(
-                            M2ePro.translator.translate('Help Blocks have been successfully restored.')
-                        );
-                    },
-                },
-                buttons: [{
-                    text: M2ePro.translator.translate('Cancel'),
-                    class: 'action-secondary action-dismiss',
-                    click: function (event) {
-                        this.closeModal(event);
-                    }
-                }, {
-                    text: M2ePro.translator.translate('Confirm'),
-                    class: 'action-primary action-accept',
-                    click: function (event) {
-                        this.closeModal(event, true);
-                    }
-                }]
-            });
+            SettingsObj.restoreAllHelpsAndRememberedChoices();
         });
 JS
 );

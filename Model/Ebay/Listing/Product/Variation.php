@@ -465,6 +465,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abst
                     $sku .= $tempSku;
                 }
             }
+
+            // Downloadable with separated links product
+        } else if ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
+
+            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+
+            $option = reset($options);
+            $sku = $option->getMagentoProduct()->getSku().'-'
+                .$this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
         if (strlen($sku) >= 80) {

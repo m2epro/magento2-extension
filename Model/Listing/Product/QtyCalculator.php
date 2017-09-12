@@ -197,7 +197,9 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->getMagentoProduct()->isConfigurableType() ||
             $this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-            $this->getMagentoProduct()->isGroupedType()) {
+            $this->getMagentoProduct()->isGroupedType() ||
+            $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
+        ) {
 
             $options = $variation->getOptions(true);
             $value = $this->getOptionBaseValue(reset($options));

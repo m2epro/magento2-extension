@@ -111,13 +111,14 @@ final class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templat
     private function immediatelyNotCheckedProducts()
     {
         $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was not checked');
+        $limit = $this->getConfigValue($this->getFullSettingsPath().'immediately_not_checked/', 'items_limit');
 
         /** @var $collection \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection */
         $collection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
         $collection->addFieldToFilter('tried_to_list',0);
 
-        $collection->getSelect()->limit(100);
+        $collection->getSelect()->limit($limit);
 
         $listingsProducts = $collection->getItems();
 
@@ -142,7 +143,7 @@ final class ListActions extends \Ess\M2ePro\Model\Amazon\Synchronization\Templat
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetListRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetListRequirements($listingProduct, false)) {
                     continue;
                 }
 

@@ -48,8 +48,6 @@ final class Magento extends AbstractModel
 
     protected function initialize()
     {
-        usleep(rand(0,2000000));
-
         parent::initialize();
 
         $helper = $this->getHelper('Module\Cron');

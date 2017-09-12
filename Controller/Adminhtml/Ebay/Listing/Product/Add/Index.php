@@ -139,7 +139,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
             return $this->getResult();
         }
 
-        $this->setPageHelpLink('x/9QMtAQ');
+        $this->setPageHelpLink('x/6gYtAQ');
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Select Magento Products'));
 

@@ -10,12 +10,20 @@ namespace Ess\M2ePro\Helper\Component\Ebay;
 
 class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const TYPE_EPID = 1;
-    const TYPE_KTYPE = 2;
+    const TYPE_EPID_MOTOR = 1;
+    const TYPE_KTYPE      = 2;
+    const TYPE_EPID_UK    = 3;
+    const TYPE_EPID_DE    = 4;
+
+    const EPID_SCOPE_MOTORS = 1;
+    const EPID_SCOPE_UK     = 2;
+    const EPID_SCOPE_DE     = 3;
 
     const PRODUCT_TYPE_VEHICLE    = 0;
     const PRODUCT_TYPE_MOTORCYCLE = 1;
     const PRODUCT_TYPE_ATV        = 2;
+
+    const MAX_ITEMS_COUNT_FOR_ATTRIBUTE = 3000;
 
     private $moduleConfig;
     private $resourceConnection;
@@ -39,14 +47,24 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     public function getAttribute($type)
     {
         switch ($type) {
-            case self::TYPE_EPID:
+            case self::TYPE_EPID_MOTOR:
                 return $this->moduleConfig->getGroupValue(
-                    '/ebay/motors/','epids_attribute'
+                    '/ebay/motors/','epids_motor_attribute'
                 );
 
             case self::TYPE_KTYPE:
                 return $this->moduleConfig->getGroupValue(
                     '/ebay/motors/','ktypes_attribute'
+                );
+
+            case self::TYPE_EPID_UK:
+                return $this->moduleConfig->getGroupValue(
+                    '/ebay/motors/','epids_uk_attribute'
+                );
+
+            case self::TYPE_EPID_DE:
+                return $this->moduleConfig->getGroupValue(
+                    '/ebay/motors/','epids_de_attribute'
                 );
         }
 
@@ -208,18 +226,38 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
+    public function isTypeBasedOnEpids($type)
+    {
+        if (in_array($type, array(
+            self::TYPE_EPID_MOTOR,
+            self::TYPE_EPID_UK,
+            self::TYPE_EPID_DE))
+        ){
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isTypeBasedOnKtypes($type)
+    {
+        return $type == self::TYPE_KTYPE;
+    }
+
+    //########################################
+
     public function getDictionaryTable($type)
     {
-        switch ($type) {
-            case self::TYPE_EPID:
-                return $this->resourceConnection->getTableName(
-                    'm2epro_ebay_dictionary_motor_epid'
-                );
+        if ($this->isTypeBasedOnEpids($type)) {
+            return $this->resourceConnection->getTableName(
+                'm2epro_ebay_dictionary_motor_epid'
+            );
+        }
 
-            case self::TYPE_KTYPE:
-                return $this->resourceConnection->getTableName(
-                    'm2epro_ebay_dictionary_motor_ktype'
-                );
+        if ($this->isTypeBasedOnKtypes($type)) {
+            return $this->resourceConnection->getTableName(
+                'm2epro_ebay_dictionary_motor_ktype'
+            );
         }
 
         return '';
@@ -227,15 +265,52 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getIdentifierKey($type)
     {
-        switch ($type) {
-            case self::TYPE_EPID:
-                return 'epid';
+        if ($this->isTypeBasedOnEpids($type)) {
+            return 'epid';
+        }
 
-            case self::TYPE_KTYPE:
-                return 'ktype';
+        if ($this->isTypeBasedOnKtypes($type)) {
+            return 'ktype';
         }
 
         return '';
+    }
+
+    //########################################
+
+    public function getEpidsScopeByType($type)
+    {
+        switch ($type) {
+            case self::TYPE_EPID_MOTOR:
+                return self::EPID_SCOPE_MOTORS;
+
+            case self::TYPE_EPID_UK:
+                return self::EPID_SCOPE_UK;
+
+            case self::TYPE_EPID_DE:
+                return self::EPID_SCOPE_DE;
+
+            default:
+                return NULL;
+        }
+    }
+
+    public function getEpidsTypeByMarketplace($marketplaceId)
+    {
+        switch ((int)$marketplaceId) {
+
+            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_MOTORS:
+                return self::TYPE_EPID_MOTOR;
+
+            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_UK:
+                return self::TYPE_EPID_UK;
+
+            case \Ess\M2ePro\Helper\Component\Ebay::MARKETPLACE_DE:
+                return self::TYPE_EPID_DE;
+
+            default:
+                return null;
+        }
     }
 
     //########################################

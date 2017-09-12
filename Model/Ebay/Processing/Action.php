@@ -18,10 +18,7 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //####################################
 
     /** @var \Ess\M2ePro\Model\Processing $processing */
-    private $processing = null;
-
-    /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Processing\Action\Item\Collection $itemCollection */
-    private $itemCollection = null;
+    private $processing = NULL;
 
     //####################################
 
@@ -56,30 +53,7 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return $this->processing = $this->activeRecordFactory->getObjectLoaded('Processing', $this->getProcessingId());
     }
 
-    //------------------------------------
-
-    public function getItemCollection()
-    {
-        if (!$this->getId()) {
-            throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
-        }
-
-        if (!is_null($this->itemCollection)) {
-            return $this->itemCollection;
-        }
-
-        $this->itemCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action\Item')->getCollection();
-        $this->itemCollection->setActionFilter($this);
-
-        return $this->itemCollection;
-    }
-
     //####################################
-
-    public function getProcessingId()
-    {
-        return (int)$this->getData('processing_id');
-    }
 
     public function getAccountId()
     {
@@ -91,9 +65,24 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (int)$this->getData('marketplace_id');
     }
 
+    public function getProcessingId()
+    {
+        return (int)$this->getData('processing_id');
+    }
+
+    public function getRelatedId()
+    {
+        return (int)$this->getData('related_id');
+    }
+
     public function getType()
     {
         return (int)$this->getData('type');
+    }
+
+    public function getPriority()
+    {
+        return (int)$this->getData('priority');
     }
 
     public function getRequestTimeOut()
@@ -101,17 +90,14 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (int)$this->getData('request_timeout');
     }
 
-    //####################################
-
-    public function delete()
+    public function getRequestData()
     {
-        if (!parent::delete()) {
-            return false;
-        }
+        return $this->getSettings('request_data');
+    }
 
-        $this->activeRecordFactory->getObject('Ebay\Processing\Action\Item')->getResource()->deleteByAction($this);
-
-        return true;
+    public function getStartDate()
+    {
+        return (string)$this->getData('start_date');
     }
 
     //####################################

@@ -62,7 +62,7 @@ class Data extends AbstractForm
             'hidden',
             [
                 'name' => 'selling_format[title]',
-                'value' => $this->getHelper('Data')->escapeHtml($this->getTitle())
+                'value' => $this->getTitle()
             ]
         );
 
@@ -506,7 +506,8 @@ class Data extends AbstractForm
                 ],
                 'value' => $formData['ignore_variations'],
                 'tooltip' => $this->__(
-                    'Choose how you want to list Configurable, Grouped, Bundle and Simple With Custom Options Products.
+                    'Choose how you want to list Configurable, Grouped, Bundle, Simple With Custom Options
+                    and Downloadable with Separated Links Products.
                     Choosing <b>Yes</b> will list these types of Products as
                     if they are Simple Products without Variations.'
                 )
@@ -657,29 +658,6 @@ class Data extends AbstractForm
                 'css_class' => 'm2epro-fieldset-table no-margin-bottom'
             ]
         );
-
-        if ($this->isShowMultiCurrencyNotification()) {
-            $currencies = explode(',', $this->getMarketplace()->getChildObject()->getCurrencies());
-            $currencies = implode(', ', array_slice($currencies, 0, -1))
-                . ' ' . $this->__('and')
-                . ' ' . end($currencies);
-
-            $fieldset->addField('multi_currency_notification',
-                self::MESSAGES,
-                [
-                    'messages' => [
-                        [
-                            'type' => 'notice',
-                            'content' => $this->__(
-                                'eBay %marketplace_title% supports %currency_code% Currencies.',
-                                $this->getMarketplace()->getTitle(),
-                                $currencies
-                            )
-                        ]
-                    ]
-                ]
-            );
-        }
 
         $fieldset->addField('price_increase_vat_percent',
             self::SELECT,
@@ -894,6 +872,13 @@ class Data extends AbstractForm
             [
                 'legend' => $this->__('Best Offer'),
                 'collapsable' => true
+            ]
+        );
+
+        $fieldset->addField('template_selling_format_messages_best_offer',
+            self::CUSTOM_CONTAINER,
+            [
+                'css_class' => 'm2epro-fieldset-table no-margin-bottom'
             ]
         );
 
@@ -1341,35 +1326,6 @@ JS
         }
 
         return false;
-    }
-
-    public function isShowMultiCurrencyNotification()
-    {
-        $marketplace = $this->getMarketplace();
-
-        if (is_null($marketplace)) {
-            return false;
-        }
-
-        if (!$marketplace->getChildObject()->isMultiCurrencyEnabled()) {
-            return false;
-        }
-
-        $marketplaceId = $marketplace->getId();
-
-        $configValue = $this->cacheConfig->getGroupValue(
-            "/view/ebay/multi_currency_marketplace_{$marketplaceId}/", 'notification_shown'
-        );
-
-        if ($configValue) {
-            return false;
-        }
-
-        $this->cacheConfig->setGroupValue(
-            "/view/ebay/multi_currency_marketplace_{$marketplaceId}/", 'notification_shown', 1
-        );
-
-        return true;
     }
 
     //########################################

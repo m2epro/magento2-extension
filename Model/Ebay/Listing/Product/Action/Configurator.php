@@ -23,6 +23,19 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     const DATA_TYPE_SHIPPING_SERVICES = 'shipping_services';
     const DATA_TYPE_VARIATIONS        = 'variations';
 
+    const PRIORITY_QTY        = 50;
+    const PRIORITY_VARIATION  = 50;
+    const PRIORITY_PRICE      = 30;
+
+    const PRIORITY_STOP                     = 60;
+    const PRIORITY_REVISE_INSTEAD_OF_STOP   = 60;
+    const PRIORITY_REVISE_INSTEAD_OF_RELIST = 20;
+    const PRIORITY_RELIST                   = 20;
+    const PRIORITY_LIST                     = 10;
+    const PRIORITY_LOW                      = 0;
+
+    private $priority = self::PRIORITY_LOW;
+
     //########################################
 
     /**
@@ -42,25 +55,6 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
             self::DATA_TYPE_SHIPPING_SERVICES,
             self::DATA_TYPE_VARIATIONS,
         );
-    }
-
-    //########################################
-
-    /**
-     * @param $dataType
-     * @return $this
-     * @throws Logic
-     */
-    public function allow($dataType)
-    {
-        $this->validateDataType($dataType);
-
-        if ($this->isAllowed($dataType)) {
-            return $this;
-        }
-
-        $this->allowedDataTypes[] = $dataType;
-        return $this;
     }
 
     //########################################
@@ -321,6 +315,28 @@ class Configurator extends \Ess\M2ePro\Model\Listing\Product\Action\Configurator
     public function disallowVariations()
     {
         return $this->disallow(self::DATA_TYPE_VARIATIONS);
+    }
+
+    //########################################
+
+    public function tryToIncreasePriority($priority)
+    {
+        if ($this->priority >= $priority) {
+            return $this;
+        }
+
+        return $this->setPriority($priority);
+    }
+
+    public function setPriority($priority)
+    {
+        $this->priority = $priority;
+        return $this;
+    }
+
+    public function getPriority()
+    {
+        return $this->priority;
     }
 
     //########################################

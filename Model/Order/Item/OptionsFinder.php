@@ -122,7 +122,8 @@ class OptionsFinder extends \Ess\M2ePro\Model\AbstractModel
     {
         $magentoProductHelper = $this->getHelper('Magento\Product');
 
-        if ($magentoProductHelper->isSimpleType($this->productType)) {
+        if ($magentoProductHelper->isSimpleType($this->productType) ||
+            $magentoProductHelper->isDownloadableType($this->productType)) {
             return array($this->productId);
         }
 

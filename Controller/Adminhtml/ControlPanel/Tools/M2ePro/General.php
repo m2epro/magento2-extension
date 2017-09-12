@@ -555,7 +555,9 @@ HTML;
     {
         try {
 
-            $response = $this->getHelper('Server')->sendRequest(array(), array(), null, null, 30, false, false);
+            $response = $this->getHelper('Server\Request')->single(
+                array('timeout' => 30), null, null, false, false
+            );
 
         } catch (Connection $e) {
 
@@ -581,7 +583,7 @@ HTML;
         }
 
         $result = '<h2>Response</h2><pre>';
-        $result .= json_encode($this->getHelper('Data')->jsonDecode($response['response']), JSON_PRETTY_PRINT);
+        $result .= json_encode($this->getHelper('Data')->jsonDecode($response['body']), JSON_PRETTY_PRINT);
         $result .= '</pre>';
 
         $result .= '</pre><h2>Report</h2><pre>';

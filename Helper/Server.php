@@ -83,105 +83,12 @@ class Server extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function sendRequest(array $postData,
-                                array $headers = array(),
-                                $serverBaseUrl = null,
-                                $serverHostName = null,
-                                $timeout = 300,
-                                $tryToResendOnError = true,
-                                $tryToSwitchEndpointOnError = true)
-    {
-        $curlObject = curl_init();
-
-        // set the server we are using
-        !$serverBaseUrl && $serverBaseUrl = $this->getEndpoint();
-        curl_setopt($curlObject, CURLOPT_URL, $serverBaseUrl);
-
-        // stop CURL from verifying the peer's certificate
-        curl_setopt($curlObject, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curlObject, CURLOPT_SSL_VERIFYHOST, false);
-
-        // disable http headers
-        curl_setopt($curlObject, CURLOPT_HEADER, false);
-
-        // set the headers using the array of headers
-        !$serverHostName && $serverHostName = $this->getCurrentHostName();
-        $serverHostName && $headers['Host'] = $serverHostName;
-
-        $preparedHeaders = array();
-        foreach ($headers as $headerName => $headerValue) {
-            $preparedHeaders[] = $headerName.':'.$headerValue;
-        }
-
-        curl_setopt($curlObject, CURLOPT_HTTPHEADER, $preparedHeaders);
-
-        // set the data body of the request
-        curl_setopt($curlObject, CURLOPT_POST, true);
-        curl_setopt($curlObject, CURLOPT_POSTFIELDS, http_build_query($postData,'','&'));
-
-        // set it to return the transfer as a string from curl_exec
-        curl_setopt($curlObject, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curlObject, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_setopt($curlObject, CURLOPT_TIMEOUT, $timeout);
-
-        $response = curl_exec($curlObject);
-
-        $curlInfo     = curl_getinfo($curlObject);
-        $errorNumber  = curl_errno($curlObject);
-        $errorMessage = curl_error($curlObject);
-
-        curl_close($curlObject);
-
-        if ($response === false) {
-
-            $switchingResult = false;
-            $tryToSwitchEndpointOnError && $switchingResult = $this->switchEndpoint();
-
-            if ($errorNumber !== CURLE_OPERATION_TIMEOUTED && $tryToResendOnError &&
-                (!$tryToSwitchEndpointOnError || ($tryToSwitchEndpointOnError && $switchingResult))) {
-
-                return $this->sendRequest(
-                    $postData,
-                    $headers,
-                    $tryToSwitchEndpointOnError ? $this->getEndpoint() : $serverBaseUrl,
-                    $tryToSwitchEndpointOnError ? $this->getCurrentHostName() : $serverHostName,
-                    $timeout,
-                    false,
-                    $tryToSwitchEndpointOnError
-                );
-            }
-
-            $errorMsg = 'The Action was not completed because connection with M2E Pro Server was not set.
-            There are several possible reasons:  temporary connection problem – please wait and try again later;
-            block of outgoing connection by firewall – please, ensure that connection to s1.m2epro.com and
-            s2.m2epro.com, port 443 is allowed; CURL library is not installed or it does not support HTTPS Protocol –
-            please, install/update CURL library on your server and ensure it supports HTTPS Protocol.
-            More information you can find <a target="_blank" href="'.
-            $this->getHelper('Module\Support')
-                ->getKnowledgebaseUrl('664870-issues-with-m2e-pro-server-connection')
-                .'">here</a>';
-
-            throw new \Ess\M2ePro\Model\Exception\Connection($errorMsg,
-                                                             array('curl_error_number'  => $errorNumber,
-                                                                   'curl_error_message' => $errorMessage,
-                                                                   'curl_info'          => $curlInfo));
-        }
-
-        return array(
-            'curl_error_number' => $errorNumber,
-            'curl_info'         => $curlInfo,
-            'response'          => $response
-        );
-    }
-
-    //########################################
-
-    private function getCurrentBaseUrl()
+    public function getCurrentBaseUrl()
     {
         return $this->getBaseUrlByIndex($this->getCurrentIndex());
     }
 
-    private function getCurrentHostName()
+    public function getCurrentHostName()
     {
         return $this->getHostNameByIndex($this->getCurrentIndex());
     }

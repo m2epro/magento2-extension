@@ -115,6 +115,8 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         ));
         // ---------------------------------------
 
+        $this->setActiveTab($this->getRequest()->getParam('tab', self::TAB_ID_DASHBOARD));
+
         return parent::_prepareLayout();
     }
 

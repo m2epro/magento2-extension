@@ -1,0 +1,71 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Add $block */
+?>
+
+<div id="add_custom_motors_record_data_container">
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'content' => $block->__('
+            In this Block you can <strong>Filter</strong> and <strong>Select</strong> Compatible Vehicles. Also, various
+            Actions may be applied.<br/><br/>
+
+            The appropriate Vehicles which are compatible with your Parts can be selected and assigned Manually.<br/><br/>
+            The Compatible Vehicles can also be <strong>Filtered</strong> based on <strong>various Conditions</strong>, e.g.
+            Type, Model, etc. Use the <strong>corresponding Options</strong> available in the Columns of the Grid
+            to Filter the ePID(s)/kType(s).<br/><br/>
+
+            By pressing the Save Filter Button, you can Save the preselected Filter Settings and reapply them in
+            future if needed. All of the saved Filters can be found under the Filters Tab.<br/><br/>
+
+            The selected ePID(s)/kType(s) or Filters can be saved as a Group by selecting the appropriate Option in
+            mass actions bulk. The Group of ePID(s)/kType(s) or Filters can be applied <strong>multiple times</strong>.<br/><br/>
+        ')
+    ])->toHtml() ?>
+
+    <div id="selected_motors_data_container" class="switcher m2epro-box-style" style="margin-bottom: 20px; padding: 10px;">
+
+        <?php
+            $idTitle = $block->isMotorsTypeEpid() ? $block->__('ePID(s)') : $block->__('kType(s)');
+        ?>
+
+        <div style="font-weight: bold; padding: 7px; float: left;"><?php echo $block->__('Selected Items') ?>:</div>
+
+        <div id="selected_motors_data" style="padding: 7px; width: 640px; float: left;">
+            <span id="motors_empty_text" style="color: grey;">
+                <?php echo $block->__('There are no %item_type%, Filter or Group selected for further their assigning to your Product(s)', $idTitle) ?>
+            </span>
+            <span class="items" style="margin-left: 14%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedItemPopup()"><span class="count"></span> <?php echo $idTitle ?></a></span>
+            &nbsp;&nbsp;
+            <span class="filters" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedFilterPopup()"><span class="count"></span> <?php echo $block->__('Filter(s)') ?></a></span>
+            &nbsp;&nbsp;
+            <span class="groups" style="margin-left: 18%;display: none"><a href="javascript:void(0)" onclick="EbayListingViewSettingsMotorsObj.viewSelectedGroupPopup()"><span class="count"></span> <?php echo $block->__('Group(s)') ?></a></span>
+        </div>
+        <div style="float: right">
+            <?php echo $block->getChildHtml('motor_add_btn'); ?>
+            <?php echo $block->getChildHtml('motor_override_btn'); ?>
+        </div>
+        <div style="clear: both"></div>
+    </div>
+
+    <div id="generate_attribute_content_container" class="switcher" style="display: none; margin-top: 15px;">
+
+        <table cellspacing="0" class="form-list">
+            <tbody>
+            <tr>
+                <td class="label">
+                    <label><?php echo $block->__('Selected %identifier_title%', $idTitle) ?>:</label>
+                </td>
+                <td class="value" style="width: 100%; padding-right: 10px;">
+                    <input class="left-col-block input-text" style="width: 100%;" name="attribute_content" id="attribute_content" readonly>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div id="motors">
+        <?php echo $block->getChildHtml('motor_add_tabs'); ?>
+    </div>
+
+</div>

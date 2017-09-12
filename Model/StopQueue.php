@@ -94,7 +94,7 @@ class StopQueue extends ActiveRecord\AbstractModel
     {
         $connectorName = ucfirst($listingProduct->getComponentMode()).'\Connector\\';
         $connectorName .= $listingProduct->isComponentModeEbay() ? 'Item' : 'Product';
-        $connectorName .= '\Stop\MultipleRequester';
+        $connectorName .= '\Stop\Requester';
 
         $connectorParams = array(
             'logs_action_id' => 0,
@@ -103,23 +103,24 @@ class StopQueue extends ActiveRecord\AbstractModel
 
         try {
 
+            /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcher */
             $dispatcher = $this->modelFactory->getObject(
                 ucfirst($listingProduct->getComponentMode()).'\Connector\Dispatcher'
             );
 
             $connector = $dispatcher->getCustomConnector($connectorName, $connectorParams);
-            $connector->setListingsProducts(array($listingProduct));
+            $connector->setListingProduct($listingProduct);
 
             $itemData = $connector->getRequestDataPackage();
         } catch (\Exception $exception) {
             return NULL;
         }
 
-        if (!isset($itemData['data']['items'])) {
+        if (!isset($itemData['data'])) {
             return NULL;
         }
 
-        return array_shift($itemData['data']['items']);
+        return $itemData['data'];
     }
 
     //########################################

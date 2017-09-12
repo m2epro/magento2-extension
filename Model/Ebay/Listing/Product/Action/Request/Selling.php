@@ -142,6 +142,10 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
             'qty' => $this->getEbayListingProduct()->getQty()
         );
 
+        $this->getConfigurator()->tryToIncreasePriority(
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_QTY
+        );
+
         $this->checkQtyWarnings();
 
         return $data;
@@ -175,6 +179,10 @@ class Selling extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Abst
             $data['price_reserve'] = $this->getEbayListingProduct()->getReservePrice();
             $data['price_buyitnow'] = $this->getEbayListingProduct()->getBuyItNowPrice();
         }
+
+        $this->getConfigurator()->tryToIncreasePriority(
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_PRICE
+        );
 
         return $data;
     }

@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * @method \Ess\M2ePro\Model\ResourceModel\Order\Change getResource()
+ */
 class Change extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 {
     const ACTION_UPDATE_PAYMENT  = 'update_payment';

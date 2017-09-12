@@ -52,8 +52,10 @@ class Initialization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
 
         // initiate attribute sets param
         // ---------------------------------------
-        $attributeSets = $this->getHelper('Data\GlobalData')->getValue('ebay_attribute_sets');
-        $params['attribute_sets'] = implode(',', $attributeSets);
+        if ($this->getMode() == \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher::MODE_LISTING_PRODUCT) {
+            $attributeSets = $this->getHelper('Data\GlobalData')->getValue('ebay_attribute_sets');
+            $params['attribute_sets'] = implode(',', $attributeSets);
+        }
         // ---------------------------------------
 
         // initiate display use default option param

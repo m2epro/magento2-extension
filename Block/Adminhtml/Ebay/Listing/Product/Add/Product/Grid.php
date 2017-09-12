@@ -17,7 +17,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Catalog\Model\Product\Visibility $visibility,
         \Magento\Catalog\Model\Product\Attribute\Source\Status $status,
@@ -30,7 +30,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Product\Add\Grid
         $this->visibility = $visibility;
         $this->status = $status;
         $this->websiteFactory = $websiteFactory;
-        parent::__construct($productFactory, $type, $context, $backendHelper, $data);
+        parent::__construct($magentoProductCollectionFactory, $type, $context, $backendHelper, $data);
     }
 
     //########################################

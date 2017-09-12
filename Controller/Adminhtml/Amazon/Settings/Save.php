@@ -17,26 +17,9 @@ class Save extends Settings
     public function execute()
     {
         $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/view/ebay/template/category/', 'use_last_specifics',
-            (int)$this->getRequest()->getParam('use_last_specifics_mode')
+            '/amazon/business/', 'mode',
+            (int)$this->getRequest()->getParam('business_mode')
         );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/connector/listing/', 'check_the_same_product_already_listed',
-            (int)$this->getRequest()->getParam('check_the_same_product_already_listed_mode')
-        );
-        $this->getHelper('Module')->getConfig()->setGroupValue(
-            '/ebay/description/', 'upload_images_mode',
-            (int)$this->getRequest()->getParam('upload_images_mode')
-        );
-
-        $sellingCurrency = $this->getRequest()->getParam('selling_currency');
-        if (!empty($sellingCurrency)) {
-            foreach ($sellingCurrency as $code => $value) {
-                $this->getHelper('Module')->getConfig()->setGroupValue(
-                    '/ebay/selling/currency/', $code, (string)$value
-                );
-            }
-        }
 
         $this->setJsonContent([
             'success' => true

@@ -126,7 +126,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
         } catch (\Exception $exception) {
 
             $this->getHelper('Module\Exception')->process($exception);
-            $error = 'The Store has not been deleted. <br/>Reason: %error_message%';
+            $error = 'The Store has not been deleted. Reason: %error_message%';
             $error = $this->getHelper('Module\Translation')->__($error, $exception->getMessage());
 
             $this->messageManager->addErrorMessage($error);

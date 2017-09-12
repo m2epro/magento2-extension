@@ -21,9 +21,11 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
     protected $currency;
     protected $magentoCurrencyFactory;
     protected $calculation;
+    protected $storeConfig;
     protected $productResource;
 
-    protected $originalStoreConfig = [];
+    /** @var \Ess\M2ePro\Model\Magento\Quote\Store\Configurator */
+    protected $storeConfigurator;
 
     //########################################
 
@@ -35,6 +37,7 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Directory\Model\CurrencyFactory $magentoCurrencyFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Tax\Model\Calculation $calculation,
+        \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Ess\M2ePro\Helper\Factory $helperFactory
     )
@@ -45,21 +48,18 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
         $this->currency = $currency;
         $this->magentoCurrencyFactory = $magentoCurrencyFactory;
         $this->calculation = $calculation;
+        $this->storeConfig = $storeConfig;
         $this->productResource = $productResource;
         parent::__construct($helperFactory, $modelFactory);
     }
 
     public function __destruct()
     {
-        if (is_null($this->quote)) {
+        if (is_null($this->storeConfigurator)) {
             return;
         }
 
-        $store = $this->quote->getStore();
-
-        foreach ($this->originalStoreConfig as $key => $value) {
-            $store->setConfig($key, $value);
-        }
+        $this->storeConfigurator->restoreOriginalStoreConfigForOrder();
     }
 
     //########################################
@@ -108,6 +108,13 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
         $this->quote->setStore($this->proxyOrder->getStore());
         $this->quote->getStore()->setData('current_currency', $this->quote->getStore()->getBaseCurrency());
         $this->quote->save();
+
+        $this->quote->setIsM2eProQuote(true);
+        $this->quote->setNeedProcessChannelTaxes(
+            $this->proxyOrder->isTaxModeChannel() ||
+            ($this->proxyOrder->isTaxModeMixed() &&
+                ($this->proxyOrder->hasTax() || $this->proxyOrder->getWasteRecyclingFee()))
+        );
 
         $this->checkoutSession->replaceQuote($this->quote);
     }
@@ -183,14 +190,11 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
      */
     private function configureStore()
     {
-        /** @var $storeConfigurator \Ess\M2ePro\Model\Magento\Quote\Store\Configurator */
-        $storeConfigurator = $this->modelFactory->getObject(
+        $this->storeConfigurator = $this->modelFactory->getObject(
             'Magento\Quote\Store\Configurator', ['quote' => $this->quote, 'proxyOrder' => $this->proxyOrder]
         );
 
-        $this->originalStoreConfig = $storeConfigurator->getOriginalStoreConfig();
-
-        $storeConfigurator->prepareStoreConfigForOrder();
+        $this->storeConfigurator->prepareStoreConfigForOrder();
     }
 
     //########################################
@@ -251,6 +255,8 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
                 }
 
                 $quoteItem->setAdditionalData($quoteItemBuilder->getAdditionalData($quoteItem));
+
+                $quoteItem->setWasteRecyclingFee($item->getWasteRecyclingFee() / $item->getQty());
             }
         }
 
@@ -273,7 +279,7 @@ class Quote extends \Ess\M2ePro\Model\AbstractModel
 
             $address->unsetData('cached_items_all');
             $address->unsetData('cached_items_nominal');
-            $address->unsetData('cached_items_nonominal');
+            $address->unsetData('cached_items_nonnominal');
         }
     }
 

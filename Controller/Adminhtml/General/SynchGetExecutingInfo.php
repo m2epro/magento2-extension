@@ -17,7 +17,7 @@ class SynchGetExecutingInfo extends General
     public function execute()
     {
         $response = array();
-        $lockItem = $this->activeRecordFactory->getObject('Synchronization\LockItem');
+        $lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
 
         if (!$lockItem->isExist()) {
             $response['mode'] = 'inactive';

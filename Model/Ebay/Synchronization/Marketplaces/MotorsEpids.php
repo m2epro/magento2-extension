@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
 final class MotorsEpids extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Marketplace */
+    protected $marketplace;
+
     //########################################
 
     /**
@@ -25,7 +28,7 @@ final class MotorsEpids extends AbstractModel
      */
     protected function getTitle()
     {
-        return 'Parts Compatibility';
+        return 'Parts Compatibility [ePIDs]';
     }
 
     // ---------------------------------------
@@ -57,6 +60,7 @@ final class MotorsEpids extends AbstractModel
         $params = $this->getParams();
 
         $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $params['marketplace_id']);
+        $this->marketplace = $marketplace;
 
         return $marketplace->getChildObject()->isEpidEnabled();
     }
@@ -70,9 +74,10 @@ final class MotorsEpids extends AbstractModel
 
             $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get_motor','Get Motor specifics from eBay');
+            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$this->marketplace->getId(),
+                                                             'Get ePIDs from eBay');
             $response = $this->receiveFromEbay($partNumber);
-            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get_motor');
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$this->marketplace->getId());
 
             if (empty($response)) {
                 break;
@@ -84,9 +89,10 @@ final class MotorsEpids extends AbstractModel
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
             $this->getActualLockItem()->activate();
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save_motor','Save specifics to DB');
+            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$this->marketplace->getId(),
+                                                             'Save ePIDs to DB');
             $this->saveSpecificsToDb($response['data']);
-            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save_motor');
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$this->marketplace->getId());
 
             $this->getActualLockItem()->setPercents($this->getPercentsEnd());
             $this->getActualLockItem()->activate();
@@ -107,7 +113,10 @@ final class MotorsEpids extends AbstractModel
     {
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector('marketplace','get','motorsEpids',
-                                                            array('part_number' => $partNumber));
+                                                            array(
+                                                                'marketplace' => $this->marketplace->getNativeId(),
+                                                                'part_number' => $partNumber
+                                                            ));
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
@@ -127,7 +136,18 @@ final class MotorsEpids extends AbstractModel
         $connWrite = $this->resourceConnection->getConnection();
         $tableMotorsEpids = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_epid');
 
-        $connWrite->delete($tableMotorsEpids, '`is_custom` = 0');
+        $helper = $this->getHelper('Component\Ebay\Motors');
+        $scope = $helper->getEpidsScopeByType($helper->getEpidsTypeByMarketplace(
+            $this->marketplace->getId()
+        ));
+
+        $connWrite->delete(
+            $tableMotorsEpids,
+            array(
+                'is_custom = ?' => 0,
+                'scope = ?'     => $scope
+            )
+        );
     }
 
     protected function saveSpecificsToDb(array $data)
@@ -147,6 +167,11 @@ final class MotorsEpids extends AbstractModel
         $temporaryIds   = array();
         $itemsForInsert = array();
 
+        $helper = $this->getHelper('Component\Ebay\Motors');
+        $scope = $helper->getEpidsScopeByType($helper->getEpidsTypeByMarketplace(
+            $this->marketplace->getId()
+        ));
+
         for ($i = 0; $i < $totalCountItems; $i++) {
 
             $item = $data['items'][$i];
@@ -160,14 +185,15 @@ final class MotorsEpids extends AbstractModel
                 'year'         => $item['Year'],
                 'trim'         => (isset($item['Trim']) ? $item['Trim'] : NULL),
                 'engine'       => (isset($item['Engine']) ? $item['Engine'] : NULL),
-                'submodel'     => (isset($item['Submodel']) ? $item['Submodel'] : NULL)
+                'submodel'     => (isset($item['Submodel']) ? $item['Submodel'] : NULL),
+                'scope'        => $scope
             );
 
             if (count($itemsForInsert) >= 100 || $i >= ($totalCountItems - 1)) {
 
                 $connWrite->insertMultiple($tableMotorsEpids, $itemsForInsert);
                 $connWrite->delete($tableMotorsEpids, array('is_custom = ?' => 1,
-                                                                'epid IN (?)'   => $temporaryIds));
+                                                            'epid IN (?)'   => $temporaryIds));
                 $itemsForInsert = $temporaryIds = array();
             }
 
@@ -182,10 +208,12 @@ final class MotorsEpids extends AbstractModel
 
     protected function logSuccessfulOperation()
     {
-        // M2ePro\TRANSLATIONS
-        // The "Parts Compatibility" Action for eBay Motors Site has been successfully completed.
+        // M2ePro_TRANSLATIONS
+        // The "Parts Compatibility [ePIDs]" Action for eBay Site: "%mrk%" has been successfully completed.
+
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
-            'The "Parts Compatibility" Action for eBay Motors Site has been successfully completed.'
+            'The "Parts Compatibility [ePIDs]" Action for eBay Site: "%mrk%" has been successfully completed.',
+            array('mrk' => $this->marketplace->getTitle())
         );
 
         $this->getLog()->addMessage($tempString,

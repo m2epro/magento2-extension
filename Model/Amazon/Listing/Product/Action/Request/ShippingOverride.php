@@ -60,7 +60,9 @@ class ShippingOverride extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\R
             }
 
             if ($service->isTypeExclusive() || $service->isTypeAdditive()) {
-                $tempService['amount'] = $service->getSource($this->getMagentoProduct())->getCost();
+
+                $store = $this->getListing()->getStoreId();
+                $tempService['amount'] = $service->getSource($this->getMagentoProduct())->getCost($store);
             }
 
             $data['shipping_data'][] = $tempService;

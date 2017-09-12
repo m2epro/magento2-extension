@@ -76,7 +76,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
-                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/JYMVAQ')
+                        $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/OAYtAQ')
                 )
             ]
         );
@@ -113,7 +113,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[title_template]',
                 'label' => $this->__('Title Value'),
                 'title' => $this->__('Title Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['title_template']),
+                'value' => $this->formData['title_template'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="custom_title_tr" style="display: none;"',
@@ -173,7 +173,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[brand_custom_value]',
                 'label' => $this->__('Brand Value'),
                 'title' => $this->__('Brand Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['brand_custom_value']),
+                'value' => $this->formData['brand_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="brand_custom_value_tr" style="display: none;"',
@@ -218,7 +218,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[manufacturer_custom_value]',
                 'label' => $this->__('Manufacturer Value'),
                 'title' => $this->__('Manufacturer Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['manufacturer_custom_value']),
+                'value' => $this->formData['manufacturer_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="manufacturer_custom_value_tr" style="display: none;"',
@@ -265,9 +265,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[manufacturer_part_number_custom_value]',
                 'label' => $this->__('Manufacturer Part Number Value'),
                 'title' => $this->__('Manufacturer Part Number Value'),
-                'value' => $this->getHelper('Data')->escapeHtml(
-                    $this->formData['manufacturer_part_number_custom_value']
-                ),
+                'value' => $this->formData['manufacturer_part_number_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible',
                 'required' => true,
                 'field_extra_attributes' => 'id="manufacturer_part_number_custom_value_tr" style="display: none;"',
@@ -318,7 +316,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[item_package_quantity_custom_value]',
                 'label' => $this->__('Package Quantity Value'),
                 'title' => $this->__('Package Quantity Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['item_package_quantity_custom_value']),
+                'value' => $this->formData['item_package_quantity_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="item_package_quantity_custom_value_tr"',
@@ -369,7 +367,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[number_of_items_custom_value]',
                 'label' => $this->__('Number of Items Value'),
                 'title' => $this->__('Number of Items Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['number_of_items_custom_value']),
+                'value' => $this->formData['number_of_items_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="number_of_items_custom_value_tr"',
@@ -539,7 +537,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[description_template]',
                 'label' => $this->__('Description Value'),
                 'title' => $this->__('Description Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['description_template']),
+                'value' => $this->formData['description_template'],
                 'class' => 'textarea M2ePro-required-when-visible',
                 'required' => true,
                 'css_class' => 'c-custom_description_tr',
@@ -1008,7 +1006,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[package_weight_custom_value]',
                 'label' => $this->__('Package Weight Value'),
                 'title' => $this->__('Package Weight Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['package_weight_custom_value']),
+                'value' => $this->formData['package_weight_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="package_weight_custom_value_tr" style="display: none;"',
@@ -1090,7 +1088,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'name' => 'definition[shipping_weight_custom_value]',
                 'label' => $this->__('Shipping Weight Value'),
                 'title' => $this->__('Shipping Weight Value'),
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['shipping_weight_custom_value']),
+                'value' => $this->formData['shipping_weight_custom_value'],
                 'class' => 'input-text M2ePro-required-when-visible M2ePro-validate-greater-than',
                 'required' => true,
                 'field_extra_attributes' => 'id="shipping_weight_custom_value_tr" style="display: none;"',

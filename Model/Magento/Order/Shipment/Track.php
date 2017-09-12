@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Magento\Order\Shipment;
 
+use Magento\Sales\Api\Data\ShipmentInterface;
+use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
+
 class Track extends \Ess\M2ePro\Model\AbstractModel
 {
     protected $shipmentTrackFactory;
@@ -100,6 +103,13 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         /** @var $shipment \Magento\Sales\Model\Order\Shipment */
         $shipment = $this->magentoOrder->getShipmentsCollection()->getFirstItem();
 
+        // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
+        if ($shipment->hasData(ShipmentInterface::TRACKS) &&
+            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
+
+            $shipment->unsetData(ShipmentInterface::TRACKS);
+        }
+
         foreach ($trackingDetails as $trackingDetail) {
             /** @var $track \Magento\Sales\Model\Order\Shipment\Track */
             $track = $this->shipmentTrackFactory->create();
@@ -125,7 +135,7 @@ class Track extends \Ess\M2ePro\Model\AbstractModel
         foreach ($this->magentoOrder->getTracksCollection() as $track) {
 
             foreach ($this->trackingDetails as $key => $trackingDetail) {
-                if ($track->getData('number') == $trackingDetail['number']) {
+                if ($track->getData('track_number') == $trackingDetail['number']) {
                     unset($this->trackingDetails[$key]);
                 }
             }

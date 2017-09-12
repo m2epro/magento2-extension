@@ -304,4 +304,15 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
     }
 
     //########################################
+
+    public function setNeedSynchRulesCheck(array $listingsProductsIds)
+    {
+        $this->getConnection()->update(
+            $this->getMainTable(),
+            array('need_synch_rules_check' => 1),
+            array('id IN (?)' => $listingsProductsIds)
+        );
+    }
+
+    //########################################
 }

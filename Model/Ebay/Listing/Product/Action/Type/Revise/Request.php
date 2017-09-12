@@ -62,6 +62,31 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         return parent::prepareFinalData($data);
     }
 
+    protected function afterBuildDataEvent(array $data)
+    {
+        $params = $this->getConfigurator()->getParams();
+
+        if (!isset($params['replaced_action'])) {
+            parent::afterBuildDataEvent($data);
+            return;
+        }
+
+        if ($params['replaced_action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_STOP) {
+
+            $this->getConfigurator()->setPriority(
+                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_REVISE_INSTEAD_OF_STOP
+            );
+
+        } elseif ($params['replaced_action'] == \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST) {
+
+            $this->getConfigurator()->setPriority(
+                \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_REVISE_INSTEAD_OF_RELIST
+            );
+        }
+
+        parent::afterBuildDataEvent($data);
+    }
+
     //########################################
 
     protected function insertOutOfStockControl(array $data)

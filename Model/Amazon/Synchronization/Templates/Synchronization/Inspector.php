@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
+use Ess\M2ePro\Model\Listing\Product as ListingProduct;
+use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
+
 class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Inspector
 {
     private $amazonFactory;
@@ -33,12 +36,13 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      * @throws \Exception
      */
-    public function isMeetListRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetListRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
         if (!$listingProduct->isNotListed() || $listingProduct->isBlocked()) {
             return false;
@@ -76,7 +80,8 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             if ($variationManager->isIndividualType()) {
                 if (!$amazonListingProduct->getGeneralId() &&
                     ($listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-                        $listingProduct->getMagentoProduct()->isBundleType())
+                        $listingProduct->getMagentoProduct()->isBundleType() ||
+                        $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())
                 ) {
                     return false;
                 }
@@ -103,6 +108,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($listingProduct->isSetProcessingLock('in_action')) {
+            if ($needSynchRulesCheckIfLocked) {
+                $this->activeRecordFactory->getObject('Listing\Product')
+                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+            }
             return false;
         }
 
@@ -373,11 +382,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetRelistRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetRelistRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
         if (!$listingProduct->isStopped() || $listingProduct->isBlocked()) {
             return false;
@@ -414,6 +424,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($listingProduct->isSetProcessingLock('in_action')) {
+            if ($needSynchRulesCheckIfLocked) {
+                $this->activeRecordFactory->getObject('Listing\Product')
+                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+            }
             return false;
         }
 
@@ -520,11 +534,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetStopGeneralRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetStopGeneralRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
         if (!$listingProduct->isListed() || $listingProduct->isBlocked()) {
             return false;
@@ -546,6 +561,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($listingProduct->isSetProcessingLock('in_action')) {
+            if ($needSynchRulesCheckIfLocked) {
+                $this->activeRecordFactory->getObject('Listing\Product')
+                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+            }
             return false;
         }
 
@@ -554,11 +573,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetStopRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetStopRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
@@ -658,11 +678,12 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseGeneralRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetReviseGeneralRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
@@ -691,6 +712,10 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         if ($listingProduct->isSetProcessingLock('in_action')) {
+            if ($needSynchRulesCheckIfLocked) {
+                $this->activeRecordFactory->getObject('Listing\Product')
+                    ->getResource()->setNeedSynchRulesCheck(array($listingProduct->getId()));
+            }
             return false;
         }
 
@@ -701,12 +726,13 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseQtyRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetReviseQtyRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
     {
-        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
 
@@ -736,17 +762,60 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         return false;
     }
 
+    public function isMeetReviseQtyDetailsRequirements(ListingProduct $listingProduct,
+                                                       $needSynchRulesCheckIfLocked = true)
+    {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
+            return false;
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+
+        $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        if (!$amazonSynchronizationTemplate->isReviseWhenChangeQty() || $amazonListingProduct->isAfnChannel()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    // ---------------------------------------
+
     /**
+     * In Amazon component we use separate revise configurator options for regular and business prices,
+     * because of business price should be revised for repriced products.
+     *
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetRevisePriceRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetRevisePriceRequirements(ListingProduct $listingProduct, $needSynchRulesCheckIfLocked = true)
+    {
+        throw new \Ess\M2ePro\Model\Exception\Logic(
+            'You must use ->isMeetReviseRegularPriceRequirements() or ->isMeetReviseBusinessPriceRequirements() method'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseRegularPriceRequirements(ListingProduct $listingProduct,
+                                                         $needSynchRulesCheckIfLocked = true)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
         $amazonListingProduct = $listingProduct->getChildObject();
 
-        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
+            return false;
+        }
+
+        if (!$amazonListingProduct->isAllowedForRegularCustomers()) {
             return false;
         }
 
@@ -761,15 +830,15 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             return false;
         }
 
-        $currentPrice = $amazonListingProduct->getPrice();
-        $onlinePrice = $amazonListingProduct->getOnlinePrice();
+        $currentPrice = $amazonListingProduct->getRegularPrice();
+        $onlinePrice  = $amazonListingProduct->getOnlineRegularPrice();
 
         $needRevise = $this->checkRevisePricesRequirements($amazonSynchronizationTemplate, $onlinePrice, $currentPrice);
         if ($needRevise) {
             return true;
         }
 
-        $currentSalePriceInfo = $amazonListingProduct->getSalePriceInfo();
+        $currentSalePriceInfo = $amazonListingProduct->getRegularSalePriceInfo();
         if ($currentSalePriceInfo !== false) {
             $currentSalePrice          = $currentSalePriceInfo['price'];
             $currentSalePriceStartDate = $currentSalePriceInfo['start_date'];
@@ -780,7 +849,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             $currentSalePriceEndDate   = null;
         }
 
-        $onlineSalePrice = $amazonListingProduct->getOnlineSalePrice();
+        $onlineSalePrice = $amazonListingProduct->getOnlineRegularSalePrice();
 
         if (!$currentSalePrice && !$onlineSalePrice) {
             return false;
@@ -800,8 +869,8 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
             return true;
         }
 
-        $onlineSalePriceStartDate  = $amazonListingProduct->getOnlineSalePriceStartDate();
-        $onlineSalePriceEndDate    = $amazonListingProduct->getOnlineSalePriceEndDate();
+        $onlineSalePriceStartDate  = $amazonListingProduct->getOnlineRegularSalePriceStartDate();
+        $onlineSalePriceEndDate    = $amazonListingProduct->getOnlineRegularSalePriceEndDate();
 
         if ($currentSalePriceStartDate != $onlineSalePriceStartDate ||
             $currentSalePriceEndDate   != $onlineSalePriceEndDate
@@ -812,16 +881,82 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         return false;
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetReviseBusinessPriceRequirements(ListingProduct $listingProduct,
+                                                          $needSynchRulesCheckIfLocked = true)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
+            return false;
+        }
+
+        if (!$amazonListingProduct->isAllowedForBusinessCustomers()) {
+            return false;
+        }
+
+        $amazonSynchronizationTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        if (!$amazonSynchronizationTemplate->isReviseWhenChangePrice()) {
+            return false;
+        }
+
+        $currentPrice = $amazonListingProduct->getBusinessPrice();
+        $onlinePrice  = $amazonListingProduct->getOnlineBusinessPrice();
+
+        if ($this->checkRevisePricesRequirements($amazonSynchronizationTemplate, $onlinePrice, $currentPrice)) {
+            return true;
+        }
+
+        $currentDiscounts = $amazonListingProduct->getBusinessDiscounts();
+        $onlineDiscounts  = $amazonListingProduct->getOnlineBusinessDiscounts();
+
+        // amazon does not support disabling discounts, so revise should not be allowed
+        if (empty($currentDiscounts)) {
+            return false;
+        }
+
+        if (count($currentDiscounts) != count($onlineDiscounts)) {
+            return true;
+        }
+
+        foreach ($currentDiscounts as $qty => $currentDiscount) {
+            if (!isset($onlineDiscounts[$qty])) {
+                return true;
+            }
+
+            $onlineDiscount = $onlineDiscounts[$qty];
+
+            $needRevise = $this->checkRevisePricesRequirements(
+                $amazonSynchronizationTemplate, $onlineDiscount, $currentDiscount
+            );
+
+            if ($needRevise) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     // ---------------------------------------
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseDetailsRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetReviseDetailsRequirements(ListingProduct $listingProduct,
+                                                    $needSynchRulesCheckIfLocked = true)
     {
-        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
 
@@ -838,12 +973,14 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseImagesRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetReviseImagesRequirements(ListingProduct $listingProduct,
+                                                   $needSynchRulesCheckIfLocked = true)
     {
-        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
 
@@ -862,17 +999,19 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
 
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param bool $needSynchRulesCheckIfLocked
      * @return bool
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function isMeetReviseSynchReasonsRequirements(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    public function isMeetReviseSynchReasonsRequirements(ListingProduct $listingProduct,
+                                                         $needSynchRulesCheckIfLocked = true)
     {
         $reasons = $listingProduct->getSynchReasons();
         if (empty($reasons)) {
             return false;
         }
 
-        if (!$this->isMeetReviseGeneralRequirements($listingProduct)) {
+        if (!$this->isMeetReviseGeneralRequirements($listingProduct, $needSynchRulesCheckIfLocked)) {
             return false;
         }
 
@@ -959,6 +1098,104 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         }
 
         return $resultProducts;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedListRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        if (!$amazonTemplate->isListAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct, SynchronizationPolicy::LIST_ADVANCED_RULES_PREFIX, 'list'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedRelistRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        if (!$amazonTemplate->isRelistAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct, SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX, 'relist'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function isMeetAdvancedStopRequirements(ListingProduct $listingProduct)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+        $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+
+        if (!$amazonTemplate->isStopAdvancedRulesEnabled()) {
+            return false;
+        }
+
+        return $this->isMeetAdvancedRequirements(
+            $listingProduct, SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX, 'stop'
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param string $ruleModelPrefix
+     * @param string $ruleFiltersDataKeyPrefix
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     * @throws \Exception
+     */
+    private function isMeetAdvancedRequirements(ListingProduct $listingProduct,
+                                                $ruleModelPrefix,
+                                                $ruleFiltersDataKeyPrefix)
+    {
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $listingProduct->getChildObject();
+
+        /* @var $tempCollection \Magento\Catalog\Model\ResourceModel\Product\Collection */
+        $tempCollection = $this->magentoProductCollectionFactory->create();
+        $tempCollection->addFieldToFilter('entity_id', $listingProduct->getProductId());
+        $tempCollection->setStoreId($listingProduct->getListing()->getStoreId());
+
+        $ruleModel = $this->activeRecordFactory->getObject('Magento\Product\Rule')->setData(
+            [
+                'store_id' => $listingProduct->getListing()->getStoreId(),
+                'prefix'   => $ruleModelPrefix
+            ]
+        );
+
+        $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
+        $templateData = $amazonTemplate->getData($ruleFiltersDataKeyPrefix . '_advanced_rules_filters');
+        $templateData && $ruleModel->loadFromSerialized($templateData);
+
+        $ruleModel->setAttributesFilterToCollection($tempCollection);
+
+        return $tempCollection->getSize();
     }
 
     //########################################

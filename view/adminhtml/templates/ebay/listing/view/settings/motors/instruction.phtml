@@ -1,0 +1,32 @@
+<?php
+/** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors\Instruction $block */
+?>
+
+<div id="add_custom_motors_record_instruction_container">
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'no_collapse' => true,
+        'no_hide' => true,
+        'content' => $block->__('
+            This Tool allows you to select the appropriate Compatible Vehicles for your Parts on eBay.<br/><br/>
+
+            There are a <strong>few ways</strong> you can use to Add necessary Compatible Vehicles.<br/><br/>
+
+            <ul style="padding-left: 30px !important;">
+                <li><strong>1)</strong> By Manually choosing the appropriate ePID(s)/kType(s) from the list of available ones and applying Select action from the Mass Action, you will prepare the Compatible Vehicles to be imported to the Parts Compatibility Magento Attribute which is configured in <a href="%general_path%">eBay Settings</a>.</li><br/>
+
+                <li><strong>2)</strong> Besides the manual adding, an ability to save ePID/kType Filters is also available. After you press the Save Filter button, the Columns Filter specified in the Grid will be saved for future usage.<br/><br/>
+
+                <strong>Note:</strong> Saving a Filter does not imply its Automatic Application. If you want to apply any of the saved Filters, you should go to the Filters Tab, select the appropriate Filter(s) and apply them by choosing Select Action from the mass action bulk.</li><br/>
+
+                <li><strong>3) </strong>Also, you have an Option to Group the appropriate ePIDs/kTypes or Filters. You can do it by selecting certain ePID(s)/kType(s) from the list of available ones and applying Save as a Group action or by choosing particular saved Filters under the Filters Tab and also applying Save as a Group action. The Group of ePID(s)/kType(s) or Filters can be reapplied multiple times without any need to Manually Search for the same Compatible Vehicles all over again.</li>
+            </ul><br/>
+
+            Thus, using these methods lets you Create a set of data which will be further added to the Parts Compatibility Magento Attribute. You can either use Add or Override options to import the Filtered or Grouped data to the Parts Compatibility Magento Attribute.<br/><br/>
+
+            <ul style="padding-left: 30px !important;">
+                <li><strong>1)</strong> In case of using Add option, the prepared ePIDs/kTypes, Filters or Groups Values will be Added to the already present in the Attribute Values. For example, if the Parts Compatibility Magento Attribute contains 5 ePIDs/kTypes Values, the 3 newly selected Values will be added on top of them, and eventually 8 values will be available in the Magento Attribute.</li><br/>
+                <li><strong>2)</strong> In case of using Override option, all of the previously present in the Magento Attribute Values will be Overridden, and only the newly selected ePIDs/kTypes, Filters or Groups Values will be applied.</li>
+            </ul>
+        ', $block->getUrl('*/ebay_settings/index',  ['active_tab' => \Ess\M2ePro\Block\Adminhtml\Ebay\Settings\Tabs::TAB_ID_MOTORS]))
+    ])->toHtml() ?>
+</div>

@@ -46,6 +46,7 @@ abstract class ItemsResponser extends \Ess\M2ePro\Model\Amazon\Connector\Command
                 $order['marketplace_id'] = $marketplace->getId();
                 $order['is_afn_channel'] = (int)$orderData['channel']['is_afn'];
                 $order['is_prime'] = (int)$orderData['is_prime'];
+                $order['is_business'] = (int)$orderData['is_business'];
 
                 $order['purchase_create_date'] = $orderData['purchase_date'];
                 $order['purchase_update_date'] = $orderData['update_date'];

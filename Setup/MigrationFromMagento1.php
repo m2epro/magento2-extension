@@ -69,7 +69,7 @@ class MigrationFromMagento1
         }
     }
 
-    private function getOldTablesPrefix()
+    public function getOldTablesPrefix()
     {
         $prefix = false;
         $primaryConfigTables = $this->installer->getConnection()->getTables('%m2epro_primary_config');
@@ -110,6 +110,7 @@ class MigrationFromMagento1
         $this->migrateInStorePickupGlobalKey();
         $this->migrateProductCustomTypes();
         $this->migrateHealthStatus();
+        $this->migrateArchivedEntity();
 
         $this->migrateProcessing();
         $this->migrateLockItem();
@@ -118,6 +119,7 @@ class MigrationFromMagento1
         $this->migrateGridsPerformanceStructure();
         $this->migrateSynchronizationTemplateAdvancedConditions();
 
+        $this->migrateEbayMarketplaces();
         $this->migrateEbayReturnTemplate();
         $this->migrateEbaySynchronizationTemplate();
         $this->migrateEbayCharity();
@@ -126,8 +128,6 @@ class MigrationFromMagento1
         $this->migrateAmazonListingProduct();
 
         $this->removeAndBackupBuyData();
-
-        $this->createSetupTables();
 
         $this->migrateOther();
     }
@@ -269,7 +269,7 @@ class MigrationFromMagento1
             '/cron/task/health_status/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
         $this->getConfigModifier('module')->insert(
-            '/cron/task/health_status/', 'interval', '1800', 'in seconds'
+            '/cron/task/health_status/', 'interval', '3600', 'in seconds'
         );
         $this->getConfigModifier('module')->insert(
             '/cron/task/health_status/', 'last_access', NULL, 'date of last access'
@@ -281,6 +281,56 @@ class MigrationFromMagento1
         $this->getConfigModifier('module')->insert('/health_status/notification/', 'mode', 1);
         $this->getConfigModifier('module')->insert('/health_status/notification/', 'email', '');
         $this->getConfigModifier('module')->insert('/health_status/notification/', 'level', 40);
+    }
+
+    private function migrateArchivedEntity()
+    {
+        $archivedEntity = $this->getConnection()->newTable(
+            $this->getFullTableName('archived_entity')
+        )
+            ->addColumn(
+                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'origin_id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'name', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'data', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, InstallSchema::LONG_COLUMN_SIZE,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addIndex('origin_id__name', ['origin_id', 'name'])
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($archivedEntity);
+
+        //----------------------------------------
+
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/archive_orders_entities/', 'mode', '1', '0 - disable, \r\n1 - enable'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/archive_orders_entities/', 'interval', '3600', 'in seconds'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/archive_orders_entities/', 'last_access', NULL, 'date of last access'
+        );
+        $this->getConfigModifier('module')->insert(
+            '/cron/task/archive_orders_entities/', 'last_run', NULL, 'date of last run'
+        );
+
+        $this->getTableModifier('amazon_order')->addIndex('purchase_create_date');
+        $this->getTableModifier('ebay_order')->addIndex('purchase_create_date');
     }
 
     private function migrateProcessing()
@@ -309,6 +359,27 @@ class MigrationFromMagento1
     private function migrateLockItem()
     {
         $this->getTableModifier('lock_item')->dropColumn('kill_now');
+
+        $lockTransactional = $this->getConnection()->newTable(
+            $this->getFullTableName('lock_transactional')
+        )
+            ->addColumn(
+                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'nick', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addIndex('nick', 'nick')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($lockTransactional);
     }
 
     private function migrateLogs()
@@ -490,6 +561,15 @@ class MigrationFromMagento1
             ->addColumn('list_advanced_rules_filters','TEXT',NULL,'list_advanced_rules_mode')
             ->addColumn('relist_advanced_rules_filters','TEXT',NULL,'relist_advanced_rules_mode')
             ->addColumn('stop_advanced_rules_filters','TEXT',NULL,'stop_advanced_rules_mode');
+    }
+
+    private function migrateEbayMarketplaces()
+    {
+        $this->getConnection()->update(
+            $this->getFullTableName('ebay_marketplace'),
+            ['is_ktype' => 1],
+            ['marketplace_id = ?' => [13]] // Spain
+        );
     }
 
     private function migrateEbayReturnTemplate()
@@ -685,6 +765,7 @@ class MigrationFromMagento1
                 'NULL', 'is_general_id_owner', true, false)
             ->addColumn('variation_parent_repricing_state', 'SMALLINT(5) UNSIGNED',
                 'NULL', 'variation_parent_afn_state', true, false)
+            ->changeColumn('search_settings_data', 'LONGTEXT', 'NULL', NULL, false)
             ->commit();
     }
 
@@ -809,77 +890,6 @@ class MigrationFromMagento1
                 ['processing_id IN (?)' => $processingIdsForRemove]
             );
         }
-    }
-
-    private function createSetupTables()
-    {
-        $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
-            ->addColumn(
-                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'version_from', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'version_to', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'is_backuped', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'is_completed', \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'nullable' => false, 'default' => 0]
-            )
-            ->addColumn(
-                'profiler_data', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'update_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addIndex('version_from', 'version_from')
-            ->addIndex('version_to', 'version_to')
-            ->addIndex('is_backuped', 'is_backuped')
-            ->addIndex('is_completed', 'is_completed')
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($setupTable);
-
-        $versionsHistoryTable = $this->getConnection()->newTable($this->getFullTableName('versions_history'))
-            ->addColumn(
-                'id', \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
-            )
-            ->addColumn(
-                'version_from', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'version_to', \Magento\Framework\DB\Ddl\Table::TYPE_TEXT, 32,
-                ['nullable' => false]
-            )
-            ->addColumn(
-                'update_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->addColumn(
-                'create_date', \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
-            )
-            ->setOption('type', 'INNODB')
-            ->setOption('charset', 'utf8')
-            ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($versionsHistoryTable);
     }
 
     private function migrateOther()

@@ -103,7 +103,8 @@ final class Title extends AbstractModel
 
             $neededItems = array();
             foreach ($listingOtherCollection->getItems() as $tempItem) {
-                $neededItems[] = $tempItem->getData('general_id');
+                /**@var $tempItem \Ess\M2ePro\Model\Listing\Other  */
+                $neededItems[] = $tempItem->getChildObject()->getData('general_id');
             }
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Dispatcher $dispatcherObject */

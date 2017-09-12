@@ -39,6 +39,18 @@ class Assign extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Tem
 
             $this->setShippingTemplateForProducts($productsIdsLocked, $templateId, $shippingMode);
             $this->runProcessorForParents($productsIdsLocked);
+
+            if ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE) {
+                $template = $this->activeRecordFactory->getObjectLoaded(
+                    'Amazon\Template\ShippingOverride', $templateId
+                );
+            } else {
+                $template = $this->activeRecordFactory->getObjectLoaded(
+                    'Amazon\Template\ShippingTemplate', $templateId
+                );
+            }
+
+            $template->setSynchStatusNeed($template->getDataSnapshot(), array());
         }
 
         $this->setJsonContent(['messages' => $messages]);

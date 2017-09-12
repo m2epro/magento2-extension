@@ -26,7 +26,9 @@ class Save extends Template
 
         $keys = array(
             'title',
-            'template_name',
+            'template_name_mode',
+            'template_name_value',
+            'template_name_attribute',
         );
 
         foreach ($keys as $key) {

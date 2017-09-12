@@ -18,7 +18,7 @@ class SynchCheckProcessingNow extends Settings
     {
         $warningMessages = array();
 
-        $synchronizationEbayOtherListingsProcessing = $this->activeRecordFactory->getObject('LockItem')
+        $synchronizationEbayOtherListingsProcessing = $this->activeRecordFactory->getObject('Lock\Item')
             ->getCollection()
             ->addFieldToFilter('nick', array('like' => 'synchronization_ebay_other_listings_update%'))
             ->getSize();

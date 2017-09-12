@@ -32,8 +32,9 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $helpBlock = $this->createBlock('HelpBlock');
         $helpBlock->setData([
             'content' => $this->__(
-                '<p>You should configure rules for the automatic data update between a Magento Product
-                and an eBay Item.</p>'
+                '<p>You should configure rules for the automatic data update between a Magento Product and an eBay
+                Item. More detailed information you can find <a href="%url%" target="_blank">here</a>.</p>',
+                $this->getHelper("Module\\Support")->getDocumentationArticleUrl("x/OwItAQ")
             )
         ]);
         $this->setChild('help', $helpBlock);

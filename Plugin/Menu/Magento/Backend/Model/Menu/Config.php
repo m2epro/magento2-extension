@@ -49,17 +49,19 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     //########################################
 
-    public function aroundGetMenu(\Magento\Backend\Model\Menu\Config $interceptor, \Closure $callback)
+    public function aroundGetMenu(\Magento\Backend\Model\Menu\Config $interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('getMenu', $interceptor, $callback);
+        return $this->execute('getMenu', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processGetMenu(\Magento\Backend\Model\Menu\Config $interceptor, \Closure $callback)
+    protected function processGetMenu(\Magento\Backend\Model\Menu\Config $interceptor,
+                                      \Closure $callback,
+                                      array $arguments)
     {
         /** @var \Magento\Backend\Model\Menu $menuModel */
-        $menuModel = $callback();
+        $menuModel = $callback(...$arguments);
 
         if ($this->isProcessed) {
             return $menuModel;

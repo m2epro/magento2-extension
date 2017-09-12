@@ -63,7 +63,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $responseData['items'] = $this->filterReceivedOnlyOtherListings($responseData['items']);
-        $responseData['items'] = $this->filterReceivedOnlyCurrentOtherListings($responseData['items']);
 
         /** @var $logModel \Ess\M2ePro\Model\Listing\Other\Log */
         $logModel = $this->activeRecordFactory->getObject('Listing\Other\Log');
@@ -141,7 +140,7 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_FINISHED;
 
             } else if ($receivedItem['listingStatus'] == self::EBAY_STATUS_ACTIVE &&
-                       $receivedItem['quantity'] <= 0) {
+                       $receivedItem['quantity'] - $receivedItem['quantitySold'] <= 0) {
 
                 $newData['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_HIDDEN;
 
@@ -341,49 +340,6 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
         return array_values($receivedItemsByItemId);
     }
 
-    protected function filterReceivedOnlyCurrentOtherListings(array $receivedItems)
-    {
-        $connection = $this->resourceConnection->getConnection();
-
-        $resultItems = array();
-
-        foreach (array_chunk($receivedItems,500) as $partReceivedItems) {
-
-            if (count($partReceivedItems) <= 0) {
-                continue;
-            }
-
-            $collection = $this->ebayFactory->getObject('Listing\Other')->getCollection()
-                ->addFieldToFilter('account_id', $this->getAccount()->getId());
-
-            $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS)->columns(
-                array('second_table.old_items')
-            );
-
-            $method = 'where';
-            $partReceivedItemsByItemId = array();
-            foreach ($partReceivedItems as $partReceivedItem) {
-                $collection->getSelect()->$method('old_items LIKE \'%'.(string)$partReceivedItem['id'].'%\'');
-                $partReceivedItemsByItemId[(string)$partReceivedItem['id']] = $partReceivedItem;
-                $method = 'orWhere';
-            }
-
-            $stmtTemp = $connection->query($collection->getSelect()->__toString());
-
-            while ($existItem = $stmtTemp->fetch()) {
-                $oldItems = trim(trim($existItem['old_items'],','));
-                $oldItems = !empty($oldItems) ? explode(',',$oldItems) : array();
-                foreach ($oldItems as $oldItem) {
-                    unset($partReceivedItemsByItemId[(string)$oldItem]);
-                }
-            }
-
-            $resultItems = array_merge($resultItems,$partReceivedItemsByItemId);
-        }
-
-        return array_values($resultItems);
-    }
-
     //########################################
 
     /**
@@ -400,7 +356,8 @@ class Updating extends \Ess\M2ePro\Model\AbstractModel
             return $this->logsActionId;
         }
 
-        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')->getNextActionId();
+        return $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Other\Log')
+                                          ->getResource()->getNextActionId();
     }
 
     //########################################

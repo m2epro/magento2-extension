@@ -17,7 +17,8 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
     private $activeRecordFactory;
     private $modelFactory;
     private $moduleConfig;
-    protected $phpEnvironmentRequest;
+    private $phpEnvironmentRequest;
+    private $storeManager;
 
     //########################################
 
@@ -27,13 +28,15 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context,
-        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest
+        \Magento\Framework\HTTP\PhpEnvironment\Request $phpEnvironmentRequest,
+        \Magento\Store\Model\StoreManagerInterface $storeManager
     )
     {
         $this->activeRecordFactory = $activeRecordFactory;
         $this->modelFactory = $modelFactory;
         $this->moduleConfig = $moduleConfig;
         $this->phpEnvironmentRequest = $phpEnvironmentRequest;
+        $this->storeManager = $storeManager;
         parent::__construct($helperFactory, $context);
     }
 
@@ -50,6 +53,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $info = $this->getExceptionInfo($throwable, $type);
             $info .= $this->getExceptionStackTraceInfo($throwable);
             $info .= $this->getCurrentUserActionInfo();
+            $info .= $this->getAdditionalActionInfo();
             $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
 
             $this->log($info, $type);
@@ -83,6 +87,7 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
             $info = $this->getFatalInfo($error, $type);
             $info .= $traceInfo;
             $info .= $this->getCurrentUserActionInfo();
+            $info .= $this->getAdditionalActionInfo();
             $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
 
             $this->log($info, $type);
@@ -151,6 +156,15 @@ class Exception extends \Ess\M2ePro\Helper\AbstractHelper
 
         $log->setType($type);
         $log->setDescription($message);
+
+        $trace = debug_backtrace();
+        $file = isset($trace[1]['file']) ? $trace[1]['file'] : 'not set';;
+        $line = isset($trace[1]['line']) ? $trace[1]['line'] : 'not set';
+
+        $additionalData = array(
+            'called-from' => $file .' : '. $line
+        );
+        $log->setData('additional_data', print_r($additionalData, true));
 
         $log->save();
     }
@@ -264,6 +278,19 @@ TRACE;
 SERVER: {$server}
 GET: {$get}
 POST: {$post}
+
+ACTION;
+
+        return $actionInfo;
+    }
+
+    private function getAdditionalActionInfo()
+    {
+        $currentStoreId = $this->storeManager->getStore()->getId();
+
+        $actionInfo = <<<ACTION
+-------------------------------- ADDITIONAL INFO -------------------------------------
+Current Store: {$currentStoreId}
 
 ACTION;
 

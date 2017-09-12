@@ -91,8 +91,8 @@ class Website extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             self::SELECT,
             [
                 'name' => 'auto_website_deleting_mode',
-                'label' => $this->__('Product Deleted from Magento'),
-                'title' => $this->__('Product Deleted from Magento'),
+                'label' => $this->__('Product Deleted from Website'),
+                'title' => $this->__('Product Deleted from Website'),
                 'values' => [
                     ['value' => \Ess\M2ePro\Model\Listing::DELETING_MODE_NONE,
                         'label' => $this->__('No Action')],

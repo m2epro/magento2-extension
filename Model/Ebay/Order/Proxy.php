@@ -121,6 +121,20 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         }
 
         if ($this->order->getEbayAccount()->isMagentoOrdersCustomerNew()) {
+            $userIdAttribute = $this->attributeFactory->create();
+
+            $userIdAttribute->loadByCode(
+                $this->customerFactory->create()->getEntityType()->getEntityTypeId(),
+                self::USER_ID_ATTRIBUTE_CODE
+            );
+
+            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
+            $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
+
+            if (!$userIdAttribute->getId()) {
+                $customerBuilder->buildAttribute(self::USER_ID_ATTRIBUTE_CODE, 'eBay User ID');
+            }
+
             $customerInfo = $this->getAddressData();
 
             $customerObject = $this->customerFactory->create();
@@ -128,16 +142,20 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             $customerObject->loadByEmail($customerInfo['email']);
 
             if (!is_null($customerObject->getId())) {
+                $customerObject->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
+                $customerObject->save();
+
                 return $customerObject->getDataModel();
             }
 
             $customerInfo['website_id'] = $this->order->getEbayAccount()->getMagentoOrdersCustomerNewWebsiteId();
             $customerInfo['group_id'] = $this->order->getEbayAccount()->getMagentoOrdersCustomerNewGroupId();
 
-            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
-            $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
             $customerBuilder->setData($customerInfo);
             $customerBuilder->buildCustomer();
+
+            $customerBuilder->getCustomer()->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
+            $customerBuilder->getCustomer()->save();
 
             return $customerBuilder->getCustomer()->getDataModel();
         }
@@ -186,6 +204,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         // Adding reference id into street array
         // ---------------------------------------
         $referenceId = '';
+        $addressData['street'] = !empty($rawAddressData['street']) ? $rawAddressData['street'] : [];
 
         if ($this->order->isUseGlobalShippingProgram()) {
             $details = $this->order->getGlobalShippingDetails();
@@ -203,17 +222,16 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             isset($details['reference_id']) && $referenceId = 'Ref #'.$details['reference_id'];
         }
 
-        $streetParts = !empty($rawAddressData['street']) ? $rawAddressData['street'] : array();
+        if (!empty($referenceId)) {
 
-        $addressData['street'] = array();
-        if (count($streetParts) >= 2) {
-            $addressData['street'] = array(
-                $referenceId,
-                implode(' ', $streetParts),
-            );
-        } else {
-            array_unshift($streetParts, $referenceId);
-            $addressData['street'] = $streetParts;
+            if (count($addressData['street']) >= 2) {
+                $addressData['street'] = array(
+                    $referenceId,
+                    implode(' ', $addressData['street']),
+                );
+            } else {
+                array_unshift($addressData['street'], $referenceId);
+            }
         }
         // ---------------------------------------
 
@@ -254,13 +272,14 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         );
 
         $paymentData = array(
-            'method'            => $this->payment->getCode(),
-            'component_mode'    => \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            'payment_method'    => $paymentMethodTitle,
-            'channel_order_id'  => $this->order->getEbayOrderId(),
-            'channel_final_fee' => $this->convertPrice($this->order->getFinalFee()),
-            'transactions'      => $this->getPaymentTransactions(),
-            'tax_id'            => $this->order->getBuyerTaxId(),
+            'method'                => $this->payment->getCode(),
+            'component_mode'        => \Ess\M2ePro\Helper\Component\Ebay::NICK,
+            'payment_method'        => $paymentMethodTitle,
+            'channel_order_id'      => $this->order->getEbayOrderId(),
+            'channel_final_fee'     => $this->convertPrice($this->order->getFinalFee()),
+            'cash_on_delivery_cost' => $this->convertPrice($this->order->getCashOnDeliveryCost()),
+            'transactions'          => $this->getPaymentTransactions(),
+            'tax_id'                => $this->order->getBuyerTaxId(),
         );
 
         return $paymentData;

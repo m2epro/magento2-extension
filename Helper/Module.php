@@ -72,6 +72,14 @@ class Module extends AbstractHelper
         return $this->moduleConfig;
     }
 
+    /**
+     * @return \Ess\M2ePro\Model\Config\Manager\Cache
+     */
+    public function getCacheConfig()
+    {
+        return $this->cacheConfig;
+    }
+
     //########################################
 
     public function getName()
@@ -83,7 +91,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.2.1';
+        return '1.3.0';
     }
 
     public function getSetupVersion()
@@ -118,7 +126,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '1821';
+        return '2257';
     }
 
     //########################################
@@ -273,33 +281,33 @@ class Module extends AbstractHelper
     {
         $clientPhpData = $this->getHelper('Client')->getPhpSettings();
 
-        $requirements = array (
+        $requirements = [
 
-            'memory_limit' => array(
+            'memory_limit' => [
                 'title' => $this->getHelper('Module\Translation')->__('Memory Limit'),
-                'condition' => array(
+                'condition' => [
                     'sign' => '>=',
-                    'value' => '256 MB'
-                ),
-                'current' => array(
+                    'value' => '768 MB'
+                ],
+                'current' => [
                     'value' => (int)$clientPhpData['memory_limit'] . ' MB',
                     'status' => true
-                )
-            ),
+                ]
+            ],
 
-            'max_execution_time' => array(
+            'max_execution_time' => [
                 'title' => $this->getHelper('Module\Translation')->__('Max Execution Time'),
-                'condition' => array(
+                'condition' => [
                     'sign' => '>=',
                     'value' => '360 sec'
-                ),
-                'current' => array(
+                ],
+                'current' => [
                     'value' => is_null($clientPhpData['max_execution_time'])
                         ? 'unknown' : $clientPhpData['max_execution_time'] . ' sec',
                     'status' => true
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
         foreach ($requirements as $key => &$requirement) {
 
@@ -327,13 +335,13 @@ class Module extends AbstractHelper
         $registryModel = $this->activeRecordFactory->getObjectLoaded('Registry', '/server/messages/', 'key', false);
 
         if (is_null($registryModel)) {
-            return array();
+            return [];
         }
 
         $messages = $registryModel->getValueFromJson();
 
-        $messages = array_filter($messages,array($this,'getServerMessagesFilterModuleMessages'));
-        !is_array($messages) && $messages = array();
+        $messages = array_filter($messages, [$this,'getServerMessagesFilterModuleMessages']);
+        !is_array($messages) && $messages = [];
 
         return $messages;
     }

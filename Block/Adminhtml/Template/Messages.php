@@ -24,6 +24,18 @@ class Messages extends AbstractBlock
         $block = $this;
 
         switch ($templateNick) {
+
+            case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING:
+
+                $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+                    '/magento/attribute/', 'price_type_converting'
+                );
+
+                if ($isPriceConvertEnabled && $componentMode == \Ess\M2ePro\Helper\Component\Ebay::NICK) {
+                    $block = $this->createBlock('Ebay\Template\Shipping\Messages');
+                }
+                break;
+
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
                 $block = $this->createBlock('Template\SellingFormat\Messages');
                 break;

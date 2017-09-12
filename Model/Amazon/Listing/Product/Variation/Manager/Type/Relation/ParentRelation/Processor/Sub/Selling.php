@@ -18,8 +18,9 @@ class Selling extends AbstractModel
 
     protected function execute()
     {
-        $qty = null;
-        $price = null;
+        $qty           = null;
+        $regularPrice  = null;
+        $businessPrice = null;
 
         $afnState = NULL;
         $repricingState = NULL;
@@ -55,25 +56,29 @@ class Selling extends AbstractModel
                 $qty = (int)$qty + (int)$amazonListingProduct->getOnlineQty();
             }
 
-            $salePrice = (float)$amazonListingProduct->getOnlineSalePrice();
-            $actualOnlinePrice = (float)$amazonListingProduct->getOnlinePrice();
+            $regularSalePrice = $amazonListingProduct->getOnlineRegularSalePrice();
+            $actualOnlineRegularPrice = $amazonListingProduct->getOnlineRegularPrice();
 
-            if ($salePrice > 0) {
-                $startDateTimestamp = strtotime($amazonListingProduct->getOnlineSalePriceStartDate());
-                $endDateTimestamp   = strtotime($amazonListingProduct->getOnlineSalePriceEndDate());
+            if ($regularSalePrice > 0) {
+                $startDateTimestamp = strtotime($amazonListingProduct->getOnlineRegularSalePriceStartDate());
+                $endDateTimestamp   = strtotime($amazonListingProduct->getOnlineRegularSalePriceEndDate());
 
                 $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
 
                 if ($currentTimestamp >= $startDateTimestamp &&
                     $currentTimestamp <= $endDateTimestamp &&
-                    $salePrice < $actualOnlinePrice
+                    $regularSalePrice < $actualOnlineRegularPrice
                 ) {
-                    $actualOnlinePrice = $salePrice;
+                    $actualOnlineRegularPrice = $regularSalePrice;
                 }
             }
 
-            if (is_null($price) || $price > $actualOnlinePrice) {
-                $price = $actualOnlinePrice;
+            if (is_null($regularPrice) || $regularPrice > $actualOnlineRegularPrice) {
+                $regularPrice = $actualOnlineRegularPrice;
+            }
+
+            if (is_null($businessPrice) || $businessPrice > $amazonListingProduct->getOnlineBusinessPrice()) {
+                $businessPrice = $amazonListingProduct->getOnlineBusinessPrice();
             }
         }
 
@@ -87,10 +92,11 @@ class Selling extends AbstractModel
         ($totalOnRepricing == $totalCount) && $repricingState = Product::VARIATION_PARENT_IS_REPRICING_STATE_ALL_YES;
 
         $this->getProcessor()->getListingProduct()->getChildObject()->addData(array(
-            'online_qty'        => $qty,
-            'online_price'      => $price,
-            'is_afn_channel'    => $isAfn,
-            'is_repricing'      => $isRepricing,
+            'online_qty'                       => $qty,
+            'online_regular_price'             => $regularPrice,
+            'online_business_price'            => $businessPrice,
+            'is_afn_channel'                   => $isAfn,
+            'is_repricing'                     => $isRepricing,
             'variation_parent_afn_state'       => $afnState,
             'variation_parent_repricing_state' => $repricingState
         ));

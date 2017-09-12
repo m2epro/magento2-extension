@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Connector\OrderItem;
 
-class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
+class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     // M2ePro\TRANSLATIONS
     // Action was not completed (Item: %item_id%, Transaction: %trn_id%). Reason: %msg%
@@ -23,24 +23,14 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     )
     {
         $this->ebayFactory = $ebayFactory;
         parent::__construct(
-            $modelFactory,
-            $activeRecordFactory,
             $helperFactory,
-            $context,
-            $registry,
-            $resource,
-            $resourceCollection,
+            $modelFactory,
             $data
         );
     }
@@ -59,10 +49,10 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         if (is_null($connector)) {
-            return;
+            return false;
         }
 
-        $this->processItems($items, $connector, $params);
+        return $this->processItems($items, $connector, $params);
     }
 
     // ########################################
@@ -70,7 +60,7 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     protected function processItems(array $items, $connectorName, array $params = array())
     {
         if (count($items) == 0) {
-            return;
+            return false;
         }
 
         /** @var $items \Ess\M2ePro\Model\Order\Item[] */
@@ -93,9 +83,11 @@ class Dispatcher extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
                     )
                 );
 
-                return;
+                return false;
             }
         }
+
+        return true;
     }
 
     // ########################################

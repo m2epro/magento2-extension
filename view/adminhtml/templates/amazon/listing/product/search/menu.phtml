@@ -12,7 +12,7 @@
                 <div style="color:#666; height:50px; margin:5px auto 10px auto;"> <?php echo $block->__('Search ASIN/ISBN by data that will be specified on the next step.'); ?></div>
             </div>
             <div>
-                <?php if (!$block->isIndividualFromBundleOrSimpleWithCustome()) { ?>
+                <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable()) { ?>
 
                     <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.showSearchGeneralIdAutoPrompt();">
                         <?php echo $block->__('Assign ASIN/ISBN Automatically'); ?>
@@ -22,14 +22,14 @@
                 <?php } else { ?>
                     <span style="color:#666; font-size:140%"><?php echo $block->__('Assign ASIN/ISBN Automatically'); ?></span>
                     <div style="color:#666; height:50px; margin:5px auto 10px auto;">
-                        <?php echo $block->__('This Option is not available for Simple with Custom Options and Bundle Magento Products. Please use "Assign ASIN/ISBN Manually" functionality.'); ?>
+                        <?php echo $block->__('This Option is not available for Simple with Custom Options, Bundle and Downloadable with Separated Links Magento Products. Please use "Assign ASIN/ISBN Manually" functionality.'); ?>
                     </div>
                 <?php } ?>
             </div>
 
             <div>
-                <?php if (!$block->isIndividualFromBundleOrSimpleWithCustome() &&
-                          !$block->isParentFromBundleOrSimpleWithCustome()) { ?>
+                <?php if (!$block->isIndividualFromBundleOrSimpleOrDownloadable() &&
+                          !$block->isParentFromBundleOrSimpleOrDownloadable()) { ?>
 
                     <a style="font-size:140%" href="javascript:void(0);" onclick="ListingGridHandlerObj.productSearchHandler.addNewGeneralId();">
                         <?php echo $block->__('Assign Settings for New ASIN/ISBN'); ?>
@@ -39,7 +39,7 @@
                 <?php } else { ?>
                     <span style="color:#666; font-size:140%"><?php echo $block->__('Assign Settings for New ASIN/ISBN'); ?></span>
                     <div style="color:#666; height:50px; margin:5px auto 10px auto;">
-                        <?php echo $block->__('This Option is not available for Simple with Custom Options and Bundle Magento Products.'); ?>
+                        <?php echo $block->__('This Option is not available for Simple with Custom Options, Bundle and Downloadable with Separated Links Magento Products.'); ?>
                     </div>
                 <?php } ?>
             </div>

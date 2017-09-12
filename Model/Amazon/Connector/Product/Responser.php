@@ -10,24 +10,14 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
 use Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Inspector;
 use Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner;
-use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
+use Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator;
 
 abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pending\Responser
 {
     /**
-     * @var \Ess\M2ePro\Model\Listing\Product[]
+     * @var \Ess\M2ePro\Model\Listing\Product
      */
-    protected $listingsProducts = array();
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product[]
-     */
-    protected $successfulListingProducts = array();
-
-    /**
-     * @var \Ess\M2ePro\Model\Listing\Product[]
-     */
-    protected $skippedListingsProducts = array();
+    protected $listingProduct = NULL;
 
     // ---------------------------------------
 
@@ -37,21 +27,25 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     protected $logger = NULL;
 
     /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator[]
+     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Configurator
      */
-    protected $configurators = array();
+    protected $configurator = NULL;
 
     // ---------------------------------------
 
     /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response[]
+     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
      */
-    protected $responsesObjects = array();
+    protected $responseObject = NULL;
 
     /**
-     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData[]
+     * @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
-    protected $requestsDataObjects = array();
+    protected $requestDataObject = NULL;
+
+    // ---------------------------------------
+
+    protected $isSuccess = false;
 
     // ########################################
 
@@ -65,13 +59,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     {
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
 
-        $listingsProductsIds = array_keys($this->params['products']);
-
-        /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->addFieldToFilter('id', array('in' => $listingsProductsIds));
-
-        $this->listingsProducts = $listingProductCollection->getItems();
+        $this->listingProduct = $this->amazonFactory->getObjectLoaded(
+            'Listing\Product', $this->params['product']['id']
+        );
     }
 
     // ########################################
@@ -86,268 +76,186 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_ERROR
         );
 
-        foreach ($this->listingsProducts as $listingProduct) {
-            $this->getLogger()->logListingProductMessage(
-                $listingProduct,
-                $message,
-                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
-            );
-        }
+        $this->getLogger()->logListingProductMessage(
+            $this->listingProduct,
+            $message,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+        );
     }
 
     public function eventAfterExecuting()
     {
         parent::eventAfterExecuting();
 
-        $this->processParentProcessors();
-        $this->inspectProducts();
+        $this->processParentProcessor();
+        $this->inspectProduct();
     }
 
-    // ########################################
-
-    protected function inspectProducts()
+    protected function inspectProduct()
     {
-        $listingsProductsByStatus = array(
-            \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED  => array(),
-            \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED => array(),
-            \Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN => array(),
-        );
-
-        foreach ($this->successfulListingProducts as $listingProduct) {
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-
-            if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
-                continue;
-            }
-
-            $listingsProductsByStatus[$listingProduct->getStatus()][$listingProduct->getId()] = $listingProduct;
+        if (!$this->isSuccess && !$this->listingProduct->needSynchRulesCheck()) {
+            return;
         }
 
-        foreach ($this->skippedListingsProducts as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-
-            if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
-                continue;
-            }
-
-            $listingsProductsByStatus[$listingProduct->getStatus()][$listingProduct->getId()] = $listingProduct;
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->listingProduct->getChildObject();
+        if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
+            return;
         }
 
         $runner = $this->modelFactory->getObject('Synchronization\Templates\Synchronization\Runner');
         $runner->setConnectorModel('Amazon\Connector\Product\Dispatcher');
         $runner->setMaxProductsPerStep(100);
 
+        /** @var \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\Inspector $inspector */
         $inspector = $this->modelFactory->getObject('Amazon\Synchronization\Templates\Synchronization\Inspector');
 
-        $products = $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED];
-        $this->inspectStopRequirements($products, $inspector, $runner);
+        $responseData = $this->getPreparedResponseData();
 
-        $products = array_merge($listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_LISTED],
-                                $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_UNKNOWN]);
-
-        $this->inspectReviseRequirements($products, $inspector, $runner);
-
-        $products = $listingsProductsByStatus[\Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED];
-        $this->inspectRelistRequirements($products, $inspector, $runner);
-
-        $runner->execute();
-    }
-
-    //----------------------------------------
-
-    protected function inspectStopRequirements(array $products, Inspector $inspector, Runner $runner)
-    {
-        $lpForAdvancedRules = [];
-
-        foreach ($products as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-            if (!$inspector->isMeetStopGeneralRequirements($listingProduct)) {
-                continue;
-            }
-
-            if ($inspector->isMeetStopRequirements($listingProduct)) {
-
-                $runner->addProduct(
-                    $listingProduct,
-                    \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                    $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator')
-                );
-                continue;
-            }
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-            $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
-
-            if ($amazonTemplate->isStopAdvancedRulesEnabled()) {
-
-                $templateId = $amazonTemplate->getId();
-                $storeId    = $listingProduct->getListing()->getStoreId();
-                $magentoProductId  = $listingProduct->getProductId();
-
-                $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-            }
-        }
-
-        $affectedListingProducts = $inspector->getMeetAdvancedRequirementsProducts(
-            $lpForAdvancedRules, SynchronizationPolicy::STOP_ADVANCED_RULES_PREFIX, 'stop'
-        );
-
-        foreach ($affectedListingProducts as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-            $runner->addProduct(
-                $listingProduct,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_STOP,
-                $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator')
-            );
-        }
-    }
-
-    //----------------------------------------
-
-    protected function inspectReviseRequirements(array $products, Inspector $inspector, Runner $runner)
-    {
-        foreach ($products as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-            $isExistInRunner = $runner->isExistProductWithAction(
-                $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP
-            );
-
-            if ($isExistInRunner) {
-                continue;
-            }
-
+        if (empty($responseData['request_time']) && $this->listingProduct->needSynchRulesCheck()) {
+            $configurator = $this->getConfigurator();
+        } else {
             $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
-            $configurator->setPartialMode();
-
-            $needRevise = false;
-
-            if (!$listingProduct->isUnknown() && $inspector->isMeetReviseQtyRequirements($listingProduct)) {
-                $configurator->allowQty();
-                $needRevise = true;
-            }
-
-            if ($inspector->isMeetRevisePriceRequirements($listingProduct)) {
-                $configurator->allowPrice();
-                $needRevise = true;
-            }
-
-            if (!$needRevise) {
-                continue;
-            }
-
-            $runner->addProduct(
-                $listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
-            );
         }
+
+        if (empty($responseData['request_time']) && !empty($responseData['start_processing_date'])) {
+            $configurator->setParams(array('start_processing_date' => $responseData['start_processing_date']));
+        }
+
+        $result = $this->inspectStopRequirements($inspector, $runner, $configurator);
+        !$result && $result = $this->inspectReviseRequirements($inspector, $runner, $configurator);
+        !$result && $result = $this->inspectRelistRequirements($inspector, $runner, $configurator);
     }
 
-    //----------------------------------------
-
-    protected function inspectRelistRequirements(array $products, Inspector $inspector, Runner $runner)
+    protected function inspectStopRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
     {
-        $lpForAdvancedRules = [];
-
-        foreach ($products as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-
-            if (!$inspector->isMeetRelistRequirements($listingProduct)) {
-                continue;
-            }
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-            $amazonTemplate = $amazonListingProduct->getAmazonSynchronizationTemplate();
-
-            if ($amazonTemplate->isRelistAdvancedRulesEnabled()) {
-
-                $templateId = $amazonTemplate->getId();
-                $storeId    = $listingProduct->getListing()->getStoreId();
-                $magentoProductId = $listingProduct->getProductId();
-
-                $lpForAdvancedRules[$templateId][$storeId][$magentoProductId][] = $listingProduct;
-
-            } else {
-
-                $runner->addProduct(
-                    $listingProduct,
-                    \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
-                    $this->getRelistConfigurator($listingProduct)
-                );
-            }
+        if (!$this->listingProduct->isListed()) {
+            return false;
         }
 
-        $affectedListingProducts = $inspector->getMeetAdvancedRequirementsProducts(
-            $lpForAdvancedRules, SynchronizationPolicy::RELIST_ADVANCED_RULES_PREFIX, 'relist'
-        );
+        if (!$inspector->isMeetStopGeneralRequirements($this->listingProduct)) {
+            return false;
+        }
 
-        foreach ($affectedListingProducts as $listingProduct) {
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        if ($inspector->isMeetStopRequirements($this->listingProduct) ||
+            $inspector->isMeetAdvancedStopRequirements($this->listingProduct)) {
 
             $runner->addProduct(
-                $listingProduct,
-                \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST,
-                $this->getRelistConfigurator($listingProduct)
+                $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_STOP, $configurator
             );
+
+            $runner->execute();
+            return true;
         }
+
+        return false;
     }
 
-    protected function getRelistConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    protected function inspectReviseRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
     {
+        if (!$this->listingProduct->isListed() && !$this->listingProduct->isUnknown()) {
+            return false;
+        }
+
+        $configurator->reset();
+        $needRevise = false;
+
+        if (!$this->listingProduct->isUnknown() && $inspector->isMeetReviseQtyRequirements($this->listingProduct)) {
+            $configurator->allowQty();
+            $needRevise = true;
+        }
+
+        if ($inspector->isMeetReviseRegularPriceRequirements($this->listingProduct)) {
+            $configurator->allowRegularPrice();
+            $needRevise = true;
+        }
+
+        if ($inspector->isMeetReviseBusinessPriceRequirements($this->listingProduct)) {
+            $configurator->allowBusinessPrice();
+            $needRevise = true;
+        }
+
+        if ($needRevise) {
+            $runner->addProduct(
+                $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_REVISE, $configurator
+            );
+
+            $runner->execute();
+            return true;
+        }
+
+        return false;
+    }
+
+    protected function inspectRelistRequirements(Inspector $inspector, Runner $runner, Configurator $configurator)
+    {
+        if (!$this->listingProduct->isStopped()) {
+            return false;
+        }
+
+        if (!$inspector->isMeetRelistRequirements($this->listingProduct)) {
+            return false;
+        }
+
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-        $amazonListingProduct = $listingProduct->getChildObject();
-
-        $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
+        $amazonListingProduct = $this->listingProduct->getChildObject();
 
         if (!$amazonListingProduct->getAmazonSynchronizationTemplate()->isRelistSendData()) {
-            $configurator->setPartialMode();
+            $configurator->reset();
             $configurator->allowQty();
         }
 
-        return $configurator;
+        if ($amazonListingProduct->getAmazonSynchronizationTemplate()->isRelistAdvancedRulesEnabled()) {
+
+            if ($inspector->isMeetAdvancedRelistRequirements($this->listingProduct)) {
+
+                $runner->addProduct(
+                    $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
+                );
+
+                $runner->execute();
+                return true;
+            }
+
+        } else {
+
+            $runner->addProduct(
+                $this->listingProduct, \Ess\M2ePro\Model\Listing\Product::ACTION_RELIST, $configurator
+            );
+
+            $runner->execute();
+            return true;
+        }
+
+        return false;
     }
 
-    // ########################################
-
-    protected function processParentProcessors()
+    protected function processParentProcessor()
     {
-        $processedParentListingProducts = array();
-
-        foreach ($this->successfulListingProducts as $listingProduct) {
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-
-            $variationManager = $amazonListingProduct->getVariationManager();
-
-            if (!$variationManager->isRelationMode()) {
-                continue;
-            }
-
-            if ($variationManager->isRelationParentType()) {
-                $parentListingProduct = $listingProduct;
-            } else {
-                $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
-            }
-
-            if (isset($processedParentListingProducts[$parentListingProduct->getId()])) {
-                continue;
-            }
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonParentListingProduct */
-            $amazonParentListingProduct = $parentListingProduct->getChildObject();
-
-            $parentTypeModel = $amazonParentListingProduct->getVariationManager()->getTypeModel();
-            $parentTypeModel->getProcessor()->process();
-
-            $processedParentListingProducts[$parentListingProduct->getId()] = true;
+        if (!$this->isSuccess) {
+            return;
         }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->listingProduct->getChildObject();
+
+        $variationManager = $amazonListingProduct->getVariationManager();
+
+        if (!$variationManager->isRelationMode()) {
+            return;
+        }
+
+        if ($variationManager->isRelationParentType()) {
+            $parentListingProduct = $this->listingProduct;
+        } else {
+            $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonParentListingProduct */
+        $amazonParentListingProduct = $parentListingProduct->getChildObject();
+
+        $parentTypeModel = $amazonParentListingProduct->getVariationManager()->getTypeModel();
+        $parentTypeModel->getProcessor()->process();
     }
 
     // ########################################
@@ -364,79 +272,60 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
 
         $responseData = $this->getPreparedResponseData();
 
-        foreach ($responseData['messages'] as $listingProductId => $messagesData) {
-            $messages = array();
+        foreach ($responseData['messages'] as $messageData) {
+            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
+            $message->initFromResponseData($messageData);
 
-            foreach ($messagesData as $messageData) {
-                $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
-                $message->initFromResponseData($messageData);
-
-                $messages[] = $message;
-            }
-
-            $responseMessages[$listingProductId] = $messages;
+            $responseMessages[] = $message;
         }
 
-        foreach ($this->listingsProducts as $listingProduct) {
-
-            $messages = array();
-            if (!empty($responseMessages[$listingProduct->getId()])) {
-                $messages = $responseMessages[$listingProduct->getId()];
-            }
-
-            if (!$this->processMessages($listingProduct, $messages)) {
-                if (!empty($responseData[$listingProduct->getId()]['is_skipped'])) {
-                    $this->skippedListingsProducts[$listingProduct->getId()] = $listingProduct;
-                }
-
-                continue;
-            }
-
-            $successParams = $this->getSuccessfulParams($listingProduct);
-            $this->processSuccess($listingProduct, $successParams);
+        if (!$this->processMessages($responseMessages)) {
+            return;
         }
+
+        $successParams = $this->getSuccessfulParams();
+        $this->processSuccess($successParams);
     }
 
     //----------------------------------------
 
-    protected function processMessages(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $messages)
+    protected function processMessages(array $messages)
     {
         $hasError = false;
 
         foreach ($messages as $message) {
-
             /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message $message */
 
             !$hasError && $hasError = $message->isError();
 
             $this->getLogger()->logListingProductMessage(
-                $listingProduct, $message
+                $this->listingProduct, $message
             );
         }
 
         return !$hasError;
     }
 
-    protected function processSuccess(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $params = array())
+    protected function processSuccess(array $params = array())
     {
-        $this->getResponseObject($listingProduct)->processSuccess($params);
+        $this->getResponseObject()->processSuccess($params);
 
         $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
         $message->initFromPreparedData(
-            $this->getSuccessfulMessage($listingProduct),
-           \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
+            $this->getSuccessfulMessage(),
+            \Ess\M2ePro\Model\Connector\Connection\Response\Message::TYPE_SUCCESS
         );
 
         $this->getLogger()->logListingProductMessage(
-            $listingProduct, $message
+            $this->listingProduct, $message
         );
 
-        $this->successfulListingProducts[$listingProduct->getId()] = $listingProduct;
+        $this->isSuccess = true;
     }
 
     //----------------------------------------
 
-    protected function getSuccessfulParams(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    protected function getSuccessfulParams()
     {
         return array();
     }
@@ -444,10 +333,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
     //----------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return string
      */
-    abstract protected function getSuccessfulMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct);
+    abstract protected function getSuccessfulMessage();
 
     // ########################################
 
@@ -485,28 +373,27 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
         return $this->logger;
     }
 
-    protected function getConfigurator(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    protected function getConfigurator()
     {
-        if (empty($this->configurators[$listingProduct->getId()])) {
+        if (is_null($this->configurator)) {
 
             $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
-            $configurator->setUnserializedData($this->params['products'][$listingProduct->getId()]['configurator']);
+            $configurator->setUnserializedData($this->params['product']['configurator']);
 
-            $this->configurators[$listingProduct->getId()] = $configurator;
+            $this->configurator = $configurator;
         }
 
-        return $this->configurators[$listingProduct->getId()];
+        return $this->configurator;
     }
 
     // ########################################
 
     /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response
      */
-    protected function getResponseObject(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    protected function getResponseObject()
     {
-        if (!isset($this->responsesObjects[$listingProduct->getId()])) {
+        if (is_null($this->responseObject)) {
 
             /* @var $response \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Response */
             $response = $this->modelFactory->getObject(
@@ -514,34 +401,33 @@ abstract class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Command\Pend
             );
 
             $response->setParams($this->params['params']);
-            $response->setListingProduct($listingProduct);
-            $response->setConfigurator($this->getConfigurator($listingProduct));
-            $response->setRequestData($this->getRequestDataObject($listingProduct));
+            $response->setListingProduct($this->listingProduct);
+            $response->setConfigurator($this->getConfigurator());
+            $response->setRequestData($this->getRequestDataObject());
 
-            $this->responsesObjects[$listingProduct->getId()] = $response;
+            $this->responseObject = $response;
         }
 
-        return $this->responsesObjects[$listingProduct->getId()];
+        return $this->responseObject;
     }
 
     /**
-     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData
      */
-    protected function getRequestDataObject(\Ess\M2ePro\Model\Listing\Product $listingProduct)
+    protected function getRequestDataObject()
     {
-        if (!isset($this->requestsDataObjects[$listingProduct->getId()])) {
+        if (is_null($this->requestDataObject)) {
 
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Action\RequestData $requestData */
             $requestData = $this->modelFactory->getObject('Amazon\Listing\Product\Action\RequestData');
 
-            $requestData->setData($this->params['products'][$listingProduct->getId()]['request']);
-            $requestData->setListingProduct($listingProduct);
+            $requestData->setData($this->params['product']['request']);
+            $requestData->setListingProduct($this->listingProduct);
 
-            $this->requestsDataObjects[$listingProduct->getId()] = $requestData;
+            $this->requestDataObject = $requestData;
         }
 
-        return $this->requestsDataObjects[$listingProduct->getId()];
+        return $this->requestDataObject;
     }
 
     // ########################################

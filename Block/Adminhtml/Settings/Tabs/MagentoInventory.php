@@ -21,14 +21,13 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
             ]
         ]);
 
-        $urlComponents = $this->getHelper('Component')->getEnabledComponents();
-        $componentForUrl = count($urlComponents) == 1
-                           ? array_shift($urlComponents)
-                           : \Ess\M2ePro\Helper\Component\Ebay::NICK;
-
-        $fieldset = $form->addFieldset('configuration_settings_magento_inventory',
+        $fieldset = $form->addFieldset('configuration_settings_magento_inventory_quantity',
             [
-                'legend' => '', 'collapsable' => false,
+                'legend'      => $this->__('Quantity'),
+                'collapsable' => false,
+                'tooltip'     => $this->__(
+                    'In this section, you can provide the global settings for Inventory management.'
+                )
             ]
         );
 
@@ -45,9 +44,9 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
                     '/product/force_qty/','mode'
                 ),
                 'tooltip' => $this->__(
-                    'Choose whether M2E Pro should List Products on external Channels when Manage Stock is \'No\'
-                    or Backorders is enabled.
-                    <b>Disallow</b> is the recommended Setting if you are selling on eBay.'
+                    'Choose whether M2E Pro is allowed to List Products with unlimited stock or that are
+                    temporarily out of stock.<br>
+                    <b>Disallow</b> is the recommended setting for eBay Integration.'
                 )
             ]
         );
@@ -67,6 +66,42 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
                 'field_extra_attributes' => 'id="force_qty_value_tr"',
                 'class' => 'validate-greater-than-zero',
                 'required' => true
+            ]
+        );
+
+        $fieldset = $form->addFieldset('configuration_settings_magento_inventory_price',
+            [
+                'legend'      => $this->__('Price'),
+                'collapsable' => false,
+                'tooltip'     => $this->__(
+                    'In this section, you can provide the global settings for Product Price management.'
+                )
+            ]
+        );
+
+        $fieldset->addField('price_type_converting_mode',
+            self::SELECT,
+            [
+                'name' => 'price_type_converting_mode',
+                'label' => $this->__('Convert Magento Price Attribute'),
+                'values' => [
+                    0 => $this->__('No'),
+                    1 => $this->__('Yes')
+                ],
+                'value' => (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+                    '/magento/attribute/','price_type_converting'
+                ),
+                'tooltip' => $this->__(
+                    '<p>Choose whether Magento Price Attribute values should be converted automatically.
+                    With this option enabled, M2E Pro will provide currency conversion based on Magento
+                    Currency Settings.</p>
+                    <p><strong>For example</strong>, the Item Price is set to be taken from Magento Price
+                    Attribute (e.g. 5 USD).<br>
+                    If this Item is listed on Marketplace with a different Base Currency (e.g. GBP),
+                    the currency conversion is performed automatically based on the set exchange rate
+                    (e.g. 1 USD = 0.82 GBP).<br>
+                    The Item will be available on Channel at the Price of 4.1 GBP.</p>'
+                )
             ]
         );
 

@@ -15,14 +15,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
     protected $amazonFactory;
     protected $resourceConnection;
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Magento\Category\CollectionFactory $categoryCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
@@ -31,7 +31,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
     {
         $this->amazonFactory = $amazonFactory;
         $this->resourceConnection = $resourceConnection;
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
 
         parent::__construct($categoryCollectionFactory, $context, $backendHelper, $data);
     }
@@ -314,7 +314,9 @@ JS
         $categoriesData = array();
 
         foreach ($categoriesIds as $categoryId) {
-            $collection = $this->productFactory->create()->getCollection();
+
+            /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+            $collection = $this->magentoProductCollectionFactory->create();
             $collection->addFieldToFilter('entity_id', array('in' => $productsIds));
 
             $collection->joinTable(

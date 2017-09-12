@@ -89,11 +89,24 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                                         array $requestData = array(), $responseDataKey = NULL,
                                         $marketplace = NULL, $account = NULL, $requestTimeOut = NULL)
     {
-        $virtualConnector = $this->modelFactory->getObject('Connector\Command\RealTime\Virtual');
+        return $this->getCustomVirtualConnector(
+            'Connector\Command\RealTime\Virtual',
+            $entity, $type, $name,
+            $requestData, $responseDataKey, $marketplace, $account,
+            $requestTimeOut
+        );
+    }
+
+    public function getCustomVirtualConnector($modelName, $entity, $type, $name,
+                                              array $requestData = array(), $responseDataKey = NULL,
+                                              $marketplace = NULL, $account = NULL, $requestTimeOut = NULL)
+    {
+        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime\Virtual $virtualConnector */
+        $virtualConnector = $this->modelFactory->getObject($modelName);
         $virtualConnector->setProtocol($this->getProtocol());
         $virtualConnector->setCommand(array($entity, $type, $name));
         $virtualConnector->setResponseDataKey($responseDataKey);
-        $virtualConnector->setRequestTimeOut($requestTimeOut);
+        !is_null($requestTimeOut) && $virtualConnector->setRequestTimeOut($requestTimeOut);
 
         if (is_int($marketplace) || is_string($marketplace)) {
             $marketplace = $this->ebayFactory->getCachedObjectLoaded(

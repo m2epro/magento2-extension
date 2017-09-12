@@ -11,6 +11,7 @@ function(jQuery, confirm, localStorage) {
         // ---------------------------------------
 
         showConfirmMsg: true,
+        skipSaveConfirmationPostFix: '_skip_save_confirmation',
 
         // ---------------------------------------
 
@@ -24,7 +25,7 @@ function(jQuery, confirm, localStorage) {
         confirm: function(templateNick, confirmText, okCallback)
         {
             var self = this;
-            var skipConfirmation = localStorage.get(this.getComponent()+'_template_'+templateNick+'_skip_save_confirmation');
+            var skipConfirmation = localStorage.get(this.getComponent()+'_template_'+templateNick+self.skipSaveConfirmationPostFix);
 
             if (!confirmText || skipConfirmation) {
                 okCallback();
@@ -51,7 +52,7 @@ function(jQuery, confirm, localStorage) {
                 actions: {
                     confirm: function () {
                         if ($('do_not_show_again').checked) {
-                            localStorage.set(self.getComponent()+'_template_'+templateNick+'_skip_save_confirmation', 1);
+                            localStorage.set(self.getComponent()+'_template_'+templateNick+self.skipSaveConfirmationPostFix, 1);
                         }
 
                         okCallback();
@@ -112,6 +113,13 @@ function(jQuery, confirm, localStorage) {
             }
 
             $super(url, tabsId, true)
+        },
+
+        // ---------------------------------------
+
+        forgetSkipSaveConfirmation: function()
+        {
+            localStorage.removeAllByPostfix(this.skipSaveConfirmationPostFix);
         }
 
         // ---------------------------------------

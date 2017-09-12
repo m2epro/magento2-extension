@@ -57,6 +57,18 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    protected function prepareMetadata()
+    {
+        // backward compatibility for case when we have old request data and new response logic
+        $metadata = $this->getRequestMetaData();
+        if (!isset($metadata["is_listing_type_fixed"])) {
+            $metadata["is_listing_type_fixed"] = $this->getEbayListingProduct()->isListingTypeFixed();
+            $this->setRequestMetaData($metadata);
+        }
+    }
+
+    //########################################
+
     /**
      * @param array $params
      */
@@ -231,15 +243,15 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         );
 
         if ($this->getRequestData()->isVariationItem() && $this->getRequestData()->getVariations()) {
-            $requestData = $this->getRequestData()->getData();
 
             $variations = array();
+            $requestMetadata = $this->getRequestMetaData();
 
             foreach ($this->getRequestData()->getVariations() as $variation) {
                 $channelOptions = $variation['specifics'];
                 $productOptions = $variation['specifics'];
 
-                if (empty($requestData['variations_specifics_replacements'])) {
+                if (empty($requestMetadata['variations_specifics_replacements'])) {
                     $variations[] = array(
                         'product_options' => $productOptions,
                         'channel_options' => $channelOptions,
@@ -248,7 +260,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                     continue;
                 }
 
-                foreach ($requestData['variations_specifics_replacements'] as $productValue => $channelValue) {
+                foreach ($requestMetadata['variations_specifics_replacements'] as $productValue => $channelValue) {
                     if (!isset($productOptions[$channelValue])) {
                         continue;
                     }
@@ -355,7 +367,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function appendOnlineBidsValue($data)
     {
-        if ($this->getEbayListingProduct()->isListingTypeFixed()) {
+        $metadata = $this->getRequestMetaData();
+
+        if ($metadata["is_listing_type_fixed"]) {
             $data['online_bids'] = NULL;
         } else {
             $data['online_bids'] = 0;
@@ -379,7 +393,9 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function appendOnlinePriceValues($data)
     {
-        if ($this->getEbayListingProduct()->isListingTypeFixed()) {
+        $metadata = $this->getRequestMetaData();
+
+        if ($metadata["is_listing_type_fixed"]) {
 
             $data['online_start_price'] = NULL;
             $data['online_reserve_price'] = NULL;
@@ -569,6 +585,21 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             ? $response['variations_that_can_not_be_deleted'] : array();
 
         $data['additional_data']['variations_that_can_not_be_deleted'] = $variations;
+
+        return $data;
+    }
+
+    protected function appendIsVariationValue(array $data)
+    {
+        $data["online_is_variation"] = $this->getRequestData()->isVariationItem();
+
+        return $data;
+    }
+
+    protected function appendIsAuctionType(array $data)
+    {
+        $metadata = $this->getRequestMetaData();
+        $data["online_is_auction_type"] = !$metadata["is_listing_type_fixed"];
 
         return $data;
     }

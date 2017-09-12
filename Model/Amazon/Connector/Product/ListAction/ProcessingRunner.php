@@ -14,61 +14,42 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Amazon\Connector\Product\Proces
 
     protected function eventBefore()
     {
-        parent::eventBefore();
-
         $params = $this->getParams();
 
-        $skus = array();
+        $accountId = (int)$params['account_id'];
+        $sku       = (string)$params['request_data']['sku'];
 
-        foreach ($params['request_data']['items'] as $productData) {
-            $skus[] = $productData['sku'];
-        }
+        $processingActionListSku = $this->activeRecordFactory->getObject('Amazon\Processing\Action\ListAction\Sku');
+        $processingActionListSku->setData(array(
+            'account_id' => $accountId,
+            'sku'        => $sku,
+        ));
+        $processingActionListSku->save();
 
-        /** @var \Ess\M2ePro\Model\LockItem $lockItem */
-        $lockItem = $this->activeRecordFactory->getObject('LockItem');
-        $lockItem->setNick('amazon_list_skus_queue_' . $params['account_id']);
-
-        if ($lockItem->isExist()) {
-            $existSkus = $lockItem->getContentData();
-        } else {
-            $existSkus = array();
-            $lockItem->create();
-        }
-
-        $skus = array_map('strval', $skus);
-        $skus = array_merge($existSkus, $skus);
-
-        $lockItem->setContentData($skus);
+        parent::eventBefore();
     }
 
     protected function eventAfter()
     {
-        parent::eventAfter();
-
         $params = $this->getParams();
 
-        /** @var \Ess\M2ePro\Model\LockItem $lockItem */
-        $lockItem = $this->activeRecordFactory->getObject('LockItem');
-        $lockItem->setNick('amazon_list_skus_queue_' . $params['account_id']);
+        $accountId = (int)$params['account_id'];
+        $sku       = (string)$params['request_data']['sku'];
 
-        if (!$lockItem->isExist()) {
-            return;
+        $processingActionListSkuCollection = $this->activeRecordFactory
+                                                  ->getObject('Amazon\Processing\Action\ListAction\Sku')
+                                                  ->getCollection();
+        $processingActionListSkuCollection->addFieldToFilter('account_id', $accountId);
+        $processingActionListSkuCollection->addFieldToFilter('sku', $sku);
+
+        /** @var \Ess\M2ePro\Model\Amazon\Processing\Action\ListAction\Sku $processingActionListSku */
+        $processingActionListSku = $processingActionListSkuCollection->getFirstItem();
+
+        if ($processingActionListSku->getId()) {
+            $processingActionListSku->delete();
         }
 
-        $skusToRemove = array();
-
-        foreach ($params['request_data']['items'] as $productData) {
-            $skusToRemove[] = (string)$productData['sku'];
-        }
-
-        $resultSkus = array_diff($lockItem->getContentData(), $skusToRemove);
-
-        if (empty($resultSkus)) {
-            $lockItem->remove();
-            return;
-        }
-
-        $lockItem->setContentData($resultSkus);
+        parent::eventAfter();
     }
 
     // ########################################

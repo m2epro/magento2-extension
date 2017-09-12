@@ -39,46 +39,59 @@ class Logger extends \Ess\M2ePro\Helper\AbstractHelper
     {
         try {
 
-            $this->log($logData, $type);
+            $info  = $this->getLogMessage($logData, $type);
+            $info .= $this->getStackTraceInfo();
+            $info .= $this->getCurrentUserActionInfo();
+
+            $this->log($info, $type);
 
             if (!$sendToServer || !(bool)(int)$this->moduleConfig->getGroupValue('/debug/logging/', 'send_to_server')) {
                 return;
             }
 
             $type = is_null($type) ? 'undefined' : $type;
+            $info .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
 
-            $logData = $this->prepareLogMessage($logData, $type);
-            $logData .= $this->getCurrentUserActionInfo();
-            $logData .= $this->getHelper('Module\Support\Form')->getSummaryInfo();
-
-            $this->send($logData, $type);
+            $this->send($info, $type);
 
         } catch (\Exception $exceptionTemp) {}
     }
 
     //########################################
 
-    private function prepareLogMessage($logData, $type)
-    {
-        !is_string($logData) && $logData = print_r($logData, true);
-
-        $logData = '[DATE] '.date('Y-m-d H:i:s',(int)gmdate('U')).PHP_EOL.
-                   '[TYPE] '.$type.PHP_EOL.
-                   '[MESSAGE] '.$logData.PHP_EOL.
-                   str_repeat('#',80).PHP_EOL.PHP_EOL;
-
-        return $logData;
-    }
-
-    private function log($logData, $type)
+    private function log($info, $type)
     {
         /** @var \Ess\M2ePro\Model\Log\System $log */
         $log = $this->logSystemFactory->create();
 
         $log->setType(is_null($type) ? 'Logging' : "{$type} Logging");
-        $log->setDescription(is_string($logData) ? $logData : print_r($logData, true));
+        $log->setDescription($info);
 
         $log->save();
+    }
+
+    private function getLogMessage($logData, $type)
+    {
+        !is_string($logData) && $logData = print_r($logData, true);
+
+        $logData = '[DATE] '.date('Y-m-d H:i:s',(int)gmdate('U')).PHP_EOL.
+            '[TYPE] '.$type.PHP_EOL.
+            '[MESSAGE] '.$logData.PHP_EOL.
+            str_repeat('#',80).PHP_EOL.PHP_EOL;
+
+        return $logData;
+    }
+
+    private function getStackTraceInfo()
+    {
+        $exception = new \Exception('');
+        $stackTraceInfo = <<<TRACE
+-------------------------------- STACK TRACE INFO --------------------------------
+{$exception->getTraceAsString()}
+
+TRACE;
+
+        return $stackTraceInfo;
     }
 
     //########################################

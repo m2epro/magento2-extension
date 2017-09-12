@@ -14,17 +14,22 @@ class Index extends \Magento\Framework\App\Action\Action
     /** @var \Magento\Framework\App\Config\ScopeConfigInterface */
     private $config;
 
+    /** @var \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory */
+    private $responseFactory;
+
     //########################################
 
     public function __construct(
         Context $context,
         Service $serviceCronRunner,
-        \Magento\PageCache\Model\Config $config
+        \Magento\PageCache\Model\Config $config,
+        \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory $responseFactory
     )
     {
         parent::__construct($context);
         $this->serviceCronRunner = $serviceCronRunner;
         $this->config = $config;
+        $this->responseFactory = $responseFactory;
     }
 
     //########################################
@@ -41,11 +46,23 @@ class Index extends \Magento\Framework\App\Action\Action
 
         $this->serviceCronRunner->process();
 
-        // Magento is going to set a special cookie for Varnish to prevent caching of POST requests.
-        // An error "Headers already sent" will be thrown as we've already closed connection with server.
+        /*
+         * Magento is going to set a special cookie for Varnish to prevent caching of POST requests.
+         * An error "Headers already sent" will be thrown as we've already closed connection with server.
+         *
+         * vendor\magento\module-page-cache\Model\App\FrontController\VarnishPlugin.php
+         */
         if ($this->config->getType() == \Magento\PageCache\Model\Config::VARNISH && $this->config->isEnabled()) {
             die;
         }
+
+        /*
+         * Magento is going to set a special cookie for Caching Systems to mark page content.
+         *
+         * http://devdocs.magento.com/guides/v2.0/config-guide/cache/cache-priv-context.html
+         * vendor\magento\module-page-cache\Model\App\Response\HttpPlugin.php
+         */
+        return $this->responseFactory->create();
     }
 
     //########################################

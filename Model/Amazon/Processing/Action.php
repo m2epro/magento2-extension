@@ -21,10 +21,10 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //####################################
 
     /** @var \Ess\M2ePro\Model\Processing $processing */
-    private $processing = null;
+    private $processing = NULL;
 
-    /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Processing\Action\Item\Collection $itemCollection */
-    private $itemCollection = null;
+    /** @var \Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle */
+    private $requestPendingSingle = NULL;
 
     //####################################
 
@@ -63,20 +63,33 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
 
     //------------------------------------
 
-    public function getItemCollection()
+    public function setRequestPendingSingle(\Ess\M2ePro\Model\Request\Pending\Single $requestPendingSingle)
+    {
+        $this->requestPendingSingle = $requestPendingSingle;
+        return $this;
+    }
+
+    /**
+     * @return \Ess\M2ePro\Model\Request\Pending\Single
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getRequestPendingSingle()
     {
         if (!$this->getId()) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Instance must be loaded first.');
         }
 
-        if (!is_null($this->itemCollection)) {
-            return $this->itemCollection;
+        if (!$this->getRequestPendingSingleId()) {
+            return null;
         }
 
-        $this->itemCollection = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getCollection();
-        $this->itemCollection->setActionFilter($this);
+        if (!is_null($this->requestPendingSingle)) {
+            return $this->requestPendingSingle;
+        }
 
-        return $this->itemCollection;
+        return $this->requestPendingSingle = $this->activeRecordFactory->getObjectLoaded(
+            'Request\Pending\Single', $this->getRequestPendingSingleId()
+        );
     }
 
     //####################################
@@ -91,22 +104,29 @@ class Action extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         return (int)$this->getData('processing_id');
     }
 
+    public function getRequestPendingSingleId()
+    {
+        return (int)$this->getData('request_pending_single_id');
+    }
+
+    public function getRelatedId()
+    {
+        return (int)$this->getData('related_id');
+    }
+
     public function getType()
     {
         return (int)$this->getData('type');
     }
 
-    //####################################
-
-    public function delete()
+    public function getRequestData()
     {
-        if (!parent::delete()) {
-            return false;
-        }
+        return $this->getSettings('request_data');
+    }
 
-        $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item')->getResource()->deleteByAction($this);
-
-        return true;
+    public function getStartDate()
+    {
+        return (string)$this->getData('start_date');
     }
 
     //####################################

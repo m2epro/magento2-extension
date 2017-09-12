@@ -38,14 +38,23 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $rawMagentoVariations = $listingProduct->getMagentoProduct()
                                                ->getVariationInstance()
                                                ->getVariationsTypeStandard();
+
+        if (empty($rawMagentoVariations['set']) || !is_array($rawMagentoVariations['set']) ||
+            empty($rawMagentoVariations['variations']) || !is_array($rawMagentoVariations['variations'])) {
+
+            $rawMagentoVariations = array(
+                'set'        => array(),
+                'variations' => array()
+            );
+        }
+
         $rawMagentoVariations = $this->getHelper('Component\Ebay')
                                             ->reduceOptionsForVariations($rawMagentoVariations);
 
-        $rawMagentoVariations = $this->validateExistenceConditions($rawMagentoVariations,$listingProduct);
-
         $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
 
-        if (!$listingProduct->getMagentoProduct()->isSimpleType()) {
+        if (!$listingProduct->getMagentoProduct()->isSimpleType() &&
+            !$listingProduct->getMagentoProduct()->isDownloadableType()) {
             $this->inspectAndFixProductOptionsIds($listingProduct, $magentoVariations);
         }
 
@@ -61,22 +70,6 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
     }
 
     //########################################
-
-    protected function validateExistenceConditions($sourceVariations,
-                                                   \Ess\M2ePro\Model\Listing\Product $listingProduct)
-    {
-        if (!isset($sourceVariations['set']) || !isset($sourceVariations['variations']) ||
-            !is_array($sourceVariations['set']) || !is_array($sourceVariations['variations']) ||
-            !count($sourceVariations['set']) || !count($sourceVariations['variations'])) {
-
-            return array(
-                'set' => array(),
-                'variations' => array()
-            );
-        }
-
-        return $sourceVariations;
-    }
 
     protected function saveVariationsData(\Ess\M2ePro\Model\Listing\Product $listingProduct, $variationsData)
     {

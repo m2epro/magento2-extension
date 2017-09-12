@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Controller\Adminhtml\HealthStatus;
 
 use Ess\M2ePro\Controller\Adminhtml\HealthStatus;
+use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
 
 class Save extends HealthStatus
 {
@@ -28,29 +29,37 @@ class Save extends HealthStatus
 
     public function execute()
     {
-        $settings = $this->getRequest()->getPostValue('settings');
-        $settings = $this->helperFactory->getObject('Data')->jsonDecode($settings);
+        $referrer = $this->getRequest()->getParam('referrer', false);
+        $postData = $this->getRequest()->getPost()->toArray();
 
-        if (empty($settings)) {
-            $this->setAjaxContent(json_encode(['success' => false]), false);
-            return $this->getResult();
-        }
-
-        foreach ($settings as $settingEntity) {
-
-            if (!isset($settingEntity['group'], $settingEntity['key'], $settingEntity['value'])) {
-
-                $this->setAjaxContent(json_encode(['success' => false]), false);
-                return $this->getResult();
-            }
+        if (isset($postData['notification_mode'])) {
 
             $this->moduleConfig->setGroupValue(
-                $settingEntity['group'], $settingEntity['key'], $settingEntity['value']
+                '/health_status/notification/', 'mode', (int)$postData['notification_mode']
             );
         }
 
-        $this->setAjaxContent(json_encode(['success' => true]), false);
-        return $this->getResult();
+        if (isset($postData['notification_email'])) {
+
+            $this->moduleConfig->setGroupValue(
+                '/health_status/notification/', 'email', $postData['notification_email']
+            );
+        }
+
+        if (isset($postData['notification_level'])) {
+
+            $this->moduleConfig->setGroupValue(
+                '/health_status/notification/', 'level', (int)$postData['notification_level']
+            );
+        }
+
+        $this->getMessageManager()->addSuccessMessage($this->__('Settings are successfully saved.'));
+
+        $params = [];
+        $params['tab'] = Tabs::TAB_ID_NOTIFICATIONS;
+        $referrer && $params['referrer'] = $referrer;
+
+        $this->_redirect('*/*/index', $params);
     }
 
     //########################################

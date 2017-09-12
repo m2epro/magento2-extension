@@ -140,9 +140,17 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ItemsRespo
 
     private function processAmazonOrders(array $ordersData, \Ess\M2ePro\Model\Account $account)
     {
+        $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
+
         $orders = array();
 
         foreach ($ordersData as $orderData) {
+
+            $orderCreateDate = new \DateTime($orderData['purchase_create_date'], new \DateTimeZone('UTC'));
+            if ($orderCreateDate < $accountCreateDate) {
+                continue;
+            }
+
             /** @var $orderBuilder \Ess\M2ePro\Model\Amazon\Order\Builder */
             $orderBuilder = $this->orderBuilderFactory->create();
             $orderBuilder->initialize($account, $orderData);
@@ -167,6 +175,11 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ItemsRespo
     {
         foreach ($amazonOrders as $order) {
             /** @var $order \Ess\M2ePro\Model\Order */
+
+            if ($this->isOrderChangedInParallelProcess($order)) {
+                continue;
+            }
+
             $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
             if ($order->canCreateMagentoOrder()) {
@@ -191,6 +204,24 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Get\ItemsRespo
                 $order->updateMagentoOrderStatus();
             }
         }
+    }
+
+    /**
+     * This is going to protect from Magento Orders duplicates.
+     * (Is assuming that there may be a parallel process that has already created Magento Order)
+     *
+     * But this protection is not covering a cases when two parallel cron processes are isolated by mysql transactions
+     */
+    private function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)
+    {
+        /** @var \Ess\M2ePro\Model\Order $dbOrder */
+        $dbOrder = $this->activeRecordFactory->getObject('Order')->load($order->getId());
+
+        if ($dbOrder->getMagentoOrderId() != $order->getMagentoOrderId()) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

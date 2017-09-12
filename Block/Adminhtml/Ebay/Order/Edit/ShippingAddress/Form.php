@@ -43,7 +43,7 @@ class Form extends AbstractForm
             [
                 'name' => 'buyer_name',
                 'label' => $this->__('Buyer Name'),
-                'value' => $this->getHelper('Data')->escapeHtml($order->getData('buyer_name')),
+                'value' => $order->getData('buyer_name'),
                 'required' => true,
             ]
         );
@@ -54,7 +54,7 @@ class Form extends AbstractForm
             [
                 'name' => 'buyer_email',
                 'label' => $this->__('Buyer Email'),
-                'value' => $this->getHelper('Data')->escapeHtml($buyerEmail),
+                'value' => $buyerEmail,
                 'required' => true,
             ]
         );
@@ -88,7 +88,7 @@ class Form extends AbstractForm
             [
                 'name' => 'city',
                 'label' => $this->__('City'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['city']),
+                'value' => $address['city'],
                 'required' => true,
             ]
         );
@@ -120,7 +120,7 @@ class Form extends AbstractForm
             [
                 'name' => 'postal_code',
                 'label' => $this->__('Zip/Postal Code'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['postal_code']),
+                'value' => $address['postal_code'],
             ]
         );
 
@@ -130,7 +130,7 @@ class Form extends AbstractForm
             [
                 'name' => 'phone',
                 'label' => $this->__('Telephone'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['phone']),
+                'value' => $address['phone'],
             ]
         );
 

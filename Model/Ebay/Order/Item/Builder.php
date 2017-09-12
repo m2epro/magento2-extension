@@ -48,6 +48,7 @@ class Builder extends AbstractModel
         $this->setData('qty_purchased', (int)$data['selling']['qty_purchased']);
         $this->setData('tax_details', $this->getHelper('Data')->jsonEncode($data['selling']['tax_details']));
         $this->setData('final_fee', (float)$data['selling']['final_fee']);
+        $this->setData('waste_recycling_fee', (float)$data['selling']['waste_recycling_fee']);
         // ---------------------------------------
 
         // ---------------------------------------

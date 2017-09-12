@@ -117,13 +117,16 @@ final class Update extends AbstractModel
             return;
         }
 
-        $items = array();
-        $changesIds = array();
+        $this->activeRecordFactory->getObject('Order\Change')->getResource()
+            ->incrementAttemptCount(array_keys($relatedChanges));
+
+        /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
 
         foreach ($relatedChanges as $change) {
             $changeParams = $change->getParams();
 
-            $items[] = array(
+            $connectorData = array(
                 'order_id'         => $change->getOrderId(),
                 'change_id'        => $change->getId(),
                 'amazon_order_id'  => $changeParams['amazon_order_id'],
@@ -134,27 +137,21 @@ final class Update extends AbstractModel
                 'items'            => $changeParams['items']
             );
 
-            $changesIds[] = $change->getId();
+            $connectorObj = $dispatcherObject->getCustomConnector(
+                'Amazon\Synchronization\Orders\Update\Requester',
+                array('order' => $connectorData),
+                $account
+            );
+            $dispatcherObject->process($connectorObj);
         }
-
-        if (empty($items)) {
-            return;
-        }
-
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->incrementAttemptCount($changesIds);
-
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Synchronization\Orders\Update\Requester',
-            array('items' => $items),
-            $account
-        );
-        $dispatcherObject->process($connectorObj);
     }
 
     //########################################
 
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return \Ess\M2ePro\Model\Order\Change[]
+     */
     private function getRelatedChanges(\Ess\M2ePro\Model\Account $account)
     {
         $changesCollection = $this->activeRecordFactory->getObject('Order\Change')->getCollection();

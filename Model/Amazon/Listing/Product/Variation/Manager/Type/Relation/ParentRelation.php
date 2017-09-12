@@ -131,7 +131,6 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             'additional_data', 'variation_product_attributes', $this->getRealMagentoAttributes()
         );
 
-        $this->setVirtualProductAttributes(array(), false);
         $this->setVirtualChannelAttributes(array(), false);
 
         $this->restoreAllRemovedProductOptions(false);
@@ -319,7 +318,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         );
 
         if (empty($matchedAttributes)) {
-            return NULL;
+            return array();
         }
 
         ksort($matchedAttributes);
@@ -481,7 +480,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         );
 
         if (empty($attributesSets)) {
-            return null;
+            return array();
         }
 
         foreach ($this->getVirtualChannelAttributes() as $virtualAttribute => $virtualValue) {
@@ -533,7 +532,7 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
         );
 
         if (empty($channelVariations)) {
-            return null;
+            return array();
         }
 
         $virtualChannelAttributes = $this->getVirtualChannelAttributes();
@@ -823,6 +822,9 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             'is_variation_parent'     => 0,
             'variation_parent_id'     => $this->getListingProduct()->getId(),
             'template_description_id' => $this->getAmazonListingProduct()->getTemplateDescriptionId(),
+            'template_shipping_template_id' => $this->getAmazonListingProduct()->getTemplateShippingTemplateId(),
+            'template_shipping_override_id' => $this->getAmazonListingProduct()->getTemplateShippingOverrideId(),
+            'template_product_tax_code_id'  => $this->getAmazonListingProduct()->getTemplateProductTaxCodeId(),
         );
 
         /** @var \Ess\M2ePro\Model\Listing\Product $childListingProduct */
@@ -904,8 +906,12 @@ class ParentRelation extends \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\
             /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager $childVariationManager */
             $childVariationManager = $childListingProduct->getChildObject()->getVariationManager();
 
-            $childVariationManager->getTypeModel()->unsetChannelVariation();
-            $childVariationManager->setIndividualType();
+            if ($this->getMagentoProduct()->isProductWithVariations()) {
+                $childVariationManager->getTypeModel()->unsetChannelVariation();
+                $childVariationManager->setIndividualType();
+            } else {
+                $childVariationManager->setSimpleType();
+            }
 
             $childListingProduct->save();
         }

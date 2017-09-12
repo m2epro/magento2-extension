@@ -6,10 +6,11 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Ebay\Listing;
+
 /**
  * @method \Ess\M2ePro\Model\Listing\Product getParentObject()
  */
-namespace Ess\M2ePro\Model\Ebay\Listing;
 
 class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -107,6 +108,10 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         return parent::delete();
     }
+
+    //########################################
+
+    public function afterSaveNewEntity() {}
 
     //########################################
 
@@ -576,6 +581,24 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function isSetOtherCategoryTemplate()
     {
         return !is_null($this->getTemplateOtherCategoryId());
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return bool
+     */
+    public function isOnlineVariation()
+    {
+        return (bool)$this->getData("online_is_variation");
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOnlineAuctionType()
+    {
+        return (bool)$this->getData("online_is_auction_type");
     }
 
     // ---------------------------------------
@@ -1077,7 +1100,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::BEST_OFFER_ACCEPT_MODE_ATTRIBUTE:
-                $price = (float)$this->getMagentoProduct()->getAttributeValue($src['attribute']);
+                $price = (float)$this->getHelper('Magento\Attribute')
+                    ->convertAttributeTypePriceFromStoreToMarketplace(
+                        $this->getMagentoProduct(),
+                        $src['attribute'],
+                        $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
+                        $this->getListing()->getStoreId()
+                    );
                 break;
         }
 
@@ -1110,7 +1139,13 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
                 break;
 
             case \Ess\M2ePro\Model\Ebay\Template\SellingFormat::BEST_OFFER_REJECT_MODE_ATTRIBUTE:
-                $price = (float)$this->getMagentoProduct()->getAttributeValue($src['attribute']);
+                $price = (float)$this->getHelper('Magento\Attribute')
+                    ->convertAttributeTypePriceFromStoreToMarketplace(
+                        $this->getMagentoProduct(),
+                        $src['attribute'],
+                        $this->getEbayListing()->getEbayMarketplace()->getCurrency(),
+                        $this->getListing()->getStoreId()
+                    );
                 break;
         }
 
@@ -1212,6 +1247,58 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
         }
         $this->getResource()->setSynchStatusNeedByCategoryTemplate($newData,$oldData,$listingProductData);
         $this->getResource()->setSynchStatusNeedByOtherCategoryTemplate($newData,$oldData,$listingProductData);
+    }
+
+    // ---------------------------------------
+
+    public function clearParentIndexer()
+    {
+        $manager = $this->modelFactory->getObject('Indexer\Listing\Product\VariationParent\Manager', [
+            'listing' => $this->getListing()
+        ]);
+        $manager->markInvalidated();
+    }
+
+    //########################################
+
+    public function beforeSave()
+    {
+        if ($this->isObjectCreatingState()) {
+            $this->setData('item_uuid', $this->generateItemUUID());
+        }
+
+        return parent::beforeSave();
+    }
+
+    public function afterSave()
+    {
+        if ($this->isObjectCreatingState()) {
+
+            $this->clearParentIndexer();
+        } else {
+
+            /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
+            $resource = $this->activeRecordFactory->getObject(
+                'Ebay\Indexer\Listing\Product\VariationParent'
+            )->getResource();
+
+            foreach ($resource->getTrackedFields() as $fieldName) {
+                if ($this->getData($fieldName) != $this->getOrigData($fieldName)) {
+
+                    $this->clearParentIndexer();
+                    break;
+                }
+            }
+        }
+
+        return parent::afterSave();
+    }
+
+    public function beforeDelete()
+    {
+        $this->clearParentIndexer();
+
+        parent::beforeDelete();
     }
 
     //########################################

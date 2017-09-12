@@ -18,7 +18,7 @@ class SynchCheckProcessingNow extends Settings
     {
         $warningMessages = array();
 
-        $Processing = $this->activeRecordFactory->getObject('LockItem')->getCollection()
+        $Processing = $this->activeRecordFactory->getObject('Lock\Item')->getCollection()
             ->addFieldToFilter('nick', array('like' => 'synchronization_amazon%'))
             ->getSize();
 

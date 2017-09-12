@@ -33,13 +33,16 @@ class ShippingSettings extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-There are several modes available for working with Shipping settings on Amazon:<br/><br/>
-&nbsp;&nbsp;Global settings with the ability to override the configurations for the particular Product(s)
-(Shipping Override Policy);<br />
-&nbsp;&nbsp;Shipping Templates which allow identifying settings for the particular Product(s).<br/><br/>
-M2E Pro supports both of the Amazon Shipping configurations. So, on this page you should select
-the Mode which is enabled in your Amazon Account configurations.
+                There are several modes available for working with Shipping settings on Amazon:<br/><br/>
+                Global settings with the ability to override the configurations for the particular Product(s)
+                (Shipping Override Policy);<br />
+                Shipping Templates which allow identifying settings for the particular Product(s).<br/><br/>
+                M2E Pro supports both of the Amazon Shipping configurations. So, on this page you should select
+                the Mode which is enabled in your Amazon Account configurations.
+                More detailed information about how to work with this Page you can find
+                <a href="%url%" target="_blank">here</a>.
 HTML
+                    ,$this->getHelper('Module\Support')->getDocumentationArticleUrl("x/yQA9AQ")
                 )
             ]
         );

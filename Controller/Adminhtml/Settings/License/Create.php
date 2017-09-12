@@ -41,29 +41,6 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
                 return $this->getResult();
             }
 
-            $registry = $this->activeRecordFactory->getObjectLoaded(
-                'Registry', '/wizard/license_form_data/', 'key', false
-            );
-
-            if (is_null($registry)) {
-                $registry = $this->activeRecordFactory->getObject('Registry');
-            }
-
-            $earlierFormData = $registry->getData('value');
-
-            if (!empty($earlierFormData)) {
-                $earlierFormData = $this->getHelper('Data')->jsonDecode($earlierFormData);
-
-                if ($earlierFormData == $licenseData) {
-
-                    $this->setJsonContent(array(
-                        'success' => true,
-                        'message' => $this->__('The License Key has been successfully created.')
-                    ));
-                    return $this->getResult();
-                }
-            }
-
             $primaryConfig = $this->getHelper('Primary')->getConfig();
             $oldLicenseKey = $primaryConfig->getGroupValue('/license/', 'key');
             $primaryConfig->setGroupValue('/license/', 'key', '');
@@ -76,6 +53,14 @@ class Create extends \Ess\M2ePro\Controller\Adminhtml\Base
             );
 
             if ($licenseResult) {
+
+                $registry = $this->activeRecordFactory->getObjectLoaded(
+                    'Registry', '/wizard/license_form_data/', 'key', false
+                );
+
+                if (is_null($registry)) {
+                    $registry = $this->activeRecordFactory->getObject('Registry');
+                }
 
                 $registry->setData('key', '/wizard/license_form_data/');
                 $registry->setData('value', $this->getHelper('Data')->jsonEncode($licenseData));

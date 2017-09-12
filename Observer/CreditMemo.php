@@ -127,46 +127,13 @@ class CreditMemo extends AbstractModel
                 }
             }
 
-            $result = $amazonOrder->refund($itemsForCancel);
-
-            if ($result) {
-                $this->addSessionSuccessMessage();
-            } else {
-                $this->addSessionErrorMessage($order);
-            }
+            $amazonOrder->refund($itemsForCancel);
 
         } catch (\Exception $exception) {
 
             $this->getHelper('Module\Exception')->process($exception);
 
         }
-    }
-
-    //########################################
-
-    private function addSessionSuccessMessage()
-    {
-        $this->messageManager->addSuccess(
-            $this->getHelper('Module\Translation')->__('Cancel Amazon Order in Progress...')
-        );
-    }
-
-    private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
-    {
-        $url = $this->urlBuilder->getUrl(
-            '*/amazon_log_order/index', array('order_id' => $order->getId())
-        );
-
-        // M2ePro\TRANSLATIONS
-        // Cancel for Amazon Order was not performed. View <a href="%url%" target="_blank" >order log</a> for more details.
-        $message = $this->getHelper('Module\Translation')->__(
-            'Cancel for Amazon Order was not performed.'.
-            ' View <a href="%url% target="_blank" >order log</a>'.
-            ' for more details.',
-            $url
-        );
-
-        $this->messageManager->addError($message);
     }
 
     //########################################

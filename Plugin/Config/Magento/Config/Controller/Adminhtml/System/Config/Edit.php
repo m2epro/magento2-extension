@@ -27,16 +27,16 @@ class Edit extends \Ess\M2ePro\Plugin\AbstractPlugin
         return true;
     }
 
-    public function aroundExecute($interceptor, \Closure $callback)
+    public function aroundExecute($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('execute', $interceptor, $callback);
+        return $this->execute('execute', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processExecute($interceptor, \Closure $callback)
+    protected function processExecute($interceptor, \Closure $callback, array $arguments)
     {
-        $result = $callback();
+        $result = $callback(...$arguments);
 
         if ($result instanceof \Magento\Backend\Model\View\Result\Redirect) {
             return $result;

@@ -49,7 +49,7 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
 
         if (!is_null($repricingDisabled)) {
-            $listingOtherCollection->addFieldToFilter('is_repricing_disabled', $repricingDisabled);
+            $listingOtherCollection->addFieldToFilter('is_repricing_disabled', (int)$repricingDisabled);
         }
 
         $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
@@ -66,25 +66,45 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
                                           array $filters = array(),
                                           array $columns = array())
     {
-        $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
+        $result = [];
+        $skuWithQuotes = false;
 
-        if (!empty($skus)) {
-            $skus = array_map(function($el){ return (string)$el; }, $skus);
-            $listingOtherCollection->addFieldToFilter('sku', array('in' => array_unique($skus)));
-        }
-
-        if (!empty($filters)) {
-            foreach ($filters as $columnName => $columnValue) {
-                $listingOtherCollection->addFieldToFilter($columnName, $columnValue);
+        foreach ($skus as $sku) {
+            if (strpos($sku, '"') !== false) {
+                $skuWithQuotes = true;
+                break;
             }
         }
 
-        if (!empty($columns)) {
-            $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingOtherCollection->getSelect()->columns($columns);
+        $skus = (empty($skus) || !$skuWithQuotes) ? [$skus] : array_chunk($skus, 500);
+
+        foreach ($skus as $skusChunk) {
+
+            $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
+
+            if (!empty($skusChunk)) {
+                $skusChunk = array_map(function($el){ return (string)$el; }, $skusChunk);
+                $listingOtherCollection->addFieldToFilter('sku', array('in' => array_unique($skusChunk)));
+            }
+
+            if (!empty($filters)) {
+                foreach ($filters as $columnName => $columnValue) {
+                    $listingOtherCollection->addFieldToFilter($columnName, $columnValue);
+                }
+            }
+
+            if (!empty($columns)) {
+                $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+                $listingOtherCollection->getSelect()->columns($columns);
+            }
+
+            $result = array_merge(
+                $result,
+                $listingOtherCollection->getData()
+            );
         }
 
-        return $listingOtherCollection->getData();
+        return $result;
     }
 
     //########################################

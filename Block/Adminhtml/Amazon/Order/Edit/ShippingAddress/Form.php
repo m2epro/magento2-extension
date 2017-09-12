@@ -40,7 +40,7 @@ class Form extends AbstractForm
             [
                 'name' => 'buyer_name',
                 'label' => $this->__('Buyer Name'),
-                'value' => $this->getHelper('Data')->escapeHtml($order->getChildObject()->getData('buyer_name')),
+                'value' => $order->getChildObject()->getData('buyer_name'),
                 'required' => true,
             ]
         );
@@ -51,7 +51,7 @@ class Form extends AbstractForm
             [
                 'name' => 'buyer_email',
                 'label' => $this->__('Buyer Email'),
-                'value' => $this->getHelper('Data')->escapeHtml($order->getChildObject()->getData('buyer_email')),
+                'value' => $order->getChildObject()->getData('buyer_email'),
                 'required' => true,
             ]
         );
@@ -96,7 +96,7 @@ class Form extends AbstractForm
             [
                 'name' => 'city',
                 'label' => $this->__('City'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['city']),
+                'value' => $address['city'],
                 'required' => true,
             ]
         );
@@ -128,7 +128,7 @@ class Form extends AbstractForm
             [
                 'name' => 'county',
                 'label' => $this->__('County'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['county']),
+                'value' => $address['county'],
             ]
         );
 
@@ -138,7 +138,7 @@ class Form extends AbstractForm
             [
                 'name' => 'postal_code',
                 'label' => $this->__('Zip/Postal Code'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['postal_code']),
+                'value' => $address['postal_code'],
             ]
         );
 
@@ -148,7 +148,7 @@ class Form extends AbstractForm
             [
                 'name' => 'phone',
                 'label' => $this->__('Telephone'),
-                'value' => $this->getHelper('Data')->escapeHtml($address['phone']),
+                'value' => $address['phone'],
             ]
         );
 

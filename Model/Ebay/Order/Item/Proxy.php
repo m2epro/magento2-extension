@@ -46,6 +46,13 @@ class Proxy extends \Ess\M2ePro\Model\Order\Item\Proxy
 
     //########################################
 
+    public function getWasteRecyclingFee()
+    {
+        return $this->item->getWasteRecyclingFee();
+    }
+
+    //########################################
+
     /**
      * @return array
      */

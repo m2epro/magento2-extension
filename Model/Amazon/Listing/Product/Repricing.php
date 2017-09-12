@@ -184,18 +184,30 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
         }
 
         $source        = $this->getAccountRepricing()->getRegularPriceSource();
+        $sourceModeMapping = array(
+            PriceCalculator::MODE_NONE      => AccountRepricing::PRICE_MODE_MANUAL,
+            PriceCalculator::MODE_PRODUCT   => AccountRepricing::PRICE_MODE_PRODUCT,
+            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            PriceCalculator::MODE_SPECIAL   => AccountRepricing::PRICE_MODE_SPECIAL,
+        );
         $coefficient   = $this->getAccountRepricing()->getRegularPriceCoefficient();
         $variationMode = $this->getAccountRepricing()->getRegularPriceVariationMode();
 
         if ($source['mode'] == AccountRepricing::REGULAR_PRICE_MODE_PRODUCT_POLICY) {
             $amazonSellingFormatTemplate = $this->getAmazonListingProduct()->getAmazonSellingFormatTemplate();
 
-            $source        = $amazonSellingFormatTemplate->getPriceSource();
-            $coefficient   = $amazonSellingFormatTemplate->getPriceCoefficient();
-            $variationMode = $amazonSellingFormatTemplate->getPriceVariationMode();
+            $source        = $amazonSellingFormatTemplate->getRegularPriceSource();
+            $sourceModeMapping = array(
+                PriceCalculator::MODE_NONE      => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
+                PriceCalculator::MODE_PRODUCT   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
+                PriceCalculator::MODE_SPECIAL   => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL,
+                PriceCalculator::MODE_ATTRIBUTE => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE,
+            );
+            $coefficient   = $amazonSellingFormatTemplate->getRegularPriceCoefficient();
+            $variationMode = $amazonSellingFormatTemplate->getRegularPriceVariationMode();
         }
 
-        $calculator = $this->getPriceCalculator($source, $coefficient, $variationMode);
+        $calculator = $this->getPriceCalculator($source, $sourceModeMapping, $coefficient, $variationMode);
 
         if ($this->getVariationManager()->isPhysicalUnit() &&
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
@@ -233,8 +245,16 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return $value <= 0 ? 0 : (float)$value;
         }
 
+        $sourceModeMapping = array(
+            PriceCalculator::MODE_NONE      => AccountRepricing::PRICE_MODE_MANUAL,
+            PriceCalculator::MODE_PRODUCT   => AccountRepricing::PRICE_MODE_PRODUCT,
+            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            PriceCalculator::MODE_SPECIAL   => AccountRepricing::PRICE_MODE_SPECIAL,
+        );
+
         $calculator = $this->getPriceCalculator(
             $source,
+            $sourceModeMapping,
             $this->getAccountRepricing()->getMinPriceCoefficient(),
             $this->getAccountRepricing()->getMinPriceVariationMode()
         );
@@ -275,8 +295,16 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return $value <= 0 ? 0 : (float)$value;
         }
 
+        $sourceModeMapping = array(
+            PriceCalculator::MODE_NONE      => AccountRepricing::PRICE_MODE_MANUAL,
+            PriceCalculator::MODE_PRODUCT   => AccountRepricing::PRICE_MODE_PRODUCT,
+            PriceCalculator::MODE_ATTRIBUTE => AccountRepricing::PRICE_MODE_ATTRIBUTE,
+            PriceCalculator::MODE_SPECIAL   => AccountRepricing::PRICE_MODE_SPECIAL,
+        );
+
         $calculator = $this->getPriceCalculator(
             $source,
+            $sourceModeMapping,
             $this->getAccountRepricing()->getMaxPriceCoefficient(),
             $this->getAccountRepricing()->getMaxPriceVariationMode()
         );
@@ -323,7 +351,10 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             return $isDisabled;
         }
 
-        if ($this->getMagentoProduct()->isSimpleType() || $this->getMagentoProduct()->isBundleType()) {
+        if ($this->getMagentoProduct()->isSimpleType() ||
+            $this->getMagentoProduct()->isBundleType() ||
+            $this->getMagentoProduct()->isDownloadableType()
+        ) {
             return $isDisabled;
         }
 
@@ -333,15 +364,23 @@ class Repricing extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     //########################################
 
     /**
-     * @param array $src
+     * @param array  $source
+     * @param array  $sourceModeMapping
      * @param string $coefficient
-     * @param int $priceVariationMode
+     * @param int    $priceVariationMode
      * @return PriceCalculator
      */
-    private function getPriceCalculator(array $src, $coefficient = NULL, $priceVariationMode = NULL)
+    private function getPriceCalculator(
+        array $source,
+        array $sourceModeMapping,
+        $coefficient = NULL,
+        $priceVariationMode = NULL
+    )
     {
+        /** @var PriceCalculator $calculator */
         $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\Repricing\PriceCalculator');
-        $calculator->setSource($src)->setProduct($this->getListingProduct());
+        $calculator->setSourceModeMapping($sourceModeMapping);
+        $calculator->setSource($source)->setProduct($this->getListingProduct());
         $calculator->setCoefficient($coefficient);
         $calculator->setPriceVariationMode($priceVariationMode);
 

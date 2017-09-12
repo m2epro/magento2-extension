@@ -10,12 +10,9 @@ namespace Ess\M2ePro\Model\Listing\Product\Action;
 
 abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MODE_FULL    = 'full';
-    const MODE_PARTIAL = 'partial';
-
     //########################################
 
-    protected $mode = self::MODE_FULL;
+    protected $isDefaultMode = true;
 
     protected $allowedDataTypes = array();
 
@@ -23,74 +20,14 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function getAllModes()
-    {
-        return array(
-            self::MODE_FULL,
-            self::MODE_PARTIAL,
-        );
-    }
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        array $data = []
+    ){
+        parent::__construct($helperFactory, $modelFactory, $data);
 
-    //########################################
-
-    /**
-     * @param string $mode
-     * @return $this
-     */
-    public function setMode($mode)
-    {
-        if (!in_array($mode, $this->getAllModes())) {
-            throw new \InvalidArgumentException('Mode is invalid.');
-        }
-
-        $this->mode = $mode;
-        $this->allowedDataTypes = array();
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getMode()
-    {
-        return $this->mode;
-    }
-
-    //########################################
-
-    /**
-     * @return bool
-     */
-    public function isFullMode()
-    {
-        return $this->mode == self::MODE_FULL;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product\Action\Configurator
-     */
-    public function setFullMode()
-    {
-        return $this->setMode(self::MODE_FULL);
-    }
-
-    // ---------------------------------------
-
-    /**
-     * @return bool
-     */
-    public function isPartialMode()
-    {
-        return $this->mode == self::MODE_PARTIAL;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Listing\Product\Action\Configurator
-     */
-    public function setPartialMode()
-    {
-        return $this->setMode(self::MODE_PARTIAL);
+        $this->allowedDataTypes = $this->getAllDataTypes();
     }
 
     //########################################
@@ -99,16 +36,17 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    /**
-     * @return bool
-     */
-    public function isAllAllowed()
+    public function reset()
     {
-        if ($this->isFullMode()) {
-            return true;
-        }
+        $this->isDefaultMode    = false;
+        $this->allowedDataTypes = array();
+    }
 
-        return !array_diff($this->getAllDataTypes(), $this->getAllowedDataTypes());
+    //########################################
+
+    public function isDefaultMode()
+    {
+        return $this->isDefaultMode;
     }
 
     /**
@@ -116,10 +54,6 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function getAllowedDataTypes()
     {
-        if ($this->isFullMode()) {
-            return $this->getAllDataTypes();
-        }
-
         return $this->allowedDataTypes;
     }
 
@@ -128,11 +62,6 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function isAllowed($dataType)
     {
         $this->validateDataType($dataType);
-
-        if ($this->isFullMode()) {
-            return true;
-        }
-
         return in_array($dataType, $this->allowedDataTypes);
     }
 
@@ -153,13 +82,6 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $this->validateDataType($dataType);
 
         if (!$this->isAllowed($dataType)) {
-            return $this;
-        }
-
-        if ($this->isFullMode()) {
-            $this->setPartialMode();
-            $this->allowedDataTypes = array_diff($this->getAllDataTypes(), array($dataType));
-
             return $this;
         }
 
@@ -195,11 +117,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isDataConsists(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
     {
-        if ($this->isAllAllowed()) {
-            return true;
-        }
-
-        if ($configurator->isAllAllowed()) {
+        if ($this->isDefaultMode() != $configurator->isDefaultMode()) {
             return false;
         }
 
@@ -223,17 +141,8 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function mergeData(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)
     {
-        if ($this->isAllAllowed()) {
-            return $this;
-        }
-
-        if ($configurator->isAllAllowed()) {
-            $this->setFullMode();
-            return $this;
-        }
-
-        if (!$this->isPartialMode()) {
-            $this->setPartialMode();
+        if ($configurator->isDefaultMode()) {
+            $this->isDefaultMode = true;
         }
 
         $this->allowedDataTypes = array_unique(array_merge(
@@ -264,7 +173,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
     public function getSerializedData()
     {
         return array(
-            'mode'               => $this->mode,
+            'is_default_mode'    => $this->isDefaultMode,
             'allowed_data_types' => $this->allowedDataTypes,
             'params'             => $this->params,
         );
@@ -277,13 +186,7 @@ abstract class Configurator extends \Ess\M2ePro\Model\AbstractModel
      */
     public function setUnserializedData(array $data)
     {
-        if (!empty($data['mode'])) {
-            if (!in_array($data['mode'], $this->getAllModes())) {
-                throw new \InvalidArgumentException('Mode is invalid.');
-            }
-
-            $this->mode = $data['mode'];
-        }
+        $this->isDefaultMode = $data['is_default_mode'];
 
         if (!empty($data['allowed_data_types'])) {
             if (!is_array($data['allowed_data_types']) ||

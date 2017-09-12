@@ -161,7 +161,7 @@ final class Relist extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Sy
         $amazonListingProduct = $listingProduct->getChildObject();
 
         if (!$amazonListingProduct->getAmazonSynchronizationTemplate()->isRelistSendData()) {
-            $configurator->setPartialMode();
+            $configurator->reset();
             $configurator->allowQty();
         }
     }

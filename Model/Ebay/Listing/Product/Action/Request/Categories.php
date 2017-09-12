@@ -36,17 +36,19 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 $this->getCategoriesData()
             );
 
-            if ($this->getMarketplace()->getChildObject()->isEpidEnabled()) {
-                $tempData = $this->getMotorsData(
-                    \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID
+            if ($this->getEbayListing()->isPartsCompatibilityModeEpids()) {
+
+                $motorsType = $this->getHelper('Component\Ebay\Motors')->getEpidsTypeByMarketplace(
+                    $this->getMarketplace()->getId()
                 );
+                $tempData = $this->getMotorsData($motorsType);
                 $tempData !== false && $data['motors_epids'] = $tempData;
             }
 
-            if ($this->getMarketplace()->getChildObject()->isKtypeEnabled()) {
-                $tempData = $this->getMotorsData(
-                    \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
-                );
+            if ($this->getEbayListing()->isPartsCompatibilityModeKtypes()) {
+
+                $motorsType = \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE;
+                $tempData = $this->getMotorsData($motorsType);
                 $tempData !== false && $data['motors_ktypes'] = $tempData;
             }
         }
@@ -136,11 +138,11 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             return false;
         }
 
-        if ($type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID) {
+        if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
             return $this->getPreparedMotorsEpidsData($rawData);
         }
 
-        if ($type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE) {
+        if ($this->getMotorsHelper()->isTypeBasedOnKtypes($type)) {
             return $this->getPreparedMotorsKtypesData($rawData);
         }
 
@@ -203,15 +205,19 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         }
 
         $typeIdentifier = $this->getMotorsHelper()->getIdentifierKey($type);
-
-        $queryStmt = $this->resourceConnection->getConnection()
+        $select = $this->resourceConnection->getConnection()
             ->select()
             ->from($this->getMotorsHelper()->getDictionaryTable($type))
             ->where(
                 '`'.$typeIdentifier.'` IN (?)',
                 array_keys($data)
-            )
-            ->query();
+            );
+
+        if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
+            $select->where('scope = ?', $this->getMotorsHelper()->getEpidsScopeByType($type));
+        }
+
+        $queryStmt = $select->query();
 
         $existedItems = array();
         while ($row = $queryStmt->fetch()) {
@@ -239,7 +245,11 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         foreach ($data as $filterId) {
 
             /** @var \Ess\M2ePro\Model\Ebay\Motor\Filter $filter */
-            $filter = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->load($filterId);
+            $filter = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Filter', $filterId, NULL, false);
+
+            if (is_null($filter)) {
+                $filter = $this->activeRecordFactory->getObject('Ebay\Motor\Filter');
+            }
 
             if ($filter->getType() != $type) {
                 continue;
@@ -251,6 +261,10 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 ->select()
                 ->from($this->getMotorsHelper()->getDictionaryTable($type));
 
+            if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
+                $select->where('scope = ?', $this->getMotorsHelper()->getEpidsScopeByType($type));
+            }
+
             foreach ($conditions as $key => $value) {
 
                 if ($key != 'year') {
@@ -258,7 +272,7 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                     continue;
                 }
 
-                if ($type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID) {
+                if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
 
                     if (!empty($value['from'])) {
                         $select->where('`year` >= ?', $value['from']);
@@ -286,15 +300,18 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
                 continue;
             }
 
-            if ($type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID) {
+            if ($this->getMotorsHelper()->isTypeBasedOnEpids($type)) {
 
-                $groupedData = $this->groupEpidsData($filterData, $conditions);
-                foreach ($groupedData as $group) {
+                if ($type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR) {
+                    $filterData = $this->groupEbayMotorsEpidsData($filterData, $conditions);
+                }
+
+                foreach ($filterData as $group) {
                     $result[] = array(
-                        'id' => $filterId,
+                        'id'   => $filterId,
                         'type' => 'filter',
-                        'note'  => $filter->getNote(),
-                        'info'  => $group
+                        'note' => $filter->getNote(),
+                        'info' => $group
                     );
                 }
                 continue;
@@ -302,10 +319,10 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
             foreach ($filterData as $item) {
                 $result[] = array(
-                    'id' => $item[$typeIdentifier],
+                    'id'   => $item[$typeIdentifier],
                     'type' => $typeIdentifier,
-                    'note'  => $filter->getNote(),
-                    'info'  => $item
+                    'note' => $filter->getNote(),
+                    'info' => $item
                 );
             }
         }
@@ -324,7 +341,11 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
         foreach ($data as $groupId) {
 
             /** @var \Ess\M2ePro\Model\Ebay\Motor\Group $group */
-            $group = $this->activeRecordFactory->getObject('Ebay\Motor\Group')->load($groupId);
+            $group = $this->activeRecordFactory->getObjectLoaded('Ebay\Motor\Group', $groupId, NULL, false);
+
+            if (is_null($group)) {
+                $group = $this->activeRecordFactory->getObject('Ebay\Motor\Group');
+            }
 
             if ($group->getType() != $type) {
                 continue;
@@ -332,10 +353,10 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
             if (!$group->getId()) {
                 $result[] = array(
-                    'id' => $groupId,
+                    'id'   => $groupId,
                     'type' => 'group',
-                    'note'  => $group->getNote(),
-                    'info'  => array()
+                    'note' => $group->getNote(),
+                    'info' => array()
                 );
                 continue;
             }
@@ -394,6 +415,7 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             }
 
             $preparedData[] = array(
+                'epid' => isset($item['info']['epid']) ? $item['info']['epid'] : null,
                 'list' => $motorsList,
                 'note' => $item['note'],
             );
@@ -515,7 +537,7 @@ class Categories extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
 
     // ---------------------------------------
 
-    private function groupEpidsData($data, $condition)
+    private function groupEbayMotorsEpidsData($data, $condition)
     {
         $groupingFields = array_unique(array_merge(
             array('year', 'make', 'model'),

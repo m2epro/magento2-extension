@@ -48,7 +48,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             return false;
         }
 
-        if (!$this->validatePrice()) {
+        if (!$this->validateRegularPrice() || !$this->validateBusinessPrice()) {
             return false;
         }
 

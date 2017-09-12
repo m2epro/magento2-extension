@@ -20,6 +20,7 @@
     margin-left: 20% !important;
 }
 
+#tabs_container #configuration_settings_tabs_motors_content form,
 #tabs_container #configuration_settings_tabs_synchronization_content form,
 #tabs_container #configuration_settings_tabs_main_content form {
     margin-top: -20px;

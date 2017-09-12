@@ -332,44 +332,78 @@ td.specifics-grid {
     display: block;
 }
 
-#price_mode, #sale_price_mode {
+#regular_price_mode,
+#regular_sale_price_mode,
+#business_price_mode,
+#business_discounts_mode {
     width: 250px;
 }
-#price_coefficient, #sale_price_coefficient {
+
+#regular_price_coefficient,
+#regular_sale_price_coefficient,
+#business_price_coefficient,
+#business_discounts_tier_coefficient {
     width: 100px;
 }
-#price_coefficient_td, #sale_price_coefficient_td {
+
+#regular_price_coefficient_td,
+#regular_sale_price_coefficient_td,
+#business_price_coefficient_td,
+#business_discounts_tier_coefficient_td {
     position: relative;
     left: 65px;
 }
-label.mage-error[for='price_coefficient'],
-label.mage-error[for='sale_price_coefficient'] {
+
+label.mage-error[for='regular_price_coefficient'],
+label.mage-error[for='regular_sale_price_coefficient'],
+label.mage-error[for='business_price_coefficient'],
+label.mage-error[for='business_discounts_tier_coefficient'] {
     position: absolute;
     display: block !important;
     width: 150px;
     margin-left: 7px;
 }
 
-#sale_price_start_date_value + .ui-datepicker-trigger,
-#sale_price_end_date_value + .ui-datepicker-trigger {
+#regular_sale_price_start_date_value + .ui-datepicker-trigger,
+#regular_sale_price_end_date_value + .ui-datepicker-trigger {
     margin-left: -3em;
 }
 
-.field-sale_price_end_date_value_validation {
-    margin: 0 !important;
+.field-regular_sale_price_end_date_value_validation {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
 }
-.field-sale_price_end_date_value_validation > .admin__field-control {
-    margin-left: 35.8% !important;
+.field-regular_sale_price_end_date_value_validation > .admin__field-control {
+    margin-left: calc( (100%) * 0.33333333 + 30px) !important;
 }
-#sale_price_end_date_value_validation {
+.field-regular_sale_price_end_date_value_validation + .admin__field {
+    margin-top: 0;
+}
+#regular_sale_price_end_date_value_validation {
     visibility: hidden;
-    width: 100% !important;
-    margin-top: -40px !important;
+    width: 70% !important;
+    margin-top: -44px !important;
     display: block;
     height: 1px;
 }
-#sale_price_end_date_value_validation + label {
-    width: 150px !important;
+
+#is_regular_customer_allowed + label.mage-error,
+#is_business_customer_allowed + label.mage-error {
+    width: 300px !important;
+}
+
+#business_discounts_not_set_table {
+    background-color: #EFEFEF;
+    padding: 1em;
+    margin: 0 auto;
+}
+
+#business_discounts_not_set_table > table {
+    margin-left: calc(50% - 115px);
+}
+
+#business_discounts_custom_value_discount_table select {
+    width: 100%;
 }
 
 .specifics_list_grid_template tr:hover {

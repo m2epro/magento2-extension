@@ -14,12 +14,14 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
     public function processSuccess(array $response, array $responseParams = array())
     {
+        $this->prepareMetadata();
+
         $data = array(
             'status' => \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED,
             'ebay_item_id' => $this->createEbayItem($response['ebay_item_id'])->getId()
         );
 
-        if ($this->getConfigurator()->isAllAllowed()) {
+        if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
             $data['synch_reasons'] = NULL;
         }
@@ -41,6 +43,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
 
         $data = $this->appendIsVariationMpnFilledValue($data);
         $data = $this->appendVariationsThatCanNotBeDeleted($data, $response);
+
+        $data = $this->appendIsVariationValue($data);
+        $data = $this->appendIsAuctionType($data);
 
         if (isset($data['additional_data'])) {
             $data['additional_data'] = $this->getHelper('Data')->jsonEncode($data['additional_data']);

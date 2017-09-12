@@ -315,6 +315,7 @@ class Client extends AbstractHelper
         }
 
         $lastMemoryLimitLetter = strtolower(substr($memoryLimit, -1));
+        $memoryLimit = (int)$memoryLimit;
 
         switch($lastMemoryLimitLetter) {
             case 'g':

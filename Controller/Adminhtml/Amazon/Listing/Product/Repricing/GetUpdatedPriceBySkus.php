@@ -57,14 +57,16 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingProductCollection->getSelect()->columns(
                 array(
                     'second_table.sku',
-                    'second_table.online_price'
+                    'second_table.online_regular_price'
                 )
             );
 
             $listingsProductsData = $listingProductCollection->getData();
 
             foreach ($listingsProductsData as $listingProductData) {
-                $price = $this->localeCurrency->getCurrency($currency)->toCurrency($listingProductData['online_price']);
+                $price = $this->localeCurrency
+                    ->getCurrency($currency)
+                    ->toCurrency($listingProductData['online_regular_price']);
                 $resultPrices[$accountId][$listingProductData['sku']] = $price;
             }
 
@@ -74,8 +76,8 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
             $listingOtherCollection->addFieldToFilter('account_id', $accountId);
             $listingOtherCollection->addFieldToFilter('sku', array('in' => $skus));
 
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns(
+            $listingOtherCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+            $listingOtherCollection->getSelect()->columns(
                 array(
                     'second_table.sku',
                     'second_table.online_price'

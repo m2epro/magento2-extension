@@ -511,7 +511,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isFixedPriceModeNone()
     {
-        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -519,7 +519,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isFixedPriceModeProduct()
     {
-        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -527,7 +527,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isFixedPriceModeSpecial()
     {
-        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -535,7 +535,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isFixedPriceModeAttribute()
     {
-        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getFixedPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     public function getFixedPriceCoefficient()
@@ -563,7 +563,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getFixedPriceSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -585,7 +585,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isStartPriceModeNone()
     {
-        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -593,7 +593,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isStartPriceModeProduct()
     {
-        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -601,7 +601,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isStartPriceModeSpecial()
     {
-        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -609,7 +609,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isStartPriceModeAttribute()
     {
-        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getStartPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     public function getStartPriceCoefficient()
@@ -637,7 +637,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getStartPriceSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -659,7 +659,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isReservePriceModeNone()
     {
-        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -667,7 +667,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isReservePriceModeProduct()
     {
-        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -675,7 +675,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isReservePriceModeSpecial()
     {
-        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -683,7 +683,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isReservePriceModeAttribute()
     {
-        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getReservePriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     public function getReservePriceCoefficient()
@@ -711,7 +711,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getReservePriceSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -733,7 +733,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isBuyItNowPriceModeNone()
     {
-        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -741,7 +741,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isBuyItNowPriceModeProduct()
     {
-        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -749,7 +749,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isBuyItNowPriceModeSpecial()
     {
-        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -757,7 +757,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isBuyItNowPriceModeAttribute()
     {
-        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getBuyItNowPriceMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     public function getBuyItNowPriceCoefficient()
@@ -785,7 +785,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getBuyItNowPriceSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -807,7 +807,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountStpModeNone()
     {
-        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -815,7 +815,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountStpModeProduct()
     {
-        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -823,7 +823,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountStpModeSpecial()
     {
-        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -831,7 +831,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountStpModeAttribute()
     {
-        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getPriceDiscountStpMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     /**
@@ -853,7 +853,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getPriceDiscountStpSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -947,7 +947,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountMapModeNone()
     {
-        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE;
+        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE;
     }
 
     /**
@@ -955,7 +955,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountMapModeProduct()
     {
-        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT;
+        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT;
     }
 
     /**
@@ -963,7 +963,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountMapModeSpecial()
     {
-        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_SPECIAL;
+        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_SPECIAL;
     }
 
     /**
@@ -971,7 +971,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
      */
     public function isPriceDiscountMapModeAttribute()
     {
-        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE;
+        return $this->getPriceDiscountMapMode() == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE;
     }
 
     /**
@@ -993,7 +993,7 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
         $attributes = array();
         $src = $this->getPriceDiscountMapSource();
 
-        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_ATTRIBUTE) {
+        if ($src['mode'] == \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_ATTRIBUTE) {
             $attributes[] = $src['attribute'];
         }
 
@@ -1039,9 +1039,15 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
     /**
      * @return bool
      */
-    public function usesProductOrSpecialPrice()
+    public function usesConvertiblePrices()
     {
-        if ($this->isListingTypeFixed()) {
+        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            '/magento/attribute/', 'price_type_converting'
+        );
+
+        $attributeHelper = $this->getHelper('Magento\Attribute');
+
+        if ($this->isListingTypeFixed() || $this->isListingTypeAttribute()) {
 
             if ($this->isFixedPriceModeProduct() || $this->isFixedPriceModeSpecial()) {
                 return true;
@@ -1051,7 +1057,31 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
                 return true;
             }
 
-            return false;
+            if ($this->isPriceDiscountMapModeProduct() || $this->isPriceDiscountMapModeSpecial()) {
+                return true;
+            }
+
+            if ($isPriceConvertEnabled) {
+
+                if ($this->isFixedPriceModeAttribute() &&
+                    $attributeHelper->isAttributeInputTypePrice($this->getData('fixed_price_custom_attribute'))) {
+                    return true;
+                }
+
+                if ($this->isPriceDiscountStpModeAttribute() &&
+                    $attributeHelper->isAttributeInputTypePrice($this->getData('price_discount_stp_attribute'))) {
+                    return true;
+                }
+
+                if ($this->isPriceDiscountMapModeAttribute() &&
+                    $attributeHelper->isAttributeInputTypePrice($this->getData('price_discount_map_attribute'))) {
+                    return true;
+                }
+            }
+
+            if ($this->isListingTypeFixed()) {
+                return false;
+            }
         }
 
         if ($this->isStartPriceModeProduct() || $this->isStartPriceModeSpecial()) {
@@ -1064,6 +1094,44 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
 
         if ($this->isBuyItNowPriceModeProduct() || $this->isBuyItNowPriceModeSpecial()) {
             return true;
+        }
+
+        if ($isPriceConvertEnabled) {
+
+            if ($this->isStartPriceModeAttribute() &&
+                $attributeHelper->isAttributeInputTypePrice($this->getData('start_price_custom_attribute'))) {
+                return true;
+            }
+
+            if ($this->isReservePriceModeAttribute() &&
+                $attributeHelper->isAttributeInputTypePrice($this->getData('reserve_price_custom_attribute'))) {
+                return true;
+            }
+
+            if ($this->isBuyItNowPriceModeAttribute() &&
+                $attributeHelper->isAttributeInputTypePrice($this->getData('buyitnow_price_custom_attribute'))) {
+                return true;
+            }
+        }
+
+        if ($this->isBestOfferEnabled()) {
+
+            if ($this->isBestOfferAcceptModePercentage() || $this->isBestOfferRejectModePercentage()) {
+                return true;
+            }
+
+            if ($isPriceConvertEnabled) {
+
+                if ($this->isBestOfferAcceptModeAttribute() &&
+                    $attributeHelper->isAttributeInputTypePrice($this->getData('best_offer_accept_attribute'))) {
+                    return true;
+                }
+
+                if ($this->isBestOfferRejectModeAttribute() &&
+                    $attributeHelper->isAttributeInputTypePrice($this->getData('best_offer_reject_attribute'))) {
+                    return true;
+                }
+            }
         }
 
         return false;
@@ -1307,27 +1375,27 @@ class SellingFormat extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\
             'price_increase_vat_percent' => 0,
             'price_variation_mode' => self::PRICE_VARIATION_MODE_PARENT,
 
-            'fixed_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT,
+            'fixed_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
             'fixed_price_coefficient' => '',
             'fixed_price_custom_attribute' => '',
 
-            'start_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT,
+            'start_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
             'start_price_coefficient' => '',
             'start_price_custom_attribute' => '',
 
-            'reserve_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
+            'reserve_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'reserve_price_coefficient' => '',
             'reserve_price_custom_attribute' => '',
 
-            'buyitnow_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
+            'buyitnow_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'buyitnow_price_coefficient' => '',
             'buyitnow_price_custom_attribute' => '',
 
-            'price_discount_stp_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
+            'price_discount_stp_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'price_discount_stp_attribute' => '',
             'price_discount_stp_type' => self::PRICE_DISCOUNT_STP_TYPE_RRP,
 
-            'price_discount_map_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
+            'price_discount_map_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
             'price_discount_map_attribute' => '',
             'price_discount_map_exposure_type' => self::PRICE_DISCOUNT_MAP_EXPOSURE_NONE,
 

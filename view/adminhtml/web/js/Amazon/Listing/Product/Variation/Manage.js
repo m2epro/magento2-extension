@@ -184,7 +184,7 @@ define([
                         attributesHtml += '<li>' + element.key + ' > ' + element.value + '</li>';
                     });
 
-                    attributesHtml = '<ul>' + attributesHtml + '</ul>';
+                    attributesHtml = '<ul style="list-style-position: inside;">' + attributesHtml + '</ul>';
 
                     var bodyHtml = str_replace('%attributes%', attributesHtml, $('vocabulary_attributes_pupup').innerHTML);
 

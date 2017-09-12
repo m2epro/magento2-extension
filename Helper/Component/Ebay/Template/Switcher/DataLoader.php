@@ -282,7 +282,12 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
         $mode = $source->getParam('mode', \Ess\M2ePro\Model\Ebay\Template\Manager::MODE_CUSTOM);
 
         $attributeSets = $source->getParam('attribute_sets', '');
-        $attributeSets = explode(',', $attributeSets);
+        $attributeSets = array_filter(explode(',', $attributeSets));
+
+        if (empty($attributeSets)) {
+            $attributeSets = $this->getHelper('Magento\AttributeSet')
+                ->getAll(\Ess\M2ePro\Helper\Magento\AbstractHelper::RETURN_TYPE_IDS);
+        }
 
         return array(
             'account_id'                 => $source->getParam('account_id'),

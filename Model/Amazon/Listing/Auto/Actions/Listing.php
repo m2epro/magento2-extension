@@ -218,7 +218,8 @@ class Listing extends \Ess\M2ePro\Model\Listing\Auto\Actions\Listing
         $processor = $amazonListingProduct->getVariationManager()->getTypeModel()->getProcessor();
 
         if ($listingProduct->getMagentoProduct()->isBundleType() ||
-            $listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions()
+            $listingProduct->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+            $listingProduct->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
         ) {
             $processor->process();
             return;

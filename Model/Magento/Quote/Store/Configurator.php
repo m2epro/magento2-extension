@@ -22,12 +22,17 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     protected $calculation;
 
+    protected $mutableConfig;
+
+    protected $originalStoreConfig = [];
+
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Magento\Config\Mutable $mutableConfig,
+        \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Model\Magento\Tax\Helper $taxHelper,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
-        \Magento\Tax\Model\Config $taxConfigModel,
         \Magento\Quote\Model\Quote $quote,
         \Ess\M2ePro\Model\Order\Proxy $proxyOrder,
         \Magento\Tax\Model\Config $taxConfig,
@@ -36,64 +41,53 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->taxHelper   = $taxHelper;
-        $this->storeConfig = $storeConfig;
-        $this->quote       = $quote;
-        $this->proxyOrder  = $proxyOrder;
-        $this->taxConfig   = $taxConfig;
-        $this->calculation = $calculation;
+        $this->mutableConfig = $mutableConfig;
+        $this->taxHelper     = $taxHelper;
+        $this->storeConfig   = $storeConfig;
+        $this->quote         = $quote;
+        $this->proxyOrder    = $proxyOrder;
+        $this->taxConfig     = $taxConfig;
+
+        // We need to use newly created instances, because magento caches tax rates in private properties
+        $this->calculation = $objectManager->create('Magento\Tax\Model\Calculation', [
+            'resource' => $objectManager->create($calculation->getResourceName())
+        ]);
+
         parent::__construct($helperFactory, $modelFactory);
-    }
-
-    //########################################
-
-    /**
-     * @return array
-     */
-    public function getOriginalStoreConfig()
-    {
-        $keys = [
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX,
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS,
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON,
-            \Magento\Customer\Model\GroupManagement::XML_PATH_DEFAULT_ID,
-            $this->getOriginCountryIdXmlPath(),
-            $this->getOriginRegionIdXmlPath(),
-            $this->getOriginPostcodeXmlPath()
-        ];
-
-        $config = [];
-
-        foreach ($keys as $key) {
-            $config[$key] = $this->getStoreConfig($key);
-        }
-
-        return $config;
     }
 
     //########################################
 
     public function prepareStoreConfigForOrder()
     {
+        $this->saveOriginalStoreConfig();
+        $this->helperFactory->getObject('Data\GlobalData')->setValue('use_mutable_config', true);
+
         // catalog prices
         // ---------------------------------------
-        // reset flag, use store config instead
-        $this->taxConfig->setPriceIncludesTax(true);
+        $isProductPriceIncludesTax = $this->isPriceIncludesTax();
+        $this->taxConfig->setPriceIncludesTax($isProductPriceIncludesTax);
         $this->setStoreConfig(
-            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $this->isPriceIncludesTax()
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX, $isProductPriceIncludesTax
         );
         // ---------------------------------------
 
         // shipping prices
         // ---------------------------------------
         $isShippingPriceIncludesTax = $this->isShippingPriceIncludesTax();
-        if (method_exists($this->taxConfig, 'setShippingPriceIncludeTax')) {
-            $this->taxConfig->setShippingPriceIncludeTax($isShippingPriceIncludesTax);
-        } else {
-            $this->setStoreConfig(
-                \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $isShippingPriceIncludesTax
-            );
+        $this->taxConfig->setShippingPriceIncludeTax($isShippingPriceIncludesTax);
+        $this->setStoreConfig(
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX, $isShippingPriceIncludesTax
+        );
+        // ---------------------------------------
+
+        // Fixed Product Tax settings
+        // ---------------------------------------
+        if ($this->proxyOrder->isTaxModeChannel() ||
+            ($this->proxyOrder->isTaxModeMixed() &&
+                ($this->proxyOrder->hasTax() || $this->proxyOrder->getWasteRecyclingFee()))
+        ) {
+            $this->setStoreConfig(\Magento\Weee\Model\Config::XML_PATH_FPT_ENABLED, false);
         }
         // ---------------------------------------
 
@@ -117,6 +111,40 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS, $this->getShippingTaxClassId()
         );
         // ---------------------------------------
+    }
+
+    public function restoreOriginalStoreConfigForOrder()
+    {
+        $this->helperFactory->getObject('Data\GlobalData')->unsetValue('use_mutable_config');
+        foreach ($this->originalStoreConfig as $key => $value) {
+
+            $this->mutableConfig->unsetValue(
+                $key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+            );
+        }
+    }
+
+    //########################################
+
+    private function saveOriginalStoreConfig()
+    {
+        $keys = [
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX,
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_INCLUDES_TAX,
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS,
+            \Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON,
+            \Magento\Customer\Model\GroupManagement::XML_PATH_DEFAULT_ID,
+            \Magento\Weee\Model\Config::XML_PATH_FPT_ENABLED,
+            $this->getOriginCountryIdXmlPath(),
+            $this->getOriginRegionIdXmlPath(),
+            $this->getOriginPostcodeXmlPath()
+        ];
+
+        $this->originalStoreConfig = [];
+
+        foreach ($keys as $key) {
+            $this->originalStoreConfig[$key] = $this->getStoreConfig($key);
+        }
     }
 
     //########################################
@@ -170,7 +198,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         // ---------------------------------------
         /** @var $taxRuleBuilder \Ess\M2ePro\Model\Magento\Tax\Rule\Builder */
         $taxRuleBuilder = $this->modelFactory->getObject('Magento\Tax\Rule\Builder');
-        $taxRuleBuilder->buildTaxRule(
+        $taxRuleBuilder->buildShippingTaxRule(
             $shippingPriceTaxRate,
             $this->quote->getShippingAddress()->getCountryId(),
             $this->quote->getCustomerTaxClassId()
@@ -316,12 +344,16 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     private function setStoreConfig($key, $value)
     {
-        $this->storeConfig->setValue($key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore());
+        $this->mutableConfig->setValue(
+            $key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+        );
     }
 
     private function getStoreConfig($key)
     {
-        return $this->storeConfig->getValue($key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore());
+        return $this->storeConfig->getValue(
+            $key, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
+        );
     }
 
     //########################################

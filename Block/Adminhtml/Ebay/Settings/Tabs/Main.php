@@ -85,33 +85,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
-        $multiCurrency = $this->getMultiCurrency();
-        if (!empty($multiCurrency)) {
-            foreach ($multiCurrency as $marketplace => $data) {
-                $currencies = explode(',', $data['currency']);
-
-                $preparedValues = [];
-                $selectedValue = '';
-                foreach ($currencies as $currency) {
-                    if ($this->isCurrencyForCode($data['code'], $currency)) {
-                        $selectedValue = $currency;
-                    }
-                    $preparedValues[$currency] = $currency;
-                }
-
-                $fieldset->addField('selling_currency' . $data['code'],
-                    'select',
-                    [
-                        'name' => 'selling_currency' . $data['code'],
-                        'label' => $this->__($marketplace) . ' ' . $this->__('Currency'),
-                        'values' => $preparedValues,
-                        'value' => $selectedValue,
-                        'tooltip' => $this->__('Choose the Currency you want to sell for.')
-                    ]
-                );
-            }
-        }
-
         $fieldset->addField('check_the_same_product_already_listed_mode',
             'select',
             [
@@ -192,36 +165,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         );
 
         return parent::_beforeToHtml();
-    }
-
-    //########################################
-
-    protected function getMultiCurrency()
-    {
-        $multiCurrency = [];
-
-        $collection = $this->activeRecordFactory->getObject('Marketplace')->getCollection();
-        $collection->addFieldToFilter('component_mode', \Ess\M2ePro\Helper\Component\Ebay::NICK);
-        $collection->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
-
-        foreach ($collection as $marketplace) {
-            $tempCurrency = $marketplace->getChildObject()->getCurrencies();
-            if (strpos($tempCurrency, ',') !== false) {
-                $multiCurrency[$marketplace->getTitle()]['currency'] = $tempCurrency;
-                $multiCurrency[$marketplace->getTitle()]['code'] = $marketplace->getCode();
-                $multiCurrency[$marketplace->getTitle()]['default'] = substr($tempCurrency,
-                    0,
-                    strpos($tempCurrency, ','));
-            }
-        }
-
-        return $multiCurrency;
-    }
-
-    protected function isCurrencyForCode($code, $currency)
-    {
-        return $currency == $this->cacheConfig
-            ->getGroupValue('/ebay/selling/currency/', $code);
     }
 
     //########################################

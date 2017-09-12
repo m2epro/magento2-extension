@@ -51,10 +51,6 @@ class IssueGroup extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
             foreach ($this->resultSet->getByFieldSet($this->resultSet->getFieldSetKey($resultItem)) as $byFieldSet) {
 
-                if ($byFieldSet->isSuccess() && !$byFieldSet->isTaskMustBeShowIfSuccess()) {
-                    continue;
-                }
-
                 $fieldSet->addField(strtolower($byFieldSet->getTaskHash()),
                     self::NOTE_ELEMENT,
                     [

@@ -25,12 +25,17 @@ class ViewGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\T
             $marketplaceId = $listingProduct->getListing()->getMarketplaceId();
         }
 
+        if (!is_array($productsIds)) {
+            $productsIds = explode(',', $productsIds);
+        }
+
         $blockName = ($shippingMode == \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE)
             ? 'Amazon\Listing\Product\Template\ShippingOverride\Grid'
             : 'Amazon\Listing\Product\Template\ShippingTemplate\Grid';
 
         $grid = $this->createBlock($blockName);
         $grid->setMarketplaceId($marketplaceId);
+        $grid->setProductsIds($productsIds);
 
         $this->setAjaxContent($grid);
 

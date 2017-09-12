@@ -221,8 +221,6 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
         if ($this->getVariationManager()->isRelationParentType()) {
             $this->processParentResult($result);
         }
-
-        return;
     }
 
     private function processParentResult(array $result)
@@ -258,7 +256,8 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         if ($this->getVariationManager()->isIndividualType()) {
             if ($this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-                $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions()
+                $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+                $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()
             ) {
                 return false;
             }

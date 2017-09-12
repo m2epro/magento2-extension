@@ -144,6 +144,9 @@ define([
             });
 
             EbayTemplateShippingObj.renderShippingMethods(EbayTemplateShippingObj.shippingMethods);
+
+            EbayTemplateShippingObj.checkMessages('local');
+            EbayTemplateShippingObj.checkMessages('international');
         },
 
         // ---------------------------------------
@@ -270,6 +273,7 @@ define([
             EbayTemplateShippingObj.updateRateTableVisibility('local');
             EbayTemplateShippingObj.updateLocalHandlingCostVisibility();
             EbayTemplateShippingObj.renderDiscountProfiles('local');
+            EbayTemplateShippingObj.clearMessages('local');
             // ---------------------------------------
 
             // ---------------------------------------
@@ -372,6 +376,7 @@ define([
             EbayTemplateShippingObj.renderDiscountProfiles('international');
             EbayTemplateShippingObj.updateRateTableVisibility('international');
             EbayTemplateShippingObj.updateInternationalHandlingCostVisibility();
+            EbayTemplateShippingObj.clearMessages('international');
             // ---------------------------------------
         },
 
@@ -1036,6 +1041,49 @@ define([
             }
             if (type == 'international' && EbayTemplateShippingObj.counter[type] >= 5) {
                 $(id).up('table').select('tfoot')[0].hide();
+            }
+            // ---------------------------------------
+
+            // ---------------------------------------
+            var isAttributeMode = function(element) {
+                return element.value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Shipping::COUNTRY_MODE_CUSTOM_ATTRIBUTE');
+            };
+
+            row.down('[name^="shipping[shipping_cost_attribute]"]').observe('change', function(event) {
+                var element = event.target.up('tr').down('[name^="shipping[cost_mode]"]');
+
+                if (!isAttributeMode(element)) {
+                    return;
+                }
+
+                EbayTemplateShippingObj.checkMessages(type);
+            });
+
+            row.down('[name^="shipping[shipping_cost_additional_attribute]"]').observe('change', function(event) {
+                var element = event.target.up('tr').down('[name^="shipping[cost_mode]"]');
+
+                if (!isAttributeMode(element)) {
+                    return;
+                }
+
+                EbayTemplateShippingObj.checkMessages(type);
+            });
+
+            if (type == 'local') {
+
+                var next = row.next("[id^='shipping_variant_cost_surcharge']");
+
+                if (next) {
+                    next.down('[name^="shipping[shipping_cost_surcharge_attribute]"]').observe('change', function(event) {
+                        var element = row.down('[name^="shipping[cost_mode]"]');
+
+                        if (!isAttributeMode(element)) {
+                            return;
+                        }
+
+                        EbayTemplateShippingObj.checkMessages(type);
+                    });
+                }
             }
             // ---------------------------------------
 
@@ -1930,6 +1978,88 @@ define([
                 weightSelect.selectedIndex = 0;
                 jQuery(weightSelect).trigger('change');
             }
+        },
+
+        // ---------------------------------------
+
+        checkMessages: function(type)
+        {
+            if (typeof EbayListingTemplateSwitcherObj == 'undefined') {
+                // not inside template switcher
+                return;
+            }
+
+            var container, excludeTable, data, formElements = Form.getElements('template_shipping_data_container');
+
+            if (type == 'local') {
+                container = 'shipping_local_table_messages';
+                excludeTable = $('shipping_international_table');
+
+                formElements = formElements.map(function (element) {
+
+                    if (element.up('table') == excludeTable) {
+                        return false;
+                    }
+
+                    return element;
+                }).filter(function(el) { return el; });
+
+                data = Form.serializeElements(formElements);
+
+            } else if (type == 'international') {
+                container = 'shipping_international_table_messages';
+                excludeTable = $('shipping_local_table');
+
+                formElements = formElements.map(function (element) {
+
+                    if (element.up('table') == excludeTable) {
+                        return false;
+                    }
+
+                    return element;
+                }).filter(function(el) { return el; });
+
+                data = Form.serializeElements(formElements);
+
+            } else {
+                return;
+            }
+
+            var id = '',
+                nick = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Manager::TEMPLATE_SHIPPING'),
+                storeId = EbayListingTemplateSwitcherObj.storeId,
+                marketplaceId = EbayListingTemplateSwitcherObj.marketplaceId,
+                checkAttributesAvailability = false,
+                callback = function() {
+                    var refresh = $(container).down('a.refresh-messages');
+                    if (refresh) {
+                        refresh.observe('click', function() {
+                            this.checkMessages();
+                        }.bind(this))
+                    }
+                }.bind(this);
+
+            TemplateHandlerObj.checkMessages(
+                id,
+                nick,
+                data,
+                storeId,
+                marketplaceId,
+                checkAttributesAvailability,
+                container,
+                callback
+            );
+        },
+
+        clearMessages: function(type)
+        {
+            if (typeof EbayListingTemplateSwitcherObj == 'undefined') {
+                // not inside template switcher
+                return;
+            }
+
+            var container = type == 'local' ? 'shipping_local_table_messages' : 'shipping_international_table_messages';
+            $(container).innerHTML = '';
         }
 
         // ---------------------------------------

@@ -158,6 +158,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
             $customerBuilder->setData($customerInfo);
             $customerBuilder->buildCustomer();
+            $customerBuilder->getCustomer()->save();
 
             return $customerBuilder->getCustomer()->getDataModel();
         }
@@ -226,12 +227,13 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
     public function getPaymentData()
     {
         $paymentData = array(
-            'method'            => $this->payment->getCode(),
-            'component_mode'    =>\Ess\M2ePro\Helper\Component\Amazon::NICK,
-            'payment_method'    => '',
-            'channel_order_id'  => $this->order->getAmazonOrderId(),
-            'channel_final_fee' => 0,
-            'transactions'      => array()
+            'method'                => $this->payment->getCode(),
+            'component_mode'        =>\Ess\M2ePro\Helper\Component\Amazon::NICK,
+            'payment_method'        => '',
+            'channel_order_id'      => $this->order->getAmazonOrderId(),
+            'channel_final_fee'     => 0,
+            'cash_on_delivery_cost' => 0,
+            'transactions'          => array()
         );
 
         return $paymentData;
@@ -252,6 +254,10 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
 
         if ($this->order->isPrime()) {
             $shippingData['shipping_method'] .= ' | Is Prime';
+        }
+
+        if ($this->order->isBusiness()) {
+            $shippingData['shipping_method'] .= ' | Is Business';
         }
 
         if ($this->order->isMerchantFulfillmentApplied()) {

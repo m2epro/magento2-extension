@@ -91,7 +91,11 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function isTypeEpid()
     {
-        return $this->getType() == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID;
+        return in_array($this->getType(), array(
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_MOTOR,
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_UK,
+            \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_EPID_DE,
+        ));
     }
 
     /**
@@ -125,7 +129,7 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
 
         $select = $connection->select();
         $select->from(array('emftg' => $table), array('filter_id'))
-            ->where('group_id IN (?)', $this->getId());
+               ->where('group_id IN (?)', $this->getId());
 
         return $connection->fetchCol($select);
     }

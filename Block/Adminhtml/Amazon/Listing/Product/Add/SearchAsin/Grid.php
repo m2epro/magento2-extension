@@ -107,8 +107,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'variation_child_statuses'       => 'variation_child_statuses',
                 'amazon_sku'                     => 'sku',
                 'online_qty'                     => 'online_qty',
-                'online_price'                   => 'online_price',
-                'online_sale_price'              => 'online_sale_price',
+                'online_regular_price'           => 'online_regular_price',
+                'online_regular_sale_price'      => 'online_regular_sale_price',
                 'is_afn_channel'                 => 'is_afn_channel',
                 'is_general_id_owner'            => 'is_general_id_owner',
                 'is_variation_parent'            => 'is_variation_parent',
@@ -251,7 +251,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $imageResizedUrl = $imageResized->getUrl();
 
-        $imageHtml = $productId.'<div style="margin-top: 5px"><img src="'.$imageResizedUrl.'" /></div>';
+        $imageHtml = $productId.'<div style="margin-top: 5px">'.
+            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageResizedUrl. '" /></div>';
         $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
 
         return $withImageHtml;

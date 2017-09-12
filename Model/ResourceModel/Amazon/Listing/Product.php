@@ -128,36 +128,83 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
         );
     }
 
+    public function setSynchStatusNeedByProductTaxCodeTemplate($newData, $oldData, $listingProduct)
+    {
+        $newTemplateData = array();
+        if ($newData['template_product_tax_code_id']) {
+
+            $template = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Amazon\Template\ProductTaxCode', $newData['template_product_tax_code_id'], NULL, array('template')
+            );
+            $template && $newTemplateData = $template->getDataSnapshot();
+        }
+
+        $oldTemplateData = array();
+        if ($oldData['template_product_tax_code_id']) {
+
+            $template = $this->activeRecordFactory->getCachedObjectLoaded(
+                'Amazon\Template\ProductTaxCode', $oldData['template_product_tax_code_id'], NULL, array('template')
+            );
+            $template && $oldTemplateData = $template->getDataSnapshot();
+        }
+
+        $this->activeRecordFactory->getObject('Amazon\Template\ProductTaxCode')->getResource()->setSynchStatusNeed(
+            $newTemplateData,
+            $oldTemplateData,
+            array($listingProduct)
+        );
+    }
+
     //########################################
 
     public function getProductsDataBySkus(array $skus = array(),
                                           array $filters = array(),
                                           array $columns = array())
     {
-        $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
-        $listingProductCollection->getSelect()->joinLeft(
-            array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
-            'l.id = main_table.listing_id',
-            array()
-        );
+        $result = [];
+        $skuWithQuotes = false;
 
-        if (!empty($skus)) {
-            $skus = array_map(function($el){ return (string)$el; }, $skus);
-            $listingProductCollection->addFieldToFilter('sku', array('in' => array_unique($skus)));
-        }
-
-        if (!empty($filters)) {
-            foreach ($filters as $columnName => $columnValue) {
-                $listingProductCollection->addFieldToFilter($columnName, $columnValue);
+        foreach ($skus as $sku) {
+            if (strpos($sku, '"') !== false) {
+                $skuWithQuotes = true;
+                break;
             }
         }
 
-        if (!empty($columns)) {
-            $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-            $listingProductCollection->getSelect()->columns($columns);
+        $skus = (empty($skus) || !$skuWithQuotes) ? [$skus] : array_chunk($skus, 500);
+
+        foreach ($skus as $skusChunk) {
+
+            $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
+            $listingProductCollection->getSelect()->joinLeft(
+                array('l' => $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable()),
+                'l.id = main_table.listing_id',
+                array()
+            );
+
+            if (!empty($skusChunk)) {
+                $skusChunk = array_map(function($el){ return (string)$el; }, $skusChunk);
+                $listingProductCollection->addFieldToFilter('sku', array('in' => array_unique($skusChunk)));
+            }
+
+            if (!empty($filters)) {
+                foreach ($filters as $columnName => $columnValue) {
+                    $listingProductCollection->addFieldToFilter($columnName, $columnValue);
+                }
+            }
+
+            if (!empty($columns)) {
+                $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+                $listingProductCollection->getSelect()->columns($columns);
+            }
+
+            $result = array_merge(
+                $result,
+                $listingProductCollection->getData()
+            );
         }
 
-        return $listingProductCollection->getData();
+        return $result;
     }
 
     //########################################

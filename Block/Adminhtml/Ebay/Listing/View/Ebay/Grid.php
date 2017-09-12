@@ -11,8 +11,6 @@ use Ess\M2ePro\Model\Listing\Log;
 
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 {
-    private $isTerapeakWidgetEnabled = false;
-
     protected $magentoProductCollectionFactory;
     protected $ebayFactory;
     protected $localeCurrency;
@@ -52,10 +50,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------------------------------------
 
         $this->showAdvancedFilterProductsOption = false;
-
-        $this->isTerapeakWidgetEnabled = (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
-            '/view/ebay/terapeak/', 'mode'
-        );
     }
 
     //########################################
@@ -314,13 +308,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'url'      => '',
             'confirm'  => $this->__('Are you sure?')
         ), 'other');
-
-        $this->getMassactionBlock()->addItem('remove', array(
-            'label'    => $this->__('Remove From Listing'),
-            'url'      => '',
-            'confirm'  => $this->__('Are you sure?')
-        ), 'other');
-
         // ---------------------------------------
 
         return parent::_prepareMassaction();
@@ -338,13 +325,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $title = $this->getHelper('Data')->escapeHtml($title);
 
         $valueHtml = '<span class="product-title-value">' . $title . '</span>';
-
-        if (!empty($onlineTitle) && $this->isTerapeakWidgetEnabled) {
-            $valueHtml = '<span class="terapeak-product-title">' .
-                $valueHtml .
-                $this->getTerapeakButtonHtml($row) .
-            '</span>';
-        }
 
         if (is_null($sku = $row->getData('sku'))) {
             $sku = $this->modelFactory->getObject('Magento\Product')
@@ -374,7 +354,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $additionalData = (array)$this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
 
-        $productAttributes = array_keys($additionalData['variations_sets']);
+        $productAttributes = isset($additionalData['variations_sets'])
+                             ? array_keys($additionalData['variations_sets']) : array();
 
         $valueHtml .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin: 7px 0 0 7px">';
         $valueHtml .= implode(', ', $productAttributes);
@@ -438,37 +419,6 @@ HTML;
 <div style="font-size: 11px">
     <a href="javascript:void(0);" class="ebay-fee"
         onclick="EbayListingViewEbayGridObj.getEstimatedFees({$listingProductId});">{$label}</a>
-</div>
-HTML;
-
-    }
-
-    private function getTerapeakButtonHtml($row)
-    {
-        $buttonTitle = $this->__('optimize');
-        $buttonHtml = <<<HTML
-<div class="tp-research" style="">
-    &nbsp;[<a class="tp-button" target="_blank">{$buttonTitle}</a>]
-</div>
-HTML;
-
-        $productId = (int)$row->getData('entity_id');
-        $storeId   = $this->listing ? (int)$this->listing['store_id'] : 0;
-
-        /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
-        $magentoProduct = $this->modelFactory->getObject('Magento\Product');
-        $magentoProduct->setProductId($productId);
-        $magentoProduct->setStoreId($storeId);
-
-        $imageLink = $magentoProduct->getImageLink();
-
-        if (empty($imageLink)) {
-            return $buttonHtml;
-        }
-
-        return $buttonHtml . <<<HTML
-<div style="display: none;">
-    <img class="product-image-value" src="{$imageLink}" />
 </div>
 HTML;
 
@@ -633,7 +583,7 @@ HTML;
 
             $title = $this->getHelper('Data')->escapeHtml($title);
 
-            $bidsPopupTitle = $this->__('Bids of &quot;%s&quot;', $title);
+            $bidsPopupTitle = $this->__('Bids of &quot;%s%&quot;', $title);
             $bidsPopupTitle = addslashes($bidsPopupTitle);
 
             $bidsTitle = $this->__('Show bids list');
@@ -910,8 +860,6 @@ HTML;
 
     protected function _toHtml()
     {
-        $this->getInitTerapeakWidgetHtml();
-
         if ($this->getRequest()->isXmlHttpRequest()) {
 
             $this->js->add(
@@ -937,7 +885,6 @@ JS
             'runReviseProducts' => $this->getUrl('*/ebay_listing/runReviseProducts'),
             'runStopProducts' => $this->getUrl('*/ebay_listing/runStopProducts'),
             'runStopAndRemoveProducts' => $this->getUrl('*/ebay_listing/runStopAndRemoveProducts'),
-            'runRemoveProducts' => $this->getUrl('*/ebay_listing/runRemoveProducts'),
             'previewItems' => $this->getUrl('*/ebay_listing/previewItems'),
         ]);
 
@@ -984,6 +931,8 @@ JS
             'ebay_listing_moving/moveToListingGrid'
         );
 
+        $this->jsUrl->add($this->getUrl('*/ebay_listing/getListingProductBids'), 'ebay_listing/getListingProductBids');
+
         // M2ePro_TRANSLATIONS
         // %task_title%" task has completed with warnings. <a target="_blank" href="%url%">View Log</a> for details.
         $taskCompletedWarningMessage = '"%task_title%" task has completed with warnings. ';
@@ -1026,21 +975,12 @@ JS
 
             'Please select Action.' => $this->__('Please select Action.'),
 
-            'Product(s) was successfully Moved.' => $this->__('Product(s) was successfully Moved.'),
-
-            'Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__('Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.'),
-
-            'Some Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.' =>
-                $this->__('Some Product(s) was not Moved. <a target="_blank" href="%url%">View Log</a> for details.'),
-
             'Moving eBay Item' => $this->__('Moving eBay Item'),
             'Moving eBay Items' => $this->__('Moving eBay Items'),
-            'Product(s) failed to Move' => $this->__('Product(s) failed to Move'),
             'eBay Categories' => $this->__('eBay Categories'),
             'of Product' => $this->__('of Product'),
             'Specifics' => $this->__('Specifics'),
-            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate'),
+            'Ebay Item Duplicate' => $this->__('eBay Item Duplicate')
         ]);
 
         $showAutoAction   = $this->getHelper('Data')->jsonEncode((bool)$this->getRequest()->getParam('auto_actions'));
@@ -1080,6 +1020,7 @@ JS
 
         EbayListingViewEbayGridObj.actionHandler.setOptions(M2ePro);
         EbayListingViewEbayGridObj.variationProductManageHandler.setOptions(M2ePro);
+        EbayListingViewEbayGridObj.listingProductBidsHandler.setOptions(M2ePro);
 
         EbayListingViewEbayGridObj.actionHandler.setProgressBar('listing_view_progress_bar');
         EbayListingViewEbayGridObj.actionHandler.setGridWrapper('listing_view_content_container');
@@ -1145,70 +1086,6 @@ JS
         }
 
         return $html;
-    }
-
-    private function getInitTerapeakWidgetHtml()
-    {
-
-        if (!$this->isTerapeakWidgetEnabled) {
-            return;
-        }
-
-        if ($this->getRequest()->isXmlHttpRequest()) {
-
-            $this->js->add(
-                <<<JS
-    terapeakResearchConfig.init();
-JS
-            );
-
-            return;
-        }
-
-        $this->css->add(<<<CSS
-div.tp-research { display: inline-block; }
-a.tp-button { cursor: pointer; text-decoration: none; }
-
-.terapeak-product-title div.tp-research{
-    opacity:0;
-    transition:opacity 0.2s linear;
-}
-
-.terapeak-product-title:hover div.tp-research{
-    opacity:1;
-}
-CSS
-        );
-
-        $this->js->addOnReadyJs(<<<JS
-require([
-    'jquery',
-    'prototype',
-    '//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js',
-    'M2ePro/Ebay/Terapeak'
-],function(jQuery) {
-    /* Set up Terapeack Widget */
-    _tpwidget = {
-        product_container_selector:        'tr',
-        productid_element_selector:        '.no-value',
-        title_element_selector:            '.product-title-value',
-        image_element_selector:            '.product-image-value',
-        price_element_selector:            '.product-price-value',
-        description_element_selector:      [],
-        terapeak_research_button_selector: '.tp-research',
-
-        affiliate_id: '7800677',
-        pid:          '7800677'
-    };
-
-    terapeakResearchConfig.init();
-
-    jQuery.fn.terapeakModal = jQuery.fn.modal;
-    jQuery.fn.modal.noConflict();
-});
-
-JS
-        );
     }
 
     //########################################

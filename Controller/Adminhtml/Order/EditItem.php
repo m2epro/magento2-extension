@@ -37,7 +37,7 @@ class EditItem extends Order
             return $this->getResult();
         }
 
-        if ($item->getMagentoProduct()->hasRequiredOptions()) {
+        if ($item->getMagentoProduct()->isProductWithVariations()) {
             $block = $this->createBlock('Order\Item\Product\Options\Mapping')->setData(array(
                 'order_id' => $item->getOrderId(),
                 'product_id' => $item->getProductId()

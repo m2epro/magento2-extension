@@ -47,24 +47,9 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
 
     //########################################
 
-    protected function isSourceModeNone()
+    protected function getCurrencyForPriceConvert()
     {
-        return $this->getSource('mode') == AccountRepricing::PRICE_MODE_MANUAL;
-    }
-
-    protected function isSourceModeProduct()
-    {
-        return $this->getSource('mode') == AccountRepricing::PRICE_MODE_PRODUCT;
-    }
-
-    protected function isSourceModeSpecial()
-    {
-        return $this->getSource('mode') == AccountRepricing::PRICE_MODE_SPECIAL;
-    }
-
-    protected function isSourceModeAttribute()
-    {
-        return $this->getSource('mode') == AccountRepricing::PRICE_MODE_ATTRIBUTE;
+        return $this->getComponentListing()->getAmazonMarketplace()->getDefaultCurrency();
     }
 
     //########################################

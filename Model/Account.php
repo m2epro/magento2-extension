@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model;
 
+/**
+ * @method \Ess\M2ePro\Model\Ebay\Account|\Ess\M2ePro\Model\Amazon\Account getChildObject()
+ */
 class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     //########################################

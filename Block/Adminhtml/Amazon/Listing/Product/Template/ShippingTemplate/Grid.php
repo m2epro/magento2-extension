@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingTem
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $marketplaceId;
+    protected $productsIds;
 
     //########################################
 
@@ -49,6 +50,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->marketplaceId = $marketplaceId;
     }
 
+    /**
+     * @param mixed $productsIds
+     */
+    public function setProductsIds($productsIds)
+    {
+        $this->productsIds = $productsIds;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductsIds()
+    {
+        return $this->productsIds;
+    }
+
     // ---------------------------------------
 
     protected function _prepareCollection()
@@ -71,15 +88,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'filter'       => false,
             'sortable'     => false,
             'frame_callback' => array($this, 'callbackColumnTitle')
-        ));
-
-        $this->addColumn('code', array(
-            'header'       => $this->__('Channel Template Name'),
-            'align'        => 'left',
-            'type'         => 'text',
-            'index'        => 'template_name',
-            'filter'       => false,
-            'sortable'     => false
         ));
 
         $this->addColumn('action', array(
@@ -160,7 +168,7 @@ HTML;
     {
         $this->js->add(
             <<<JS
-ListingGridHandlerObj.templateShippingHandler.newTemplateUrl='{$this->getNewTemplateShippingUrl()}';
+ListingGridHandlerObj.templateShippingHandler.newTemplateUrl='{$this->getNewTemplateShippingTemplateUrl()}';
 JS
         );
 
@@ -176,7 +184,8 @@ JS
             'shipping_mode' => \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_TEMPLATE,
             '_query' => array(
                 'marketplace_id' => $this->getMarketplaceId()
-            )
+            ),
+            'products_ids' => implode(',', $this->getProductsIds()),
         ));
     }
 
@@ -201,7 +210,7 @@ HTML;
         $this->setEmptyText($message);
     }
 
-    protected function getNewTemplateShippingUrl()
+    protected function getNewTemplateShippingTemplateUrl()
     {
         return $this->getUrl('*/amazon_template_shippingTemplate/new', [
             'close_on_save' => true

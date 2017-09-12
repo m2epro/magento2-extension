@@ -31,6 +31,8 @@ class Edit extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
             $this->__('Edit M2E Pro Listing "%listing_title%" Settings', $listing->getTitle())
         );
 
+        $this->setPageHelpLink('x/tActAQ');
+
         return $this->getResult();
     }
 

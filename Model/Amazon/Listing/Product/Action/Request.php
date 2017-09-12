@@ -95,7 +95,7 @@ abstract class Request extends \Ess\M2ePro\Model\AbstractModel
      */
     protected function getMarketplace()
     {
-        $this->getAmazonAccount()->getMarketplace();
+        return $this->getAmazonAccount()->getMarketplace();
     }
 
     /**

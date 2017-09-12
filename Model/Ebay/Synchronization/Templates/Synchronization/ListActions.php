@@ -140,10 +140,11 @@ final class ListActions extends AbstractModel
     private function immediatelyNotCheckedProducts()
     {
         $this->getActualOperationHistory()->addTimePoint(__METHOD__,'Immediately when Product was not checked');
+        $limit = $this->getConfigValue($this->getFullSettingsPath().'immediately_not_checked/', 'items_limit');
 
         $collection = $this->ebayFactory->getObject('Listing\Product')->getCollection();
         $collection->addFieldToFilter('tried_to_list',0);
-        $collection->getSelect()->limit(100);
+        $collection->getSelect()->limit($limit);
 
         $listingsProducts = $collection->getItems();
 
@@ -168,7 +169,7 @@ final class ListActions extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetListRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetListRequirements($listingProduct, false)) {
                     continue;
                 }
 

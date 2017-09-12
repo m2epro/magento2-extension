@@ -5,22 +5,22 @@
 
     <!-- external orders -->
 
-    <event name="layout_render_before_sales_order_view">
+    <event name="controller_action_postdispatch_sales_order_view">
         <observer name="m2epro_observer_order_view_before"
                   instance="Ess\M2ePro\Observer\Order\View\Before"
                   shared="false" />
     </event>
-    <event name="layout_render_before_adminhtml_order_shipment_view">
+    <event name="controller_action_postdispatch_adminhtml_order_shipment_view">
         <observer name="m2epro_observer_shipment_view"
                   instance="Ess\M2ePro\Observer\Shipment\View"
                   shared="false" />
     </event>
-    <event name="layout_render_before_sales_order_invoice_view">
+    <event name="controller_action_postdispatch_adminhtml_order_invoice_view">
         <observer name="m2epro_observer_invoice_view"
                   instance="Ess\M2ePro\Observer\Invoice\View"
                   shared="false" />
     </event>
-    <event name="layout_render_before_sales_order_creditmemo_view">
+    <event name="controller_action_postdispatch_adminhtml_order_creditmemo_view">
         <observer name="m2epro_observer_creditmemo_view"
                   instance="Ess\M2ePro\Observer\CreditMemo\View"
                   shared="false" />

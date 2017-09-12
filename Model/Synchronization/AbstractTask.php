@@ -8,6 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization;
 
+use Ess\M2ePro\Model\Exception;
 use Ess\M2ePro\Model\Log\AbstractModel as LogModel;
 
 abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
@@ -179,15 +180,15 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
     // ---------------------------------------
 
     /**
-     * @param \Ess\M2ePro\Model\Synchronization\LockItem $object
+     * @param \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $object
      */
-    public function setParentLockItem(\Ess\M2ePro\Model\Synchronization\LockItem $object)
+    public function setParentLockItem(\Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $object)
     {
         $this->parentLockItem = $object;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Synchronization\LockItem
+     * @return \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager
      */
     public function getParentLockItem()
     {
@@ -268,6 +269,10 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
     protected function beforeStart()
     {
         if (!$this->getParentLockItem()) {
+            if ($this->getLockItem()->isExist()) {
+                throw new Exception('Lock item "'.$this->getLockItem()->getNick().'" already exists.');
+            }
+
             $this->getLockItem()->create();
             $this->getLockItem()->makeShutdownFunction();
         }
@@ -324,7 +329,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
     protected function getLockItem()
     {
         if (is_null($this->lockItem)) {
-            $this->lockItem = $this->activeRecordFactory->getObject('Synchronization\LockItem');
+            $this->lockItem = $this->modelFactory->getObject('Synchronization\Lock\Item\Manager');
             $operationHistoryNickSuffix = str_replace('/','_',trim($this->getFullSettingsPath(),'/'));
             $this->lockItem->setNick('synchronization_'.$operationHistoryNickSuffix);
         }
@@ -351,7 +356,7 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Synchronization\LockItem
+     * @return \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager
      * @throws \Ess\M2ePro\Model\Exception
      */
     protected function getActualLockItem()

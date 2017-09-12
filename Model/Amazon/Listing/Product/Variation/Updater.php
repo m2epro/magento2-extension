@@ -57,7 +57,10 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             return false;
         }
 
-        if ($magentoProduct->isSimpleTypeWithCustomOptions() || $magentoProduct->isBundleType()) {
+        if ($magentoProduct->isSimpleTypeWithCustomOptions() ||
+            $magentoProduct->isBundleType() ||
+            $magentoProduct->isDownloadableTypeWithSeparatedLinks()
+        ) {
             $listingProduct->getChildObject()->setData(
                 'is_general_id_owner', \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO
             );
@@ -91,6 +94,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED);
 
             $listingProduct->delete();
+            $listingProduct->isDeleted(true);
         } else {
             $variationManager->setSimpleType();
         }
@@ -113,7 +117,9 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\PhysicalUnit $typeModel */
         $typeModel = $variationManager->getTypeModel();
 
-        if (!$listingProduct->getMagentoProduct()->isSimpleType()) {
+        if (!$listingProduct->getMagentoProduct()->isSimpleType() &&
+            !$listingProduct->getMagentoProduct()->isDownloadableType()
+        ) {
             $typeModel->inspectAndFixProductOptionsIds();
         }
 

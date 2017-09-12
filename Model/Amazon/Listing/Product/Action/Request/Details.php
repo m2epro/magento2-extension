@@ -51,7 +51,11 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
             );
         }
 
-        $data = array_merge($data, $this->getShippingData());
+        if ($this->getConfigurator()->isShippingTemplateAllowed()) {
+            $data = array_merge($data, $this->getShippingData());
+        }
+
+        $data = array_merge($data, $this->getTaxCodeData());
 
         $isUseDescriptionTemplate = false;
 
@@ -65,7 +69,8 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
 
             if (($variationManager->isRelationChildType() || $variationManager->isIndividualType()) &&
                 ($this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
-                 $this->getMagentoProduct()->isBundleType())) {
+                 $this->getMagentoProduct()->isBundleType()||
+                 $this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks())) {
                 break;
             }
 
@@ -111,14 +116,19 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
      */
     private function getConditionData()
     {
-        $this->searchNotFoundAttributes();
-        $conditionNote = $this->getAmazonListingProduct()->getListingSource()->getConditionNote();
-        $this->processNotFoundAttributes('Condition Note');
+        $condition = array();
 
-        return array(
-            'condition'      => $this->getAmazonListingProduct()->getListingSource()->getCondition(),
-            'condition_note' => $conditionNote,
-        );
+        $this->searchNotFoundAttributes();
+        $condition['condition'] = $this->getAmazonListingProduct()->getListingSource()->getCondition();
+        $this->processNotFoundAttributes('Condition');
+
+        if ($condition['condition'] != \Ess\M2ePro\Model\Amazon\Listing::CONDITION_NEW) {
+            $this->searchNotFoundAttributes();
+            $condition['condition_note'] = $this->getAmazonListingProduct()->getListingSource()->getConditionNote();
+            $this->processNotFoundAttributes('Condition Note');
+        }
+
+        return $condition;
     }
 
     /**
@@ -316,25 +326,39 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         }
 
         $data = array();
-        $data['shipping_data']['template_name'] = $this->getShippingTemplateTemplate()->getTemplateName();
+        $data['shipping_data']['template_name'] = $this->getAmazonListingProduct()
+                                                       ->getShippingTemplateSource()->getTemplateName();
+
+        return $data;
+    }
+
+    /**
+     * @return array
+     */
+    private function getTaxCodeData()
+    {
+        if (!$this->getAmazonMarketplace()->isProductTaxCodePolicyAvailable() ||
+            !$this->getAmazonAccount()->isVatCalculationServiceEnabled()
+        ) {
+            return array();
+        }
+
+        if (!$this->getAmazonListingProduct()->isExistProductTaxCodeTemplate()) {
+            return array();
+        }
+
+        $data = array();
+
+        $this->searchNotFoundAttributes();
+
+        $data['tax_code'] = $this->getAmazonListingProduct()->getProductTaxCodeTemplateSource()->getProductTaxCode();
+
+        $this->processNotFoundAttributes('Product Tax Code');
 
         return $data;
     }
 
     //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Amazon\Template\ShippingTemplate
-     */
-    private function getShippingTemplateTemplate()
-    {
-        if (is_null($this->shippingTemplateTemplate)) {
-            $this->shippingTemplateTemplate = $this->getAmazonListingProduct()->getShippingTemplateTemplate();
-        }
-        return $this->shippingTemplateTemplate;
-    }
-
-    // ---------------------------------------
 
     /**
      * @return \Ess\M2ePro\Model\Amazon\Template\Description

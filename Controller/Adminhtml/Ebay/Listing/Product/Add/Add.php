@@ -19,7 +19,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Product\Add
 
         $ids = array();
         foreach ($productsIds as $productId) {
-            $listingProduct = $listing->addProduct($productId);
+            $listingProduct = $listing->addProduct($productId, \Ess\M2ePro\Helper\Data::INITIATOR_USER);
             if ($listingProduct instanceof \Ess\M2ePro\Model\Listing\Product) {
                 $ids[] = $listingProduct->getId();
             }

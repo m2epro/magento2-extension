@@ -213,20 +213,31 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $value .= '<br/><strong>'.$this->__('SKU') .
             ':</strong> '.$this->getHelper('Data')->escapeHtml($sku) . '<br/>';
 
-        $listingProductId = (int)$row->getData('id');
         /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $listingProductId = (int)$row->getData('id');
         $listingProduct = $this->amazonFactory->getObjectLoaded('Listing\Product', $listingProductId);
+        $amazonListingProduct = $listingProduct->getChildObject();
 
-        if (!$listingProduct->getChildObject()->getVariationManager()->isVariationProduct()) {
+        if (!$amazonListingProduct->getVariationManager()->isVariationProduct()) {
             return $value;
         }
 
-        $productOptions = $listingProduct->getChildObject()->getVariationManager()
-            ->getTypeModel()->getProductAttributes();
+        if ($amazonListingProduct->getVariationManager()->isRelationParentType()) {
+            $productAttributes = (array)$amazonListingProduct->getVariationManager()
+                ->getTypeModel()->getProductAttributes();
+        } else {
+            $productOptions = $amazonListingProduct->getVariationManager()
+                ->getTypeModel()->getProductOptions();
+            $productAttributes = !empty($productOptions) ? array_keys($productOptions) : array();
+        }
 
-        $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin-left: 7px"><br/>';
-        $value .= implode(', ', $productOptions);
-        $value .= '</div>';
+        if (!empty($productAttributes)) {
+
+            $value .= '<div style="font-size: 11px; font-weight: bold; color: grey; margin-left: 7px"><br/>';
+            $value .= implode(', ', $productAttributes);
+            $value .= '</div>';
+        }
 
         return $value;
     }

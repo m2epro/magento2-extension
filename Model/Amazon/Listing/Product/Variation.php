@@ -6,11 +6,11 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Amazon\Listing\Product;
+
 /**
  * @method \Ess\M2ePro\Model\Listing\Product\Variation getParentObject()
  */
-namespace Ess\M2ePro\Model\Amazon\Listing\Product;
-
 class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\AbstractModel
 {
     //########################################
@@ -226,6 +226,15 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
                     $sku .= $tempSku;
                 }
             }
+
+            // Downloadable with separated links product
+        } else if ($this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
+
+            /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+
+            $option = reset($options);
+            $sku = $option->getMagentoProduct()->getSku().'-'
+                .$this->getHelper('Data')->convertStringToSku($option->getOption());
         }
 
         if (!empty($sku)) {
@@ -268,45 +277,158 @@ class Variation extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Ab
         return $calculator->getVariationValue($this->getParentObject());
     }
 
-    public function getPrice()
+    // ---------------------------------------
+
+    public function getRegularPrice()
     {
-        $src = $this->getAmazonSellingFormatTemplate()->getPriceSource();
+        if (!$this->getAmazonListingProduct()->isAllowedForRegularCustomers()) {
+            return NULL;
+        }
+
+        $src = $this->getAmazonSellingFormatTemplate()->getRegularPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
         $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
-        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getPriceCoefficient());
-        $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getPriceVatPercent());
-        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getPriceVariationMode());
+        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularPriceCoefficient());
+        $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
+        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
 
         return $calculator->getVariationValue($this->getParentObject());
     }
 
-    public function getMapPrice()
+    public function getRegularMapPrice()
     {
-        $src = $this->getAmazonSellingFormatTemplate()->getMapPriceSource();
+        if (!$this->getAmazonListingProduct()->isAllowedForRegularCustomers()) {
+            return NULL;
+        }
+
+        $src = $this->getAmazonSellingFormatTemplate()->getRegularMapPriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
         $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
-        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getPriceVariationMode());
+        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
 
         return $calculator->getVariationValue($this->getParentObject());
     }
 
-    public function getSalePrice()
+    public function getRegularSalePrice()
     {
-        $src = $this->getAmazonSellingFormatTemplate()->getSalePriceSource();
+        if (!$this->getAmazonListingProduct()->isAllowedForRegularCustomers()) {
+            return NULL;
+        }
+
+        $src = $this->getAmazonSellingFormatTemplate()->getRegularSalePriceSource();
 
         /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
         $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
         $calculator->setSource($src)->setProduct($this->getListingProduct());
         $calculator->setIsSalePrice(true);
-        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getSalePriceCoefficient());
-        $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getPriceVatPercent());
-        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getPriceVariationMode());
+        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getRegularSalePriceCoefficient());
+        $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getRegularPriceVatPercent());
+        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getRegularPriceVariationMode());
 
         return $calculator->getVariationValue($this->getParentObject());
+    }
+
+    // ---------------------------------------
+
+    public function getBusinessPrice()
+    {
+        if (!$this->getAmazonListingProduct()->isAllowedForBusinessCustomers()) {
+            return NULL;
+        }
+
+        $src = $this->getAmazonSellingFormatTemplate()->getBusinessPriceSource();
+
+        /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+        $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+        $calculator->setSource($src)->setProduct($this->getListingProduct());
+        $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessPriceCoefficient());
+        $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
+        $calculator->setPriceVariationMode($this->getAmazonSellingFormatTemplate()->getBusinessPriceVariationMode());
+
+        return $calculator->getVariationValue($this->getParentObject());
+    }
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getBusinessDiscounts()
+    {
+        if (!$this->getAmazonListingProduct()->isAllowedForBusinessCustomers()) {
+            return NULL;
+        }
+
+        if ($this->getAmazonSellingFormatTemplate()->isBusinessDiscountsModeNone()) {
+            return array();
+        }
+
+        if ($this->getAmazonSellingFormatTemplate()->isBusinessDiscountsModeTier()) {
+            $src = $this->getAmazonSellingFormatTemplate()->getBusinessDiscountsSource();
+
+            $storeId = $this->getListing()->getStoreId();
+            $src['tier_website_id'] = $this->getHelper('Magento\Store')->getWebsite($storeId)->getId();
+
+            /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+            $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+            $calculator->setSource($src)->setProduct($this->getListingProduct());
+            $calculator->setSourceModeMapping(array(
+                PriceCalculator::MODE_TIER
+                    => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::BUSINESS_DISCOUNTS_MODE_TIER,
+            ));
+            $calculator->setCoefficient($this->getAmazonSellingFormatTemplate()->getBusinessDiscountsTierCoefficient());
+            $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
+            $calculator->setPriceVariationMode(
+                $this->getAmazonSellingFormatTemplate()->getBusinessPriceVariationMode()
+            );
+
+            return array_slice(
+                $calculator->getVariationValue($this->getParentObject()), 0,
+                \Ess\M2ePro\Model\Amazon\Listing\Product::BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED,
+                true
+            );
+        }
+
+        /** @var \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount[] $businessDiscounts */
+        $businessDiscounts = $this->getAmazonSellingFormatTemplate()->getBusinessDiscounts(true);
+        if (empty($businessDiscounts)) {
+            return array();
+        }
+
+        $resultValue = array();
+
+        foreach ($businessDiscounts as $businessDiscount) {
+            /** @var $calculator \Ess\M2ePro\Model\Amazon\Listing\Product\PriceCalculator */
+            $calculator = $this->modelFactory->getObject('Amazon\Listing\Product\PriceCalculator');
+            $calculator->setSource($businessDiscount->getSource())->setProduct($this->getListingProduct());
+            $calculator->setSourceModeMapping(array(
+                PriceCalculator::MODE_PRODUCT
+                    => \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_PRODUCT,
+                PriceCalculator::MODE_SPECIAL
+                    => \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_SPECIAL,
+                PriceCalculator::MODE_ATTRIBUTE
+                    => \Ess\M2ePro\Model\Amazon\Template\SellingFormat\BusinessDiscount::MODE_ATTRIBUTE,
+            ));
+            $calculator->setCoefficient($businessDiscount->getCoefficient());
+            $calculator->setVatPercent($this->getAmazonSellingFormatTemplate()->getBusinessPriceVatPercent());
+            $calculator->setPriceVariationMode(
+                $this->getAmazonSellingFormatTemplate()->getBusinessPriceVariationMode()
+            );
+
+            $resultValue[$businessDiscount->getQty()] = $calculator->getVariationValue($this->getParentObject());
+
+            $rulesMaxCount = \Ess\M2ePro\Model\Amazon\Listing\Product::BUSINESS_DISCOUNTS_MAX_RULES_COUNT_ALLOWED;
+
+            if (count($resultValue) >= $rulesMaxCount) {
+                break;
+            }
+        }
+
+        return $resultValue;
     }
 
     //########################################

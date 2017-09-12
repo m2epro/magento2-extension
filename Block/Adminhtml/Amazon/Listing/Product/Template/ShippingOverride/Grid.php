@@ -11,6 +11,7 @@ namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ShippingOve
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 {
     protected $marketplaceId;
+    protected $productsIds;
 
     //########################################
 
@@ -46,6 +47,22 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function setMarketplaceId($marketplaceId)
     {
         $this->marketplaceId = $marketplaceId;
+    }
+
+    /**
+     * @param mixed $productsIds
+     */
+    public function setProductsIds($productsIds)
+    {
+        $this->productsIds = $productsIds;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getProductsIds()
+    {
+        return $this->productsIds;
     }
 
     // ---------------------------------------
@@ -170,7 +187,8 @@ JS
             'shipping_mode' => \Ess\M2ePro\Model\Amazon\Account::SHIPPING_MODE_OVERRIDE,
             '_query' => array(
                 'marketplace_id' => $this->getMarketplaceId()
-            )
+            ),
+            'products_ids' => implode(',', $this->getProductsIds()),
         ));
     }
 

@@ -120,8 +120,12 @@ final class Refund extends AbstractModel
             return;
         }
 
-        $items = array();
-        $changesIds = array();
+        $this->activeRecordFactory->getObject('Order\Change')->getResource()
+            ->incrementAttemptCount(array_keys($relatedChanges));
+
+        /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
+        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
+
         $failedChangesIds = array();
 
         foreach ($relatedChanges as $change) {
@@ -143,39 +147,32 @@ final class Refund extends AbstractModel
                 continue;
             }
 
-            $items[] = array(
-                'order_id'  => $change->getOrderId(),
-                'change_id' => $change->getId(),
+            $connectorData = array(
+                'order_id'        => $change->getOrderId(),
+                'change_id'       => $change->getId(),
                 'amazon_order_id' => $changeParams['order_id'],
-                'currency' => $changeParams['currency'],
-                'items' => $changeParams['items'],
+                'currency'        => $changeParams['currency'],
+                'items'           => $changeParams['items'],
             );
 
-            $changesIds[] = $change->getId();
+            $connectorObj = $dispatcherObject->getCustomConnector(
+                'Amazon\Synchronization\Orders\Refund\Requester',
+                array('order' => $connectorData), $account
+            );
+            $dispatcherObject->process($connectorObj);
         }
 
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByIds($failedChangesIds);
-
-        if (empty($items)) {
-            return;
+        if (!empty($failedChangesIds)) {
+            $this->activeRecordFactory->getObject('Order\Change')->getResource()
+                ->deleteByIds($failedChangesIds);
         }
-
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->incrementAttemptCount($changesIds);
-
-        /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
-        $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getCustomConnector(
-            'Amazon\Synchronization\Orders\Refund\Requester',
-            array('items' => $items), $account
-        );
-        $dispatcherObject->process($connectorObj);
     }
 
     //########################################
 
     /**
      * @param \Ess\M2ePro\Model\Account $account
-     * @return \Ess\M2ePro\Model\Order\Change
+     * @return \Ess\M2ePro\Model\Order\Change[]
      */
     private function getRelatedChanges(\Ess\M2ePro\Model\Account $account)
     {

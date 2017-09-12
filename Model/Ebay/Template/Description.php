@@ -6,12 +6,12 @@
  * @license    Commercial use is forbidden
  */
 
+namespace Ess\M2ePro\Model\Ebay\Template;
+
 /**
  * @method \Ess\M2ePro\Model\Template\Description getParentObject()
  * @method \Ess\M2ePro\Model\ResourceModel\Ebay\Template\Description getResource()
  */
-namespace Ess\M2ePro\Model\Ebay\Template;
-
 class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
     const TITLE_MODE_PRODUCT = 0;

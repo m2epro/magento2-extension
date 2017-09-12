@@ -29,12 +29,16 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
+    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
+    protected $stockConfiguration;
+
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
@@ -60,6 +64,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->stockConfiguration = $stockConfiguration;
 
         parent::__construct(
             $entityFactory,
@@ -214,8 +219,9 @@ SQL;
         }
 
         /** @var \Ess\M2ePro\Model\Indexer\Listing\Product\VariationParent\Manager $manager */
-        $manager = $this->modelFactory->getObject('Indexer\Listing\Product\VariationParent\Manager');
-        $manager->setListing($this->listing);
+        $manager = $this->modelFactory->getObject('Indexer\Listing\Product\VariationParent\Manager', [
+            'listing' => $this->listing
+        ]);
         $manager->prepare();
 
         if ($this->listing->isComponentModeAmazon()) {
@@ -227,36 +233,88 @@ SQL;
 
     private function joinAmazonIndexerParent()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resource */
-        $resource = $this->activeRecordFactory->getObject('Indexer\Listing\Product\VariationParent')->getResource();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject(
+            'Amazon\Indexer\Listing\Product\VariationParent'
+        )->getResource();
 
         $this->getSelect()->joinLeft(
             array('indexer' => $resource->getMainTable()),
             '(`alp`.`listing_product_id` = `indexer`.`listing_product_id`)',
             array(
-                'min_online_price' => new \Zend_Db_Expr('IF(
-                    (`indexer`.`min_price` IS NULL),
+                'min_online_regular_price' => new \Zend_Db_Expr('IF(
+                    (`indexer`.`min_regular_price` IS NULL),
                     IF(
-                      `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                      `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                      `alp`.`online_sale_price`,
-                      `alp`.`online_price`
+                      `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                      `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                      `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                      `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                      `alp`.`online_regular_sale_price`,
+                      `alp`.`online_regular_price`
                     ),
-                    `indexer`.`min_price`
+                    `indexer`.`min_regular_price`
+                )'),
+                'max_online_regular_price' => new \Zend_Db_Expr('IF(
+                    (`indexer`.`max_regular_price` IS NULL),
+                    IF(
+                      `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                      `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                      `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                      `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                      `alp`.`online_regular_sale_price`,
+                      `alp`.`online_regular_price`
+                    ),
+                    `indexer`.`max_regular_price`
+                )'),
+                'min_online_business_price' => new \Zend_Db_Expr('IF(
+                    (`indexer`.`min_business_price` IS NULL),
+                    `alp`.`online_business_price`,
+                    `indexer`.`min_business_price`
+                )'),
+                'max_online_business_price' => new \Zend_Db_Expr('IF(
+                    (`indexer`.`max_business_price` IS NULL),
+                    `alp`.`online_business_price`,
+                    `indexer`.`max_business_price`
+                )'),
+                'min_online_price' => new \Zend_Db_Expr('IF(
+                    (`indexer`.`min_regular_price` IS NULL AND `indexer`.`min_business_price` IS NULL),
+                    IF(
+                       `alp`.`online_regular_price` IS NULL,
+                       `alp`.`online_business_price`,
+                       IF(
+                          `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                          `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                          `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                          `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                          `alp`.`online_regular_sale_price`,
+                          `alp`.`online_regular_price`
+                       )
+                    ),
+                    IF(
+                        `indexer`.`min_regular_price` IS NULL,
+                        `indexer`.`min_business_price`,
+                        `indexer`.`min_regular_price`
+                    )
                 )'),
                 'max_online_price' => new \Zend_Db_Expr('IF(
-                    (`indexer`.`max_price` IS NULL),
+                    `indexer`.`max_regular_price` IS NULL AND `indexer`.`max_business_price` IS NULL,
                     IF(
-                      `alp`.`online_sale_price_start_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_end_date` IS NOT NULL AND
-                      `alp`.`online_sale_price_start_date` <= CURRENT_DATE() AND
-                      `alp`.`online_sale_price_end_date` >= CURRENT_DATE(),
-                      `alp`.`online_sale_price`,
-                      `alp`.`online_price`
+                      `alp`.`online_regular_price` IS NULL,
+                       `alp`.`online_business_price`,
+                       IF(
+                          `alp`.`online_regular_sale_price_start_date` IS NOT NULL AND
+                          `alp`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                          `alp`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                          `alp`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                          `alp`.`online_regular_sale_price`,
+                          `alp`.`online_regular_price`
+                       )
                     ),
-                    `indexer`.`max_price`
+                    IF(
+                        `indexer`.`max_regular_price` IS NULL,
+                        `indexer`.`max_business_price`,
+                        `indexer`.`max_regular_price`
+                    )
                 )'),
             )
         );
@@ -264,8 +322,10 @@ SQL;
 
     private function joinEbayIndexerParent()
     {
-        /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resource */
-        $resource = $this->activeRecordFactory->getObject('Indexer\Listing\Product\VariationParent')->getResource();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject(
+            'Ebay\Indexer\Listing\Product\VariationParent'
+        )->getResource();
 
         $this->getSelect()->joinLeft(
             array('indexer' => $resource->getMainTable()),
@@ -314,8 +374,6 @@ SQL;
         } else if ($this->listing->isComponentModeEbay()) {
             $this->injectEbayParentPrices();
         }
-
-        return;
     }
 
     private function injectAmazonParentPrices()
@@ -323,8 +381,10 @@ SQL;
         $listingProductsData = array();
         foreach ($this as $product) {
             $listingProductsData[(int)$product->getData('id')] = array(
-                'min_online_price' => $product->getData('current_online_price'),
-                'max_online_price' => $product->getData('current_online_price'),
+                'min_online_regular_price'  => $product->getData('online_regular_price'),
+                'max_online_regular_price'  => $product->getData('online_regular_price'),
+                'min_online_business_price' => $product->getData('online_business_price'),
+                'max_online_business_price' => $product->getData('online_business_price'),
             );
         }
 
@@ -332,25 +392,31 @@ SQL;
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resource */
-        $resource = $this->activeRecordFactory->getObject('Indexer\Listing\Product\VariationParent')->getResource();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject(
+            'Amazon\Indexer\Listing\Product\VariationParent'
+        )->getResource();
 
-        $selectStmt = $resource->getBuildIndexForAmazonSelect($this->listing->getId());
+        $selectStmt = $resource->getBuildIndexSelect($this->listing);
         $selectStmt->where('malp.variation_parent_id IN (?)', array_keys($listingProductsData));
 
         $data = $this->getConnection()->fetchAll($selectStmt);
         foreach ($data as $row) {
             $listingProductsData[(int)$row['variation_parent_id']] = array(
-                'min_online_price' => $row['variation_min_price'],
-                'max_online_price' => $row['variation_max_price'],
+                'min_online_regular_price'  => $row['variation_min_regular_price'],
+                'max_online_regular_price'  => $row['variation_max_regular_price'],
+                'min_online_business_price' => $row['variation_min_business_price'],
+                'max_online_business_price' => $row['variation_max_business_price'],
             );
         }
 
         foreach ($this as $product) {
             if (isset($listingProductsData[(int)$product->getData('id')])) {
                 $dataPart = $listingProductsData[(int)$product->getData('id')];
-                $product->setData('min_online_price',  $dataPart['min_online_price']);
-                $product->setData('max_online_price', $dataPart['max_online_price']);
+                $product->setData('min_online_regular_price',  $dataPart['min_online_regular_price']);
+                $product->setData('max_online_regular_price',  $dataPart['max_online_regular_price']);
+                $product->setData('min_online_business_price', $dataPart['min_online_business_price']);
+                $product->setData('max_online_business_price', $dataPart['max_online_business_price']);
             }
         }
     }
@@ -369,10 +435,12 @@ SQL;
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resource */
-        $resource = $this->activeRecordFactory->getObject('Indexer\Listing\Product\VariationParent')->getResource();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Ebay\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject(
+            'Ebay\Indexer\Listing\Product\VariationParent'
+        )->getResource();
 
-        $selectStmt = $resource->getBuildIndexForEbaySelect($this->listing->getId());
+        $selectStmt = $resource->getBuildIndexSelect($this->listing);
         $selectStmt->where('mlpv.listing_product_id IN (?)', array_keys($listingProductsData));
 
         $data = $this->getConnection()->fetchAll($selectStmt);
@@ -400,7 +468,10 @@ SQL;
             array('cisi' => $this->getConnection()->getTableName('cataloginventory_stock_item')),
             'product_id = entity_id',
             $columnsMap,
-            '{{table}}.stock_id = 1',
+            array(
+                'stock_id'   => \Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID,
+                'website_id' => $this->stockConfiguration->getDefaultScopeId()
+            ),
             'left'
         );
 

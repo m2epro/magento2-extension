@@ -27,14 +27,14 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         return true;
     }
 
-    public function aroundSave(\Magento\Config\Model\Config $interceptor, \Closure $callback)
+    public function aroundSave(\Magento\Config\Model\Config $interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('save', $interceptor, $callback);
+        return $this->execute('save', $interceptor, $callback, $arguments);
     }
 
     // ---------------------------------------
 
-    protected function processSave(\Magento\Config\Model\Config $interceptor, \Closure $callback)
+    protected function processSave(\Magento\Config\Model\Config $interceptor, \Closure $callback, array $arguments)
     {
         $saveData = $interceptor->getData();
 
@@ -48,7 +48,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             !isset($saveData['section']) ||
             !in_array($saveData['section'], $availableSections)
         ) {
-            return $callback();
+            return $callback(...$arguments);
         }
 
         $groups = $saveData['groups'];

@@ -41,6 +41,10 @@ class Edit extends Template
             return 'shippingTemplate';
         }
 
+        if ($type == \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Grid::TEMPLATE_PRODUCT_TAX_CODE) {
+            return 'productTaxCode';
+        }
+
         return $type;
     }
 

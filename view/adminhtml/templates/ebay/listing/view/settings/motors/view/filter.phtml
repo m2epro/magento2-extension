@@ -1,0 +1,11 @@
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the saved Filters which are used to select
+        the Compatible Vehicles. In case you do not want some of them to be used, you can
+        Choose the appropriate Option from the mass actions bulk to Remove the Filters.
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $this->getChildHtml('view_filter_grid'); ?>
+</div>

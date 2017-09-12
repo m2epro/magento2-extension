@@ -97,8 +97,6 @@ HTML;
             $this->setActiveTab('variations');
         }
 
-        $this->setActiveTab('variations');
-
         return parent::_beforeToHtml();
     }
 
@@ -106,18 +104,15 @@ HTML;
     {
         $generalId = $this->getListingProduct()->getChildObject()->getGeneralId();
 
-        $showMask = 0;
-        if (!(empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner())) {
-            $showMask = 1;
-        }
+        $showChildProducts = (int)(
+            !(empty($generalId) && $this->getListingProduct()->getChildObject()->isGeneralIdOwner())
+        );
 
         $this->js->add(
 <<<JS
-//    amazonVariationProductManageTabsJsTabs.moveTabContentInDest();
-//
-//    if (!{$showMask}) {
-//        amazonVariationProductManageTabsJsTabs.tabs[0].hide();
-//    }
+    if (!{$showChildProducts}) {
+        jQuery(jQuery('#amazonVariationProductManageTabs').find("li")[0]).hide();
+    }
 JS
         );
 

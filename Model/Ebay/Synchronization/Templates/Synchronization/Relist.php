@@ -208,7 +208,7 @@ final class Relist extends AbstractModel
         $ebayListingProduct = $listingProduct->getChildObject();
 
         if (!$ebayListingProduct->getEbaySynchronizationTemplate()->isRelistSendData()) {
-            $configurator->setPartialMode();
+            $configurator->reset();
             $configurator->allowQty();
             $configurator->allowPrice();
             $configurator->allowVariations();

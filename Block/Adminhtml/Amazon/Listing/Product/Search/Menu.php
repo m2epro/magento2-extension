@@ -44,24 +44,26 @@ class Menu extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractContainer
 
     //########################################
 
-    public function isIndividualFromBundleOrSimpleWithCustome()
+    public function isIndividualFromBundleOrSimpleOrDownloadable()
     {
         if (!$this->getListingProduct()->getChildObject()->getVariationManager()->isIndividualType()) {
             return false;
         }
 
         return $this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions();
+               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+               $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
-    public function isParentFromBundleOrSimpleWithCustome()
+    public function isParentFromBundleOrSimpleOrDownloadable()
     {
         if (!$this->getListingProduct()->getChildObject()->getVariationManager()->isRelationParentType()) {
             return false;
         }
 
         return $this->getListingProduct()->getMagentoProduct()->isBundleType() ||
-               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions();
+               $this->getListingProduct()->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
+               $this->getListingProduct()->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks();
     }
 
     //########################################

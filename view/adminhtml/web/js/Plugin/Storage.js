@@ -61,6 +61,20 @@ define([
             _storage.set(M2EPRO_STORAGE_KEY, data);
         },
 
+        removeAllByPostfix: function(postfix) {
+            var data = initStorage();
+
+            _.each(data, function(value, key) {
+                if (key.indexOf(postfix) === -1) {
+                    return;
+                }
+
+                delete data[key];
+            });
+
+            _storage.set(M2EPRO_STORAGE_KEY, data);
+        },
+
         removeAll: function () {
             _storage.set(M2EPRO_STORAGE_KEY, {});
             return true;

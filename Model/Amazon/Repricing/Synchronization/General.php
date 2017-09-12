@@ -155,7 +155,7 @@ class General extends AbstractModel
                 'second_table.variation_parent_id',
                 'second_table.listing_product_id',
                 'second_table.sku',
-                'second_table.online_price',
+                'second_table.online_regular_price',
             ]
         );
 
@@ -183,11 +183,11 @@ class General extends AbstractModel
             ];
 
             if (!is_null($offerData['product_price']) &&
-                $offerData['product_price'] != $listingProductData['online_price']
+                $offerData['product_price'] != $listingProductData['online_regular_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->resourceConnection->getTableName('m2epro_amazon_listing_product'),
-                    ['online_price' => $offerData['product_price']],
+                    ['online_regular_price' => $offerData['product_price']],
                     ['listing_product_id = ?' => $listingProductId]
                 );
             }
@@ -207,10 +207,10 @@ class General extends AbstractModel
             $this->resourceConnection->getConnection()->update(
                 $this->resourceConnection->getTableName('m2epro_amazon_listing_product'),
                 [
-                    'is_repricing'                 => 1,
-                    'online_sale_price'            => 0,
-                    'online_sale_price_start_date' => NULL,
-                    'online_sale_price_end_date'   => NULL,
+                    'is_repricing'                         => 1,
+                    'online_regular_sale_price'            => 0,
+                    'online_regular_sale_price_start_date' => NULL,
+                    'online_regular_sale_price_end_date'   => NULL,
                 ],
                 ['listing_product_id IN (?)' => array_keys($insertDataPack)]
             );
@@ -333,7 +333,7 @@ class General extends AbstractModel
                 'main_table.product_id',
                 'second_table.listing_product_id',
                 'second_table.sku',
-                'second_table.online_price',
+                'second_table.online_regular_price',
                 'alpr.is_online_disabled',
                 'alpr.online_regular_price',
                 'alpr.online_min_price',
@@ -353,12 +353,12 @@ class General extends AbstractModel
 
             $offerData = $updatedOffersData[strtolower($listingProductData['sku'])];
 
-            if (!is_null($offerData['product_price']) &&
-                $listingProductData['online_price'] != $offerData['product_price']
+            if (!is_null($offerData['product_price']) && !$offerData['is_calculation_disabled'] &&
+                $listingProductData['online_regular_price'] != $offerData['product_price']
             ) {
                 $this->resourceConnection->getConnection()->update(
                     $this->resourceConnection->getTableName('m2epro_amazon_listing_product'),
-                    ['online_price' => $offerData['product_price']],
+                    ['online_regular_price' => $offerData['product_price']],
                     ['listing_product_id = ?' => $listingProductId]
                 );
             }
@@ -467,7 +467,7 @@ class General extends AbstractModel
 
             $offerData = $updatedOffersData[strtolower($listingOtherData['sku'])];
 
-            if (!is_null($offerData['product_price']) &&
+            if (!is_null($offerData['product_price']) && !$offerData['is_calculation_disabled'] &&
                 $offerData['product_price'] != $listingOtherData['online_price']
             ) {
                 $this->resourceConnection->getConnection()->update(

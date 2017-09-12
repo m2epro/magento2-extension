@@ -53,6 +53,7 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
         $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
         $listingProductCollection->addFieldToFilter('second_table.sku', array('notnull' => true));
+        $listingProductCollection->addFieldToFilter('second_table.online_regular_price', array('notnull' => true));
 
         if (!is_null($repricingDisabled)) {
             $listingProductCollection->getSelect()->joinLeft(
@@ -60,7 +61,7 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
                 'alpr.listing_product_id = main_table.id'
             );
 
-            $listingProductCollection->addFieldToFilter('alpr.is_online_disabled', $repricingDisabled);
+            $listingProductCollection->addFieldToFilter('alpr.is_online_disabled', (int)$repricingDisabled);
         }
 
         $listingProductCollection->getSelect()->reset(\Zend_Db_Select::COLUMNS);

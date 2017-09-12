@@ -11,6 +11,9 @@
  */
 namespace Ess\M2ePro\Model\Order\Shipment;
 
+use Magento\Sales\Api\Data\ShipmentInterface;
+use Magento\Sales\Model\ResourceModel\Order\Shipment\Track\Collection as TrackCollection;
+
 class Handler extends \Ess\M2ePro\Model\AbstractModel
 {
     const HANDLE_RESULT_FAILED    = -1;
@@ -69,6 +72,13 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     protected function getTrackingDetails(\Magento\Sales\Model\Order\Shipment $shipment)
     {
+        // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
+        if ($shipment->hasData(ShipmentInterface::TRACKS) &&
+            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
+
+            $shipment->unsetData(ShipmentInterface::TRACKS);
+        }
+
         $track = $shipment->getTracksCollection()->getLastItem();
         $trackingDetails = array();
 
@@ -76,10 +86,6 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($number)) {
             $carrierCode = trim($track->getData('carrier_code'));
-
-            if (strtolower($carrierCode) == 'dhlint') {
-                $carrierCode = 'dhl';
-            }
 
             $trackingDetails = array(
                 'carrier_title'   => trim($track->getData('title')),

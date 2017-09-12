@@ -12,9 +12,25 @@
 
     <!-- order -->
 
+    <type name="Magento\Framework\App\Config">
+        <plugin name="m2epro_plugin_order_magento_framework_app_config"
+                type="Ess\M2ePro\Plugin\Order\Magento\Framework\App\Config" />
+    </type>
+
     <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
         <plugin name="m2epro_plugin_order_magento_quote_model_quote_item_toorderitem"
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem" />
     </type>
 
+    <type name="Magento\Quote\Model\Quote\TotalsCollectorList">
+        <plugin name="m2epro_plugin_order_magento_quote_model_quote_totalscollectorlist"
+                type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList" />
+    </type>
+
+    <!-- func_get_args() fix - see detailed explanation into the Plugin -->
+
+    <type name="Ess\M2ePro\Helper\Module\Translation">
+        <plugin name="m2epro_plugin_functionGetArgsFix_helper_module_translation"
+                type="Ess\M2ePro\Plugin\FunctionGetArgsFix\Translation" />
+    </type>
 </config>

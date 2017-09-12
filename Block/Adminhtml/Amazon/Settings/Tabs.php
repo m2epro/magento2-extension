@@ -18,6 +18,18 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs
     {
         // ---------------------------------------
 
+        $tab = [
+            'label' => __('Main'),
+            'title' => __('Main'),
+            'content' => $this->createBlock('Amazon\Settings\Tabs\Main')->toHtml()
+        ];
+
+        $this->addTab(self::TAB_ID_MAIN, $tab);
+
+        // ---------------------------------------
+
+        // ---------------------------------------
+
         $tab = array(
             'label' => __('Synchronization'),
             'title' => __('Synchronization'),

@@ -56,50 +56,8 @@ class Invoice extends AbstractModel
             return;
         }
 
-        $this->createChange($order);
-
         $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-
-        $result = $order->getChildObject()->updatePaymentStatus();
-
-        $result ? $this->addSessionSuccessMessage()
-                : $this->addSessionErrorMessage($order);
-    }
-
-    //########################################
-
-    private function createChange(\Ess\M2ePro\Model\Order $order)
-    {
-        $orderId   = $order->getId();
-        $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_PAYMENT;
-        $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
-        $component = $order->getComponentMode();
-
-        $this->activeRecordFactory->getObject('Order\Change')->create($orderId, $action, $creator, $component, array());
-    }
-
-    // ---------------------------------------
-
-    private function addSessionSuccessMessage()
-    {
-        $message = $this->getHelper('Module\Translation')->__('Payment Status for eBay Order was updated to Paid.');
-        $this->messageManager->addSuccess($message);
-    }
-
-    private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
-    {
-        $url = $this->urlBuilder->getUrl('*/ebay_log_order/index', array('id' => $order->getId()));
-
-        $channelTitle = $order->getComponentTitle();
-        // M2ePro\TRANSLATIONS
-        // Payment Status for %channel_title% Order was not updated. View <a href="%url%" target="_blank">Order Log</a> for more details.
-        $message  = $this->getHelper('Module\Translation')->__(
-            'Payment Status for %channel_title% Order was not updated.'.
-            ' View <a href="%url%" target="_blank">Order Log</a> for more details.',
-            $channelTitle, $url
-        );
-
-        $this->messageManager->addError($message);
+        $order->getChildObject()->updatePaymentStatus();
     }
 
     //########################################

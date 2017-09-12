@@ -64,7 +64,7 @@ class Data extends AbstractForm
             'hidden',
             [
                 'name' => 'description[title]',
-                'value' => $this->getHelper('Data')->escapeHtml($this->getTitle())
+                'value' => $this->getTitle()
             ]
         );
 
@@ -750,6 +750,7 @@ HTML
                     'magento_attributes' => $preparedAttributes,
                     'class' => 'select_attributes_for_title_button primary',
                     'select_custom_attributes' => [
+                        'allowed_attribute_types' => 'text,select,multiselect,boolean,price,date',
                         'apply_to_all_attribute_sets' => 0
                     ],
                 ])->toHtml()
@@ -798,6 +799,7 @@ HTML
                     'magento_attributes' => $preparedAttributes,
                     'class' => 'select_attributes_for_title_button primary',
                     'select_custom_attributes' => [
+                        'allowed_attribute_types' => 'text,select,multiselect,boolean,price,date',
                         'apply_to_all_attribute_sets' => 0
                     ],
                 ])->toHtml()
@@ -895,6 +897,7 @@ HTML
                 'wysiwyg' => true,
                 'force_load' => true,
                 'config' => new \Magento\Framework\DataObject([
+                    'hidden' => true,
                     'enabled' => true,
                     'settings' => [
                         'force_br_newlines' => false,
@@ -1144,7 +1147,7 @@ HTML
         );
 
         $preparedAttributes = [];
-        foreach ($generalAttributesByTypes['text'] as $attribute) {
+        foreach ($generalAttributesByTypes['text_select'] as $attribute) {
             $attrs = ['attribute_code' => $attribute['code']];
             if (
                 $formData['product_details']['brand']['mode'] == Description::PRODUCT_DETAILS_MODE_ATTRIBUTE
@@ -1410,9 +1413,11 @@ HTML
     require([
         'M2ePro/Attribute',
         'M2ePro/Ebay/Template/Description',
-        'M2ePro/Plugin/Magento/Attribute/Button',
+        'M2ePro/Plugin/Magento/Attribute/Button'
     ], function(){
-        window.AttributeObj = new Attribute();
+        if (typeof AttributeObj === 'undefined') {
+            window.AttributeObj = new Attribute();
+        }
         window.EbayTemplateDescriptionObj = new EbayTemplateDescription();
         EbayTemplateDescriptionObj.initObservers();
         {$initWYSIWYG}

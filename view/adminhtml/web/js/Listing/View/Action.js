@@ -318,19 +318,6 @@ define([
             );
         },
 
-        removeAction: function () {
-            var selectedProductsParts = this.gridHandler.getSelectedItemsParts();
-            if (selectedProductsParts.length == 0) {
-                return;
-            }
-
-            this.startActions(
-                M2ePro.translator.translate('removing_selected_items_message'),
-                M2ePro.url.get('runRemoveProducts'),
-                selectedProductsParts
-            );
-        },
-
         previewItemsAction: function () {
             var orderedSelectedProductsArray = this.gridHandler.getOrderedSelectedProductsArray();
             if (orderedSelectedProductsArray.length == 0) {

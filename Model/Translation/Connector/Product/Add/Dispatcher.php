@@ -38,7 +38,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
      */
     public function process($products, array $params = array())
     {
-        $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+        $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId();
         $params['logs_action_id'] = $this->logsActionId;
 
         $tempProducts = $this->prepareProducts($products);

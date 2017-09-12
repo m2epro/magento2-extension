@@ -10,8 +10,41 @@ namespace Ess\M2ePro\Model\Amazon\Connector\Product;
 
 class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Processing\Runner\Single
 {
-    /** @var \Ess\M2ePro\Model\Listing\Product[] $listingsProducts */
-    private $listingsProducts = array();
+    /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
+    private $listingProduct = NULL;
+
+    // ########################################
+
+    public function processSuccess()
+    {
+        // listing product can be removed during processing action
+        if (is_null($this->getListingProduct()->getId())) {
+            return true;
+        }
+
+        return parent::processSuccess();
+    }
+
+    public function processExpired()
+    {
+        // listing product can be removed during processing action
+        if (is_null($this->getListingProduct()->getId())) {
+            return;
+        }
+
+        $this->getResponser()->failDetected($this->getExpiredErrorMessage());
+    }
+
+    public function complete()
+    {
+        // listing product can be removed during processing action
+        if (is_null($this->getListingProduct()->getId())) {
+            $this->getProcessingObject()->delete();
+            return;
+        }
+
+        parent::complete();
+    }
 
     // ########################################
 
@@ -22,24 +55,14 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         /** @var \Ess\M2ePro\Model\Amazon\Processing\Action $processingAction */
         $processingAction = $this->activeRecordFactory->getObject('Amazon\Processing\Action');
         $processingAction->setData(array(
-            'processing_id' => $this->getProcessingObject()->getId(),
             'account_id'    => $params['account_id'],
+            'processing_id' => $this->getProcessingObject()->getId(),
+            'related_id'    => $params['listing_product_id'],
             'type'          => $this->getProcessingActionType(),
+            'request_data'  => $this->getHelper('Data')->jsonEncode($params['request_data']),
+            'start_date'    => $params['start_date'],
         ));
-
         $processingAction->save();
-
-        foreach ($params['request_data']['items'] as $listingProductId => $productData) {
-            /** @var \Ess\M2ePro\Model\Amazon\Processing\Action\Item $processingActionItem */
-            $processingActionItem = $this->activeRecordFactory->getObject('Amazon\Processing\Action\Item');
-            $processingActionItem->setData(array(
-                'action_id'  => $processingAction->getId(),
-                'related_id' => $listingProductId,
-                'input_data' => $this->getHelper('Data')->jsonEncode($productData),
-            ));
-
-            $processingActionItem->save();
-        }
     }
 
     protected function setLocks()
@@ -48,44 +71,27 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $alreadyLockedListings = array();
-        $alreadyLockedParents  = array();
-        foreach ($this->getListingsProducts() as $listingProduct) {
+        $this->getListingProduct()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->addProcessingLock('in_action', $this->getProcessingObject()->getId());
+        $this->getListingProduct()->addProcessingLock(
+            $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+        );
 
-            /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->getListingProduct()->getChildObject();
+        $variationManager = $amazonListingProduct->getVariationManager();
 
-            $listingProduct->addProcessingLock(NULL, $this->getProcessingObject()->getId());
-            $listingProduct->addProcessingLock('in_action', $this->getProcessingObject()->getId());
-            $listingProduct->addProcessingLock(
-                $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+        if ($variationManager->isRelationChildType()) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $parentListingProduct */
+            $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
+
+            $parentListingProduct->addProcessingLock(NULL, $this->getProcessingObject()->getId());
+            $parentListingProduct->addProcessingLock(
+                'child_products_in_action', $this->getProcessingObject()->getId()
             );
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-            $variationManager = $amazonListingProduct->getVariationManager();
-
-            if ($variationManager->isRelationChildType()) {
-                $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
-                if (isset($alreadyLockedParents[$parentListingProduct->getId()])) {
-                    continue;
-                }
-
-                $parentListingProduct->addProcessingLock(NULL, $this->getProcessingObject()->getId());
-                $parentListingProduct->addProcessingLock(
-                    'child_products_in_action', $this->getProcessingObject()->getId()
-                );
-
-                $alreadyLockedParents[$parentListingProduct->getId()] = true;
-            }
-
-            if (isset($alreadyLockedListings[$listingProduct->getListingId()])) {
-                continue;
-            }
-
-            $listingProduct->getListing()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
-
-            $alreadyLockedListings[$listingProduct->getListingId()] = true;
         }
+
+        $this->getListingProduct()->getListing()->addProcessingLock(NULL, $this->getProcessingObject()->getId());
     }
 
     protected function unsetLocks()
@@ -94,43 +100,27 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
 
         $params = $this->getParams();
 
-        $alreadyUnlockedListings = array();
-        $alreadyUnlockedParents  = array();
-        foreach ($this->getListingsProducts() as $listingProduct) {
+        $this->getListingProduct()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+        $this->getListingProduct()->deleteProcessingLocks('in_action', $this->getProcessingObject()->getId());
+        $this->getListingProduct()->deleteProcessingLocks(
+            $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+        );
 
-            $listingProduct->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
-            $listingProduct->deleteProcessingLocks('in_action', $this->getProcessingObject()->getId());
-            $listingProduct->deleteProcessingLocks(
-                $params['lock_identifier'].'_action', $this->getProcessingObject()->getId()
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
+        $amazonListingProduct = $this->getListingProduct()->getChildObject();
+        $variationManager = $amazonListingProduct->getVariationManager();
+
+        if ($variationManager->isRelationChildType()) {
+            /** @var \Ess\M2ePro\Model\Listing\Product $parentListingProduct */
+            $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
+
+            $parentListingProduct->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
+            $parentListingProduct->deleteProcessingLocks(
+                'child_products_in_action', $this->getProcessingObject()->getId()
             );
-
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
-
-            $variationManager = $amazonListingProduct->getVariationManager();
-
-            if ($variationManager->isRelationChildType()) {
-                $parentListingProduct = $variationManager->getTypeModel()->getParentListingProduct();
-                if (isset($alreadyUnlockedParents[$parentListingProduct->getId()])) {
-                    continue;
-                }
-
-                $parentListingProduct->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
-                $parentListingProduct->deleteProcessingLocks(
-                    'child_products_in_action', $this->getProcessingObject()->getId()
-                );
-
-                $alreadyUnlockedParents[$parentListingProduct->getId()] = true;
-            }
-
-            if (isset($alreadyUnlockedListings[$listingProduct->getListingId()])) {
-                continue;
-            }
-
-            $listingProduct->getListing()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
-
-            $alreadyUnlockedListings[$listingProduct->getListingId()] = true;
         }
+
+        $this->getListingProduct()->getListing()->deleteProcessingLocks(NULL, $this->getProcessingObject()->getId());
     }
 
     // ########################################
@@ -156,10 +146,10 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         }
     }
 
-    protected function getListingsProducts()
+    protected function getListingProduct()
     {
-        if (!empty($this->listingsProducts)) {
-            return $this->listingsProducts;
+        if (!empty($this->listingProduct)) {
+            return $this->listingProduct;
         }
 
         $params = $this->getParams();
@@ -168,9 +158,9 @@ class ProcessingRunner extends \Ess\M2ePro\Model\Connector\Command\Pending\Proce
         $collection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
         )->getCollection();
-        $collection->addFieldToFilter('id', array('in' => $params['listing_product_ids']));
+        $collection->addFieldToFilter('id', array('in' => $params['listing_product_id']));
 
-        return $this->listingsProducts = $collection->getItems();
+        return $this->listingProduct = $collection->getFirstItem();
     }
 
     // ########################################

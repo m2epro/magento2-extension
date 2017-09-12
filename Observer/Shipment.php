@@ -39,6 +39,7 @@ class Shipment extends AbstractModel
 
         /** @var $shipment \Magento\Sales\Model\Order\Shipment */
         $shipment = $this->getEvent()->getShipment();
+
         $magentoOrderId = $shipment->getOrderId();
 
         try {
@@ -61,59 +62,7 @@ class Shipment extends AbstractModel
         /** @var $shipmentHandler \Ess\M2ePro\Model\Order\Shipment\Handler */
         $shipmentHandler = $this->modelFactory->getObject('Order\Shipment\Handler')
                                               ->factory($order->getComponentMode());
-        $result = $shipmentHandler->handle($order, $shipment);
-
-        switch ($result) {
-            case \Ess\M2ePro\Model\Order\Shipment\Handler::HANDLE_RESULT_SUCCEEDED:
-                $this->addSessionSuccessMessage($order);
-                break;
-            case \Ess\M2ePro\Model\Order\Shipment\Handler::HANDLE_RESULT_FAILED:
-                $this->addSessionErrorMessage($order);
-                break;
-        }
-    }
-
-    //########################################
-
-    private function addSessionSuccessMessage(\Ess\M2ePro\Model\Order $order)
-    {
-        $message = '';
-
-        switch ($order->getComponentMode()) {
-            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
-                $message = $this->getHelper('Module\Translation')->__('Shipping Status for eBay Order was updated.');
-                break;
-            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
-                $message = $this->getHelper('Module\Translation')->__(
-                    'Updating Amazon Order Status to Shipped in Progress...'
-                );
-                break;
-        }
-
-        if ($message) {
-            $this->messageManager->addSuccess($message);
-        }
-    }
-
-    private function addSessionErrorMessage(\Ess\M2ePro\Model\Order $order)
-    {
-        if ($order->isComponentModeEbay()) {
-            $url = $this->urlBuilder->getUrl('*/ebay_log_order/index', array('id' => $order->getId()));
-        } else {
-            $url = $this->urlBuilder->getUrl('*/amazon_log_order/index', array('id' => $order->getId()));
-        }
-
-        $channelTitle = $order->getComponentTitle();
-        // M2ePro\TRANSLATIONS
-        // Shipping Status for %channel_title% Order was not updated. View <a href="%url%" target="_blank" >Order Log</a> for more details.
-        $message = $this->getHelper('Module\Translation')->__(
-            'Shipping Status for %channel_title% Order was not updated.'.
-            ' View <a href="%url% target="_blank" >Order Log</a>'.
-            ' for more details.',
-            $channelTitle, $url
-        );
-
-        $this->messageManager->addError($message);
+        $shipmentHandler->handle($order, $shipment);
     }
 
     //########################################

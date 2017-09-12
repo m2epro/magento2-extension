@@ -18,7 +18,8 @@ class RemoveOption extends Main
         }
 
         if (!is_array($productOptionsGroup)) {
-            $productOptionsGroup = explode(',', $productOptionsGroup);
+            $productOptionsGroup = htmlspecialchars_decode($productOptionsGroup);
+            $productOptionsGroup = $this->getHelper('Data')->jsonDecode($productOptionsGroup);
         }
 
         $vocabularyHelper = $this->getHelper('Component\Amazon\Vocabulary');

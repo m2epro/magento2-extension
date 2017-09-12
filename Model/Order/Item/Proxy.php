@@ -194,6 +194,13 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    public function getWasteRecyclingFee()
+    {
+        return 0.0;
+    }
+
+    //########################################
+
     public function getGiftMessage()
     {
         return null;

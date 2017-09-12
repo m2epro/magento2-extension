@@ -173,7 +173,7 @@ HTML;
         }
 
         $itemUrl = $this->getHelper('Component\Ebay')->getItemUrl(
-            $row->getItemId(),
+            $row->getChildObject()->getData('item_id'),
             $this->order->getAccount()->getChildObject()->getMode(),
             $this->order->getMarketplaceId()
         );
@@ -197,7 +197,7 @@ HTML;
         $gridId = $this->getId();
 
         $editLink = '';
-        if (!$row->getProductId() || $row->getMagentoProduct()->hasRequiredOptions()) {
+        if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
 
             if (!$row->getProductId()) {
                 $action = $this->__('Map to Magento Product');
@@ -248,7 +248,7 @@ HTML;
 
     public function callbackColumnOriginalPrice($value, $row, $column, $isExport)
     {
-        $formattedPrice = '0';
+        $formattedPrice = $this->__('N/A');
 
         $product = $row->getProduct();
 

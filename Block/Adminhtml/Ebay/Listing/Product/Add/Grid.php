@@ -13,20 +13,20 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
     /** @var \Ess\M2ePro\Model\Listing */
     protected $listing;
 
-    protected $productFactory;
+    protected $magentoProductCollectionFactory;
     protected $type;
 
     //########################################
 
     public function __construct(
-        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Magento\Catalog\Model\Product\Type $type,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->productFactory = $productFactory;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
         $this->type = $type;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -52,21 +52,16 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
 
     protected function _prepareCollection()
     {
-        $collection = $this->productFactory->create()->getCollection()
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create()
             ->addAttributeToSelect('sku')
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
-        $collection->joinTable(
-            array('cisi' => 'cataloginventory_stock_item'),
-            'product_id=entity_id',
-            array(
-                'qty' => 'qty',
-                'is_in_stock' => 'is_in_stock'
-            ),
-            '{{table}}.stock_id=1',
-            'left'
-        );
+        $collection->joinStockItem(array(
+            'qty'         => 'qty',
+            'is_in_stock' => 'is_in_stock'
+        ));
 
         // ---------------------------------------
         $collection->getSelect()->distinct();

@@ -50,7 +50,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
                 select.value = '';
             } else if (config.confirm) {
                 CommonObj.confirm({
-                    content: config.confirm, 
+                    content: config.confirm,
                     actions: {
                         confirm: function () {
                             setLocation(config.href);
@@ -59,7 +59,7 @@ class Action extends \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
                             return false;
                         }
                     }
-                });          
+                });
             } else {
                 varienGridAction.execute(select);
             }
@@ -93,6 +93,7 @@ JS
         if (!empty($field)) {
             $itemId = $row->getData($field);
         }
+        $itemId = (int)$itemId;
 
         if (!empty($groupOrder) && is_array($groupOrder)) {
             $actions = $this->sortActionsByGroupsOrder($groupOrder, $actions);
@@ -162,7 +163,7 @@ JS
 
         if (isset($action['confirm'])) {
             $action['onclick'] = 'CommonObj.confirm({
-                content: \''.addslashes($this->escapeHtml($action['confirm'])).'\', 
+                content: \''.addslashes($this->escapeHtml($action['confirm'])).'\',
                 actions: {
                     confirm: function () {
                         setLocation(this.href);
@@ -177,5 +178,31 @@ JS
 
         $actionAttributes->setData($action);
         return '<a ' . $actionAttributes->serialize() . '>' . $actionCaption . '</a>';
+    }
+
+    //########################################
+
+    /**
+     * In some causes default Magento logic in foreach method is not working.
+     * In result variables located in $action['url']['params'] will not we replaced.
+     *
+     * @param array $action
+     * @param string $actionCaption
+     * @param \Magento\Framework\DataObject $row
+     * @return \Magento\Backend\Block\Widget\Grid\Column\Renderer\Action
+     */
+    protected function _transformActionData(&$action, &$actionCaption, \Magento\Framework\DataObject $row)
+    {
+        if (!empty($action['url']['params']) && is_array($action['url']['params'])) {
+            foreach ($action['url']['params'] as $paramKey => $paramValue) {
+
+                if (strpos($paramValue, '$') === 0) {
+                    $paramValue = str_replace('$', '', $paramValue);
+                    $action['url']['params'][$paramKey] = $row->getData($paramValue);
+                }
+            }
+        }
+
+        return parent::_transformActionData($action, $actionCaption, $row);
     }
 }

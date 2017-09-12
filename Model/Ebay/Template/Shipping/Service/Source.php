@@ -63,9 +63,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
+     * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCost()
+    public function getCost($storeForConvertingAttributeTypePrice = NULL)
     {
         $result = 0;
 
@@ -77,8 +78,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $result = $this->getShippingServiceTemplate()->getCostValue();
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE:
-                $result = $this->getMagentoProduct()->getAttributeValue(
-                    $this->getShippingServiceTemplate()->getCostValue()
+                $result = $this->getMagentoProductAttributeValue(
+                    $this->getShippingServiceTemplate()->getCostValue(),
+                    $storeForConvertingAttributeTypePrice
                 );
                 break;
         }
@@ -89,9 +91,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
+     * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCostAdditional()
+    public function getCostAdditional($storeForConvertingAttributeTypePrice = NULL)
     {
         $result = 0;
 
@@ -103,8 +106,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $result = $this->getShippingServiceTemplate()->getCostAdditionalValue();
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE:
-                $result = $this->getMagentoProduct()->getAttributeValue(
-                    $this->getShippingServiceTemplate()->getCostAdditionalValue()
+                $result = $this->getMagentoProductAttributeValue(
+                    $this->getShippingServiceTemplate()->getCostAdditionalValue(),
+                    $storeForConvertingAttributeTypePrice
                 );
                 break;
         }
@@ -115,9 +119,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
+     * @param null $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCostSurcharge()
+    public function getCostSurcharge($storeForConvertingAttributeTypePrice = NULL)
     {
         $result = 0;
 
@@ -129,8 +134,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $result = $this->getShippingServiceTemplate()->getCostSurchargeValue();
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Shipping\Service::COST_MODE_CUSTOM_ATTRIBUTE:
-                $result = $this->getMagentoProduct()->getAttributeValue(
-                    $this->getShippingServiceTemplate()->getCostSurchargeValue()
+                $result = $this->getMagentoProductAttributeValue(
+                    $this->getShippingServiceTemplate()->getCostSurchargeValue(),
+                    $storeForConvertingAttributeTypePrice
                 );
                 break;
         }
@@ -138,6 +144,28 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         is_string($result) && $result = str_replace(',','.',$result);
 
         return round((float)$result,2);
+    }
+
+    // ---------------------------------------
+
+    protected function getMagentoProductAttributeValue($attributeCode, $store)
+    {
+        if (is_null($store)) {
+            return $this->getMagentoProduct()->getAttributeValue($attributeCode);
+        }
+
+        $currency = $this->getShippingServiceTemplate()
+            ->getShippingTemplate()
+            ->getMarketplace()
+            ->getChildObject()
+            ->getCurrency();
+
+        return $this->getHelper('Magento\Attribute')->convertAttributeTypePriceFromStoreToMarketplace(
+            $this->getMagentoProduct(),
+            $attributeCode,
+            $currency,
+            $store
+        );
     }
 
     //########################################

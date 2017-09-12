@@ -8,6 +8,9 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+/**
+ * @method \Ess\M2ePro\Model\Amazon\Order\Item|\Ess\M2ePro\Model\Ebay\Order\Item getChildObject()
+ */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
     // M2ePro\TRANSLATIONS
@@ -272,7 +275,9 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $existProducts = $this->getAssociatedProducts();
 
         if (count($existProducts) == 1
-            && ($magentoProduct->isGroupedType() || $magentoProduct->isConfigurableType())
+            && ($magentoProduct->isDownloadableType() ||
+                $magentoProduct->isGroupedType() ||
+                $magentoProduct->isConfigurableType())
         ) {
             // grouped and configurable products can have only one associated product mapped with sold variation
             // so if count($existProducts) == 1 - there is no need for further actions
@@ -422,6 +427,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         $this->setData('product_id', null);
         $this->setAssociatedProducts(array());
         $this->setAssociatedOptions(array());
+
+        if ($this->getOrder()->getReserve()->isPlaced()) {
+            $this->getOrder()->getReserve()->cancel();
+        }
+
         $this->save();
     }
 

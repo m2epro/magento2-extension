@@ -71,21 +71,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'variation_child_statuses'     => 'variation_child_statuses',
                 'online_sku'                   => 'sku',
                 'online_qty'                   => 'online_qty',
-                'online_price'                 => 'online_price',
-                'online_sale_price'            => 'online_sale_price',
-                'online_sale_price_start_date' => 'online_sale_price_start_date',
-                'online_sale_price_end_date'   => 'online_sale_price_end_date',
+                'online_regular_price'         => 'online_regular_price',
+                'online_regular_sale_price'    => 'online_regular_sale_price',
+                'online_regular_sale_price_start_date' => 'online_regular_sale_price_start_date',
+                'online_regular_sale_price_end_date'   => 'online_regular_sale_price_end_date',
+
+                'online_business_price'        => 'online_business_price',
 
                 'variation_parent_afn_state'       => 'variation_parent_afn_state',
                 'variation_parent_repricing_state' => 'variation_parent_repricing_state',
 
                 'online_current_price' => new \Zend_Db_Expr('IF(
-                    alp.online_sale_price_start_date IS NOT NULL AND
-                    alp.online_sale_price_end_date IS NOT NULL AND
-                    alp.online_sale_price_start_date <= CURRENT_DATE() AND
-                    alp.online_sale_price_end_date >= CURRENT_DATE(),
-                    alp.online_sale_price,
-                    alp.online_price
+                    alp.online_regular_sale_price_start_date IS NOT NULL AND
+                    alp.online_regular_sale_price_end_date IS NOT NULL AND
+                    alp.online_regular_sale_price_start_date <= CURRENT_DATE() AND
+                    alp.online_regular_sale_price_end_date >= CURRENT_DATE(),
+                    alp.online_regular_sale_price,
+                    alp.online_regular_price
                 )')
             ],
             'variation_parent_id IS NULL'
@@ -448,13 +450,17 @@ HTML;
             return;
         }
 
-        $onlineCurrentPrice = 'IF(
-            alp.online_sale_price_start_date IS NOT NULL AND
-            alp.online_sale_price_end_date IS NOT NULL AND
-            alp.online_sale_price_start_date <= CURRENT_DATE() AND
-            alp.online_sale_price_end_date >= CURRENT_DATE(),
-            alp.online_sale_price,
-            alp.online_price
+        $onlineCurrentPrice = 'IF (
+            alp.online_regular_price IS NULL,
+            alp.online_business_price,
+            IF(
+                alp.online_regular_sale_price_start_date IS NOT NULL AND
+                alp.online_regular_sale_price_end_date IS NOT NULL AND
+                alp.online_regular_sale_price_start_date <= CURRENT_DATE() AND
+                alp.online_regular_sale_price_end_date >= CURRENT_DATE(),
+                alp.online_regular_sale_price,
+                alp.online_regular_price
+            )
         )';
 
         $where = '';
@@ -554,12 +560,12 @@ HTML;
 
             if ($columnIndex == 'online_current_price') {
                 $onlineCurrentPrice = 'IF(
-                    alp.online_sale_price_start_date IS NOT NULL AND
-                    alp.online_sale_price_end_date IS NOT NULL AND
-                    alp.online_sale_price_start_date <= CURRENT_DATE() AND
-                    alp.online_sale_price_end_date >= CURRENT_DATE(),
-                    alp.online_sale_price,
-                    alp.online_price
+                    alp.online_regular_sale_price_start_date IS NOT NULL AND
+                    alp.online_regular_sale_price_end_date IS NOT NULL AND
+                    alp.online_regular_sale_price_start_date <= CURRENT_DATE() AND
+                    alp.online_regular_sale_price_end_date >= CURRENT_DATE(),
+                    alp.online_regular_sale_price,
+                    alp.online_regular_price
                 )';
                 $collection->getSelect()->order(
                     '('. $onlineCurrentPrice .')' . strtoupper($column->getDir())

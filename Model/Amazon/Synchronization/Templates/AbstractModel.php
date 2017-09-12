@@ -56,7 +56,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Synchronization\Ab
             $listingProduct->getProductId(),
             $listingProduct->getId(),
             \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
-            $logModel->getNextActionId(),
+            $logModel->getResource()->getNextActionId(),
             $this->getActionForLog(),
             $exception->getMessage(),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,

@@ -43,14 +43,16 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
             /** @var $stockItem \Magento\CatalogInventory\Model\Stock\Item */
             $stockItem = $this->itemFactory->create();
             $stockItem->getResource()->loadByProductId(
-                $stockItem, $orderItem->getProductId(), $stockItem->getWebsiteId()
+                $stockItem, $orderItem->getProductId(), $stockItem->getStockId()
             );
 
             if (!$stockItem->getId()) {
                 continue;
             }
 
-            $stockItem->addQty($orderItem->getQtyOrdered())->save();
+            $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem');
+            $magentoStockItem->setStockItem($stockItem);
+            $magentoStockItem->addQty($orderItem->getQtyOrdered());
         }
     }
 

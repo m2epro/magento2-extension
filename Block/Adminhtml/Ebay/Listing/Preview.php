@@ -435,7 +435,7 @@ JS
 
         $images = array();
 
-        if ($this->ebayListingProduct->isVariationMode()) {
+        if ($this->ebayListingProduct->isVariationsReady()) {
 
             $attributeLabels = array();
             $images['variations'] = array();
@@ -756,6 +756,7 @@ JS
     public function getShippingLocalServices()
     {
         $services = array();
+        $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
 
@@ -772,10 +773,10 @@ JS
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingFlatEnabled()) {
 
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCost();
+                    ->getCost($storeId);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCostAdditional();
+                    ->getCostAdditional($storeId);
             }
 
             if ($this->ebayListingProduct->getShippingTemplate()->isLocalShippingCalculatedEnabled()) {
@@ -791,6 +792,7 @@ JS
     public function getShippingInternationalServices()
     {
         $services = array();
+        $storeId = $this->ebayListingProduct->getListing()->getStoreId();
 
         foreach ($this->ebayListingProduct->getShippingTemplate()->getServices(true) as $service) {
 
@@ -808,10 +810,10 @@ JS
             if ($this->ebayListingProduct->getShippingTemplate()->isInternationalShippingFlatEnabled()) {
 
                 $tempDataMethod['cost'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCost();
+                    ->getCost($storeId);
 
                 $tempDataMethod['cost_additional'] = $service->getSource($this->ebayListingProduct->getMagentoProduct())
-                    ->getCostAdditional();
+                    ->getCostAdditional($storeId);
             }
 
             $services[] = $tempDataMethod;

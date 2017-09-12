@@ -1,0 +1,11 @@
+<?php echo $block->createBlock('HelpBlock')->setData([
+    'content' => $block->__('
+        In this Block you can see the list of the saved Groups of ePID(s)/kType(s) or
+        Filter(s). In case you do not want some of these Groups to be Used, they can be
+        Removed by selecting the appropriate Option from the mass actions bulk.
+    ')
+])->toHtml() ?>
+
+<div id="motors">
+    <?php echo $this->getChildHtml('view_group_grid'); ?>
+</div>

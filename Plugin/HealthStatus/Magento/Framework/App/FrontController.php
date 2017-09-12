@@ -37,15 +37,18 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     //########################################
 
-    public function aroundDispatch($interceptor, \Closure $callback, \Magento\Framework\App\RequestInterface $request)
+    public function aroundDispatch($interceptor, \Closure $callback, ...$arguments)
     {
-        return $this->execute('dispatch', $interceptor, $callback, [$request]);
+        return $this->execute('dispatch', $interceptor, $callback, $arguments);
     }
 
     protected function processDispatch($interceptor, \Closure $callback, $arguments)
     {
-        /** @var \Magento\Framework\App\Request\Http $request */
-        $request = $arguments[0];
+        $request = isset($arguments[0]) ? $arguments[0] : NULL;
+
+        if (!($request instanceof \Magento\Framework\App\Request\Http)) {
+            return $callback(...$arguments);
+        }
 
         if ($this->shouldBeAdded($request)) {
 
@@ -73,7 +76,7 @@ class FrontController extends \Ess\M2ePro\Plugin\AbstractPlugin
             );
         }
 
-        return $callback($request);
+        return $callback(...$arguments);
     }
 
     //########################################

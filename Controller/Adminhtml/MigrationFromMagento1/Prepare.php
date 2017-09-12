@@ -2,47 +2,34 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\MigrationFromMagento1;
 
-use Ess\M2ePro\Controller\Adminhtml\Wizard\BaseMigrationFromMagento1;
-
 class Prepare extends Base
 {
+    /** @var \Magento\Framework\App\ResourceConnection|null  */
+    protected $resourceConnection = NULL;
+
+    /** @var \Magento\Framework\View\Result\PageFactory $resultPageFactory  */
+    protected $resultPageFactory = NULL;
+
+    /** @var \Ess\M2ePro\Helper\Factory $helperFactory */
+    protected $helperFactory = NULL;
+
     //########################################
 
-    public function execute()
+    public function __construct(\Ess\M2ePro\Controller\Adminhtml\Context $context)
     {
-        $this->getHelper('Module\Maintenance\General')->enable();
+        $this->resourceConnection = $context->getResourceConnection();
+        $this->resultPageFactory = $context->getResultPageFactory();
+        $this->helperFactory = $context->getHelperFactory();
 
-        $this->setWizardStatus(BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED);
-
-        try {
-            $this->prepareDatabase();
-        } catch (\Exception $exception) {
-            $this->getMessageManager()->addErrorMessage(
-                $this->__(
-                    'Module was not prepared for migration. Reason: %error_message%.',
-                    array('error_message' => $exception->getMessage())
-                )
-            );
-
-            return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/disableModule'));
-        }
-
-        $this->getHelper('Magento')->clearCache();
-
-        return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
+        parent::__construct($context);
     }
 
     //########################################
 
-    private function prepareDatabase()
+    public function execute()
     {
-        $allTables = $this->getHelper('Module\Database\Structure')->getMySqlTables();
-
-        foreach ($allTables as $tableName) {
-            $this->resourceConnection->getConnection()->dropTable(
-                $this->resourceConnection->getTableName($tableName)
-            );
-        }
+        $this->getRawResult()->setContents('Current version of M2E Pro does not support migration from Magento v1.x');
+        return $this->getRawResult();
     }
 
     //########################################

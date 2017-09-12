@@ -314,6 +314,8 @@ JS
             /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
             $magentoAttributeHelper = $this->getHelper('Magento\Attribute');
             $this->attributes = $magentoAttributeHelper->getGeneralFromAllAttributeSets();
+            $this->attributes = $magentoAttributeHelper
+                                    ->filterByInputTypes($this->attributes, array('text', 'select', 'price'));
 
             if ($this->formData['id']) {
                 foreach ($this->formData['shipping_override_rule'] as $rule) {

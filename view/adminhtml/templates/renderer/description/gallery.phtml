@@ -81,7 +81,7 @@ $data = $block->getData();
                     <?php $imageIndex == 0 && print ' checked="checked" '; ?>
                        id="image-gallery-<?php echo $block->getGalleryId(); ?>-<?php echo $imageIndex; ?>"
                 />
-                <img class="full-image" src="<?php echo $imageUrl; ?>" />
+                <img class="full-image" src="<?php echo $imageUrl; ?>" <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
             <?php endforeach; ?>
 
             <div class="hint">

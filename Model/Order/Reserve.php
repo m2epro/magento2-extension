@@ -179,11 +179,14 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         $stockItems = array();
 
         foreach ($this->order->getItemsCollection()->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Order\Item $item */
+
             if ($action == self::ACTION_SUB) {
                 $qty = $item->getChildObject()->getQtyPurchased();
                 $item->setData('qty_reserved', $qty);
             } else {
                 $qty = $item->getQtyReserved();
+                $item->setData('qty_reserved', 0);
             }
 
             $products = $this->getItemProductsByAction($item, $action);
@@ -194,6 +197,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
             foreach ($products as $key => $productId) {
                 /** @var $magentoProduct \Ess\M2ePro\Model\Magento\Product */
+
                 $magentoProduct = $this->modelFactory->getObject('Magento\Product')
                     ->setStoreId($this->order->getStoreId())
                     ->setProductId($productId);
@@ -229,7 +233,10 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $productsAffectedCount++;
 
                 $this->transaction->addObject($this->stockItem->getStockItem());
-                $item->getProduct()->setStockItem($this->stockItem->getStockItem());
+                if ($item->getMagentoProduct()->isSimpleType() ||
+                    $item->getMagentoProduct()->isDownloadableType()) {
+                    $item->getProduct()->setStockItem($this->stockItem->getStockItem());
+                }
             }
 
             $item->setReservedProducts($products);
@@ -313,7 +320,9 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                 $products = $item->getReservedProducts();
                 break;
             case self::ACTION_SUB:
-                if ($item->getProductId() && $item->getMagentoProduct()->isSimpleType()) {
+                if ($item->getProductId() &&
+                    ($item->getMagentoProduct()->isSimpleType() ||
+                     $item->getMagentoProduct()->isDownloadableType())) {
                     $products[] = $item->getProductId();
                 } else {
                     $products = $item->getAssociatedProducts();

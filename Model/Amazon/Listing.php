@@ -814,6 +814,21 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         );
     }
 
+    /**
+     * @return array
+     */
+    public function getHandlingTimeAttributes()
+    {
+        $attributes = array();
+        $src = $this->getHandlingTimeSource();
+
+        if ($src['mode'] == self::HANDLING_TIME_MODE_CUSTOM_ATTRIBUTE) {
+            $attributes[] = $src['attribute'];
+        }
+
+        return $attributes;
+    }
+
     // ---------------------------------------
 
     /**
@@ -858,6 +873,21 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             'value'     => $this->getData('restock_date_value'),
             'attribute' => $this->getData('restock_date_custom_attribute')
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getRestockDateAttributes()
+    {
+        $attributes = array();
+        $src = $this->getRestockDateSource();
+
+        if ($src['mode'] == self::RESTOCK_DATE_MODE_CUSTOM_ATTRIBUTE) {
+            $attributes[] = $src['attribute'];
+        }
+
+        return $attributes;
     }
 
     // ---------------------------------------
@@ -976,15 +1006,6 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
 
     //########################################
 
-    public function convertPriceFromStoreToMarketplace($price)
-    {
-        return $this->currencyModel->convertPrice(
-            $price,
-            $this->getAmazonMarketplace()->getDefaultCurrency(),
-            $this->getParentObject()->getStoreId()
-        );
-    }
-
     /**
      * @param \Ess\M2ePro\Model\Listing\Other $listingOtherProduct
      * @param int $initiator
@@ -1031,15 +1052,15 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
         $amazonListingOther = $listingOtherProduct->getChildObject();
 
         $dataForUpdate = array(
-            'general_id'         => $amazonListingOther->getGeneralId(),
-            'sku'                => $amazonListingOther->getSku(),
-            'online_price'       => $amazonListingOther->getOnlinePrice(),
-            'online_qty'         => $amazonListingOther->getOnlineQty(),
-            'is_repricing'       => (int)$amazonListingOther->isRepricing(),
-            'is_afn_channel'     => (int)$amazonListingOther->isAfnChannel(),
-            'is_isbn_general_id' => (int)$amazonListingOther->isIsbnGeneralId(),
-            'status'             => $listingOtherProduct->getStatus(),
-            'status_changer'     => $listingOtherProduct->getStatusChanger()
+            'general_id'           => $amazonListingOther->getGeneralId(),
+            'sku'                  => $amazonListingOther->getSku(),
+            'online_regular_price' => $amazonListingOther->getOnlinePrice(),
+            'online_qty'           => $amazonListingOther->getOnlineQty(),
+            'is_repricing'         => (int)$amazonListingOther->isRepricing(),
+            'is_afn_channel'       => (int)$amazonListingOther->isAfnChannel(),
+            'is_isbn_general_id'   => (int)$amazonListingOther->isIsbnGeneralId(),
+            'status'               => $listingOtherProduct->getStatus(),
+            'status_changer'       => $listingOtherProduct->getStatusChanger()
         );
 
         $listingProduct->addData($dataForUpdate);
@@ -1073,6 +1094,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $this->getGalleryImagesAttributes(),
             $this->getGiftWrapAttributes(),
             $this->getGiftMessageAttributes(),
+            $this->getHandlingTimeAttributes(),
+            $this->getRestockDateAttributes(),
             $this->getSellingFormatTemplate()->getTrackingAttributes()
         ));
     }

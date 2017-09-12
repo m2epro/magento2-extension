@@ -14,7 +14,7 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
 {
     private $items = array();
 
-    /** @var \Ess\M2ePro\Model\Synchronization\LockItem $lockItem */
+    /** @var \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $lockItem */
     private $lockItem      = NULL;
     private $percentsStart = 0;
     private $percentsEnd   = 100;
@@ -25,15 +25,15 @@ class Runner extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @param \Ess\M2ePro\Model\Synchronization\LockItem $object
+     * @param \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $object
      */
-    public function setLockItem(\Ess\M2ePro\Model\Synchronization\LockItem $object)
+    public function setLockItem(\Ess\M2ePro\Model\Synchronization\Lock\Item\Manager $object)
     {
         $this->lockItem = $object;
     }
 
     /**
-     * @return \Ess\M2ePro\Model\Synchronization\LockItem
+     * @return \Ess\M2ePro\Model\Synchronization\Lock\Item\Manager
      */
     public function getLockItem()
     {

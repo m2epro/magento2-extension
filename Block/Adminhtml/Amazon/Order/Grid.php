@@ -253,11 +253,24 @@ class Grid extends AbstractGrid
 
         $primeImageHtml = '';
         if ($row->getChildObject()->getData('is_prime')) {
-            $primeImageHtml = '<div><img src="' . $this->getViewFileUrl('Ess_M2ePro::images/prime.png') . '" /></div>';
+
+            $url = $this->getViewFileUrl('Ess_M2ePro::images/prime.png');
+            $primeImageHtml = <<<HTML
+<div style="margin-top: 2px;"><img src="{$url}" /></div>
+HTML;
+        }
+
+        $businessImageHtml = '';
+        if ($row->getChildObject()->getData('is_business')) {
+
+            $url = $this->getViewFileUrl('Ess_M2ePro::images/amazon-business.png');
+            $businessImageHtml = <<<HTML
+<div style="margin-top: 2px;"><img src="{$url}" /></div>
+HTML;
         }
 
         return <<<HTML
-<a href="{$url}" target="_blank">{$orderId}</a> {$primeImageHtml}
+<a href="{$url}" target="_blank">{$orderId}</a> {$primeImageHtml} {$businessImageHtml}
 HTML;
     }
 

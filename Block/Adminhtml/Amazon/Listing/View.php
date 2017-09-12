@@ -166,7 +166,6 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
             'runStopProducts' => $this->getUrl('*/amazon_listing/runStopProducts'),
             'runStopAndRemoveProducts' => $this->getUrl('*/amazon_listing/runStopAndRemoveProducts'),
             'runDeleteAndRemoveProducts' => $this->getUrl('*/amazon_listing/runDeleteAndRemoveProducts'),
-            'runRemoveProducts' => $this->getUrl('*/amazon_listing/runRemoveProducts')
         ]);
 
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product'));
@@ -177,6 +176,9 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         );
         $this->jsUrl->addUrls(
             $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\Shipping')
+        );
+        $this->jsUrl->addUrls(
+            $this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Template\ProductTaxCode')
         );
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Listing\Product\Variation'));
         $this->jsUrl->addUrls(
@@ -277,6 +279,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
         $templateShippingTemplatePopupTitle = $this->__('Assign Shipping Template Policy');
         $templateShippingOverridePopupTitle = $this->__('Assign Shipping Override Policy');
+        $templateProductTaxCodePopupTitle   = $this->__('Assign Product Tax Code Policy');
 
         $enterProductSearchQueryMessage = $this->__('Please enter Product Title or ASIN/ISBN/UPC/EAN.');
         $autoMapAsinSearchProducts = $this->__('Search %product_title% Product(s) on Amazon.');
@@ -316,6 +319,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
             'Add New Shipping Template Policy' => $this->__('Add New Shipping Template Policy'),
             'Add New Shipping Override Policy' => $this->__('Add New Shipping Override Policy'),
+            'Add New Product Tax Code Policy'  => $this->__('Add New Product Tax Code Policy'),
             'Add New Listing' => $this->__('Add New Listing'),
 
             'Clear Search Results' => $this->__('Clear Search Results'),
@@ -356,6 +360,7 @@ class View extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
 
             'templateShippingOverridePopupTitle' => $templateShippingOverridePopupTitle,
             'templateShippingTemplatePopupTitle' => $templateShippingTemplatePopupTitle,
+            'templateProductTaxCodePopupTitle'   => $templateProductTaxCodePopupTitle,
 
             'assign' => $assignString,
 

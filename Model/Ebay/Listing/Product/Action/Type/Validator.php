@@ -229,6 +229,29 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    protected function validateIsVariationProductWithoutVariations()
+    {
+        if ($this->getEbayListingProduct()->isVariationMode() &&
+            !$this->getEbayListingProduct()->isVariationsReady()) {
+            // M2ePro_TRANSLATIONS
+            // M2E Pro identifies this Product as a Variational one. But no Variations can be obtained from it. The problem could be related to the fact that Product Variations are not assigned to Magento Store View your M2E Pro Listing is created for. In order to be processed, the Product data should be available within Website that M2E Pro appeals to. Another possible reason is an impact of the external plugins. The 3rd party tools override Magento core functionality, therefore, prevent M2E Pro from processing the Product data correctly. Make sure you have selected an appropriate Website in each Associated Product and no 3rd party extension overrides your settings. Otherwise, contact M2E Pro Support Team to resolve the issue.
+            $this->addMessage(
+                'M2E Pro identifies this Product as a Variational one. But no Variations can be obtained from it.
+                The problem could be related to the fact that Product Variations are not assigned to Magento Store
+                View your M2E Pro Listing is created for. In order to be processed, the Product data should be
+                available within Website that M2E Pro appeals to.
+                Another possible reason is an impact of the external plugins. The 3rd party tools override
+                Magento core functionality, therefore, prevent M2E Pro from processing the Product data correctly.
+                Make sure you have selected an appropriate Website in each Associated Product and no 3rd party
+                extension overrides your settings. Otherwise, contact M2E Pro Support Team to resolve the issue.'
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
     protected function validateVariationsOptions()
     {
         $totalVariationsCount = 0;
@@ -397,6 +420,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             return true;
         }
 
+        if ($this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isReservePriceModeNone()) {
+            return true;
+        }
+
         $price = $this->getReservePrice();
         if ($price < 0.99) {
 
@@ -418,6 +445,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
     protected function validateBuyItNowPrice()
     {
         if (!$this->getConfigurator()->isPriceAllowed() || !$this->getEbayListingProduct()->isListingTypeAuction()) {
+            return true;
+        }
+
+        if ($this->getEbayListingProduct()->getEbaySellingFormatTemplate()->isBuyItNowPriceModeNone()) {
             return true;
         }
 

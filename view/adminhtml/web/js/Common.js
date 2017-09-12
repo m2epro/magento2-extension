@@ -1,6 +1,6 @@
 define([
     'M2ePro/Plugin/Confirm',
-    'Magento_Ui/js/modal/alert',
+    'M2ePro/Plugin/Alert',
     'prototype',
     'jquery/validate',
     'mage/backend/form',
@@ -18,46 +18,31 @@ define([
 
         initCommonValidators: function()
         {
+            var self = this;
             jQuery.validator.addMethod('M2ePro-required-when-visible', function(value, el) {
 
-                var hidden = false;
-                hidden = !$(el).visible();
-
-                while (!hidden) {
-                    el = $(el).up();
-                    hidden = !el.visible();
-                    if ($(el).up() == document || el.hasClassName('entry-edit')) {
-                        break;
-                    }
+                if (self.isElementHiddenFromPage(el)) {
+                    return true;
                 }
 
                 if(typeof value === 'string' ) {
                     value = value.trim();
                 }
 
-                return hidden ? true : value != null && value.length > 0;
+                return value != null && value.length > 0;
             }, M2ePro.translator.translate('This is a required field.'));
 
             jQuery.validator.addMethod('M2ePro-required-when-visible-and-enabled', function(value, el) {
 
-                var hidden = false;
-                var disabled = false;
-                hidden = !$(el).visible();
-                disabled = !$(el).disabled;
-
-                while (!hidden) {
-                    el = $(el).up();
-                    hidden = !el.visible();
-                    if (el == document || el.hasClassName('entry-edit')) {
-                        break;
-                    }
-                }
-
-                if (disabled) {
+                if (self.isElementHiddenFromPage(el)) {
                     return true;
                 }
 
-                return hidden ? true : value != null && value.length > 0;
+                if (!$(el).disabled) {
+                    return true;
+                }
+
+                return value != null && value.length > 0;
             }, M2ePro.translator.translate('This is a required field.'));
 
             jQuery.validator.addMethod('M2ePro-validation-float', function(value, element) {
@@ -100,6 +85,11 @@ define([
 
                 return true;
             }, M2ePro.translator.translate('You should select Store View'));
+
+            jQuery.validator.addMethod('M2ePro-validate-email', function(value, el) {
+                this.error = Validation.get('validate-email').error;
+                return Validation.get('validate-email').test(value,el);
+            }, M2ePro.translator.translate('Email is not valid.'));
         },
 
         initFormValidation: function (selector)
@@ -109,6 +99,21 @@ define([
             jQuery(selector).each(function (index, form) {
                 jQuery(form).form().validation();
             });
+        },
+
+        isElementHiddenFromPage: function(el)
+        {
+            var hidden = !$(el).visible();
+
+            while (!hidden) {
+                el = $(el).up();
+                hidden = !el.visible();
+                if ($(el).up() == document || el.hasClassName('entry-edit')) {
+                    break;
+                }
+            }
+
+            return hidden;
         },
 
         // ---------------------------------------
@@ -347,6 +352,19 @@ define([
                 },
                 content: text
             });
+        },
+
+        // ---------------------------------------
+
+        bindEventAtFirstPosition: function(domElement, eventName, callable)
+        {
+            // bind as you normally would
+            jQuery(domElement).bind(eventName, callable);
+
+            var handlers = jQuery(domElement).data('events')[eventName.split('.')[0]];
+            var handler = handlers.pop();
+
+            handlers.splice(0, 0, handler);
         }
 
         // ---------------------------------------

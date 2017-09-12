@@ -6,6 +6,9 @@ use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
 
 class Switcher extends AbstractBlock
 {
+    const MODE_LISTING_PRODUCT = 1;
+    const MODE_COMMON          = 2;
+
     protected $_template = 'ebay/listing/template/switcher.phtml';
 
     private $templates = NULL;

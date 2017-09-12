@@ -293,7 +293,7 @@ final class RemoveDuplicates extends AbstractModel
         $logModel = $this->activeRecordFactory->getObject('Listing\Log');
         $logModel->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
 
-        $logsActionId = $logModel->getNextActionId();
+        $logsActionId = $logModel->getResource()->getNextActionId();
 
         $statusLogMessage = $this->getStatusLogMessage($listingProduct->getStatus(), $status);
 

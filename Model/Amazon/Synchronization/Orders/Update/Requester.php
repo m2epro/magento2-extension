@@ -12,39 +12,5 @@ class Requester extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
 {
     // ########################################
 
-    protected function getResponserParams()
-    {
-        $params = array();
-
-        foreach ($this->params['items'] as $orderUpdate) {
-            if (!is_array($orderUpdate)) {
-                continue;
-            }
-
-            $params[$orderUpdate['change_id']] = $orderUpdate;
-        }
-
-        return $params;
-    }
-
-    // ########################################
-
-    public function eventBeforeExecuting()
-    {
-        parent::eventBeforeExecuting();
-
-        $changeIds = array();
-
-        foreach ($this->params['items'] as $orderUpdate) {
-            if (!is_array($orderUpdate)) {
-                continue;
-            }
-
-            $changeIds[] = $orderUpdate['change_id'];
-        }
-
-        $this->activeRecordFactory->getObject('Order\Change')->getResource()->deleteByIds($changeIds);
-    }
-
     // ########################################
 }

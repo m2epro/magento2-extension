@@ -10,6 +10,9 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
 final class MotorsKtypes extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Marketplace */
+    protected $marketplace;
+
     //########################################
 
     /**
@@ -25,7 +28,7 @@ final class MotorsKtypes extends AbstractModel
      */
     protected function getTitle()
     {
-        return 'Parts Compatibility';
+        return 'Parts Compatibility [kTypes]';
     }
 
     // ---------------------------------------
@@ -57,17 +60,13 @@ final class MotorsKtypes extends AbstractModel
         $params = $this->getParams();
 
         $marketplace = $this->ebayFactory->getCachedObjectLoaded('Marketplace', $params['marketplace_id']);
+        $this->marketplace = $marketplace;
 
         return $marketplace->getChildObject()->isKtypeEnabled();
     }
 
     protected function performActions()
     {
-        $params = $this->getParams();
-
-        /** @var $marketplace \Ess\M2ePro\Model\Marketplace **/
-        $marketplace = $this->ebayFactory->getObjectLoaded('Marketplace', (int)$params['marketplace_id']);
-
         $partNumber = 1;
         $this->deleteAllKtypes();
 
@@ -75,10 +74,10 @@ final class MotorsKtypes extends AbstractModel
 
             $this->getActualLockItem()->setPercents($this->getPercentsStart());
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$marketplace->getId(),
+            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$this->marketplace->getId(),
                                                              'Get kTypes from eBay');
-            $response = $this->receiveFromEbay($marketplace, $partNumber);
-            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$marketplace->getId());
+            $response = $this->receiveFromEbay($partNumber);
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$this->marketplace->getId());
 
             if (empty($response)) {
                 break;
@@ -90,10 +89,10 @@ final class MotorsKtypes extends AbstractModel
             $this->getActualLockItem()->setPercents($this->getPercentsStart() + $this->getPercentsInterval()/2);
             $this->getActualLockItem()->activate();
 
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$marketplace->getId(),
+            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'save'.$this->marketplace->getId(),
                                                              'Save kTypes to DB');
             $this->saveKtypesToDb($response['data']);
-            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$marketplace->getId());
+            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'save'.$this->marketplace->getId());
 
             $this->getActualLockItem()->setPercents($this->getPercentsEnd());
             $this->getActualLockItem()->activate();
@@ -105,17 +104,17 @@ final class MotorsKtypes extends AbstractModel
             }
         }
 
-        $this->logSuccessfulOperation($marketplace);
+        $this->logSuccessfulOperation();
     }
 
     //########################################
 
-    protected function receiveFromEbay(\Ess\M2ePro\Model\Marketplace $marketplace, $partNumber)
+    protected function receiveFromEbay($partNumber)
     {
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector('marketplace','get','motorsKtypes',
                                                             array('part_number' => $partNumber),
-                                                            NULL,$marketplace->getId());
+                                                            NULL,$this->marketplace->getId());
 
         $dispatcherObj->process($connectorObj);
         $response = $connectorObj->getResponseData();
@@ -189,14 +188,14 @@ final class MotorsKtypes extends AbstractModel
         }
     }
 
-    protected function logSuccessfulOperation(\Ess\M2ePro\Model\Marketplace $marketplace)
+    protected function logSuccessfulOperation()
     {
-        // M2ePro\TRANSLATIONS
-        // The "Parts Compatibility" Action for Marketplace: "%mrk%" has been successfully completed.
+        // M2ePro_TRANSLATIONS
+        // The "Parts Compatibility [kTypes]" Action for eBay Site: "%mrk%" has been successfully completed.
 
         $tempString = $this->getHelper('Module\Log')->encodeDescription(
-            'The "Parts Compatibility" Action for Marketplace: "%mrk%" has been successfully completed.',
-            array('mrk' => $marketplace->getTitle())
+            'The "Parts Compatibility [kTypes]" Action for eBay Site: "%mrk%" has been successfully completed.',
+            array('mrk' => $this->marketplace->getTitle())
         );
 
         $this->getLog()->addMessage($tempString,

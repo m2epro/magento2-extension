@@ -71,7 +71,25 @@ class SellingFormat extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Compone
             unset($newData[$ignoreField],$oldData[$ignoreField]);
         }
 
-        return (count(array_diff_assoc($newData,$oldData)) > 0);
+        !isset($newData['business_price_qty_discounts']) && $newData['business_price_qty_discounts'] = array();
+        !isset($oldData['business_price_qty_discounts']) && $oldData['business_price_qty_discounts'] = array();
+
+        foreach ($newData['business_price_qty_discounts'] as $key => $newBusinessPriceQtyDiscount) {
+            unset($newData['business_price_qty_discounts'][$key]['id'],
+                  $newData['business_price_qty_discounts'][$key]['template_selling_format_id']);
+        }
+        foreach ($oldData['business_price_qty_discounts'] as $key => $oldBusinessPriceQtyDiscount) {
+            unset($oldData['business_price_qty_discounts'][$key]['id'],
+                  $oldData['business_price_qty_discounts'][$key]['template_selling_format_id']);
+        }
+
+        ksort($newData);
+        ksort($oldData);
+        array_walk($newData['business_price_qty_discounts'],'ksort');
+        array_walk($oldData['business_price_qty_discounts'],'ksort');
+
+        $helper = $this->getHelper('Data');
+        return md5($helper->jsonEncode($newData)) !== md5($helper->jsonEncode($oldData));
     }
 
     //########################################

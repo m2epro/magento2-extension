@@ -76,7 +76,8 @@ class MapToNewAsin extends Main
         if (count($filteredLockedProducts) != count($filteredProductsIdsByType)) {
             $tempCount = count($filteredLockedProducts) - count($filteredProductsIdsByType);
             $errors[] = $this->__(
-                '%count% Items are Simple with Custom Options or Bundle Magento Products.', $tempCount
+                '%count% Items are Simple with Custom Options,
+                Bundle or Downloadable with Separated Links Magento Products.', $tempCount
             );
             $errorMsgProductsCount += $tempCount;
         }

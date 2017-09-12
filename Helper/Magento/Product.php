@@ -14,6 +14,7 @@ use \Ess\M2ePro\Model\Magento\Product as ProductModel;
 class Product extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const TYPE_SIMPLE       = 'simple';
+    const TYPE_DOWNLOADABLE = 'downloadable';
     const TYPE_CONFIGURABLE = 'configurable';
     const TYPE_BUNDLE       = 'bundle';
     const TYPE_GROUPED      = 'grouped';
@@ -47,6 +48,11 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
     public function isSimpleType($originType)
     {
         return in_array($originType, $this->getOriginKnownTypes(self::TYPE_SIMPLE));
+    }
+
+    public function isDownloadableType($originType)
+    {
+        return in_array($originType, $this->getOriginKnownTypes(self::TYPE_DOWNLOADABLE));
     }
 
     public function isConfigurableType($originType)
@@ -98,12 +104,12 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
         $associatedTypes = [
             self::TYPE_SIMPLE => [
                 ProductModel::TYPE_SIMPLE_ORIGIN,
-                ProductModel::TYPE_VIRTUAL_ORIGIN,
-                ProductModel::TYPE_DOWNLOADABLE_ORIGIN
+                ProductModel::TYPE_VIRTUAL_ORIGIN
             ],
+            self::TYPE_DOWNLOADABLE => [ProductModel::TYPE_DOWNLOADABLE_ORIGIN],
             self::TYPE_CONFIGURABLE => [ProductModel::TYPE_CONFIGURABLE_ORIGIN],
-            self::TYPE_BUNDLE => [ProductModel::TYPE_BUNDLE_ORIGIN],
-            self::TYPE_GROUPED => [ProductModel::TYPE_GROUPED_ORIGIN]
+            self::TYPE_BUNDLE       => [ProductModel::TYPE_BUNDLE_ORIGIN],
+            self::TYPE_GROUPED      => [ProductModel::TYPE_GROUPED_ORIGIN]
         ];
 
         $originTypes = array_unique(array_merge(
@@ -142,6 +148,7 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
     {
         return [
             self::TYPE_SIMPLE,
+            self::TYPE_DOWNLOADABLE,
             self::TYPE_CONFIGURABLE,
             self::TYPE_BUNDLE,
             self::TYPE_GROUPED

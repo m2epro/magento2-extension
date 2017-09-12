@@ -156,7 +156,8 @@ class Grid extends AbstractGrid
 
         $imageResizedUrl = $imageResized->getUrl();
 
-        $imageHtml = $productId.'<div style="margin-top: 5px"><img src="'.$imageResizedUrl.'" /></div>';
+        $imageHtml = $productId.'<div style="margin-top: 5px">'.
+            '<img style="max-width: 100px; max-height: 100px;" src="' .$imageResizedUrl. '" /></div>';
         $withImageHtml = str_replace('>'.$productId.'<','>'.$imageHtml.'<',$withoutImageHtml);
 
         return $withImageHtml;

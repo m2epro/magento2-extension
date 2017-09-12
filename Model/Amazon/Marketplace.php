@@ -93,6 +93,30 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
         return (bool)$this->getData('is_merchant_fulfillment_available');
     }
 
+    /**
+     * @return bool
+     */
+    public function isBusinessAvailable()
+    {
+        return (bool)$this->getData('is_business_available');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVatCalculationServiceAvailable()
+    {
+        return (bool)$this->getData('is_vat_calculation_service_available');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProductTaxCodePolicyAvailable()
+    {
+        return (bool)$this->getData('is_product_tax_code_policy_available');
+    }
+
     //########################################
 
     public function isCacheEnabled()

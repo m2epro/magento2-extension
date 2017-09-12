@@ -28,7 +28,7 @@ class Add extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
                     continue;
                 }
 
-                $tempResult = $listing->addProduct($productId);
+                $tempResult = $listing->addProduct($productId, \Ess\M2ePro\Helper\Data::INITIATOR_USER);
                 if ($tempResult instanceof \Ess\M2ePro\Model\Listing\Product) {
                     $listingProductIds[] = $tempResult->getId();
                 }

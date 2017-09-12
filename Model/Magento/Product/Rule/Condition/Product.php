@@ -210,7 +210,9 @@ class Product extends AbstractModel
         $attributes['category_ids'] = __('Category');
 
         foreach ($this->getCustomFilters() as $filterId => $instanceName) {
-            $customFilterInstance = $this->getCustomFilterInstance($filterId);
+            // $this->_data property is not initialized jet, so we can't cache a created custom filter as
+            // it requires that data
+            $customFilterInstance = $this->getCustomFilterInstance($filterId, false);
 
             if ($customFilterInstance instanceof \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel) {
                 $attributes[$filterId] = $customFilterInstance->getLabel();
@@ -568,25 +570,29 @@ class Product extends AbstractModel
 
     /**
      * @param $filterId
+     * @param $isReadyToCache
      * @return \Ess\M2ePro\Model\Magento\Product\Rule\Custom\AbstractModel
      */
-    protected function getCustomFilterInstance($filterId)
+    protected function getCustomFilterInstance($filterId, $isReadyToCache = true)
     {
         $customFilters = $this->getCustomFilters();
         if (!isset($customFilters[$filterId])) {
             return null;
         }
 
-        if (!isset($this->_customFiltersCache[$filterId])) {
-            $this->_customFiltersCache[$filterId] = $this->modelFactory->getObject(
-                'Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
-                    'filterOperator'  => $this->getData('operator'),
-                    'filterCondition' => $this->getData('value')
-                ]
-            );
+        if (isset($this->_customFiltersCache[$filterId])) {
+            return $this->_customFiltersCache[$filterId];
         }
 
-        return $this->_customFiltersCache[$filterId];
+        $model = $this->modelFactory->getObject(
+            'Magento\Product\Rule\Custom\\'.$customFilters[$filterId], [
+                'filterOperator'  => $this->getData('operator'),
+                'filterCondition' => $this->getData('value')
+            ]
+        );
+
+        $isReadyToCache && $this->_customFiltersCache[$filterId] = $model;
+        return $model;
     }
 
     //########################################

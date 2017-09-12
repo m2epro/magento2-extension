@@ -5,28 +5,15 @@
     $messages = $block->getLayout()->createBlock('\Magento\Framework\View\Element\Messages');
 
     foreach ($errors as $error) {
-        $messages->addError($this->getHelper('Data')->escapeHtml($error['text']));
+        if ($error['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_WARNING) {
+            $messages->addWarning($this->getHelper('Data')->escapeHtml($error['text']));
+        }
+
+        if ($error['type'] == \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR) {
+            $messages->addError($this->getHelper('Data')->escapeHtml($error['text']));
+        }
     }
 ?>
-<style type="text/css">
-    #errors-table {
-        background-color: #FFF7EA !important;
-        border: 1px dashed #FF7A7A !important;
-    }
-    #errors-table th, #errors-table td {
-        padding: 10px !important;
-    }
-    #errors-table th {
-        border-bottom: 1px solid #D6D6D6 !important;
-    }
-    #errors-table td.total {
-        font-weight: bold;
-    }
-    #errors-buttons {
-        padding: 10px 0 !important;
-        text-align: right;
-    }
-</style>
 <div class="entry-edit" style="padding-top: 10px;">
 
     <div><?php echo $block->__('Fee cannot be estimated because of next error(s)') ?>:</div>

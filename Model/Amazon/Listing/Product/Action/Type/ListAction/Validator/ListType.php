@@ -45,9 +45,10 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
 
         if ($this->getVariationManager()->isIndividualType() && !$this->validateComplexMagentoProductTypes()) {
 // M2ePro\TRANSLATIONS
-// You cannot list this Product because for selling Bundle or Simple with custom options Magento Products on Amazon the ASIN has to be found manually. Please use manual search to find the required ASIN and try again.
-            $this->addMessage('You cannot list this Product because for selling Bundle or Simple
-                               With Custom Options Magento Products on Amazon the ASIN/ISBN has to be found manually.
+// You cannot list this Product because for selling Bundle, Simple with custom Options or Downloadable With Separated Links Magento Products on Amazon the ASIN has to be found manually. Please use manual search to find the required ASIN and try again.
+            $this->addMessage('You cannot list this Product because for selling Bundle, Simple
+                               With Custom Options or Downloadable With Separated Links Magento Products
+                               on Amazon the ASIN/ISBN has to be found manually.
                                Please use Manual Search to find the required ASIN/ISBN and try again.');
             return false;
         }
@@ -715,6 +716,10 @@ class ListType extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Vali
         }
 
         if ($this->getMagentoProduct()->isBundleType()) {
+            return false;
+        }
+
+        if ($this->getMagentoProduct()->isDownloadableTypeWithSeparatedLinks()) {
             return false;
         }
 

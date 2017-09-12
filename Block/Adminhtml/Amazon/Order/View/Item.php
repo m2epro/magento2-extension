@@ -192,7 +192,7 @@ HTML;
         } else {
             $itemLinkText = $this->__('View on Amazon');
             $itemUrl = $this->getHelper('Component\Amazon')->getItemUrl(
-                $row->getChildObject()->getGeneralId(), $this->order->getData('marketplace_id')
+                $row->getChildObject()->getData('general_id'), $this->order->getData('marketplace_id')
             );
 
             $amazonLink = <<<HTML
@@ -210,7 +210,7 @@ HTML;
         $gridId = $this->getId();
 
         $editLink = '';
-        if (!$row->getProductId() || $row->getMagentoProduct()->hasRequiredOptions()) {
+        if (!$row->getProductId() || $row->getMagentoProduct()->isProductWithVariations()) {
 
             if (!$row->getProductId()) {
                 $action = $this->__('Map to Magento Product');

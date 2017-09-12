@@ -58,7 +58,7 @@ class Form extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'label' => $this->__('Title'),
                 'title' => $this->__('Title'),
                 'class' => 'M2ePro-required-when-visible M2ePro-validate-category-group-title',
-                'value' => $this->getHelper('Data')->escapeHtml($this->formData['title']),
+                'value' => $this->formData['title'],
                 'required' => true
             ]
         );

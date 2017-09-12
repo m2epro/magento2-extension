@@ -93,6 +93,12 @@ class Info extends \Magento\Payment\Block\Info
         return !$this->getIsSecureMode() ? (float)$this->getInfo()->getAdditionalInformation('channel_final_fee') : 0;
     }
 
+    public function getCashOnDeliveryCost()
+    {
+        return !$this->getIsSecureMode()
+            ? (float)$this->getInfo()->getAdditionalInformation('cash_on_delivery_cost') : 0;
+    }
+
     public function getChannelTitle()
     {
         $component = $this->getInfo()->getAdditionalInformation('component_mode');

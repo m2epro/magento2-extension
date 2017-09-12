@@ -64,9 +64,10 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
+     * @param $storeForConvertingAttributeTypePrice
      * @return float
      */
-    public function getCost()
+    public function getCost($storeForConvertingAttributeTypePrice = NULL)
     {
         $result = 0;
 
@@ -78,8 +79,9 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
                 $result = $this->getShippingOverrideServiceTemplate()->getCostValue();
                 break;
             case\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_CUSTOM_ATTRIBUTE:
-                $result = $this->getMagentoProduct()->getAttributeValue(
-                    $this->getShippingOverrideServiceTemplate()->getCostValue()
+                $result = $this->getMagentoProductAttributeValue(
+                    $this->getShippingOverrideServiceTemplate()->getCostValue(),
+                    $storeForConvertingAttributeTypePrice
                 );
                 break;
         }
@@ -87,6 +89,35 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         is_string($result) && $result = str_replace(',','.',$result);
 
         return round((float)$result,2);
+    }
+
+    // ---------------------------------------
+
+    protected function getMagentoProductAttributeValue($attributeCode, $store)
+    {
+        $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
+
+        if (empty($attributeValue) || is_null($store)) {
+            return $attributeValue;
+        }
+
+        $isPriceConvertEnabled = $this->getHelper('Module')->getConfig()->getGroupValue(
+            '/magento/attribute/', 'price_type_converting'
+        );
+
+        if ($isPriceConvertEnabled &&
+            $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {
+
+            $currency = $this->getShippingOverrideServiceTemplate()
+                ->getShippingOverrideTemplate()
+                ->getMarketplace()
+                ->getChildObject()
+                ->getCurrency();
+
+            return $this->modelFactory->getObject('Currency')->convertPrice($attributeValue, $currency, $store);
+        }
+
+        return $attributeValue;
     }
 
     //########################################

@@ -231,6 +231,15 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function reduceOptionsForOrders(array $options)
     {
         foreach ($options as &$singleOption) {
+            if ($singleOption instanceof \Magento\Catalog\Model\Product) {
+                $reducedName = $this->getHelper('Data')->reduceWordsInString(
+                    $singleOption->getName(), self::MAX_LENGTH_FOR_OPTION_VALUE
+                );
+                $singleOption->setData('name', $reducedName);
+
+                continue;
+            }
+
             foreach ($singleOption['values'] as &$singleOptionValue) {
                 foreach ($singleOptionValue['labels'] as &$singleOptionLabel) {
                     $singleOptionLabel = $this->getHelper('Data')->reduceWordsInString(

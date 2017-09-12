@@ -6,18 +6,21 @@ use Ess\M2ePro\Helper\Module;
 use Ess\M2ePro\Helper\Module\License;
 use Ess\M2ePro\Helper\Module\Maintenance;
 use Ess\M2ePro\Model\Servicing\Dispatcher;
-use Magento\Backend\App\Action;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
 abstract class Main extends Base
 {
+    private $systemRequirementsChecked = false;
+
     //########################################
 
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        $result = parent::preDispatch($request);
+        if (($preDispatchResult = parent::preDispatch($request)) !== true) {
+            return $preDispatchResult;
+        }
 
-        if (empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
+        if ($this->getCustomViewNick() && empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
             return $this->_redirect('admin/dashboard');
         }
 
@@ -55,7 +58,7 @@ abstract class Main extends Base
             }
         }
 
-        return $result;
+        return true;
     }
 
     //########################################
@@ -99,6 +102,51 @@ abstract class Main extends Base
         }
 
         return parent::addContent($block);
+    }
+
+    // ---------------------------------------
+
+    protected function beforeAddContentEvent()
+    {
+        $this->appendRequirementsPopup();
+        parent::beforeAddContentEvent();
+    }
+
+    protected function appendRequirementsPopup()
+    {
+        if ($this->systemRequirementsChecked) {
+            return;
+        }
+
+        if ($this->getHelper('Module')->getCacheConfig()->getGroupValue('/view/requirements/popup/', 'closed')) {
+            return;
+        };
+
+        $isMeetRequirements = $this->getHelper('Data\Cache\Permanent')->getValue('is_meet_requirements');
+
+        if (is_null($isMeetRequirements)) {
+
+            $isMeetRequirements = true;
+            foreach ($this->getHelper('Module')->getRequirementsInfo() as $requirement) {
+                if (!$requirement['current']['status']) {
+                    $isMeetRequirements = false;
+                    break;
+                }
+            }
+
+            $this->getHelper('Data\Cache\Permanent')->setValue(
+                'is_meet_requirements', (int)$isMeetRequirements, array(), 60*60
+            );
+        }
+
+        if ($isMeetRequirements) {
+            return;
+        }
+
+        $block = $this->createBlock('RequirementsPopup');
+        $this->getLayout()->setChild('js', $block->getNameInLayout(), '');
+
+        $this->systemRequirementsChecked = true;
     }
 
     //########################################
@@ -145,6 +193,7 @@ abstract class Main extends Base
             $this->addServerNotifications();
 
             if (!$muteMessages) {
+                $this->addCronErrorMessage();
                 $this->getCustomViewControllerHelper()->addMessages($this);
             }
         }
@@ -305,6 +354,32 @@ abstract class Main extends Base
 
     // ---------------------------------------
 
+    protected function addCronErrorMessage()
+    {
+        if ($this->getHelper('Module')->isReadyToWork() &&
+            $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
+            !$this->getHelper('Module')->isDevelopmentEnvironment()) {
+
+            $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl(
+                '692955-why-cron-service-is-not-working-in-my-magento'
+            );
+
+            // M2ePro_TRANSLATIONS
+            // Attention! AUTOMATIC Synchronization is not running at the moment. It does not allow M2E Pro to work correctly.<br/>Please check this <a href="%url% target="_blank" class="external-link">article</a> for the details on how to resolve the problem.
+            $message  = 'Attention! AUTOMATIC Synchronization is not running at the moment.';
+            $message .= ' It does not allow M2E Pro to work correctly.';
+            $message .= '<br/>Please check this <a href="%url%" target="_blank" class="external-link">article</a>';
+            $message .= ' for the details on how to resolve the problem.';
+            $message = $this->getHelper('Module\Translation')->__($message, $url);
+
+            $this->getMessageManager()->addError(
+                $message, \Ess\M2ePro\Controller\Adminhtml\Base::GLOBAL_MESSAGES_GROUP
+            );
+        }
+    }
+
+    // ---------------------------------------
+
     protected function addLicenseActivationNotifications()
     {
         /** @var License $licenseHelper */
@@ -312,7 +387,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->getKey() || !$licenseHelper->getDomain() || !$licenseHelper->getIp()) {
 
-            $url = $this->getHelper('View\Configuration')->getLicenseUrl();
+            $params = [];
+            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = $this->__(
                 'M2E Pro Module requires activation. Go to the <a href="%url%" target ="_blank">License Page</a>.',
@@ -333,7 +410,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->isValidDomain()) {
 
-            $url = $this->getHelper('View\Configuration')->getLicenseUrl();
+            $params = [];
+            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
 // M2ePro_TRANSLATIONS
 // M2E Pro License Key Validation is failed for this Domain. Go to the <a href="%url%" target="_blank">License Page</a>.
@@ -348,7 +427,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->isValidIp()) {
 
-            $url = $this->getHelper('View\Configuration')->getLicenseUrl();
+            $params = [];
+            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
 // M2ePro_TRANSLATIONS
 // M2E Pro License Key Validation is failed for this IP. Go to the <a href="%url%" target="_blank">License Page</a>.
@@ -371,7 +452,9 @@ abstract class Main extends Base
 
         if (!$licenseHelper->getStatus()) {
 
-            $url = $this->getHelper('View\Configuration')->getLicenseUrl();
+            $params = [];
+            $this->getBlockerWizardNick() && $params['wizard'] = '1';
+            $url = $this->getHelper('View\Configuration')->getLicenseUrl($params);
 
             $message = $this->__(
                 'The License is suspended. Go to the <a href="%url%" target ="_blank">License Page</a>.',
@@ -444,9 +527,7 @@ abstract class Main extends Base
 
     private function isContentLocked()
     {
-        return $this->getHelper('Module\Maintenance\General')->isEnabled()
-                || $this->getHelper('Module')->isDisabled()
-                || $this->getHelper('Client')->isBrowserIE()
+        return $this->getHelper('Client')->isBrowserIE()
                 || (
                        $this->getHelper('Magento')->isProduction() &&
                        !$this->getHelper('Module')->isStaticContentDeployed()

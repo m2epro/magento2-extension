@@ -89,6 +89,23 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         );
         // ---------------------------------------
 
+        $collection->getSelect()->columns(array(
+            'online_current_price' => new \Zend_Db_Expr('
+                IF (
+                    `second_table`.`online_regular_price` IS NULL,
+                    `second_table`.`online_business_price`,
+                    IF (
+                        `second_table`.`online_regular_sale_price` IS NOT NULL AND
+                        `second_table`.`online_regular_sale_price_end_date` IS NOT NULL AND
+                        `second_table`.`online_regular_sale_price_start_date` <= CURRENT_DATE() AND
+                        `second_table`.`online_regular_sale_price_end_date` >= CURRENT_DATE(),
+                        `second_table`.`online_regular_sale_price`,
+                        `second_table`.`online_regular_price`
+                    )
+                )
+            ')
+        ));
+
         $lpvTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getResource()->getMainTable();
         $lpvoTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
             ->getResource()->getMainTable();
@@ -204,8 +221,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align' => 'right',
             'width' => '70px',
             'type' => 'number',
-            'index' => 'online_price',
-            'filter_index' => 'online_price',
+            'index' => 'online_current_price',
+            'filter_index' => 'online_current_price',
             'frame_callback' => array($this, 'callbackColumnPrice'),
             'filter_condition_callback' => array($this, 'callbackFilterPrice')
         );
@@ -215,7 +232,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $priceColumn['filter'] = 'Ess\M2ePro\Block\Adminhtml\Amazon\Grid\Column\Filter\Price';
         }
 
-        $this->addColumn('online_price', $priceColumn);
+        $this->addColumn('online_current_price', $priceColumn);
 
         $this->addColumn('status', array(
             'header' => $this->__('Status'),
@@ -335,7 +352,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                     '</strong></span>:&nbsp;<span class="value">' . $this->getHelper('Data')->escapeHtml($option) .
                     '</span></span>';
 
-                if ($uniqueProductsIds && $option !== '--') {
+                if ($uniqueProductsIds && $option !== '--' && !in_array($attribute, $virtualProductAttributes)) {
                     $url = $this->getUrl('catalog/product/edit', array('id' => $productsIds[$attribute]));
                     $html .= '<a href="' . $url . '" target="_blank">' . $optionHtml . '</a><br/>';
                 } else {
@@ -572,10 +589,12 @@ HTML;
 
     public function callbackColumnPrice($value, $row, $column, $isExport)
     {
-        $value = $row->getChildObject()->getData('online_price');
         if ($row->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_NOT_LISTED) {
             return '<span style="color: gray;">' . $this->__('Not Listed') . '</span>';
         }
+
+        $onlineRegularPrice  = $row->getChildObject()->getData('online_regular_price');
+        $onlineBusinessPrice = $row->getChildObject()->getData('online_business_price');
 
         $repricingHtml ='';
 
@@ -605,7 +624,9 @@ HTML;
 HTML;
         }
 
-        if (is_null($value) || $value === '') {
+        if ((is_null($onlineRegularPrice) || $onlineRegularPrice === '') &&
+            (is_null($onlineBusinessPrice) || $onlineBusinessPrice === '')
+        ) {
             return $this->__('N/A') . $repricingHtml;
         }
 
@@ -613,10 +634,10 @@ HTML;
             ->getChildObject()
             ->getDefaultCurrency();
 
-        if ((float)$value <= 0) {
+        if ((float)$onlineRegularPrice <= 0) {
             $priceValue = '<span style="color: #f00;">0</span>';
         } else {
-            $priceValue = $this->convertAndFormatPriceCurrency($value, $currency);
+            $priceValue = $this->convertAndFormatPriceCurrency($onlineRegularPrice, $currency);
         }
 
         if ($row->getChildObject()->getData('is_repricing') &&
@@ -637,35 +658,30 @@ HTML;
 
         $resultHtml = '';
 
-        $salePrice = $row->getChildObject()->getData('online_sale_price');
+        $salePrice = $row->getChildObject()->getData('online_regular_sale_price');
         if ((float)$salePrice > 0) {
             $currentTimestamp = strtotime($this->getHelper('Data')->getCurrentGmtDate(false,'Y-m-d 00:00:00'));
 
-            $startDateTimestamp = strtotime($row->getChildObject()->getData('online_sale_price_start_date'));
-            $endDateTimestamp   = strtotime($row->getChildObject()->getData('online_sale_price_end_date'));
+            $startDateTimestamp = strtotime($row->getChildObject()->getData('online_regular_sale_price_start_date'));
+            $endDateTimestamp   = strtotime($row->getChildObject()->getData('online_regular_sale_price_end_date'));
 
             if ($currentTimestamp <= $endDateTimestamp) {
 
                 $fromDate = $this->_localeDate->formatDate(
-                    $row->getChildObject()->getData('online_sale_price_start_date'), \IntlDateFormatter::MEDIUM
+                    $row->getChildObject()->getData('online_regular_sale_price_start_date'), \IntlDateFormatter::MEDIUM
                 );
 
                 $toDate = $this->_localeDate->formatDate(
-                    $row->getChildObject()->getData('online_sale_price_end_date'), \IntlDateFormatter::MEDIUM
+                    $row->getChildObject()->getData('online_regular_sale_price_end_date'), \IntlDateFormatter::MEDIUM
                 );
 
                 $intervalHtml = <<<HTML
-<div class="m2epro-field-tooltip m2epro-field-tooltip-price-info admin__field-tooltip">
-    <a class="admin__field-tooltip-action" href="javascript://"></a>
-    <div class="admin__field-tooltip-content">
-        <span style="color:gray;">
-            <strong>From:</strong> {$fromDate}<br/>
-            <strong>To:</strong> {$toDate}
-        </span>
-    </div>
-</div>
+<span style="color: gray;">
+    <strong>From:</strong> {$fromDate}<br/>
+    <strong>To:</strong> {$toDate}
+</span>
 HTML;
-
+                $intervalHtml = $this->getTooltipHtml($intervalHtml, '', ['m2epro-field-tooltip-price-info']);
                 $salePriceValue = $this->convertAndFormatPriceCurrency($salePrice, $currency);
 
                 if ($currentTimestamp >= $startDateTimestamp &&
@@ -685,6 +701,31 @@ HTML;
 
         if (empty($resultHtml)) {
             $resultHtml = $priceValue . $repricingHtml;
+        }
+
+        if ((float)$onlineBusinessPrice > 0) {
+            $businessPriceValue = '<strong>B2B:</strong> '
+                                  .$this->localeCurrency->getCurrency($currency)->toCurrency($onlineBusinessPrice);
+
+            $businessDiscounts = $row->getChildObject()->getData('online_business_discounts');
+            if (!empty($businessDiscounts) && $businessDiscounts = json_decode($businessDiscounts, true)) {
+
+                $discountsHtml = '';
+
+                foreach ($businessDiscounts as $qty => $price) {
+                    $price = $this->localeCurrency->getCurrency($currency)->toCurrency($price);
+                    $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
+                }
+
+                $discountsHtml = $this->getTooltipHtml($discountsHtml, '', ['m2epro-field-tooltip-price-info']);
+                $businessPriceValue = $discountsHtml .'&nbsp;'. $businessPriceValue;
+            }
+
+            if (!empty($resultHtml)) {
+                $businessPriceValue = '<br />'.$businessPriceValue;
+            }
+
+            $resultHtml .= $businessPriceValue;
         }
 
         return $resultHtml;
@@ -874,42 +915,56 @@ HTML;
         if (isset($value['from']) || isset($value['to'])) {
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition = 'online_price >= \''.(float)$value['from'].'\'';
+                $condition = 'second_table.online_regular_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'second_table.online_regular_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition = '(' . $condition . ' AND
             (
-                (online_sale_price_start_date IS NULL AND
-                online_sale_price_end_date IS NULL) OR
-                online_sale_price IS NULL OR
-                online_sale_price_start_date > CURRENT_DATE() OR
-                online_sale_price_end_date < CURRENT_DATE()
+                second_table.online_regular_price IS NOT NULL AND
+                ((second_table.online_regular_sale_price_start_date IS NULL AND
+                second_table.online_regular_sale_price_end_date IS NULL) OR
+                second_table.online_regular_sale_price IS NULL OR
+                second_table.online_regular_sale_price_start_date > CURRENT_DATE() OR
+                second_table.online_regular_sale_price_end_date < CURRENT_DATE())
             )) OR (';
 
             if (isset($value['from']) && $value['from'] != '') {
-                $condition .= 'online_sale_price >= \''.(float)$value['from'].'\'';
+                $condition .= 'second_table.online_regular_sale_price >= \''.(float)$value['from'].'\'';
             }
             if (isset($value['to']) && $value['to'] != '') {
                 if (isset($value['from']) && $value['from'] != '') {
                     $condition .= ' AND ';
                 }
-                $condition .= 'online_sale_price <= \''.(float)$value['to'].'\'';
+                $condition .= 'second_table.online_regular_sale_price <= \''.(float)$value['to'].'\'';
             }
 
             $condition .= ' AND
             (
-                online_sale_price_start_date IS NOT NULL AND
-                online_sale_price_end_date IS NOT NULL AND
-                online_sale_price IS NOT NULL AND
-                online_sale_price_start_date < CURRENT_DATE() AND
-                online_sale_price_end_date > CURRENT_DATE()
-            ))';
+                second_table.online_regular_price IS NOT NULL AND
+                (second_table.online_regular_sale_price_start_date IS NOT NULL AND
+                second_table.online_regular_sale_price_end_date IS NOT NULL AND
+                second_table.online_regular_sale_price IS NOT NULL AND
+                second_table.online_regular_sale_price_start_date < CURRENT_DATE() AND
+                second_table.online_regular_sale_price_end_date > CURRENT_DATE())
+            )) OR (';
+
+            if (isset($value['from']) && $value['from'] != '') {
+                $condition .= 'online_business_price >= \''.(float)$value['from'].'\'';
+            }
+            if (isset($value['to']) && $value['to'] != '') {
+                if (isset($value['from']) && $value['from'] != '') {
+                    $condition .= ' AND ';
+                }
+                $condition .= 'second_table.online_business_price <= \''.(float)$value['to'].'\'';
+            }
+
+            $condition .= ' AND (second_table.online_regular_price IS NULL))';
 
         }
 
@@ -1140,10 +1195,12 @@ HTML;
 
     //########################################
 
-    public function getTooltipHtml($content, $id = '')
+    public function getTooltipHtml($content, $id = '', $classes = [])
     {
+        $classes = implode(' ', $classes);
+
         return <<<HTML
-    <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip">
+    <div id="{$id}" class="m2epro-field-tooltip admin__field-tooltip {$classes}">
         <a class="admin__field-tooltip-action" href="javascript://"></a>
         <div class="admin__field-tooltip-content" style="">
             {$content}
@@ -1191,9 +1248,14 @@ JS
             return false;
         }
 
-        $childTypeModel = $amazonChildListingProduct->getVariationManager()->getTypeModel();
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ChildRelation $typeModel */
+        $typeModel = $amazonChildListingProduct->getVariationManager()->getTypeModel();
 
-        if ($childTypeModel->isVariationProductMatched() && $this->hasChildWithEmptyProductOptions()) {
+        if ($typeModel->isVariationProductMatched() && $this->hasChildWithEmptyProductOptions()) {
+            return false;
+        }
+
+        if (!$typeModel->getParentTypeModel()->hasMatchedAttributes()) {
             return false;
         }
 

@@ -46,16 +46,16 @@ class Integration extends Command
         foreach ($this->getHelper('Component')->getEnabledComponents() as $component) {
 
             $reviseAllStartDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/revise/total/", 'start_date'
+                "/{$component}/templates/synchronization/revise/total/", 'start_date'
             );
 
             $reviseAllEndDate = $this->synchConfig->getGroupValue(
-                "/{$component}/templates/revise/total/", 'end_date'
+                "/{$component}/templates/synchronization/revise/total/", 'end_date'
             );
 
             $reviseAllInProcessingState = !is_null(
                 $this->synchConfig->getGroupValue(
-                    "/{$component}/templates/revise/total/", 'last_listing_product_id'
+                    "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id'
                 )
             );
 
@@ -107,15 +107,16 @@ HTML;
         }
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/revise/total/", 'start_date', $this->getHelper('Data')->getCurrentGmtDate()
+            "/{$component}/templates/synchronization/revise/total/",
+            'start_date', $this->getHelper('Data')->getCurrentGmtDate()
         );
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/revise/total/", 'end_date', null
+            "/{$component}/templates/synchronization/revise/total/", 'end_date', null
         );
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/revise/total/", 'last_listing_product_id', 0
+            "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id', 0
         );
 
         $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
@@ -135,7 +136,7 @@ HTML;
         }
 
         $this->synchConfig->setGroupValue(
-            "/{$component}/templates/revise/total/", 'last_listing_product_id', null
+            "/{$component}/templates/synchronization/revise/total/", 'last_listing_product_id', null
         );
 
         return $this->_redirect('*/*/*', ['action' => 'reviseTotal']);
@@ -150,31 +151,45 @@ HTML;
     {
         if ($this->getRequest()->getParam('print')) {
 
-            $listingProductId = $this->getRequest()->getParam('listing_product_id');
-            $componentMode    = $this->getRequest()->getParam('component_mode');
+            $listingProductId = (int)$this->getRequest()->getParam('listing_product_id');
+            $lp               = $this->activeRecordFactory->getObjectLoaded('Listing\Product', $listingProductId);
+            $componentMode    = $lp->getComponentMode();
             $requestType      = $this->getRequest()->getParam('request_type');
 
             if ($componentMode == 'ebay') {
 
-                $lp = $this->parentFactory->getObjectLoaded(Ebay::NICK, 'Listing\Product', $listingProductId);
+                $elp = $lp->getChildObject();
 
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setFullMode();
 
                 $request = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Type\\'.$requestType.'\Request');
-                $request->setParams(array());
                 $request->setListingProduct($lp);
                 $request->setConfigurator($configurator);
+
+                if ($requestType == 'Revise') {
+
+                    $outOfStockControlCurrentState  = $elp->getOutOfStockControl();
+                    $outOfStockControlTemplateState = $elp->getEbaySellingFormatTemplate()->getOutOfStockControl();
+
+                    if (!$outOfStockControlCurrentState && $outOfStockControlTemplateState) {
+                        $outOfStockControlCurrentState = true;
+                    }
+
+                    $outOfStockControlResult = $outOfStockControlCurrentState ||
+                        $elp->getEbayAccount()->getOutOfStockControl();
+
+                    $request->setParams(array(
+                        'out_of_stock_control_current_state' => $outOfStockControlCurrentState,
+                        'out_of_stock_control_result'        => $outOfStockControlResult,
+                    ));
+                }
 
                 return '<pre>' . print_r($request->getRequestData(), true);
             }
 
             if ($componentMode == 'amazon') {
 
-                $lp = $this->parentFactory->getObjectLoaded(Amazon::NICK, 'Listing\Product', $listingProductId);
-
                 $configurator = $this->modelFactory->getObject('Amazon\Listing\Product\Action\Configurator');
-                $configurator->setFullMode();
 
                 $request = $this->modelFactory->getObject(
                     'Amazon\Listing\Product\Action\Type\\'.$requestType.'\Request'
@@ -209,15 +224,6 @@ HTML;
     </div>
 
     <div style="margin: 5px 0; width: 400px;">
-        <label style="width: 170px; display: inline-block;">Component: </label>
-        <select name="component_mode" style="width: 200px;" required>
-            <option style="display: none;"></option>
-            <option value="ebay">eBay</option>
-            <option value="amazon">Amazon</option>
-        </select>
-    </div>
-
-    <div style="margin: 5px 0; width: 400px;">
         <label style="width: 170px; display: inline-block;">Request Type: </label>
         <select name="request_type" style="width: 200px;" required>
             <option style="display: none;"></option>
@@ -237,6 +243,8 @@ HTML;
 </form>
 HTML;
     }
+
+    //########################################
 
     /**
      * @title "Print Inspector Data"
@@ -287,6 +295,22 @@ HTML;
 
                 $html .= '<pre>productQty: ' .$totalQty. '<br>';
 
+                $html .= '<br>';
+                $html .= '<pre>onlineCurrentPrice: '.($elp->getOnlineCurrentPrice()).'<br>';
+                $html .= '<pre>currentPrice: '.($elp->getFixedPrice()).'<br>';
+
+                $html .= '<br>';
+                $html .= '<pre>onlineStartPrice: '.($elp->getOnlineStartPrice()).'<br>';
+                $html .= '<pre>startPrice: '.($elp->getStartPrice()).'<br>';
+
+                $html .= '<br>';
+                $html .= '<pre>onlineReservePrice: '.($elp->getOnlineReservePrice()).'<br>';
+                $html .= '<pre>reservePrice: '.($elp->getReservePrice()).'<br>';
+
+                $html .= '<br>';
+                $html .= '<pre>onlineBuyItNowPrice: '.($elp->getOnlineBuyItNowPrice()).'<br>';
+                $html .= '<pre>buyItNowPrice: '.($elp->getBuyItNowPrice()).'<br>';
+
                 return $html;
             }
 
@@ -298,12 +322,13 @@ HTML;
 
                 $html = '';
 
-                $html .= '<pre>isMeetListRequirements: ' .$insp->isMeetListRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRelistRequirements: ' .$insp->isMeetRelistRequirements($lp). '<br>';
-                $html .= '<pre>isMeetStopRequirements: ' .$insp->isMeetStopRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseGeneralRequirements: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
-                $html .= '<pre>isMeetRevisePriceRequirements: ' .$insp->isMeetRevisePriceRequirements($lp). '<br>';
-                $html .= '<pre>isMeetReviseQtyRequirements: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
+                $html .= '<pre>isMeetList: ' .$insp->isMeetListRequirements($lp). '<br>';
+                $html .= '<pre>isMeetRelist: ' .$insp->isMeetRelistRequirements($lp). '<br>';
+                $html .= '<pre>isMeetStop: ' .$insp->isMeetStopRequirements($lp). '<br>';
+                $html .= '<pre>isMeetReviseGeneral: ' .$insp->isMeetReviseGeneralRequirements($lp). '<br>';
+                $html .= '<pre>isMeetReviseRegularPrice: '.$insp->isMeetReviseRegularPriceRequirements($lp).'<br>';
+                $html .= '<pre>isMeetReviseBusinessPrice: '.$insp->isMeetReviseBusinessPriceRequirements($lp).'<br>';
+                $html .= '<pre>isMeetReviseQty: ' .$insp->isMeetReviseQtyRequirements($lp). '<br>';
 
                 $html .= '<pre>isStatusEnabled: ' .($lp->getMagentoProduct()->isStatusEnabled()). '<br>';
                 $html .= '<pre>isStockAvailability: ' .($lp->getMagentoProduct()->isStockAvailability()). '<br>';
@@ -339,6 +364,81 @@ HTML;
 
     <div style="margin: 10px 0; width: 365px; text-align: right;">
         <button type="submit">Show</button>
+    </div>
+
+</form>
+HTML;
+    }
+
+    /**
+     * @title "Build Order Quote"
+     * @description "Print Order Quote Data"
+     * @new_line
+     */
+    public function getPrintOrderQuoteDataAction()
+    {
+        if ($this->getRequest()->getParam('print')) {
+
+            /** @var \Ess\M2ePro\Model\Order $order */
+            $orderId = $this->getRequest()->getParam('order_id');
+            $order = $this->activeRecordFactory->getObjectLoaded('Order', $orderId);
+
+            if (!$order->getId()) {
+
+                $this->getMessageManager()->addError('Unable to load order instance.');
+                $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+                return;
+            }
+
+            $proxy = $order->getProxy()->setStore($order->getStore());
+
+            $magentoQuote = $this->modelFactory->getObject('Magento\Quote', ['proxyOrder' => $proxy]);
+            $magentoQuote->buildQuote();
+            $magentoQuote->getQuote()->setIsActive(false)->save();
+
+            $shippingAddressData = $magentoQuote->getQuote()->getShippingAddress()->getData();
+            unset(
+                $shippingAddressData['cached_items_all'],
+                $shippingAddressData['cached_items_nominal'],
+                $shippingAddressData['cached_items_nonnominal']
+            );
+            $billingAddressData  = $magentoQuote->getQuote()->getBillingAddress()->getData();
+            unset(
+                $billingAddressData['cached_items_all'],
+                $billingAddressData['cached_items_nominal'],
+                $billingAddressData['cached_items_nonnominal']
+            );
+
+            $quote = $magentoQuote->getQuote();
+
+            $html = '';
+
+            $html .= '<pre><b>Grand Total:</b> ' .$quote->getGrandTotal(). '<br>';
+            $html .= '<pre><b>Shipping Amount:</b> ' .$quote->getShippingAddress()->getShippingAmount(). '<br>';
+
+            $html .= '<pre><b>Quote Data:</b> ' .print_r($quote->getData(), true). '<br>';
+            $html .= '<pre><b>Shipping Address Data:</b> ' .print_r($shippingAddressData, true). '<br>';
+            $html .= '<pre><b>Billing Address Data:</b> ' .print_r($billingAddressData, true). '<br>';
+
+            return $html;
+        }
+
+        $formKey = $this->formKey->getFormKey();
+        $actionUrl = $this->getUrl('*/*/*', ['action' => 'getPrintOrderQuoteData']);
+
+        return <<<HTML
+<form method="get" enctype="multipart/form-data" action="{$actionUrl}">
+
+    <div style="margin: 5px 0; width: 400px;">
+        <label style="width: 170px; display: inline-block;">Order ID: </label>
+        <input name="order_id" style="width: 200px;" required>
+    </div>
+
+    <input name="form_key" value="{$formKey}" type="hidden" />
+    <input name="print" value="1" type="hidden" />
+
+    <div style="margin: 10px 0; width: 365px; text-align: right;">
+        <button type="submit">Build</button>
     </div>
 
 </form>

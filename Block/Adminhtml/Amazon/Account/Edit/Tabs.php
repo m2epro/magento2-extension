@@ -16,6 +16,9 @@ class Tabs extends AbstractTabs
 
     protected function _beforeToHtml()
     {
+        /** @var $account \Ess\M2ePro\Model\Account */
+        $account = $this->getHelper('Data\GlobalData')->getValue('edit_account');
+
         $this->addTab('general', array(
             'label'   => $this->__('General'),
             'title'   => $this->__('General'),
@@ -40,9 +43,23 @@ class Tabs extends AbstractTabs
             'content' => $this->createBlock('Amazon\Account\Edit\Tabs\ShippingSettings')->toHtml(),
         ));
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
-            $this->getHelper('Data\GlobalData')->getValue('edit_account')) {
+        if (
+            !is_null($account)
+            && $account->getId()
+            && $account->getChildObject()->getMarketplace()->getChildObject()->isVatCalculationServiceAvailable()
+        ) {
+            $this->addTab('vat_calculation_service', array(
+                'label'   => $this->__('VAT Calculation Service'),
+                'title'   => $this->__('VAT Calculation Service'),
+                'content' => $this->createBlock('Amazon\Account\Edit\Tabs\VatCalculationService')->toHtml(),
+            ));
+        }
 
+        if (
+            !is_null($account)
+            && $account->getId()
+            && $this->getHelper('Component\Amazon\Repricing')->isEnabled()
+        ) {
             $this->addTab('repricing', array(
                 'label'   => $this->__('Repricing Tool'),
                 'title'   => $this->__('Repricing Tool'),

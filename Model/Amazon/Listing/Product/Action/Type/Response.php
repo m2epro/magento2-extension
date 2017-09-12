@@ -207,29 +207,47 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
         return $data;
     }
 
-    protected function appendPriceValues($data)
+    protected function appendRegularPriceValues($data)
     {
-        if (!$this->getRequestData()->hasPrice()) {
+        if (!$this->getRequestData()->hasRegularPrice()) {
             return $data;
         }
 
-        $data['online_price'] = (float)$this->getRequestData()->getPrice();
+        $data['online_regular_price'] = (float)$this->getRequestData()->getRegularPrice();
 
-        $data['online_sale_price'] = NULL;
-        $data['online_sale_price_start_date'] = NULL;
-        $data['online_sale_price_end_date'] = NULL;
+        $data['online_regular_sale_price'] = NULL;
+        $data['online_regular_sale_price_start_date'] = NULL;
+        $data['online_regular_sale_price_end_date'] = NULL;
 
-        if ($this->getRequestData()->hasSalePrice()) {
+        if ($this->getRequestData()->hasRegularSalePrice()) {
 
-            $salePrice = (float)$this->getRequestData()->getSalePrice();
+            $salePrice = (float)$this->getRequestData()->getRegularSalePrice();
 
             if ($salePrice > 0) {
-                $data['online_sale_price']            = $salePrice;
-                $data['online_sale_price_start_date'] = $this->getRequestData()->getSalePriceStartDate();
-                $data['online_sale_price_end_date']   = $this->getRequestData()->getSalePriceEndDate();
+                $data['online_regular_sale_price'] = $salePrice;
+                $data['online_regular_sale_price_start_date'] = $this->getRequestData()->getRegularSalePriceStartDate();
+                $data['online_regular_sale_price_end_date'] = $this->getRequestData()->getRegularSalePriceEndDate();
             } else {
-                $data['online_sale_price'] = 0;
+                $data['online_regular_sale_price'] = 0;
             }
+        }
+
+        return $data;
+    }
+
+    protected function appendBusinessPriceValues($data)
+    {
+        if (!$this->getRequestData()->hasBusinessPrice()) {
+            return $data;
+        }
+
+        $data['online_business_price'] = (float)$this->getRequestData()->getBusinessPrice();
+
+        if ($this->getRequestData()->hasBusinessDiscounts()) {
+            $businessDiscounts = $this->getRequestData()->getBusinessDiscounts();
+            $data['online_business_discounts'] = $this->getHelper('Data')->jsonEncode($businessDiscounts['values']);
+        } else {
+            $data['online_business_discounts'] = NULL;
         }
 
         return $data;
@@ -239,7 +257,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
 
     protected function setLastSynchronizationDates()
     {
-        if (!$this->getConfigurator()->isQtyAllowed() && !$this->getConfigurator()->isPriceAllowed()) {
+        if (!$this->getConfigurator()->isQtyAllowed() && !$this->getConfigurator()->isRegularPriceAllowed()) {
             return;
         }
 
@@ -249,7 +267,7 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
             $additionalData['last_synchronization_dates']['qty'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 
-        if ($this->getConfigurator()->isPriceAllowed()) {
+        if ($this->getConfigurator()->isRegularPriceAllowed()) {
             $additionalData['last_synchronization_dates']['price'] = $this->getHelper('Data')->getCurrentGmtDate();
         }
 

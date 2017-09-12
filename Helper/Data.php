@@ -123,13 +123,13 @@ class Data extends AbstractHelper
                     $allowed = implode('|', $allowedTags);
 
                     $pattern = '/<([\/\s\r\n]*)(' . $allowed . ')'.
-                        '((\s+\w+="[\w\s\%\?=&#\/\.;:_\-\(\)]*")*[\/\s\r\n]*)>/si';
+                        '((\s+\w+="[\w\s\%\?=&#\/\.,;:_\-\(\)]*")*[\/\s\r\n]*)>/si';
                     $result = preg_replace($pattern, '##$1$2$3##', $data);
 
                     $result = htmlspecialchars($result, $flags);
 
                     $pattern = '/##([\/\s\r\n]*)(' . $allowed . ')'.
-                        '((\s+\w+="[\w\s\%\?=&#\/\.;:_\-\(\)]*")*[\/\s\r\n]*)##/si';
+                        '((\s+\w+="[\w\s\%\?=&#\/\.,;:_\-\(\)]*")*[\/\s\r\n]*)##/si';
                     $result = preg_replace($pattern, '<$1$2$3>', $result);
                 } else {
                     $result = htmlspecialchars($data, $flags);
@@ -202,14 +202,19 @@ class Data extends AbstractHelper
 
     public function reduceWordsInString($string, $neededLength, $longWord = 6, $minWordLen = 2, $atEndOfWord = '.')
     {
-        if (strlen($string) <= $neededLength) {
+        $oldEncoding = mb_internal_encoding();
+        mb_internal_encoding('UTF-8');
+
+        if (mb_strlen($string) <= $neededLength) {
+
+            mb_internal_encoding($oldEncoding);
             return $string;
         }
 
         $longWords = array();
         foreach (explode(' ', $string) as $word) {
-            if (strlen($word) >= $longWord && !preg_match('/[0-9]/', $word)) {
-                $longWords[$word] = strlen($word) - $minWordLen;
+            if (mb_strlen($word) >= $longWord && !preg_match('/[0-9]/', $word)) {
+                $longWords[$word] = mb_strlen($word) - $minWordLen;
             }
         }
 
@@ -218,9 +223,11 @@ class Data extends AbstractHelper
             $canBeReduced += $canBeReducedForWord;
         }
 
-        $needToBeReduced = strlen($string) - $neededLength + (count($longWords) * strlen($atEndOfWord));
+        $needToBeReduced = mb_strlen($string) - $neededLength + (count($longWords) * mb_strlen($atEndOfWord));
 
         if ($canBeReduced < $needToBeReduced) {
+
+            mb_internal_encoding($oldEncoding);
             return $string;
         }
 
@@ -228,7 +235,7 @@ class Data extends AbstractHelper
         foreach ($longWords as $word => $canBeReducedForWord) {
 
             $willReduced = ceil($weightOfOneLetter * $canBeReducedForWord);
-            $reducedWord = substr($word, 0, strlen($word) - $willReduced) . $atEndOfWord;
+            $reducedWord = mb_substr($word, 0, mb_strlen($word) - $willReduced) . $atEndOfWord;
 
             $string = str_replace($word, $reducedWord, $string);
 
@@ -237,13 +244,14 @@ class Data extends AbstractHelper
             }
         }
 
+        mb_internal_encoding($oldEncoding);
         return $string;
     }
 
     //########################################
 
     /**
-     * It prevents situations when json_encode() return NULL due to some broken bytes sequence.
+     * It prevents situations when json_encode() returns FALSE due to some broken bytes sequence.
      * Normally normalizeToUtfEncoding() fixes that
      *
      * @param $data
@@ -261,6 +269,10 @@ class Data extends AbstractHelper
         if ($encoded !== false) {
             return $encoded;
         }
+
+        $this->helperFactory->getObject('Module\Logger')->process(
+            ['source' => serialize($data)], 'json_encode() failed', false
+        );
 
         $encoded = @json_encode($this->normalizeToUtfEncoding($data));
         if ($encoded !== false) {
@@ -280,14 +292,11 @@ class Data extends AbstractHelper
             return NULL;
         }
 
-        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to encode to JSON.' ,
-            array(
-                'source' => serialize($data)
-            ));
+        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to encode to JSON.', ['source' => serialize($data)]);
     }
 
     /**
-     * It prevents situations when json_decode() return NULL due to unknown issue.
+     * It prevents situations when json_decode() returns NULL due to unknown issue.
      * Despite the fact that given JSON is having correct format
      *
      * @param $data
@@ -295,7 +304,7 @@ class Data extends AbstractHelper
      * @return null|array
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
-    public function jsonDecode($data, $throwError = true)
+    public function jsonDecode($data, $throwError = false)
     {
         if (is_null($data) || $data === '' || strtolower($data) === 'null') {
             return NULL;
@@ -306,23 +315,29 @@ class Data extends AbstractHelper
             return $decoded;
         }
 
-        $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
-        \Zend_Json::$useBuiltinEncoderDecoder = true;
-        $decoded = \Zend_Json::decode($data);
-        \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
+        $this->helperFactory->getObject('Module\Logger')->process(
+            ['source' => serialize($data)], 'json_decode() failed', false
+        );
 
-        if (!is_null($decoded)) {
-            return $decoded;
+        try {
+
+            $previousValue = \Zend_Json::$useBuiltinEncoderDecoder;
+            \Zend_Json::$useBuiltinEncoderDecoder = true;
+            $decoded = \Zend_Json::decode($data);
+            \Zend_Json::$useBuiltinEncoderDecoder = $previousValue;
+
+        } catch (\Exception $e) {
+            $decoded = NULL;
         }
 
-        if (!$throwError) {
-            return NULL;
+        if (is_null($decoded) && $throwError) {
+
+            throw new \Ess\M2ePro\Model\Exception\Logic(
+                'Unable to decode JSON.', ['source' => $data]
+            );
         }
 
-        throw new \Ess\M2ePro\Model\Exception\Logic('Unable to decode JSON.' ,
-            array(
-                'source' => $data
-            ));
+        return $decoded;
     }
 
     //########################################
@@ -518,6 +533,8 @@ class Data extends AbstractHelper
         }
 
         $a = 0;
+        $string = (string)$string;
+
         for ($i = 0; $i < 10; $i++) {
             if ($string[$i] == "X" || $string[$i] == "x") {
                 $a += 10 * intval(10 - $i);

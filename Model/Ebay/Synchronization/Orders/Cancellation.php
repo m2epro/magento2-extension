@@ -250,7 +250,7 @@ final class Cancellation extends AbstractModel
         /** @var $order \Ess\M2ePro\Model\Order */
         $order = $this->ebayFactory->getObject('Order')->getCollection()
             ->addFieldToFilter('account_id', $account->getId())
-            ->addFieldToFilter('ebay_order_id', $orderData['ebay_order_id'])
+            ->addFieldToFilter('ebay_order_id', $orderData['identifiers']['ebay_order_id'])
             ->getFirstItem();
 
         if (!$order->getId()) {
@@ -287,7 +287,7 @@ final class Cancellation extends AbstractModel
 
             $order->setData('shipping_details', $this->getHelper('Data')->jsonEncode($shippingDetails));
             $order->setData('shipping_status', $shippingStatus);
-            $order->setData('tax_details', $this->getHelper('Data')->jsonEncode($orderData['tax_details']));
+            $order->setData('tax_details', $this->getHelper('Data')->jsonEncode($orderData['selling']['tax_details']));
         }
 
         $order->save();
@@ -409,7 +409,7 @@ final class Cancellation extends AbstractModel
 
     private function getCheckoutStatus($orderData)
     {
-        return $this->orderHelper->getCheckoutStatus($orderData['checkout_status']);
+        return $this->orderHelper->getCheckoutStatus($orderData['statuses']['checkout']);
     }
 
     private function getPaymentStatus($orderData)

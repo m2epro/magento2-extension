@@ -50,6 +50,13 @@ final class Update extends AbstractModel
         return 40;
     }
 
+    // ---------------------------------------
+
+    protected function intervalIsEnabled()
+    {
+        return true;
+    }
+
     //########################################
 
     protected function performActions()
@@ -159,31 +166,25 @@ final class Update extends AbstractModel
 
     private function getChangesByAccount(\Ess\M2ePro\Model\Account $account, $sinceTime)
     {
-        $cacheData = $this->getHelper('Data\Cache\Runtime')->getValue('item_get_changes_data_' . $account->getId());
-
-        if (!empty($cacheData) &&
-            strtotime($cacheData['from_time']) <= strtotime($sinceTime) &&
-            strtotime($sinceTime) <= strtotime($cacheData['to_time'])) {
-
-            return $cacheData;
-        }
-
         $nextSinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
-
-        $toTime = NULL;
 
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
         if (!is_null($operationHistory)) {
-            $toTime = $operationHistory->getData('start_date');
+            $toTime = new \DateTime($operationHistory->getData('start_date'), new \DateTimeZone('UTC'));
+        } else {
+            $toTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
 
-            if ($nextSinceTime->format('U') >= strtotime($toTime)) {
-                $nextSinceTime = new \DateTime($toTime, new \DateTimeZone('UTC'));
-                $nextSinceTime->modify('- 1 minute');
-            }
+        $toTime->modify('-1 hour');
+
+        if ((int)$nextSinceTime->format('U') >= (int)$toTime->format('U')) {
+            $nextSinceTime = $toTime;
+            $nextSinceTime->modify('-1 minute');
         }
 
         $response = $this->receiveChangesFromEbay(
-            $account, array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
+            $account,
+            array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
         );
 
         if ($response) {
@@ -193,12 +194,13 @@ final class Update extends AbstractModel
         $previousSinceTime = $nextSinceTime;
 
         $nextSinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
-        $nextSinceTime->modify("-1 day");
+        $nextSinceTime->modify('-1 day');
 
-        if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
+        if ((int)$previousSinceTime->format('U') < (int)$nextSinceTime->format('U')) {
 
             $response = $this->receiveChangesFromEbay(
-                $account, array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
+                $account,
+                array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
             );
 
             if ($response) {
@@ -209,11 +211,13 @@ final class Update extends AbstractModel
         }
 
         $nextSinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $nextSinceTime->modify('-2 hours');
 
-        if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
+        if ((int)$previousSinceTime->format('U') < (int)$nextSinceTime->format('U')) {
 
             $response = $this->receiveChangesFromEbay(
-                $account, array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
+                $account,
+                array('since_time'=>$nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime->format('Y-m-d H:i:s'))
             );
 
             if ($response) {
@@ -283,8 +287,8 @@ final class Update extends AbstractModel
 
     private function isLockedAccount(\Ess\M2ePro\Model\Account $account)
     {
-        /** @var $lockItem \Ess\M2ePro\Model\LockItem */
-        $lockItem = $this->activeRecordFactory->getObject('LockItem');
+        /** @var $lockItem \Ess\M2ePro\Model\Lock\Item\Manager */
+        $lockItem = $this->modelFactory->getObject('Lock\Item\Manager');
         $lockItem->setNick(self::LOCK_ITEM_PREFIX.'_'.$account->getId());
         $lockItem->setMaxInactiveTime(Runner::MAX_LIFETIME);
 

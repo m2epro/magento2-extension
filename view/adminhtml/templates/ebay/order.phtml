@@ -140,7 +140,7 @@
 </div>
 
 <div class="col-m-6">
-    <div class="fieldset-wrapper" id="magento_block_ebay_orders_buyer">
+    <div class="fieldset-wrapper" id="magento_block_ebay_orders_buyer" style="min-height: 330px">
 
         <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
             <strong class="admin__collapsible-title"><?php echo $block->__('Buyer Information');?></strong>
@@ -203,7 +203,7 @@
                             <td class="value"><strong><?php echo $this->getHelper('Data')->escapeHtml($this->order->getChildObject()->getPaymentMethod()); ?></strong></td>
                         </tr>
                         <tr>
-                            <td class="label"><?php echo $block->__('eBay Account'); ?></td>
+                            <td class="label"><?php echo $block->__('eBay User ID'); ?></td>
                             <td class="value"><strong><?php echo $this->getHelper('Data')->escapeHtml($this->order->getChildObject()->getBuyerUserId()); ?></strong></td>
                         </tr>
                         <tr>
@@ -218,6 +218,17 @@
                                 </strong>
                             </td>
                         </tr>
+
+                        <?php if ($this->order->getChildObject()->getCashOnDeliveryCost() > 0): ?>
+                            <tr>
+                                <td class="label"><?php echo $block->__('Cash On Delivery Cost');?>:</td>
+                                <td class="value">
+                                    <strong>
+                                        <?php echo $block->formatPrice($this->order->getCurrency(), round($this->order->getChildObject()->getCashOnDeliveryCost(), 2)); ?>
+                                    </strong>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
 
                     </tbody>
                 </table>
@@ -579,6 +590,13 @@
                     <td class="label"><?php echo $block->__('Tax') ?></td>
                     <td><span class="price"><?php echo $block->formatPrice($this->order->getChildObject()->getCurrency(), $this->getTaxAmount());?></span></td>
                 </tr>
+
+                <?php if ($this->order->getChildObject()->getWasteRecyclingFee()): ?>
+                    <tr>
+                        <td class="label"><?php echo $block->__('Waste Recycling Fee') ?></td>
+                        <td><span class="price"><?php echo $block->formatPrice($this->order->getChildObject()->getCurrency(), $this->order->getChildObject()->getWasteRecyclingFee());?></span></td>
+                    </tr>
+                <?php endif; ?>
 
             </tbody>
 

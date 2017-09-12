@@ -100,6 +100,16 @@ final class Service extends AbstractModel
 
     //########################################
 
+    protected function getOperationHistoryData()
+    {
+        return array_merge(parent::getOperationHistoryData(), array(
+            'auth_key'      => $this->requestAuthKey,
+            'connection_id' => $this->requestConnectionId
+        ));
+    }
+
+    //########################################
+
     private function resetTaskStartFrom($taskName)
     {
         $config = $this->getHelper('Module')->getConfig();

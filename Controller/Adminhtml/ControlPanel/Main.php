@@ -2,9 +2,6 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel;
 
-use Ess\M2ePro\Helper\Module;
-use Magento\Backend\App\Action;
-
 abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
 {
     //########################################
@@ -33,10 +30,13 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
 
     //########################################
 
+    /**
+     * It will allow to use control panel features even if extension is disabled, etc.
+     * @param \Magento\Framework\App\RequestInterface $request
+     * @return bool
+     */
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        $result = parent::preDispatch($request);
-
         if ($request->isGet() &&
             !$request->isPost() &&
             !$request->isXmlHttpRequest()) {
@@ -45,7 +45,7 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
             $this->addMaintenanceNotification();
         }
 
-        return $result;
+        return true;
     }
 
     //########################################

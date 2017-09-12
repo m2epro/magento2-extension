@@ -36,6 +36,15 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         $this->getListingProduct()->save();
     }
 
+    protected function afterBuildDataEvent(array $data)
+    {
+        $this->getConfigurator()->setPriority(
+            \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator::PRIORITY_LIST
+        );
+
+        parent::afterBuildDataEvent($data);
+    }
+
     //########################################
 
     /**
@@ -75,9 +84,15 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
     protected function initializeVariations()
     {
+        if (!$this->getEbayListingProduct()->isVariationMode()) {
+            foreach ($this->getListingProduct()->getVariations(true) as $variation) {
+                $variation->delete();
+            }
+        }
+
         parent::initializeVariations();
 
-        if (!$this->getIsVariationItem()) {
+        if (!$this->getEbayListingProduct()->isVariationMode()) {
             return;
         }
 
@@ -92,7 +107,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
             $ebayVariation = $variation->getChildObject();
 
-            if ($ebayVariation->isDelete() || !$this->getIsVariationItem()) {
+            if ($ebayVariation->isDelete()) {
                 $variation->delete();
                 continue;
             }
@@ -175,8 +190,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         }
 
         $data = $this->doReplaceVariationSpecifics($data, $replacements);
-
-        $data['variations_specifics_replacements'] = $replacements;
+        $this->addMetaData('variations_specifics_replacements', $replacements);
 
         return $data;
     }

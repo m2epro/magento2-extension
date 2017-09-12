@@ -104,4 +104,23 @@
     display: inline-block;
 }
 
+a.ebay-listing-view-icon {
+    color: #514943;
+    vertical-align: initial;
+    display: inline-block;
+    font-size: 1.5rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+a.ebay-listing-view-icon.ebay-listing-view-remove:before {
+    content: '\e632';
+}
+
 /* ================================================ */

@@ -82,7 +82,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
                 'online_sale_price_start_date' => new \Zend_Db_Expr('NULL'),
                 'online_sale_price_end_date'   => new \Zend_Db_Expr('NULL'),
 
+                'online_business_price'        => new \Zend_Db_Expr('NULL'),
+
                 'online_current_price'         => 'second_table.online_price',
+                'online_regular_price'         => 'second_table.online_price',
 
                 'is_repricing'                 => 'second_table.is_repricing',
                 'is_repricing_disabled'        => 'second_table.is_repricing_disabled',
@@ -239,7 +242,8 @@ HTML;
             }
         }
 
-        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() && isset($value['is_repricing'])) {
+        if ($this->getHelper('Component\Amazon\Repricing')->isEnabled() &&
+            isset($value['is_repricing']) && $value['is_repricing'] !== '') {
             if (!empty($condition)) {
                 $condition = '(' . $condition . ') OR ';
             }

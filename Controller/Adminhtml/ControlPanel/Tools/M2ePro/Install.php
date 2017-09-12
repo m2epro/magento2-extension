@@ -4,10 +4,9 @@ namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
-use Ess\M2ePro\Helper\Component\Amazon;
-use Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Helper\Module;
 use Magento\Framework\Component\ComponentRegistrar;
+use Ess\M2ePro\Model\M2ePro\Connector\Tables\Get\Diff as TablesDiffConnector;
 
 class Install extends Command
 {
@@ -134,13 +133,8 @@ HTML;
      */
     public function checkTablesStructureValidityAction()
     {
-        $tablesInfo = $this->getHelper('Module\Database\Structure')->getTablesInfo();
-
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('tables','get','diff', [
-            'magento_version' => 2,
-            'tables_info'     => $this->getHelper('Data')->jsonEncode($tablesInfo)
-        ]);
+        $connectorObj = $dispatcherObject->getConnector('tables','get','diff');
 
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
@@ -173,61 +167,72 @@ HTML;
         foreach ($responseData['diff'] as $tableName => $checkResult) {
             foreach ($checkResult as $resultRow) {
 
+                if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_TABLE_MISSING ||
+                    $resultRow['problem'] == TablesDiffConnector::PROBLEM_TABLE_REDUNDANT) {
+
+                    $html .= <<<HTML
+<tr>
+    <td>{$tableName}</td>
+    <td>{$resultRow['message']}</td>
+    <td></td>
+    <td></td>
+</tr>
+HTML;
+                    continue;
+                }
+
                 $additionalInfo = '';
                 $actionsHtml    = '';
 
-                if (isset($resultRow['info'])) {
+                foreach ($resultRow['info']['diff_data'] as $diffCode => $diffValue) {
 
-                    $resultInfo = $resultRow['info'];
-                    $diffData = isset($resultInfo['diff_data']) ? $resultInfo['diff_data'] : array();
+                    $additionalInfo .= "<b>{$diffCode}</b>: '{$diffValue}'<br>";
+                    $additionalInfo .= "<b>original:</b> '{$resultRow['info']['original_data'][$diffCode]}'";
+                    $additionalInfo .= "<br>";
+                }
 
-                    if (isset($resultInfo['diff_data'])) {
-                        foreach ($resultInfo['diff_data'] as $diffCode => $diffValue) {
+                $linkTitle = '';
+                $urlParams = [
+                    'action'      => 'fixColumn',
+                    'table_name'  => $tableName,
+                    'column_info' => $this->getHelper('Data')->jsonEncode(
+                        $resultRow['info']['original_data']
+                    )
+                ];
 
-                            $additionalInfo .= "<b>{$diffCode}</b>: '{$diffValue}'. ";
-                            $additionalInfo .= "<b>original:</b> '{$resultInfo['original_data'][$diffCode]}'.";
-                            $additionalInfo .= "<br/>";
-                        }
-                    }
+                if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_REDUNDANT) {
 
-                    $linkTitle = '';
-                    $urlParams = array(
-                        'action'      => 'fixColumn',
-                        'table_name'  => $tableName,
-                        'column_info' => $this->getHelper('Data')->jsonEncode($resultInfo['original_data'])
+                    $linkTitle = 'Drop';
+                    $urlParams['mode'] = 'drop';
+                    $urlParams['column_info'] = $this->getHelper('Data')->jsonEncode(
+                        $resultRow['info']['current_data']
                     );
+                }
 
-                    if (empty($resultInfo['current_data']) ||
-                        (isset($diffData['type']) || isset($diffData['default']) ||
-                         isset($diffData['null']) || isset($diffData['extra']))) {
+                if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_DIFFERENT ||
+                    $resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_MISSING)
+                {
+                    if ($resultRow['problem'] == TablesDiffConnector::PROBLEM_COLUMN_DIFFERENT &&
+                        isset($resultRow['info']['diff_data']['key']))
+                    {
+                        $linkTitle = 'Fix Index';
+                        $urlParams['mode'] = 'index';
+                    } else {
 
                         $linkTitle = 'Fix Properties';
                         $urlParams['mode'] = 'properties';
                     }
-
-                    if (isset($diffData['key'])) {
-
-                        $linkTitle = 'Fix Index';
-                        $urlParams['mode'] = 'index';
-                    }
-
-                    if (empty($resultInfo['original_data']) && !empty($resultInfo['current_data'])) {
-
-                        $linkTitle = 'Drop';
-                        $urlParams['mode'] = 'drop';
-                        $urlParams['column_info'] = $this->getHelper('Data')->jsonEncode($resultInfo['current_data']);
-                    }
-
-                    $url = $this->getUrl('*/*/*', $urlParams);
-                    $actionsHtml .= "<a href=\"{$url}\">{$linkTitle}</a>";
                 }
+
+                $url = $this->getUrl('*/*/*', $urlParams);
+                $actionsHtml .= "<a href=\"{$url}\">{$linkTitle}</a>";
 
                 $html .= <<<HTML
 <tr>
     <td>{$tableName}</td>
     <td>{$resultRow['message']}</td>
-    <td>&nbsp;{$additionalInfo}&nbsp;</td>
-    <td>&nbsp;{$actionsHtml}&nbsp;</td>
+    <td>{$additionalInfo}</td>
+    <td>{$actionsHtml}</td>
 </tr>
 HTML;
             }
@@ -299,7 +304,7 @@ HTML;
         $srcPath = $this->getHelper('Magento')->getBaseUrl() .
                    $this->directoryList->getUrlPath(\Magento\Framework\App\Filesystem\DirectoryList::STATIC_VIEW) .'/'.
                    $this->getHelper('Magento')->getThemePath() .'/'.
-                   $this->getHelper('Magento')->getDefaultLocale();
+                   $this->getHelper('Magento')->getLocale();
 
         $html .= <<<HTML
 <script type="text/javascript" src="{$srcPath}/jquery.js"></script>

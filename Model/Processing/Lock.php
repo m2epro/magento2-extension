@@ -41,4 +41,17 @@ class Lock extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
     }
 
     //####################################
+
+    /**
+     * This object can NOT be locked. So we are avoiding unnecessary queries to the database.
+     * @return bool
+     */
+    public function isLocked()
+    {
+        return false;
+    }
+
+    public function deleteProcessingLocks($tag = false, $processingId = false) {}
+
+    //####################################
 }

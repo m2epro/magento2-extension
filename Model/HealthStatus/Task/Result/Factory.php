@@ -8,22 +8,25 @@
 
 namespace Ess\M2ePro\Model\HealthStatus\Task\Result;
 
-use Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs;
-use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
+use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 class Factory
 {
-    const CLASS_NAME = 'Ess\M2ePro\Model\HealthStatus\Task\Result';
+    /** @var \Ess\M2ePro\Model\HealthStatus\Task\Result\LocationResolver */
+    protected $locationResolver;
 
+    /** @var \Magento\Framework\ObjectManagerInterface */
     protected $_objectManager = null;
 
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\HealthStatus\Task\Result\LocationResolver $locationResolver,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Framework\ObjectManagerInterface $objectManager
     ){
+        $this->locationResolver = $locationResolver;
         $this->_objectManager = $objectManager;
     }
 
@@ -32,29 +35,16 @@ class Factory
     /**
      * @param \Ess\M2ePro\Model\HealthStatus\Task\AbstractModel $task
      * @return \Ess\M2ePro\Model\HealthStatus\Task\Result
-     * @throws \Exception
      */
     public function create(\Ess\M2ePro\Model\HealthStatus\Task\AbstractModel $task)
     {
-        $className = str_replace('Ess\M2ePro\Model\HealthStatus\Task\\', '', get_class($task));
-        $className = explode('\\', $className);
-
-        if (count($className) != 3) {
-            $className = get_class($task);
-            throw new \Exception("Unable to create result object for task [{$className}]");
-        }
-
-        $tabName      = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[0]);
-        $fieldSetName = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[1]);
-        $fieldName    = preg_replace('/(?<!^)([A-Z0-9])/', ' $1', $className[2]);
-
-        return $this->_objectManager->create(self::CLASS_NAME, [
+        return $this->_objectManager->create(TaskResult::class, [
             'taskHash'                 => get_class($task),
             'taskType'                 => $task->getType(),
             'taskMustBeShownIfSuccess' => $task->mustBeShownIfSuccess(),
-            'tabName'                  => $task->getType() == IssueType::TYPE ? $tabName : Tabs::TAB_ID_DASHBOARD,
-            'fieldSetName'             => $fieldSetName,
-            'fieldName'                => $fieldName
+            'tabName'                  => $this->locationResolver->resolveTabName($task),
+            'fieldSetName'             => $this->locationResolver->resolveFieldSetName($task),
+            'fieldName'                => $this->locationResolver->resolveFieldName($task)
         ]);
     }
 

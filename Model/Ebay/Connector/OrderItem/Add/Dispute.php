@@ -112,7 +112,9 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             return;
         }
 
-        if (empty($response['dispute_id'])) {
+        $responseData = $this->getResponse()->getResponseData();
+
+        if (empty($responseData['dispute_id'])) {
             $log = 'Unpaid Item Process was not open for Item #%id%. Reason: eBay failure. Please try again later.';
             $this->orderItem->getOrder()->addErrorLog($log, array(
                 '!id' => $this->orderItem->getChildObject()->getItemId()
@@ -120,10 +122,10 @@ class Dispute extends \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime
             return;
         }
 
-        $this->orderItem->setData(
+        $this->orderItem->getChildObject()->setData(
             'unpaid_item_process_state',\Ess\M2ePro\Model\Ebay\Order\Item::UNPAID_ITEM_PROCESS_OPENED
         );
-        $this->orderItem->save();
+        $this->orderItem->getChildObject()->save();
 
         $this->orderItem->getOrder()->addSuccessLog('Unpaid Item Process for Item #%id% has been initiated.', array(
             '!id' => $this->orderItem->getChildObject()->getItemId()

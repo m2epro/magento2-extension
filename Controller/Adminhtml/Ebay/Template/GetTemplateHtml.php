@@ -23,8 +23,8 @@ class GetTemplateHtml extends Template
             $templateNick = $this->getRequest()->getParam('nick');
             $templateDataForce = (bool)$this->getRequest()->getParam('data_force', false);
 
-            /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Template\Switcher $switcherBlock */
-            $switcherBlock = $this->createBlock('Ebay\Template\Switcher');
+            /** @var \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Template\Switcher $switcherBlock */
+            $switcherBlock = $this->createBlock('Ebay\Listing\Template\Switcher');
             $switcherBlock->setData(['template_nick' => $templateNick]);
             // ---------------------------------------
 

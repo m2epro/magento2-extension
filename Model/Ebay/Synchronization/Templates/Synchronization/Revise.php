@@ -93,7 +93,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowQty();
                 $configurator->allowVariations();
 
@@ -145,7 +145,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowPrice();
                 $configurator->allowVariations();
 
@@ -224,7 +224,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowTitle();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -235,7 +235,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseTitleRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseTitleRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -298,7 +298,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowSubtitle();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -309,7 +309,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseSubTitleRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseSubTitleRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -374,7 +374,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowDescription();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -385,7 +385,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseDescriptionRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseDescriptionRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -420,8 +420,7 @@ final class Revise extends AbstractModel
             $attributesForProductChange = array_merge(
                 $attributesForProductChange,
                 $ebayDescriptionTemplate->getImageMainAttributes(),
-                $ebayDescriptionTemplate->getGalleryImagesAttributes(),
-                $ebayDescriptionTemplate->getVariationImagesAttributes()
+                $ebayDescriptionTemplate->getGalleryImagesAttributes()
             );
         }
 
@@ -458,7 +457,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowImages();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -469,7 +468,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseImagesRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseImagesRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -483,9 +482,19 @@ final class Revise extends AbstractModel
             }
         }
 
+        foreach ($descriptionTemplates as $descriptionTemplate) {
+            /** @var \Ess\M2ePro\Model\Ebay\Template\Description $ebayDescriptionTemplate */
+            $ebayDescriptionTemplate = $descriptionTemplate->getChildObject();
+
+            $attributesForProductChange = array_merge(
+                $attributesForProductChange,
+                $ebayDescriptionTemplate->getVariationImagesAttributes()
+            );
+        }
+
         /** @var \Ess\M2ePro\Model\Listing\Product[] $changedListingsProductsByVariationOption */
         $changedListingsProductsByVariationOption = $this->getProductChangesManager()->getInstancesByVariationOption(
-            $attributesForProductChange, true
+            array_unique($attributesForProductChange), true
         );
 
         foreach ($changedListingsProductsByVariationOption as $listingProduct) {
@@ -502,7 +511,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowVariations();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -513,7 +522,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseImagesRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseImagesRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -586,7 +595,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowSpecifics();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -597,7 +606,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseSpecificsRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseSpecificsRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -664,7 +673,7 @@ final class Revise extends AbstractModel
 
                 /** @var $configurator \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Configurator */
                 $configurator = $this->modelFactory->getObject('Ebay\Listing\Product\Action\Configurator');
-                $configurator->setPartialMode();
+                $configurator->reset();
                 $configurator->allowShippingServices();
 
                 $isExistInRunner = $this->getRunner()->isExistProductWithCoveringConfigurator(
@@ -754,6 +763,7 @@ final class Revise extends AbstractModel
 
         $tag = 'in_action';
         $modelName = $this->activeRecordFactory->getObject('Listing\Product')->getResourceName();
+        $limit = $this->getConfigValue($this->getFullSettingsPath().'need_synch/', 'items_limit');
 
         $listingProductCollection->getSelect()->joinLeft(
             array('mpc' => $this->resourceConnection->getTableName('m2epro_processing_lock')),
@@ -762,7 +772,7 @@ final class Revise extends AbstractModel
         );
         $listingProductCollection->addFieldToFilter('mpc.id', array('null' => true));
 
-        $listingProductCollection->getSelect()->limit(100);
+        $listingProductCollection->getSelect()->limit($limit);
 
         foreach ($listingProductCollection->getItems() as $listingProduct) {
 
@@ -789,7 +799,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseSynchReasonsRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseSynchReasonsRequirements($listingProduct, false)) {
                     continue;
                 }
 
@@ -818,7 +828,7 @@ final class Revise extends AbstractModel
             return;
         }
 
-        $itemsPerCycle = 100;
+        $itemsPerCycle = $this->getConfigValue($this->getFullSettingsPath().'total/', 'items_limit');
 
         $collection = $this->ebayFactory->getObject('Listing\Product')
             ->getCollection()
@@ -852,7 +862,7 @@ final class Revise extends AbstractModel
                     continue;
                 }
 
-                if (!$this->getInspector()->isMeetReviseGeneralRequirements($listingProduct)) {
+                if (!$this->getInspector()->isMeetReviseGeneralRequirements($listingProduct, false)) {
                     continue;
                 }
 

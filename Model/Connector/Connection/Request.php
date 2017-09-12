@@ -23,6 +23,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setComponent($value)
     {
         $this->component = (string)$value;
+        return $this;
     }
 
     public function getComponent()
@@ -35,6 +36,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setComponentVersion($value)
     {
         $this->componentVersion = (int)$value;
+        return $this;
     }
 
     public function getComponentVersion()
@@ -53,6 +55,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $this->command = $value;
+        return $this;
     }
 
     public function getCommand()
@@ -83,7 +86,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
                     'ip' => $this->getHelper('Client')->getIp(),
                     'directory' => $this->getHelper('Client')->getBaseDirectory()
                 ),
-                'locale' => $this->getHelper('Magento')->getLocale()
+                'locale' => $this->getHelper('Magento')->getLocaleCode()
             ),
             'auth' => array(),
             'component' => array(
@@ -115,6 +118,7 @@ class Request extends \Ess\M2ePro\Model\AbstractModel
     public function setInfoRewrites(array $value = array())
     {
         $this->infoRewrites = $value;
+        return $this;
     }
 
     // ########################################

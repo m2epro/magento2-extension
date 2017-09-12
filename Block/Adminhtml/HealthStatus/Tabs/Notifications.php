@@ -37,7 +37,13 @@ class Notifications extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractFor
     {
         $notificationSettings = $this->modelFactory->getObject('HealthStatus\Notification\Settings');
 
-        $form = $this->_formFactory->create();
+        $form = $this->_formFactory->create(
+            ['data' => [
+                'id'     => 'edit_form',
+                'action' => $this->getUrl('*/*/save'),
+                'method' => 'post'
+            ]]
+        );
 
         $form->addField(
             'health_status_notification_help_block',
@@ -51,28 +57,28 @@ You can specify how M2E Pro should notify you about Health Status of your M2E Pr
         <b>Do Not Notify</b> - no notification required;
     </li>
     <li>
-        <b>On each Extension Page (default)</b> - notifications block will be shown on each page of M2E Pro Module;
+        <b>On each Extension Page (default)</b> - notification will be shown on each page of M2E Pro Module;
     </li>
     <li>
-        <b>On each Magento Page</b> - notifications block will be shown on each page of Magento;
+        <b>On each Magento Page</b> - notification will be shown on each page of Magento;
     </li>
     <li>
-        <b>As Magento System Notification</b> - adds a notification using Magento global messages system;
+        <b>As Magento System Notification</b> - notification will be shown via Magento global messages system;
     </li>
     <li>
-        <b>Send me an eMail</b> - notifications will be sent you via a provided email.
+        <b>Send me an eMail</b> - notification will be sent you to the provided email.
     </li>
 </ul>
 Also, you can select a minimal Notifications Level:
 <ul>
     <li>
-        <b>Critical/Error (default)</b> - notification will arise only for critical issues and error;
+        <b>Critical/Error (default)</b> - notification will arise only for critical issue and error;
     </li>
     <li>
-        <b>Warning</b> - notification will arise once any warning occur;
+        <b>Warning</b> - notification will arise once the error or warning occur;
     </li>
     <li>
-        <b>Notice</b> - notification will arise in case the notice appears.
+        <b>Notice</b> - notification will arise in case the error, warning or notice occur.
     </li>
 </ul>
 HTML
@@ -83,15 +89,6 @@ HTML
         $fieldSet = $form->addFieldset(
             'notification_field_set', ['legend' => false, 'collabsable' => false]
         );
-
-        //------------------------------------
-        $button = $this->createBlock('Magento\Button', '', ['data' => [
-            'id'      => 'save_notification_mode',
-            'label'   => $this->__('Save'),
-            'onclick' => 'HealthStatusObj.saveNotificationMode()',
-            'style'   => 'display: none;',
-            'class'   => 'primary'
-        ]]);
 
         $fieldSet->addField('notification_mode',
             self::SELECT,
@@ -117,11 +114,10 @@ HTML
                     ],
                     [
                         'value' => Settings::MODE_EMAIL,
-                        'label' => $this->__('Send me an eMail')
+                        'label' => $this->__('Send me an Email')
                     ],
                 ],
-                'value' => $notificationSettings->getMode(),
-                'after_element_html' => '&nbsp;&nbsp;&nbsp;'.$button->toHtml()
+                'value' => $notificationSettings->getMode()
             ]
         );
 
@@ -133,22 +129,12 @@ HTML
             [
                 'container_id' => 'notification_email_value_container',
                 'name'         => 'notification_email',
-                'label'        => $this->__('eMail'),
+                'label'        => $this->__('Email'),
                 'value'        => $email,
-                'class'        => 'validate-email',
+                'class'        => 'M2ePro-validate-email',
                 'required'     => true
             ]
         );
-        //------------------------------------
-
-        //------------------------------------
-        $button = $this->createBlock('Magento\Button', '', ['data' => [
-            'id'      => 'save_notification_level',
-            'label'   => $this->__('Save'),
-            'onclick' => 'HealthStatusObj.saveNotificationLevel()',
-            'style'   => 'display: none;',
-            'class'   => 'primary'
-        ]]);
 
         $fieldSet->addField('notification_level',
             self::SELECT,
@@ -169,13 +155,30 @@ HTML
                         'label' => $this->__('Notice')
                     ],
                 ],
-                'value' => $notificationSettings->getLevel(),
-                'after_element_html' => '&nbsp;&nbsp;&nbsp;'.$button->toHtml()
+                'value' => $notificationSettings->getLevel()
             ]
         );
         //------------------------------------
 
+        $button = $this->createBlock('Magento\Button', '', ['data' => [
+            'id'      => 'submit_button',
+            'label'   => $this->__('Save'),
+            'onclick' => 'HealthStatusObj.saveClick()',
+            'class'   => 'action-primary'
+        ]]);
+
+        $fieldSet->addField(
+            'submit_button_container',
+            self::CUSTOM_CONTAINER,
+            [
+                'text' => $button->toHtml()
+            ]
+        );
+        //------------------------------------
+
+        $form->setUseContainer(true);
         $this->setForm($form);
+
         return parent::_prepareForm();
     }
 
@@ -183,13 +186,11 @@ HTML
 
     protected function _beforeToHtml()
     {
-        $this->jsUrl->add($this->getUrl('*/healthStatus/save'), 'healthStatus/save');
+        $this->jsUrl->add($this->getUrl('*/*/save'), 'formSubmit');
 
         $this->jsPhp->addConstants(
             $this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\HealthStatus\Notification\Settings')
         );
-
-        $this->jsTranslator->add('Settings successfully saved', $this->__('Settings successfully saved'));
 
         $this->js->addRequireJs(['hS' => 'M2ePro/HealthStatus'], <<<JS
 

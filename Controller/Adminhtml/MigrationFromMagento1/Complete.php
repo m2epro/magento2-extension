@@ -42,13 +42,28 @@ class Complete extends Base
 
         $this->setWizardStatus(BaseMigrationFromMagento1::WIZARD_STATUS_IN_PROGRESS);
 
+        try {
+
+            $this->checkPreconditions();
+
+        } catch (\Exception $exception) {
+
+            $this->getMessageManager()->addErrorMessage(
+                $this->__('Migration is failed. Reason: %error_message%', $exception->getMessage())
+            );
+            $this->setWizardStatus(BaseMigrationFromMagento1::WIZARD_STATUS_PREPARED);
+
+            return $this->_redirect($this->getUrl('m2epro/wizard_migrationFromMagento1/database'));
+        }
+
         $this->dbModifier->prepareTablesPrefixes();
 
         try {
-            $this->checkPreconditions();
 
             $this->dbModifier->process();
+
         } catch (\Exception $exception) {
+
             $this->getMessageManager()->addErrorMessage(
                 $this->__('Migration is failed. Reason: %error_message%', $exception->getMessage())
             );
@@ -70,10 +85,24 @@ class Complete extends Base
 
     private function checkPreconditions()
     {
+        $primaryConfigTableName = $this->dbModifier->getOldTablesPrefix() . 'm2epro_primary_config';
+
+        if (!$this->getHelper('Module\Maintenance\General')->isEnabled() ||
+            !$this->resourceConnection->getConnection()->isTableExists($primaryConfigTableName))
+        {
+            throw new \Exception(
+                $this->__(
+                    'It seems that M2E Pro MySQL tables dump from Magento v1.x has not been copied into the database
+                    of Magento v2.x. You should complete all the required actions before you proceed to the next step.
+                    Please, follow the instructions below.'
+                )
+            );
+        }
+
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->resourceConnection->getTableName('m2epro_primary_config'))
-            ->where('`group` LIKE ?', '/migrationToMagento2/source/%');
+            ->from($primaryConfigTableName)
+            ->where('`group` LIKE ?', '/migrationtomagento2/source/%');
 
         $sourceParams = [];
 
@@ -81,30 +110,33 @@ class Complete extends Base
             $sourceParams[$paramRow['group']][$paramRow['key']] = $paramRow['value'];
         }
 
-        if (!$this->getHelper('Module\Maintenance\General')->isEnabled() ||
-            empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
+        if (empty($sourceParams['/migrationtomagento2/source/']['is_prepared_for_migration']) ||
             empty($sourceParams['/migrationtomagento2/source/m2epro/']['version'])
         ) {
-            throw new \Exception($this->__('M2E pro tables dump for Magento v1.x was not properly configured
-                                            before transferring to M2E Pro for Magento v2.x. To prepare it properly,
-                                            you should press Proceed button in
-                                            System > Configuration > M2E Pro > Advanced section, then create
-                                            new dump of M2E Pro tables from the database and transfer it to your
-                                            Magento v2.x.'));
+            throw new \Exception(
+                $this->__(
+                    'M2E pro tables dump for Magento v1.x was not properly configured
+                    before transferring to M2E Pro for Magento v2.x. To prepare it properly,
+                    you should press Proceed button in
+                    System > Configuration > M2E Pro > Advanced section, then create
+                    new dump of M2E Pro tables from the database and transfer it to your
+                    Magento v2.x.'
+                )
+            );
         }
 
-        if (empty($sourceParams['/migrationtomagento2/source/m2epro/']['version']) ||
-            $sourceParams['/migrationtomagento2/source/m2epro/']['version'] != self::SUPPORTED_SOURCE_VERSION
-        ) {
-            throw new \Exception($this->__(
-                'M2E pro tables dump for Magento v1.x cannot be migrated to Magento v2.x as your current
-                version %v% of M2E Pro for Magento v1.x does not support the ability to migrate.
-                Please, upgrade your M2E Pro to %v2% version, then prepare data by pressing
-                Proceed button in System > Configuration > M2E Pro > Advanced section, create a dump of M2E Pro
-                tables from Magento v1.x database and transfer it to Magento v2.x.',
-                $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
-                self::SUPPORTED_SOURCE_VERSION
-            ));
+        if ($sourceParams['/migrationtomagento2/source/m2epro/']['version'] != self::SUPPORTED_SOURCE_VERSION) {
+            throw new \Exception(
+                $this->__(
+                    'M2E pro tables dump for Magento v1.x cannot be migrated to Magento v2.x as your current
+                    version %v% of M2E Pro for Magento v1.x does not support the ability to migrate.
+                    Please, upgrade your M2E Pro to %v2% version, then prepare data by pressing
+                    Proceed button in System > Configuration > M2E Pro > Advanced section, create a dump of M2E Pro
+                    tables from Magento v1.x database and transfer it to Magento v2.x.',
+                    $sourceParams['/migrationtomagento2/source/m2epro/']['version'],
+                    self::SUPPORTED_SOURCE_VERSION
+                )
+            );
         }
     }
 

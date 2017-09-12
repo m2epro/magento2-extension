@@ -24,13 +24,13 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
 
         $params = array(
             'status_changer' => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_USER,
-            'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId()
+            'logs_action_id' => $this->activeRecordFactory->getObject('Listing\Log')->getResource()->getNextActionId()
         );
 
         $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
 
-        /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Verify\SingleRequester $connector */
-        $connector = $dispatcher->getCustomConnector('Ebay\Connector\Item\Verify\SingleRequester', $params);
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Item\Verify\Requester $connector */
+        $connector = $dispatcher->getCustomConnector('Ebay\Connector\Item\Verify\Requester', $params);
         $connector->setListingProduct($listingProduct);
 
         $fees = [];
@@ -41,11 +41,13 @@ class GetEstimatedFees extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Main
             $this->getHelper('Module\Exception')->process($exception);
         }
 
-        foreach ($connector->getResponse()->getMessages()->getErrorEntities() as $errorMessage) {
-            $connector->getLogger()->logListingProductMessage(
-                $listingProduct,
-                $errorMessage
-            );
+        if (!is_null($fees)) {
+            foreach ($connector->getResponse()->getMessages()->getErrorEntities() as $errorMessage) {
+                $connector->getLogger()->logListingProductMessage(
+                    $listingProduct,
+                    $errorMessage
+                );
+            }
         }
 
         $errors = $connector->getLogger()->getStoredMessages();

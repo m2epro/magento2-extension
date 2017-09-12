@@ -417,16 +417,17 @@ class Moving extends \Ess\M2ePro\Model\AbstractModel
             'qty_custom_value' => 1,
 
             'currency' => $this->getMarketplace()->getChildObject()->getDefaultCurrency(),
-            'price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_PRODUCT,
-            'price_variation_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_VARIATION_MODE_PARENT,
+            'regular_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_PRODUCT,
+            'regular_price_variation_mode' =>
+                \Ess\M2ePro\Model\Amazon\Template\SellingFormat::PRICE_VARIATION_MODE_PARENT,
 
-            'map_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
+            'regular_map_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
 
-            'sale_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_NONE,
-            'sale_price_start_date_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::DATE_VALUE,
-            'sale_price_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
-            'sale_price_end_date_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::DATE_VALUE,
-            'sale_price_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d')
+            'regular_sale_price_mode' => \Ess\M2ePro\Model\Template\SellingFormat::PRICE_MODE_NONE,
+            'regular_sale_price_start_date_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::DATE_VALUE,
+            'regular_sale_price_start_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d'),
+            'regular_sale_price_end_date_mode' => \Ess\M2ePro\Model\Amazon\Template\SellingFormat::DATE_VALUE,
+            'regular_sale_price_end_date_value' => $this->getHelper('Data')->getCurrentGmtDate(false, 'Y-m-d')
         );
 
         $tempModel->addData($dataForAdd)->save();

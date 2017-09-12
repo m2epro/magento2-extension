@@ -1,7 +1,8 @@
 define([
     'M2ePro/Listing/View/Grid',
     'M2ePro/Ebay/Listing/VariationProductManage',
-    'M2ePro/Ebay/Listing/View/Action'
+    'M2ePro/Ebay/Listing/View/Action',
+    'M2ePro/Ebay/Listing/View/Ebay/Bids'
 ], function () {
 
     window.EbayListingViewGrid = Class.create(ListingViewGrid, {
@@ -23,13 +24,13 @@ define([
                 reviseAction: this.actionHandler.reviseAction.bind(this.actionHandler),
                 stopAction: this.actionHandler.stopAction.bind(this.actionHandler),
                 stopAndRemoveAction: this.actionHandler.stopAndRemoveAction.bind(this.actionHandler),
-                removeAction: this.actionHandler.removeAction.bind(this.actionHandler),
                 previewItemsAction: this.actionHandler.previewItemsAction.bind(this.actionHandler),
                 startTranslateAction: this.actionHandler.startTranslateAction.bind(this.actionHandler),
                 stopTranslateAction: this.actionHandler.stopTranslateAction.bind(this.actionHandler)
             };
 
             this.variationProductManageHandler = new EbayListingVariationProductManage(this);
+            this.listingProductBidsHandler = new EbayListingViewEbayBids(this);
 
             this.actions = Object.extend(this.actions, {
 

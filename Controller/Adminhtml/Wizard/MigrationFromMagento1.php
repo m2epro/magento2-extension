@@ -33,13 +33,7 @@ abstract class MigrationFromMagento1 extends Wizard
 
     protected function getCustomViewNick()
     {
-        $referrer = $this->getRequest()->getParam('referrer');
-
-        if (!is_null($referrer)) {
-            return $referrer;
-        }
-
-        return '*';
+        return $this->getRequest()->getParam('referrer', NULL);
     }
 
     protected function getMenuRootNodeNick()

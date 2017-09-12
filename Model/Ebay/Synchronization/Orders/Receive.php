@@ -190,9 +190,17 @@ final class Receive extends AbstractModel
             return array();
         }
 
+        $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
+
         $orders = array();
 
         foreach ($response['items'] as $ebayOrderData) {
+
+            $orderCreateDate = new \DateTime($ebayOrderData['purchase_create_date'], new \DateTimeZone('UTC'));
+            if ($orderCreateDate < $accountCreateDate) {
+                continue;
+            }
+
             /** @var $ebayOrder \Ess\M2ePro\Model\Ebay\Order\Builder */
             $ebayOrder = $this->orderBuilderFactory->create();
             $ebayOrder->initialize($account, $ebayOrderData);
@@ -250,6 +258,10 @@ final class Receive extends AbstractModel
         foreach ($ebayOrders as $order) {
             /** @var $order \Ess\M2ePro\Model\Order */
 
+            if ($this->isOrderChangedInParallelProcess($order)) {
+                continue;
+            }
+
             if ($order->canCreateMagentoOrder()) {
                 try {
                     $order->createMagentoOrder();
@@ -285,6 +297,24 @@ final class Receive extends AbstractModel
                 $this->getActualLockItem()->activate();
             }
         }
+    }
+
+    /**
+     * This is going to protect from Magento Orders duplicates.
+     * (Is assuming that there may be a parallel process that has already created Magento Order)
+     *
+     * But this protection is not covering a cases when two parallel cron processes are isolated by mysql transactions
+     */
+    private function isOrderChangedInParallelProcess(\Ess\M2ePro\Model\Order $order)
+    {
+        /** @var \Ess\M2ePro\Model\Order $dbOrder */
+        $dbOrder = $this->activeRecordFactory->getObject('Order')->load($order->getId());
+
+        if ($dbOrder->getMagentoOrderId() != $order->getMagentoOrderId()) {
+            return true;
+        }
+
+        return false;
     }
 
     //########################################

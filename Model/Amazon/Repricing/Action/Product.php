@@ -173,6 +173,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         $listingProductCollection->addFieldToFilter('main_table.id', array('in' => $listingProductIds));
         $listingProductCollection->addFieldToFilter('second_table.is_variation_parent', 0);
         $listingProductCollection->addFieldToFilter('second_table.sku', array('notnull' => true));
+        $listingProductCollection->addFieldToFilter('second_table.online_regular_price', array('notnull' => true));
 
         if ($listingProductCollection->getSize() <= 0) {
             return array();
@@ -213,7 +214,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                 'name'  => $listingProduct->getData('product_title'),
                 'asin'  => $amazonListingProduct->getGeneralId(),
                 'sku'   => $amazonListingProduct->getSku(),
-                'price' => $amazonListingProduct->getOnlinePrice(),
+                'price' => $amazonListingProduct->getOnlineRegularPrice(),
                 'regular_product_price'   => $regularPrice,
                 'minimal_product_price'   => $minPrice,
                 'maximal_product_price'   => $maxPrice,

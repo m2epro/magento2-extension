@@ -10,8 +10,8 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Update;
 
 class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsResponser
 {
-    /** @var \Ess\M2ePro\Model\Order[] $orders */
-    private $orders = array();
+    /** @var \Ess\M2ePro\Model\Order $order */
+    private $order = NULL;
 
     protected $activeRecordFactory;
 
@@ -29,122 +29,71 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($amazonFactory, $response, $helperFactory, $modelFactory, $params);
 
-        $ordersIds = array();
-
-        foreach ($this->params as $update) {
-            if (!isset($update['order_id'])) {
-                throw new \Ess\M2ePro\Model\Exception\Logic('Order ID is not defined.');
-            }
-
-            $ordersIds[] = (int)$update['order_id'];
-        }
-
-        $this->orders = $this->activeRecordFactory->getObject('Order')
-            ->getCollection()
-            ->addFieldToFilter('id', array('in' => $ordersIds))
-            ->getItems();
+        $this->order = $this->activeRecordFactory->getObjectLoaded('Order', $this->params['order']['order_id']);
     }
 
     public function failDetected($messageText)
     {
         parent::failDetected($messageText);
 
-        foreach ($this->orders as $order) {
-            $order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-            $order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', array('msg' => $messageText));
-        }
+        $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+        $this->order->addErrorLog('Amazon Order status was not updated. Reason: %msg%', array('msg' => $messageText));
     }
 
     // ########################################
 
     protected function processResponseData()
     {
+        $this->activeRecordFactory->getObject('Order\Change')->getResource()
+             ->deleteByIds(array($this->params['order']['change_id']));
+
         $responseData = $this->getResponse()->getResponseData();
 
         // Check separate messages
         //----------------------
-        $failedOrdersIds = array();
+        $isFailed = false;
 
-        foreach ($responseData['messages'] as $changeId => $messages) {
-            $changeId = (int)$changeId;
+        /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
+        $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
+        $messagesSet->init($responseData['messages']);
 
-            if ($changeId <= 0) {
-                continue;
-            }
+        foreach ($messagesSet->getEntities() as $message) {
 
-            $orderId = $this->getOrderIdByChangeId($changeId);
+            $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
 
-            if (!is_numeric($orderId)) {
-                continue;
-            }
-
-            /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message\Set $messagesSet */
-            $messagesSet = $this->modelFactory->getObject('Connector\Connection\Response\Message\Set');
-            $messagesSet->init($messages);
-
-            $isFailed = false;
-
-            foreach ($messagesSet->getEntities() as $message) {
-                $this->orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-
-                if ($message->isError()) {
-                    $isFailed = true;
-                    $this->orders[$orderId]->addErrorLog(
-                        'Amazon Order status was not updated. Reason: %msg%',
-                        array('msg' => $message->getText())
-                    );
-                } else {
-                    $this->orders[$orderId]->addWarningLog($message->getText());
-                }
-            }
-
-            if ($isFailed) {
-                $failedOrdersIds[] = $orderId;
+            if ($message->isError()) {
+                $isFailed = true;
+                $this->order->addErrorLog(
+                    'Amazon Order status was not updated. Reason: %msg%',
+                    array('msg' => $message->getText())
+                );
+            } else {
+                $this->order->addWarningLog($message->getText());
             }
         }
         //----------------------
 
-        //----------------------
-        foreach ($this->params as $changeId => $requestData) {
-            $orderId = $this->getOrderIdByChangeId($changeId);
-
-            if (in_array($orderId, $failedOrdersIds)) {
-                continue;
-            }
-
-            if (!is_numeric($orderId)) {
-                continue;
-            }
-
-            $this->orders[$orderId]->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
-            $this->orders[$orderId]->addSuccessLog('Amazon Order status was updated to Shipped.');
-
-            if (empty($requestData['tracking_number']) || empty($requestData['carrier_name'])) {
-                continue;
-            }
-
-            $this->orders[$orderId]->addSuccessLog(
-                'Tracking number "%num%" for "%code%" has been sent to Amazon.',
-                [
-                    '!num' => $requestData['tracking_number'],
-                    'code' => $requestData['carrier_name']
-                ]
-            );
-        }
-        //----------------------
-    }
-
-    // ########################################
-
-    private function getOrderIdByChangeId($changeId)
-    {
-        foreach ($this->params as $requestChangeId => $requestData) {
-            if ($changeId == $requestChangeId && isset($requestData['order_id'])) {
-                return $requestData['order_id'];
-            }
+        if ($isFailed) {
+            return;
         }
 
-        return NULL;
+        //----------------------
+
+        $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
+        $this->order->addSuccessLog('Amazon Order status was updated to Shipped.');
+
+        if (empty($requestData['tracking_number']) || empty($requestData['carrier_name'])) {
+            return;
+        }
+
+        $this->order->addSuccessLog(
+            'Tracking number "%num%" for "%code%" has been sent to Amazon.',
+            [
+                '!num' => $requestData['tracking_number'],
+                'code' => $requestData['carrier_name']
+            ]
+        );
+        //----------------------
     }
 
     // ########################################

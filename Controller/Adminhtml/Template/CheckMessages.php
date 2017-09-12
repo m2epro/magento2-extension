@@ -58,6 +58,9 @@ class CheckMessages extends Base
 
         if (!is_null($template) && $template->getId()) {
             $templateData = $template->getData();
+            if ($template instanceof \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel) {
+                $templateData = array_merge($templateData, $template->getChildObject()->getData());
+            }
             $templateUsedAttributes = $template->getUsedAttributes();
         }
 

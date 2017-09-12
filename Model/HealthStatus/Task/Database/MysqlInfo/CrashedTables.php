@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\HealthStatus\Task\Database\MysqlInfo;
 
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
-use Ess\M2ePro\Model\HealthStatus\Task\Result;
+use Ess\M2ePro\Model\HealthStatus\Task\Result as TaskResult;
 
 class CrashedTables extends IssueType
 {
@@ -45,8 +45,8 @@ class CrashedTables extends IssueType
         $result->setTaskData($crashedTables)
                ->setTaskMessage($this->getTaskMessage($crashedTables));
 
-        empty($crashedTables) ? $result->setTaskResult(Result::STATE_SUCCESS)
-                              : $result->setTaskResult(Result::STATE_CRITICAL);
+        empty($crashedTables) ? $result->setTaskResult(TaskResult::STATE_SUCCESS)
+                              : $result->setTaskResult(TaskResult::STATE_CRITICAL);
 
         return $result;
     }

@@ -44,7 +44,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         ), $params);
 
         if (empty($params['logs_action_id'])) {
-            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')->getNextActionId();
+            $this->logsActionId = $this->activeRecordFactory->getObject('Listing\Log')
+                                       ->getResource()->getNextActionId();
             $params['logs_action_id'] = $this->logsActionId;
         } else {
             $this->logsActionId = $params['logs_action_id'];
@@ -84,28 +85,30 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            $results[] = $this->processProducts($products, $action, $params);
+            foreach ($products as $product) {
+                $results[] = $this->processProduct($product, $action, $params);
+            }
         }
 
         return $this->getHelper('Data')->getMainStatus($results);
     }
 
     /**
-     * @param array $products
+     * @param \Ess\M2ePro\Model\Listing\Product $product
      * @param string $action
      * @param array $params
      * @return int
      */
-    protected function processProducts(array $products, $action, array $params = array())
+    protected function processProduct(\Ess\M2ePro\Model\Listing\Product $product, $action, array $params = array())
     {
         try {
 
             $dispatcher = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
-            $connectorName = 'Amazon\Connector\Product\\'.$this->getActionNick($action).'\MultipleRequester';
+            $connectorName = 'Amazon\Connector\Product\\'.$this->getActionNick($action).'\Requester';
 
             /** @var \Ess\M2ePro\Model\Amazon\Connector\Product\Requester $connector */
             $connector = $dispatcher->getCustomConnector($connectorName, $params);
-            $connector->setListingsProducts($products);
+            $connector->setListingProduct($product);
 
             $dispatcher->process($connector);
 
@@ -120,14 +123,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             $action = $this->recognizeActionForLogging($action, $params);
             $initiator = $this->recognizeInitiatorForLogging($params);
 
-            foreach ($products as $product) {
-
-                /** @var \Ess\M2ePro\Model\Listing\Product $product */
-
-                if ($product->isDeleted()) {
-                    continue;
-                }
-
+            if (!$product->isDeleted()) {
                 $logModel->addProductMessage(
                     $product->getListingId(),
                     $product->getProductId(),

@@ -19,7 +19,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
     {
         $data = array();
 
-        if ($this->getConfigurator()->isAllAllowed()) {
+        if ($this->getConfigurator()->isDefaultMode()) {
             $data['synch_status'] = \Ess\M2ePro\Model\Listing\Product::SYNCH_STATUS_OK;
             $data['synch_reasons'] = NULL;
         }
@@ -30,7 +30,8 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $data = $this->appendStatusChangerValue($data);
         $data = $this->appendQtyValues($data);
-        $data = $this->appendPriceValues($data);
+        $data = $this->appendRegularPriceValues($data);
+        $data = $this->appendBusinessPriceValues($data);
 
         $this->getListingProduct()->addData($data);
         $this->getListingProduct()->getChildObject()->addData($data);
@@ -47,7 +48,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
      */
     public function getSuccessfulMessage()
     {
-        if ($this->getConfigurator()->isAllAllowed()) {
+        if ($this->getConfigurator()->isDefaultMode()) {
             // M2ePro\TRANSLATIONS
             // Item was successfully Relisted
             return 'Item was successfully Relisted';

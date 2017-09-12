@@ -70,6 +70,7 @@ class Before extends AbstractAddUpdate
         $this->getProxy()->setData('special_price',(float)$this->getProduct()->getSpecialPrice());
         $this->getProxy()->setData('special_price_from_date',$this->getProduct()->getSpecialFromDate());
         $this->getProxy()->setData('special_price_to_date',$this->getProduct()->getSpecialToDate());
+        $this->getProxy()->setData('tier_price',$this->getProduct()->getTierPrice());
 
         $this->getProxy()->setAttributes($this->getTrackingAttributesWithValues());
     }
@@ -78,7 +79,7 @@ class Before extends AbstractAddUpdate
 
     protected function isAddingProductProcess()
     {
-        return $this->getProductId() <= 0 || (string)$this->getEvent()->getProduct()->getOrigData('sku') == '';
+        return $this->getProductId() <= 0;
     }
 
     //########################################
@@ -117,7 +118,8 @@ class Before extends AbstractAddUpdate
     {
         $key = $this->getProductId().'_'.$this->getStoreId();
         if ($this->isAddingProductProcess()) {
-            $key = $this->getProduct()->getSku();
+            $key = $this->getHelper('Data')->generateUniqueHash();
+            $this->getEvent()->getProduct()->setData('before_event_key', $key);
         }
 
         self::$proxyStorage[$key] = $this->getProxy();

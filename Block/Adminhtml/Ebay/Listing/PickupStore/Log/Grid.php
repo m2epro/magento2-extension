@@ -136,16 +136,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 
     protected function getActionTitles()
     {
-        return array(
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UNKNOWN =>
-                \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::_ACTION_UNKNOWN,
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_ADD_PRODUCT =>
-                \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::_ACTION_ADD_PRODUCT,
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_UPDATE_QTY =>
-                \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::_ACTION_UPDATE_QTY,
-            \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::ACTION_DELETE_PRODUCT =>
-                \Ess\M2ePro\Model\Ebay\Account\PickupStore\Log::_ACTION_DELETE_PRODUCT,
-        );
+        return $this->activeRecordFactory->getObject('Ebay\Account\PickupStore\Log')->getActionsTitles();
     }
 
     //########################################

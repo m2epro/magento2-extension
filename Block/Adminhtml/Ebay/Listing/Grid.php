@@ -8,10 +8,10 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
-use Ess\M2ePro\Block\Adminhtml\Magento\Renderer;
-
 class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
 {
+    const MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY = 'editPartsCompatibilityMode';
+
     protected $ebayFactory;
 
     //########################################
@@ -210,19 +210,50 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\Grid
                         'back' => $backUrl
                     )
                 )
-            )
+            ),
+
+            self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY => array(
+                'caption'        => $this->__('Parts Compatibility Mode'),
+                'group'          => 'edit_actions',
+                'field'          => 'id',
+                'onclick_action' => 'EditCompatibilityModeObj.openPopup',
+                'action_id'      => self::MASS_ACTION_ID_EDIT_PARTS_COMPATIBILITY
+            ),
         );
 
         return $actions;
+    }
+
+    /**
+     * editPartsCompatibilityMode has to be not accessible for not Multi Motors marketplaces
+     * @return $this
+     */
+    protected function _prepareColumns()
+    {
+        $result = parent::_prepareColumns();
+
+        $this->getColumn('actions')->setData(
+            'renderer', '\Ess\M2ePro\Block\Adminhtml\Ebay\Listing\Grid\Column\Renderer\Action'
+        );
+
+        return $result;
     }
 
     //########################################
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
-        $value = '<span id="listing_title_'.$row->getId().'">' .
-            $this->getHelper('Data')->escapeHtml($value) .
-        '</span>';
+        $title = $this->getHelper('Data')->escapeHtml($value);
+        $compatibilityMode = $row->getChildObject()->getData('parts_compatibility_mode');
+
+        $value = <<<HTML
+<span id="listing_title_{$row->getId()}">
+    {$title}
+</span>
+<span id="listing_compatibility_mode_{$row->getId()}" style="display: none;">
+    {$compatibilityMode}
+</span>
+HTML;
 
         /* @var $row \Ess\M2ePro\Model\Listing */
         $accountTitle = $row->getData('account_title');
@@ -303,6 +334,7 @@ HTML;
         $this->jsUrl->add($this->getUrl('*/listing/edit'), 'listing/edit');
 
         $this->jsTranslator->add('Edit Listing Title', $this->__('Edit Listing Title'));
+        $this->jsTranslator->add('Edit Parts Compatibility Mode', $this->__('Edit Parts Compatibility Mode'));
         $this->jsTranslator->add('Listing Title', $this->__('Listing Title'));
         $this->jsTranslator->add(
             'The specified Title is already used for other Listing. Listing Title must be unique.',
@@ -321,11 +353,13 @@ HTML;
 <<<JS
     require([
         'M2ePro/Ebay/Listing/Grid',
-        'M2ePro/Listing/EditTitle'
+        'M2ePro/Listing/EditTitle',
+        'M2ePro/Ebay/Listing/EditCompatibilityMode'
     ], function(){
 
         window.EbayListingGridObj = new EbayListingGrid('{$this->getId()}');
         window.EditListingTitleObj = new ListingEditListingTitle('{$this->getId()}', '{$component}');
+        window.EditCompatibilityModeObj = new EditCompatibilityMode('{$this->getId()}');
 
     });
 JS

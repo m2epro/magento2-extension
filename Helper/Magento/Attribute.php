@@ -13,6 +13,7 @@ class Attribute extends AbstractHelper
     const PRICE_CODE = 'price';
     const SPECIAL_PRICE_CODE = 'special_price';
 
+    private $modelFactory;
     private $productResource;
     private $resourceConnection;
     private $attributeColFactory;
@@ -22,6 +23,7 @@ class Attribute extends AbstractHelper
     //########################################
 
     public function __construct(
+        \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\Catalog\Model\ResourceModel\Product $productResource,
         \Magento\Catalog\Model\ResourceModel\Product\Attribute\CollectionFactory $attributeColFactory,
         \Magento\Eav\Model\ResourceModel\Entity\Attribute\CollectionFactory $eavEntityAttributeColFactory,
@@ -32,6 +34,7 @@ class Attribute extends AbstractHelper
         \Magento\Framework\App\Helper\Context $context
     )
     {
+        $this->modelFactory = $modelFactory;
         $this->productResource = $productResource;
         $this->attributeColFactory = $attributeColFactory;
         $this->eavEntityAttributeColFactory = $eavEntityAttributeColFactory;
@@ -322,13 +325,15 @@ class Attribute extends AbstractHelper
         return false;
     }
 
-    public function filterByInputTypes(array $attributes, array $inputTypes)
+    public function filterByInputTypes(array $attributes,
+                                       array $frontendInputTypes = [],
+                                       array $backendInputTypes = [])
     {
         if (empty($attributes)) {
             return array();
         }
 
-        if (empty($inputTypes)) {
+        if (empty($frontendInputTypes) && empty($backendInputTypes)) {
             return $attributes;
         }
 
@@ -338,8 +343,14 @@ class Attribute extends AbstractHelper
         }
 
         $attributeCollection = $this->getPreparedAttributeCollection()
-            ->addFieldToFilter('attribute_code', array('in' => $attributeCodes))
-            ->addFieldToFilter('frontend_input', array('in' => $inputTypes));
+            ->addFieldToFilter('attribute_code', array('in' => $attributeCodes));
+
+        if (!empty($frontendInputTypes)) {
+            $attributeCollection->addFieldToFilter('frontend_input', array('in' => $frontendInputTypes));
+        }
+        if (!empty($backendInputTypes)) {
+            $attributeCollection->addFieldToFilter('backend_type', array('in' => $backendInputTypes));
+        }
 
         $filteredAttributes = $attributeCollection->toArray();
         $resultAttributes = array();
@@ -412,6 +423,42 @@ class Attribute extends AbstractHelper
         $collection->setOrder('frontend_label', \Magento\Framework\Data\Collection::SORT_ORDER_ASC);
 
         return $collection;
+    }
+
+    //########################################
+
+    public function isAttributeInputTypePrice($attributeCode)
+    {
+        $attributes = $this->filterByInputTypes(
+            [['code' => $attributeCode]], ['price']
+        );
+
+        return count($attributes) > 0;
+    }
+
+    public function convertAttributeTypePriceFromStoreToMarketplace(\Ess\M2ePro\Model\Magento\Product $magentoProduct,
+                                                                    $attributeCode, $currencyCode, $store)
+    {
+        $attributeValue = $magentoProduct->getAttributeValue($attributeCode);
+
+        if (empty($attributeValue)) {
+            return $attributeValue;
+        }
+
+        $isPriceConvertEnabled = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            '/magento/attribute/', 'price_type_converting'
+        );
+
+        if ($isPriceConvertEnabled && $this->isAttributeInputTypePrice($attributeCode)) {
+
+            $attributeValue = $this->modelFactory->getObject('Currency')->convertPrice(
+                $attributeValue,
+                $currencyCode,
+                $store
+            );
+        }
+
+        return $attributeValue;
     }
 
     //########################################
