@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
-final class DeletedProducts extends AbstractModel
+class DeletedProducts extends AbstractModel
 {
     private $itemModel;
     private $resourceConnection;

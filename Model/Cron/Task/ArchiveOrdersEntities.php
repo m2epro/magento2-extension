@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class ArchiveOrdersEntities extends AbstractModel
+class ArchiveOrdersEntities extends AbstractModel
 {
     const NICK = 'archive_orders_entities';
     const MAX_MEMORY_LIMIT = 512;

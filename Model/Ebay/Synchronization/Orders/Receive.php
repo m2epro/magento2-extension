@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
-final class Receive extends AbstractModel
+class Receive extends AbstractModel
 {
     protected $orderBuilderFactory;
 

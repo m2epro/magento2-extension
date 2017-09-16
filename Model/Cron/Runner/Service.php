@@ -8,7 +8,9 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
-final class Service extends AbstractModel
+use \Ess\M2ePro\Helper\Module\Cron\Service as CronService;
+
+class Service extends AbstractModel
 {
     private $requestAuthKey      = NULL;
     private $requestConnectionId = NULL;
@@ -74,9 +76,7 @@ final class Service extends AbstractModel
 
         if ($helper->isRunnerService()) {
 
-            $helper->isLastAccessMoreThan(\Ess\M2ePro\Helper\Module\Cron::RUNNER_SERVICE_MAX_INACTIVE_TIME) &&
-                $this->resetTasksStartFrom();
-
+            $helper->isLastAccessMoreThan(CronService::MAX_INACTIVE_TIME) && $this->resetTasksStartFrom();
             return;
         }
 

@@ -465,7 +465,7 @@ SQL;
     public function joinStockItem($columnsMap = array('qty' => 'qty'))
     {
         $this->joinTable(
-            array('cisi' => $this->getConnection()->getTableName('cataloginventory_stock_item')),
+            array('cisi' => $this->getTable('cataloginventory_stock_item')),
             'product_id = entity_id',
             $columnsMap,
             array(

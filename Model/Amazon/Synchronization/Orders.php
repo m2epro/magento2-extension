@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
-final class Orders extends AbstractModel
+class Orders extends AbstractModel
 {
     //########################################
 

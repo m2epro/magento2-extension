@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Receive;
 
-final class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
+class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {
     //########################################
 

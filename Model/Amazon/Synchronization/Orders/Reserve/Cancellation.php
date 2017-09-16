@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders\Reserve;
 
-final class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
+class Cancellation extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractModel
 {
     //########################################
 

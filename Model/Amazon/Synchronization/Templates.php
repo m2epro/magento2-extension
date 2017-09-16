@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
-final class Templates extends AbstractModel
+class Templates extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager $productChangesManager */
     private $productChangesManager = NULL;

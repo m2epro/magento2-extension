@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
-final class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
+class Actions extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/actions';
     const MAX_MEMORY_LIMIT = 512;

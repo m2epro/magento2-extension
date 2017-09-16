@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
-final class Revise extends AbstractModel
+class Revise extends AbstractModel
 {
     //########################################
 

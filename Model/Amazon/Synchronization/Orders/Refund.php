@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
-final class Refund extends AbstractModel
+class Refund extends AbstractModel
 {
     //########################################
 

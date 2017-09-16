@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Command\Pending\Requester\Single;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
-final class ConnectorRequesterPendingSingle extends AbstractModel
+class ConnectorRequesterPendingSingle extends AbstractModel
 {
     const NICK = 'connector_requester_pending_single';
     const MAX_MEMORY_LIMIT = 512;

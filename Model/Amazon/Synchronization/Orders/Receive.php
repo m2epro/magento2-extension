@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
-final class Receive extends AbstractModel
+class Receive extends AbstractModel
 {
     //########################################
 

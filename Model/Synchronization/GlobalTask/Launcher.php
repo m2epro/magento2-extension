@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
-final class Launcher extends \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal
+class Launcher extends \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal
 {
     //########################################
 

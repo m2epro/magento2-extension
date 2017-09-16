@@ -16,8 +16,6 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
     const STRATEGY_SERIAL   = 'serial';
     const STRATEGY_PARALLEL = 'parallel';
 
-    const RUNNER_SERVICE_MAX_INACTIVE_TIME = 300;
-
     protected $moduleConfig;
     protected $modelFactory;
     protected $activeRecordFactory;

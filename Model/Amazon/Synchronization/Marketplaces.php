@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
-final class Marketplaces extends AbstractModel
+class Marketplaces extends AbstractModel
 {
     //########################################
 

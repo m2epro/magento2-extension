@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates;
 
-final class Synchronization extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\AbstractModel
+class Synchronization extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\AbstractModel
 {
     /**
      * @var \Ess\M2ePro\Model\Synchronization\Templates\Synchronization\Runner

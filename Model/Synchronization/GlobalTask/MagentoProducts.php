@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
-final class MagentoProducts extends AbstractModel
+class MagentoProducts extends AbstractModel
 {
     //########################################
 

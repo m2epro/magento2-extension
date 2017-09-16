@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
-final class Details extends AbstractModel
+class Details extends AbstractModel
 {
     //########################################
 

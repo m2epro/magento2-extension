@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
 use Ess\M2ePro\Model\Synchronization\Templates\ProductChanges\Manager;
 
-final class Templates extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
+class Templates extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     /** @var Manager $productChangesManager */
     private $productChangesManager = NULL;

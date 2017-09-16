@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
-final class RepricingSynchronizationGeneral extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
+class RepricingSynchronizationGeneral extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/repricing_synchronization_general';
     const MAX_MEMORY_LIMIT = 512;

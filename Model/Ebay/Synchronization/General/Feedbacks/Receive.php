@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\Feedbacks;
 
-final class Receive extends AbstractModel
+class Receive extends AbstractModel
 {
     //########################################
 

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
-final class Update extends AbstractModel
+class Update extends AbstractModel
 {
     const MAX_UPDATES_PER_TIME = 200;
 

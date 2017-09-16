@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
-final class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
+class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
 

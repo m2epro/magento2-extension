@@ -66,7 +66,11 @@ class Parallel extends AbstractModel
 
         $transactionalManager->unlock();
 
-        return !$this->processSlowTasks() ? false : $result;
+        $result = !$this->processSlowTasks() ? false : $result;
+
+        $this->getGeneralLockItem()->remove();
+
+        return $result;
     }
 
     // ---------------------------------------
@@ -194,12 +198,15 @@ class Parallel extends AbstractModel
         $lastExecutedTask = $helper->getLastExecutedSlowTask();
 
         $allowedSlowTasks = $this->getAllowedSlowTasks();
+        $lastExecutedTaskIndex = array_search($lastExecutedTask, $allowedSlowTasks);
 
-        if (empty($lastExecutedTask) || end($allowedSlowTasks) == $lastExecutedTask) {
+        if (empty($lastExecutedTask)
+            || $lastExecutedTaskIndex === false
+            || end($allowedSlowTasks) == $lastExecutedTask) {
+
             return reset($allowedSlowTasks);
         }
 
-        $lastExecutedTaskIndex = array_search($lastExecutedTask, $this->getAllowedSlowTasks());
         return $allowedSlowTasks[$lastExecutedTaskIndex + 1];
     }
 

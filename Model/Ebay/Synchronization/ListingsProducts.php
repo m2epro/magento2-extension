@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization;
 
-final class ListingsProducts extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
+class ListingsProducts extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
 {
     //########################################
 

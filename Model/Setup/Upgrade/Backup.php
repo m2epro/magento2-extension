@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Setup\Upgrade;
 
 use Ess\M2ePro\Model\AbstractModel;
 use Ess\M2ePro\Model\Exception;
+use Ess\M2ePro\Model\Setup\Database\Modifier\Table as TableModifier;
 use Magento\Framework\Module\Setup;
 
 class Backup extends AbstractModel
@@ -69,11 +70,7 @@ class Backup extends AbstractModel
     {
         foreach ($this->tablesList as $table) {
 
-            /**
-             * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
-             * that does not support 'FLOAT UNSIGNED' column type
-             */
-            $this->prepareFloatUnsignedColumns($table);
+            $this->prepareColumns($table);
 
             $backupTable = $this->getConnection()->createTableByDdl(
                 $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table),
@@ -143,7 +140,9 @@ class Backup extends AbstractModel
         return $tableName;
     }
 
-    private function prepareFloatUnsignedColumns($table)
+    //########################################
+
+    private function prepareColumns($table)
     {
         $tableInfo = $this->getConnection()->describeTable(
             $this->helperFactory->getObject('Module\Database\Tables')->getFullName($table)
@@ -158,19 +157,59 @@ class Backup extends AbstractModel
         );
 
         foreach ($tableInfo as $columnTitle => $columnInfo) {
-            if (strtolower($columnInfo['DATA_TYPE']) != 'float unsigned') {
-                continue;
-            }
 
-            $columnType = 'FLOAT';
+            $this->prepareFloatUnsignedColumns($tableModifier, $columnTitle, $columnInfo);
+            $this->prepareVarcharColumns($tableModifier, $columnTitle, $columnInfo);
+        }
+
+        $tableModifier->commit();
+    }
+
+    /**
+     * @param $tableModifier TableModifier
+     * @param $columnTitle string
+     * @param $columnInfo array
+     *
+     * convert FLOAT UNSIGNED columns to FLOAT because of zend framework bug in ->createTableByDdl method,
+     * that does not support 'FLOAT UNSIGNED' column type
+     */
+    private function prepareFloatUnsignedColumns(TableModifier $tableModifier, $columnTitle, array $columnInfo)
+    {
+        if (strtolower($columnInfo['DATA_TYPE']) != 'float unsigned') {
+            return;
+        }
+
+        $columnType = 'FLOAT';
+        if (isset($columnInfo['NULLABLE']) && !$columnInfo['NULLABLE']) {
+            $columnType .= ' NOT NULL';
+        }
+
+        $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], NULL, false);
+    }
+
+    /**
+     * @param $tableModifier TableModifier
+     * @param $columnTitle string
+     * @param $columnInfo array
+     *
+     * convert VARCHAR(256-500) to VARCHAR(255) because ->createTableByDdl method will handle this column
+     * as TEXT. Due to the incorrect length > 255
+     */
+    private function prepareVarcharColumns(TableModifier $tableModifier, $columnTitle, array $columnInfo)
+    {
+        if (strtolower($columnInfo['DATA_TYPE']) != 'varchar') {
+            return;
+        }
+
+        if ($columnInfo['LENGTH'] > 255 && $columnInfo['LENGTH'] <= 500) {
+
+            $columnType = 'varchar(255)';
             if (isset($columnInfo['NULLABLE']) && !$columnInfo['NULLABLE']) {
                 $columnType .= ' NOT NULL';
             }
 
             $tableModifier->changeColumn($columnTitle, $columnType, $columnInfo['DEFAULT'], NULL, false);
         }
-
-        $tableModifier->commit();
     }
 
     //########################################

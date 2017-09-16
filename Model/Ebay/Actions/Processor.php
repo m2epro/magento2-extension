@@ -12,7 +12,7 @@ use Ess\M2ePro\Model\Ebay\Processing\Action;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Exception\Logic;
 
-final class Processor extends \Ess\M2ePro\Model\AbstractModel
+class Processor extends \Ess\M2ePro\Model\AbstractModel
 {
     const ACTION_MAX_LIFE_TIME = 86400;
 

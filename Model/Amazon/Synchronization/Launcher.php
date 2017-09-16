@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization;
 
-final class Launcher extends AbstractModel
+class Launcher extends AbstractModel
 {
     //########################################
 

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
-final class Cancellation extends AbstractModel
+class Cancellation extends AbstractModel
 {
     private $orderHelper;
 

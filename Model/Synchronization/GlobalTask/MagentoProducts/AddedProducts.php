@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask\MagentoProducts;
 
-final class AddedProducts extends AbstractModel
+class AddedProducts extends AbstractModel
 {
     private $productFactory;
 

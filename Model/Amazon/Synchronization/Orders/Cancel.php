@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\Orders;
 
-final class Cancel extends AbstractModel
+class Cancel extends AbstractModel
 {
     //########################################
 

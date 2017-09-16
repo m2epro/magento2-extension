@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings;
 
-final class Sku extends AbstractModel
+class Sku extends AbstractModel
 {
     //########################################
 

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates;
 
 use Ess\M2ePro\Model\ProductChange;
 
-final class Repricing extends AbstractModel
+class Repricing extends AbstractModel
 {
     //########################################
 

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\ListingsProducts;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
-final class Update extends AbstractModel
+class Update extends AbstractModel
 {
     //########################################
 

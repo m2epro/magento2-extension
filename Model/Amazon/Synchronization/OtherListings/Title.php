@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings;
 
-final class Title extends AbstractModel
+class Title extends AbstractModel
 {
     //########################################
 

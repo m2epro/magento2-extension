@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General;
 
-final class AccountPickupStore extends AbstractModel
+class AccountPickupStore extends AbstractModel
 {
     //########################################
 

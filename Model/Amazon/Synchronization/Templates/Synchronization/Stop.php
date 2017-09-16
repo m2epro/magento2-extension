@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Amazon\Template\Synchronization as SynchronizationPolicy;
 
-final class Stop extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
+class Stop extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchronization\AbstractModel
 {
     //########################################
 

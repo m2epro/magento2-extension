@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates;
 
-final class RemoveUnused extends AbstractModel
+class RemoveUnused extends AbstractModel
 {
     const SAFE_CREATE_DATE_INTERVAL = 86400;
 

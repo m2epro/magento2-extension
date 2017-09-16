@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\Marketplaces;
 
-final class MotorsEpids extends AbstractModel
+class MotorsEpids extends AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Marketplace */
     protected $marketplace;

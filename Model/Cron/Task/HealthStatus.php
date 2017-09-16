@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 
 use Ess\M2ePro\Model\HealthStatus\Task\IssueType;
 
-final class HealthStatus extends AbstractModel
+class HealthStatus extends AbstractModel
 {
     const NICK = 'health_status';
     const MAX_MEMORY_LIMIT = 512;

@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\OtherListings;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
-final class Update extends AbstractModel
+class Update extends AbstractModel
 {
     const LOCK_ITEM_PREFIX = 'synchronization_ebay_other_listings_update';
 

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
-final class StopQueue extends AbstractModel
+class StopQueue extends AbstractModel
 {
     private $itemsWereProcessed = false;
 

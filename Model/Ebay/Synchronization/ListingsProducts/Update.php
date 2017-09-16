@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
-final class Update extends AbstractModel
+class Update extends AbstractModel
 {
     const EBAY_STATUS_ACTIVE = 'Active';
     const EBAY_STATUS_ENDED = 'Ended';

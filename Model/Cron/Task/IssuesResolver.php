@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class IssuesResolver extends AbstractModel
+class IssuesResolver extends AbstractModel
 {
     const NICK = 'issues_resolver';
     const MAX_MEMORY_LIMIT = 512;

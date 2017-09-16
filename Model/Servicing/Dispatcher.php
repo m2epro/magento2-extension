@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Servicing;
 
-final class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
+class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 {
     const DEFAULT_INTERVAL = 3600;
     const MAX_MEMORY_LIMIT = 256;

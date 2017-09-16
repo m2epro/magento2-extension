@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class LogsClearing extends AbstractModel
+class LogsClearing extends AbstractModel
 {
     const NICK = 'logs_clearing';
     const MAX_MEMORY_LIMIT = 128;

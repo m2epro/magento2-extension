@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
-final class RemoveDuplicates extends AbstractModel
+class RemoveDuplicates extends AbstractModel
 {
     const BLOCKED_PRODUCTS_PER_SYNCH = 10;
     const MAX_ALLOWED_BLOCKED_PRODUCTS = 100;

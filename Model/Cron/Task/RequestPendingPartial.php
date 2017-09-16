@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Cron\Task;
 use Ess\M2ePro\Model\Connector\Connection\Response\Message;
 use Ess\M2ePro\Model\Request\Pending\Partial;
 
-final class RequestPendingPartial extends AbstractModel
+class RequestPendingPartial extends AbstractModel
 {
     const NICK = 'request_pending_partial';
     const MAX_MEMORY_LIMIT = 512;

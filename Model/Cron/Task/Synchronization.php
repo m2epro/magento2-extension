@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task;
 
-final class Synchronization extends AbstractModel
+class Synchronization extends AbstractModel
 {
     const NICK = 'synchronization';
 

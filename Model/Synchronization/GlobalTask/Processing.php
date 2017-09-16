@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Synchronization\GlobalTask;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
-final class Processing extends AbstractModel
+class Processing extends AbstractModel
 {
     private $resourceConnection;
 

@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Ebay;
 
-final class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
+class UpdateAccountsPreferences extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'ebay/update_accounts_preferences';
     const MAX_MEMORY_LIMIT = 128;

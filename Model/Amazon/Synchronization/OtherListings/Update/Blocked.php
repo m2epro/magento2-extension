@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\Update;
 
 use Ess\M2ePro\Model\Processing\Runner;
 
-final class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\AbstractModel
+class Blocked extends \Ess\M2ePro\Model\Amazon\Synchronization\OtherListings\AbstractModel
 {
     //########################################
 

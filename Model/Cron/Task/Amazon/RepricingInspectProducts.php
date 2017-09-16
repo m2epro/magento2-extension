@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Task\Amazon;
 
-final class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
+class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
 {
     const NICK = 'amazon/repricing_inspect_products';
     const MAX_MEMORY_LIMIT = 512;

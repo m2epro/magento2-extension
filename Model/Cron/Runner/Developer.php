@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Cron\Runner;
 
-final class Developer extends AbstractModel
+class Developer extends AbstractModel
 {
     private $allowedTasks = NULL;
 

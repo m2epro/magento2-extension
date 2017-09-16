@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General;
 
-final class Feedbacks extends AbstractModel
+class Feedbacks extends AbstractModel
 {
     //########################################
 

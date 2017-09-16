@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Templates\Synchronization;
 
 use Ess\M2ePro\Model\Ebay\Template\Synchronization as SynchronizationPolicy;
 
-final class Relist extends AbstractModel
+class Relist extends AbstractModel
 {
     private $cacheConfig;
 

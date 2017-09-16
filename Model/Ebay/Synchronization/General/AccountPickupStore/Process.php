@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Model\Ebay\Synchronization\General\AccountPickupStore;
 
-final class Process extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
+class Process extends \Ess\M2ePro\Model\Ebay\Synchronization\General\AbstractModel
 {
     const MAX_AFFECTED_ITEMS_COUNT = 10000;
 

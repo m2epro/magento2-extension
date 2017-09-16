@@ -1,3 +1,12 @@
+* 1.3.1 (r2297) (15/09/2017)
+
+* Fix: "Base table or view not found" error in some cases (if database prefixes is used)
+* Fix: Synchronization became in stuck (locks did not removed correctly)
+* Fix: Fatal error: Class %class_name% may not inherit from final class, when interceptors for some Plugins were created
+* Fix: "Cannot modify header information - headers already sent" on Cron Service
+* Fix: Upgrade to v1.3.0 failed if database was migrated from M2E Pro for Magento v1.x.x
+* Fix: [eBay] List/Relist/Revise/Stop actions were not processed due to Cron mechanism issue
+
 * 1.3.0 (r2257) (11/09/2017)
 
 * Added: Support of Magento Downloadable Product type
@@ -91,6 +100,7 @@
 * Fix: [Amazon] Taxes were counted incorrect if shipping tax rate and product tax rate were different
 * Fix: [Amazon] Unable to open a Description Policy for editing (mysql syntax error) in some cases
 * Fix: [Amazon] Full Revise did not work, when Shipping Template was assigned or Synchronization Policy was changed
+* Removed: Ability to migrate from Magento1 module v6.5.0.9
 * Removed: Action "Remove from Listing" from Listing grid
 * Removed: [eBay] Integration with Terapeak service
 * Removed: [eBay] Ability to use USD currency for Canada Site (eBay does not support it)
@@ -126,6 +136,7 @@
 * Fix: [Amazon] "Duplicate entry for key 'PRIMARY'" error during Synchronization process
 * Fix: [Amazon] Warning "Illegal string offset 'product_price'" during Synchronization process
 * Fix: [Amazon] You were unable to add new Child Product for Parent Product in Variations popup
+* Removed: Ability to Migrate from Magento1 module v6.5.0.8
 
 * 1.2.0 (r1731) (29/12/2016)
 
@@ -179,6 +190,7 @@
 * Fix: [Amazon] Repricing data was not synchronized correctly if product has numeric SKU
 * Fix: [Amazon] Repriced Products, moved from 3rd Party Listing, were not marked as on Repricing Service
 * Fix: [Amazon] Refund Orders on Channel did not work in some cases
+* Removed: Ability to Migrate from Magento1 module v6.5.0.7
 
 * 1.1.3 (r1627) (07/12/2016)
 
@@ -207,10 +219,12 @@
 * Fix: [eBay] Many fixes related to downloading Buyer's Feedback and respond on them
 * Fix: [eBay] PHP Fatal Error: Call to a member function format() on null [vendor/magento/framework/Stdlib/DateTime/Timezone.php]
 * Fix: [Amazon] "Auto Add/Remove Rules" in Listings did not work correctly
+* Removed: Ability to Migrate from Magento1 module v6.5.0.6
 
 * 1.1.2 (r1200) (21/09/2016)
 
-* Added: Ability to Migrate from Magento1 module v6.5.0.6 version
+* Added: Ability to Migrate from Magento1 module v6.5.0.6
+* Removed: Ability to migrate from Magento1 module v6.5.0.5
 
 * 1.1.1 (r1199) (12/09/2016)
 
@@ -272,3 +286,4 @@
 * 1.0.0 (r752) (04/07/2016)
 
 * Initial version for Magento v2.*
+* Added: Ability to migrate from Magento1 module v6.5.0.5
