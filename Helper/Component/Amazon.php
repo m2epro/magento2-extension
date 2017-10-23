@@ -85,11 +85,13 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
         $domain = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId)->getUrl();
         $applicationName = $this->getApplicationName();
 
+        $marketplace = $this->amazonFactory->getCachedObjectLoaded('Marketplace', $marketplaceId);
+
         return 'https://sellercentral.'.
                 $domain.
                 '/gp/mws/registration/register.html?ie=UTF8&*Version*=1&*entries*=0&applicationName='.
                 rawurlencode($applicationName).'&appDevMWSAccountId='.
-                $this->amazonFactory->getCachedObjectLoaded('Marketplace',$marketplaceId)->getDeveloperKey();
+                $marketplace->getChildObject()->getDeveloperKey();
     }
 
     public function getItemUrl($productId, $marketplaceId = NULL)

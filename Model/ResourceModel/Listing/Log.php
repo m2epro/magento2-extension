@@ -66,7 +66,7 @@ class Log extends \Ess\M2ePro\Model\ResourceModel\Log\AbstractModel
         $resultType = $collection->getFirstItem()->getData('type');
 
         if (empty($resultType)) {
-            throw new Exception('Logs action ID does not exist.');
+            throw new \Exception('Logs action ID does not exist.');
         }
 
         return $this->getHelper('Module\Log')->getStatusByResultType($resultType);

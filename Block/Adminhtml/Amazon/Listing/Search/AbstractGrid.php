@@ -439,8 +439,6 @@ HTML;
             ->getChildObject()
             ->getDefaultCurrency();
 
-        $onlineBusinessPrice = $row->getData('online_business_price');
-
         if ($row->getData('is_variation_parent')) {
             $noticeText = $this->__('The value is calculated as minimum price of all Child Products.');
 

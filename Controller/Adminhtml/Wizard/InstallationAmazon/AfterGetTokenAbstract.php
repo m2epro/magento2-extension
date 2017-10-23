@@ -5,58 +5,30 @@ namespace Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 use Ess\M2ePro\Controller\Adminhtml\Wizard\InstallationAmazon;
 use Ess\M2ePro\Model\Amazon\Account as AccountModel;
 
-class AfterGetToken extends InstallationAmazon
+abstract class AfterGetTokenAbstract extends InstallationAmazon
 {
     public function execute()
     {
-        $params = $this->getRequest()->getParams();
+        try {
+            $accountData = $this->getAccountData();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
+            $this->messageManager->addError($this->__($exception->getMessage()));
 
-        if (empty($params)) {
             return $this->indexAction();
         }
 
-        $requiredFields = array(
-            'Merchant',
-            'Marketplace',
-            'MWSAuthToken',
-            'Signature',
-            'SignedString'
-        );
-
-        foreach ($requiredFields as $requiredField) {
-            if (!isset($params[$requiredField])) {
-                // M2ePro_TRANSLATIONS
-                // The Amazon token obtaining is currently unavailable.
-                $error = $this->__('The Amazon token obtaining is currently unavailable.');
-                $this->messageManager->addError($error);
-
-                return $this->indexAction();
-            }
-        }
-
-        $marketplaceId = $this->getHelper('Data\Session')->getValue('marketplace_id');
-
-        $data = array_merge(
-            array(
-                'title'          => $params['Merchant'],
-                'marketplace_id' => $marketplaceId,
-                'merchant_id'    => $params['Merchant'],
-                'token'          => $params['MWSAuthToken'],
-            ),
-            $this->getAmazonAccountDefaultSettings()
-        );
-
-        $accountModel = $this->amazonFactory->getObject('Account')->setData($data)->save();
+        $accountModel = $this->amazonFactory->getObject('Account')->setData($accountData)->save();
 
         try {
             /** @var $dispatcherObject \Ess\M2ePro\Model\Amazon\Connector\Dispatcher */
             $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
 
             $params = array(
-                'title'            => $params['Merchant'],
-                'marketplace_id'   => $marketplaceId,
-                'merchant_id'      => $params['Merchant'],
-                'token'            => $params['MWSAuthToken']
+                'title'            => $accountData['merchant_id'],
+                'marketplace_id'   => $accountData['marketplace_id'],
+                'merchant_id'      => $accountData['merchant_id'],
+                'token'            => $accountData['token'],
             );
 
             $connectorObj = $dispatcherObject->getConnector('account', 'add', 'entityRequester',
@@ -65,21 +37,13 @@ class AfterGetToken extends InstallationAmazon
 
         } catch (\Exception $exception) {
             $this->getHelper('Module\Exception')->process($exception);
-
-            // M2ePro_TRANSLATIONS
-            // The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%
-
-            $error = 'The Amazon access obtaining is currently unavailable.<br/>Reason: %error_message%';
-            $error = $this->__($error, $exception->getMessage());
-
-            $this->messageManager->addError($error);
-
+            $this->messageManager->addError($this->__($exception->getMessage()));
             $accountModel->delete();
 
             return $this->indexAction();
         }
 
-        $this->activeRecordFactory->getObjectLoaded('Marketplace', $marketplaceId)
+        $this->activeRecordFactory->getObjectLoaded('Marketplace', $accountData['marketplace_id'])
             ->setData('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
             ->save();
 
@@ -88,10 +52,12 @@ class AfterGetToken extends InstallationAmazon
         return $this->_redirect('*/*/installation');
     }
 
+    abstract protected function getAccountData();
+
     /**
      * @return array
      */
-    private function getAmazonAccountDefaultSettings()
+    protected function getAmazonAccountDefaultSettings()
     {
         $billingAddressTheSame
             = AccountModel::MAGENTO_ORDERS_BILLING_ADDRESS_MODE_SHIPPING_IF_SAME_CUSTOMER_AND_RECIPIENT;

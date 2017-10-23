@@ -1,8 +1,8 @@
 {
-    "name": "m2epro/magento2-extension",
+    "name": "m2epro/ebay-amazon-magento2",
     "description": "M2E Pro is a Magento trusted (TM), award-winning extension, which allows merchants of all sizes to fully integrate Magento based system(s) into eBay/Amazon/Rakuten.com platforms.",
     "type": "magento2-module",
-    "version": "1.3.1",
+    "version": "1.3.2",
     "license": "Refer to Terms and Conditions on m2epro.com",
     "keywords": ["ebay", "amazon", "rakuten", "magento"],
     "homepage": "http://www.m2epro.com/",

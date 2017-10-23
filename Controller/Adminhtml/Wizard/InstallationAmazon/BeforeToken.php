@@ -17,7 +17,7 @@ class BeforeToken extends InstallationAmazon
 
         try {
 
-            $backUrl = $this->getUrl('*/*/afterGetToken');
+            $backUrl = $this->getUrl('*/*/afterGetTokenAutomatic');
 
             $dispatcherObject = $this->modelFactory->getObject('Amazon\Connector\Dispatcher');
             $connectorObj = $dispatcherObject->getVirtualConnector('account','get','authUrl',

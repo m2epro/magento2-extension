@@ -5948,11 +5948,16 @@ class InstallSchema implements InstallSchemaInterface
                 'is_product_tax_code_policy_available', Table::TYPE_SMALLINT, NULL,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
+            ->addColumn(
+                'is_automatic_token_retrieving_available', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
             ->addIndex('is_new_asin_available', 'is_new_asin_available')
             ->addIndex('is_merchant_fulfillment_available', 'is_merchant_fulfillment_available')
             ->addIndex('is_business_available', 'is_business_available')
             ->addIndex('is_vat_calculation_service_available', 'is_vat_calculation_service_available')
             ->addIndex('is_product_tax_code_policy_available', 'is_product_tax_code_policy_available')
+            ->addIndex('is_automatic_token_retrieving_available', 'is_automatic_token_retrieving_available')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');

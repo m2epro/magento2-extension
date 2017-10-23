@@ -505,7 +505,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      * Associate each order item with product in magento
      *
      * @param bool $strict
-     * @throws Exception|null
+     * @throws \Exception|null
      */
     public function associateItemsWithProducts($strict = true)
     {
@@ -515,7 +515,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             try {
                 /** @var $item \Ess\M2ePro\Model\Order\Item */
                 $item->associateWithProduct();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 if (is_null($exception)) {
                     $exception = $e;
                 }
@@ -740,7 +740,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->addSuccessLog('Magento Order #%order_id% was canceled.', array(
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId()
             ));
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', array(
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
                 'msg' => $e->getMessage()
@@ -757,7 +757,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         try {
             $invoice = $this->getChildObject()->createInvoice();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addErrorLog('Invoice was not created. Reason: %msg%', array('msg' => $e->getMessage()));
         }
 
@@ -778,7 +778,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
         try {
             $shipment = $this->getChildObject()->createShipment();
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->addErrorLog('Shipment was not created. Reason: %msg%', array('msg' => $e->getMessage()));
         }
 
