@@ -18,6 +18,10 @@ class Factory
     /** @var \Magento\Framework\ObjectManagerInterface */
     protected $_objectManager = null;
 
+    protected $helperFactory;
+
+    protected $modelFactory;
+
     //########################################
 
     public function __construct(
@@ -28,6 +32,8 @@ class Factory
     ){
         $this->locationResolver = $locationResolver;
         $this->_objectManager = $objectManager;
+        $this->helperFactory    = $helperFactory;
+        $this->modelFactory     = $modelFactory;
     }
 
     //########################################
@@ -39,7 +45,7 @@ class Factory
     public function create(\Ess\M2ePro\Model\HealthStatus\Task\AbstractModel $task)
     {
         return $this->_objectManager->create(TaskResult::class, [
-            'taskHash'                 => get_class($task),
+            'taskHash'                 => $this->helperFactory->getObject('Client')->getClassName($task),
             'taskType'                 => $task->getType(),
             'taskMustBeShownIfSuccess' => $task->mustBeShownIfSuccess(),
             'tabName'                  => $this->locationResolver->resolveTabName($task),

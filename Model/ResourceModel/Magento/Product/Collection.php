@@ -466,7 +466,7 @@ SQL;
     {
         $this->joinTable(
             array('cisi' => $this->getTable('cataloginventory_stock_item')),
-            'product_id = entity_id',
+            'product_id=entity_id',
             $columnsMap,
             array(
                 'stock_id'   => \Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID,

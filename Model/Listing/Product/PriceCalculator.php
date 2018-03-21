@@ -397,7 +397,7 @@ abstract class PriceCalculator extends AbstractModel
             throw new Logic('Unknown Mode in Database.');
         }
 
-        return $this->productValueCache = $value;
+        return $this->productValueCache = (float)$value;
     }
 
     protected function getVariationBaseValue(Variation $variation)
@@ -421,7 +421,7 @@ abstract class PriceCalculator extends AbstractModel
                 ));
         }
 
-        return $value;
+        return (float)$value;
     }
 
     protected function getOptionBaseValue(Variation\Option $option)
@@ -443,7 +443,7 @@ abstract class PriceCalculator extends AbstractModel
             throw new Logic('Unknown Mode in Database.');
         }
 
-        return $value;
+        return (float)$value;
     }
 
     //########################################

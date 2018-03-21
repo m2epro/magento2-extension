@@ -72,7 +72,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
 
     private function insertAttributes($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
-        preg_match_all("/#([a-zA-Z_0-9]+?)#/", $text, $matches);
+        preg_match_all("/#([a-z_0-9]+?)#/", $text, $matches);
 
         if (!count($matches[0])) {
             return $text;

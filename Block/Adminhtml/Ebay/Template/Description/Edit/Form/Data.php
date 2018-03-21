@@ -1419,7 +1419,9 @@ HTML
             window.AttributeObj = new Attribute();
         }
         window.EbayTemplateDescriptionObj = new EbayTemplateDescription();
-        EbayTemplateDescriptionObj.initObservers();
+        setTimeout(function() {
+        	EbayTemplateDescriptionObj.initObservers();
+    	}, 50);
         {$initWYSIWYG}
 
         window.MagentoAttributeButtonObj = new MagentoAttributeButton();

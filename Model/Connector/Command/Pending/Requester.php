@@ -113,7 +113,9 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
 
     protected function getResponserModelName()
     {
-        $responserModelName = preg_replace('/Requester$/', '', get_class($this)).'Responser';
+        $className = $this->getHelper('Client')->getClassName($this);
+
+        $responserModelName = preg_replace('/Requester$/', '', $className).'Responser';
         $responserModelName = str_replace('Ess\M2ePro\Model\\', '', $responserModelName);
 
         return $responserModelName;

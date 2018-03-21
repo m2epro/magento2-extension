@@ -326,7 +326,7 @@ class Client extends AbstractHelper
                 $memoryLimit *= 1024;
         }
 
-        if ($inMegabytes) {
+        if ($memoryLimit > 0 && $inMegabytes) {
             $memoryLimit /= 1024 * 1024;
         }
 
@@ -338,7 +338,7 @@ class Client extends AbstractHelper
         $minSize = 32;
         $currentMemoryLimit = $this->getMemoryLimit();
 
-        if ($maxSize < $minSize || (int)$currentMemoryLimit >= $maxSize) {
+        if ($maxSize < $minSize || (int)$currentMemoryLimit >= $maxSize || (float)$currentMemoryLimit <= 0) {
             return false;
         }
 
@@ -369,6 +369,15 @@ class Client extends AbstractHelper
     public function setPcreRecursionLimit($limit = 1000)
     {
         ini_set('pcre.recursion_limit', $limit);
+    }
+
+    public function getClassName($object)
+    {
+        if ($object instanceof \Magento\Framework\Interception\InterceptorInterface) {
+            return get_parent_class($object);
+        } else {
+            return get_class($object);
+        }
     }
 
     //########################################

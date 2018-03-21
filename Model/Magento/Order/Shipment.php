@@ -2,20 +2,18 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Model\Magento\Order;
-
-use Magento\Sales\Model\Order\ShipmentFactory;
 
 class Shipment extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\DB\Transaction  */
     protected $transaction = NULL;
 
-    /** @var ShipmentFactory */
+    /** @var \Ess\M2ePro\Model\Magento\Order\Shipment\Factory|null  */
     protected $shipmentFactory = NULL;
 
     /** @var $magentoOrder \Magento\Sales\Model\Order */
@@ -27,14 +25,14 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        \Magento\Sales\Model\Order\ShipmentFactory $shipmentFactory,
+        \Ess\M2ePro\Model\Magento\Order\Shipment\Factory $shipmentFactory,
         \Magento\Framework\DB\Transaction $transaction,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->shipmentFactory = $shipmentFactory;
-        $this->transaction = $transaction;
+        $this->shipmentFactory  = $shipmentFactory;
+        $this->transaction      = $transaction;
         parent::__construct($helperFactory, $modelFactory);
     }
 

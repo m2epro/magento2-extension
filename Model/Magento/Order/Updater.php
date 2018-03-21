@@ -97,13 +97,12 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
         $shippingAddress = $this->magentoOrder->getShippingAddress();
         if ($shippingAddress instanceof \Magento\Sales\Model\Order\Address) {
             $shippingAddress->addData($addressInfo);
-            $shippingAddress->implodeStreetAddress()->save();
+            $shippingAddress->save();
         } else {
             /** @var $shippingAddress \Magento\Sales\Model\Order\Address */
             $shippingAddress = $this->addressFactory->create();
             $shippingAddress->setCustomerId($this->magentoOrder->getCustomerId());
             $shippingAddress->addData($addressInfo);
-            $shippingAddress->implodeStreetAddress();
 
             // we need to set shipping address to order before address save to init parent_id field
             $this->magentoOrder->setShippingAddress($shippingAddress);

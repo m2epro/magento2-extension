@@ -253,6 +253,33 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $channelItem->getVariationChannelOptions();
     }
 
+    public function canCreateMagentoOrder()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    public function isReservable()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    // ---------------------------------------
+
+    private function isOrdersCreationEnabled()
+    {
+        $channelItem = $this->getChannelItem();
+
+        if (!is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if (is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        return true;
+    }
+
     //########################################
 
     /**

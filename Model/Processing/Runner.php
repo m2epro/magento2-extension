@@ -97,7 +97,10 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
     {
         $processingObject = $this->activeRecordFactory->getObject('Processing');
 
-        $processingObject->setData('model', str_replace('Ess\M2ePro\Model\\', '', get_class($this)));
+        $processingObject->setData(
+            'model',
+            str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this))
+        );
         $processingObject->setSettings('params', $this->getParams());
 
         $processingObject->setData('expiration_date', $this->helperFactory->getObject('Data')->getDate(

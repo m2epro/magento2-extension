@@ -226,6 +226,22 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         return array_shift($storeIds);
     }
 
+ /**
+     * @return bool
+     */
+    public function canCreateMagentoOrder()
+    {
+        return $this->getChildObject()->canCreateMagentoOrder();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReservable()
+    {
+        return $this->getChildObject()->isReservable();
+    }
+
     //########################################
 
     /**

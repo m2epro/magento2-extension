@@ -23,15 +23,20 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
     /** @var \Magento\Directory\Model\Region */
     protected $region;
 
+    /** @var \Magento\Directory\Helper\Data*/
+    protected $directoryHelper;
+
     //########################################
 
     public function __construct(
         \Magento\Directory\Model\CountryFactory $countryFactory,
+        \Magento\Directory\Helper\Data $directoryHelper,
         \Ess\M2ePro\Model\Order $order,
         array $data = []
     )
     {
         $this->countryFactory = $countryFactory;
+        $this->directoryHelper = $directoryHelper;
         $this->order = $order;
         parent::__construct($data);
     }
@@ -70,6 +75,13 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
                     sprintf('State/Region "%s" in the shipping address is invalid.', $this->getState())
                 );
             }
+
+            $isRegionRequired = $this->directoryHelper->isRegionRequired($this->getCountry()->getId());
+
+            if ($isRegionRequired && !$this->region->getId()) {
+                $countryRegions = $this->getCountry()->getRegionCollection();
+                $this->region = $countryRegions->getFirstItem();
+            }
         }
 
         return $this->region;
@@ -97,7 +109,7 @@ abstract class ShippingAddress extends \Magento\Framework\DataObject
         $region = $this->getRegion();
 
         if (is_null($region) || is_null($region->getId())) {
-            return 1;
+            return NULL;
         }
 
         return $region->getId();

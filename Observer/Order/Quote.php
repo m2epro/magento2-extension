@@ -75,6 +75,10 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
         /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
         $quoteItem = $this->getEvent()->getItem();
 
+        if ($quoteItem->getHasChildren()) {
+            return;
+        }
+
         $oldValue = (int)$this->getStockItem()->getQty();
         $newValue = $oldValue - (int)$quoteItem->getTotalQty();
 
@@ -96,6 +100,10 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
     {
         /* @var $quoteItem \Magento\Quote\Model\Quote\Item */
         $quoteItem = $this->getEvent()->getItem();
+
+        if ($quoteItem->getHasChildren()) {
+            return;
+        }
 
         $oldQty = (int)$this->getStockItem()->getQty();
         $newQty = $oldQty - (int)$quoteItem->getTotalQty();

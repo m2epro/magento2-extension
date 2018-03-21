@@ -21,7 +21,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
             return NULL;
         }
 
-        return str_replace('Ess\M2ePro\Model\ResourceModel',ucwords($childMode), get_class($this));
+        $className = $this->getHelper('Client')->getClassName($this);
+        return str_replace('Ess\M2ePro\Model\ResourceModel',ucwords($childMode), $className);
     }
 
     public function getChildTable($childMode)

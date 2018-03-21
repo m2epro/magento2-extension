@@ -76,6 +76,7 @@ class Form extends AbstractContainer
         if (!is_null($magentoOrder) && $magentoOrder->hasShipments()) {
             $url = $this->getUrl('*/order/resubmitShippingInfo', array('id' => $this->order->getId()));
             $data = array(
+                'class'   => 'primary',
                 'label'   => $this->__('Resend Shipping Information'),
                 'onclick' => 'setLocation(\''.$url.'\');',
             );

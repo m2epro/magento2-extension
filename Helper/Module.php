@@ -91,7 +91,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.3.2';
+        return '1.3.3';
     }
 
     public function getSetupVersion()

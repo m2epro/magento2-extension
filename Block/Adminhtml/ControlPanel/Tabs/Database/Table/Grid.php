@@ -122,6 +122,10 @@ class Grid extends AbstractGrid
                 $params['format']      = \IntlDateFormatter::MEDIUM;
             }
 
+            if($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {
+                $params['filter'] = '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select';
+            }
+
             $this->addColumn($column['name'], $params);
         }
 
@@ -402,6 +406,11 @@ HTML;
     public function getRowUrl($row)
     {
         //return $this->getUrl('*/*/editTableRow', array('id' => $row->getId()));
+    }
+
+    public function getTableModel()
+    {
+        return $this->tableModel;
     }
 
     //########################################

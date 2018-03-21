@@ -163,7 +163,7 @@ JS
 
         if (isset($action['confirm'])) {
             $action['onclick'] = 'CommonObj.confirm({
-                content: \''.addslashes($this->escapeHtml($action['confirm'])).'\',
+                content: \''.addslashes(htmlspecialchars($this->escapeHtml($action['confirm']))).'\',
                 actions: {
                     confirm: function () {
                         setLocation(this.href);

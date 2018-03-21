@@ -275,11 +275,11 @@
                             </td>
                         </tr>
 
-                        <?php if ($block->getChild('resubmit_shipping_info')): ?>
+                        <?php if ($childHtml = $this->getChildHtml('resubmit_shipping_info')): ?>
                             <tr>
                                 <td></td>
-                                <td class="value">
-                                    <?php echo $block->getChildHtml('resubmit_shipping_info') ?>
+                                <td class="value" style="padding-top: 10px;">
+                                    <?php echo $childHtml; ?>
                                 </td>
                             </tr>
                         <?php endif; ?>

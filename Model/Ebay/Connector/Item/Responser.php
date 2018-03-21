@@ -393,6 +393,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
      * 21916585: Duplicate custom variation label.
      * 21916582: Duplicate VariationSpecifics trait value in the VariationSpecificsSet container.
      * 21916672: The tags (MPN) is/are disabled as Variant.
+     * 21919061: This item was created from Selling Manager product, but the VariationSpecifics or V
+     *           ariationSpecificsSet provided for this item does not match with the product.
+     *           Please update variation specifics on the product and try again.
      */
     protected function isVariationErrorAppeared(array $messages)
     {
@@ -404,6 +407,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
             21916585,
             21916582,
             21916672,
+            21919061,
         );
 
         foreach ($messages as $message) {

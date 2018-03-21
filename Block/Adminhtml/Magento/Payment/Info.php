@@ -18,6 +18,8 @@ class Info extends \Magento\Payment\Block\Info
 
     private $order = NULL;
 
+    protected $_template = 'Ess_M2ePro::magento/order/payment/info.phtml';
+
     //########################################
 
     public function __construct(
@@ -34,11 +36,19 @@ class Info extends \Magento\Payment\Block\Info
 
     //########################################
 
-    protected function _construct()
+    /**
+     * Magento has forcibly set FRONTEND area
+     * vendor/magento/module-payment/Helper/Data.php::getInfoBlockHtm()
+     *
+     * @return string
+     */
+    protected function _toHtml()
     {
-        parent::_construct();
-        $this->setTemplate('Ess_M2ePro::magento/order/payment/info.phtml');
+        $this->setData('area', \Magento\Framework\App\Area::AREA_ADMINHTML);
+        return parent::_toHtml();
     }
+
+    //########################################
 
     /**
      * @return \Magento\Sales\Model\Order

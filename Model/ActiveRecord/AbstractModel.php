@@ -60,7 +60,8 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
     public function getObjectModelName()
     {
-        return str_replace('Ess\M2ePro\Model\\', '', get_class($this));
+        $className = $this->getHelper('Client')->getClassName($this);
+        return str_replace('Ess\M2ePro\Model\\', '', $className);
     }
 
     //########################################
@@ -488,7 +489,7 @@ abstract class AbstractModel extends \Magento\Framework\Model\AbstractModel
 
     public function getCacheGroupTags()
     {
-        $modelName = str_replace('Ess\M2ePro\Model\\', '', get_class($this));
+        $modelName = str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this));
 
         $tags[] = $modelName;
 

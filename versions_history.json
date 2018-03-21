@@ -1,4 +1,13 @@
 {
+    "1.3.3": {
+        "versions": {
+            "setup": "1.3.3",
+            "files": "1.3.3"
+        },
+        "revisions": {
+            "svn": "2494"
+        }
+    },
     "1.3.2": {
         "versions": {
             "setup": "1.3.3",

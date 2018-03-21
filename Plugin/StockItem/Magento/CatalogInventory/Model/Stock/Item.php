@@ -26,6 +26,17 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     //########################################
 
+    public function canExecute()
+    {
+        if (!parent::canExecute()) {
+            return false;
+        }
+
+        return version_compare($this->getHelper('Magento')->getVersion(), '2.2.0', '<');
+    }
+
+    //########################################
+
     public function aroundBeforeSave($interceptor, \Closure $callback, ...$arguments)
     {
         return $this->execute('beforeSave', $interceptor, $callback, $arguments);
@@ -42,6 +53,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             [
                 'data_object' => $interceptor,
                 'object' => $interceptor,
+                'item' => $interceptor,
             ]
         );
 
@@ -66,6 +78,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
             [
                 'data_object' => $interceptor,
                 'object' => $interceptor,
+                'item' => $interceptor,
             ]
         );
 

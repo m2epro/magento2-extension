@@ -89,7 +89,8 @@ JS;
 
     public function getParamPlaceHolder()
     {
-        return '%' . $this->getParamName() . '%';
+        // can't use special chars like # or % cause magento's getUrl method decoding them
+        return 'PLH' . $this->getParamName() . 'PLH';
     }
 
     public function getDefaultParam()

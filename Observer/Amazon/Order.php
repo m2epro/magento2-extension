@@ -50,8 +50,9 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
                 continue;
             }
 
-            $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem');
-            $magentoStockItem->setStockItem($stockItem);
+            $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem', [
+                'stockItem' => $stockItem
+            ]);
             $magentoStockItem->addQty($orderItem->getQtyOrdered());
         }
     }

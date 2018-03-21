@@ -7,6 +7,7 @@
  */
 
 namespace Ess\M2ePro\Model;
+use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
 
 /**
  * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Amazon\Order getChildObject()
@@ -28,6 +29,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     // Store does not exist.
     // Payment method "M2E Pro Payment" is disabled in Magento Configuration.
     // Shipping method "M2E Pro Shipping" is disabled in Magento Configuration.
+
+    const MAGENTO_ORDER_CREATION_FAILED_NO  = 0;
+    const MAGENTO_ORDER_CREATION_FAILED_YES = 1;
 
     private $storeManager;
 
@@ -58,6 +62,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     /** @var \Ess\M2ePro\Model\Order\Log */
     private $logModel = NULL;
 
+    private $productHelper = NULL;
+
+    /** @var Magento\Quote\Manager|null  */
+    private $quoteManager = NULL;
+
     // ########################################
 
     public function __construct(
@@ -70,6 +79,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\Model\Context $context,
         \Magento\Framework\Registry $registry,
+        \Magento\Catalog\Helper\Product $productHelper,
+        \Ess\M2ePro\Model\Magento\Quote\Manager $quoteManager,
         \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
         \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = [])
@@ -77,6 +88,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $this->storeManager = $storeManager;
         $this->orderFactory = $orderFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->productHelper = $productHelper;
+        $this->quoteManager = $quoteManager;
 
         parent::__construct(
             $parentFactory,
@@ -558,6 +571,14 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return false;
         }
 
+        foreach ($this->getItemsCollection()->getItems() as $item) {
+            /** @var $item \Ess\M2ePro\Model\Order\Item */
+
+            if (!$item->canCreateMagentoOrder()) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -565,6 +586,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     private function beforeCreateMagentoOrder()
     {
+        if (!is_null($this->getMagentoOrderId())) {
+            throw new \Ess\M2ePro\Model\Exception('Magento Order is already created.');
+        }
+
         if (method_exists($this->getChildObject(), 'beforeCreateMagentoOrder')) {
             $this->getChildObject()->beforeCreateMagentoOrder();
         }
@@ -599,6 +624,13 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             }
             // ---------------------------------------
 
+            /**
+             *  Since version 2.1.8 Magento added check if product is saleable before creating quote.
+             *  When order is creating from back-end, this check is skipped. See example at
+             *  Magento\Sales\Controller\Adminhtml\Order\Create.php
+             */
+            $this->productHelper->setSkipSaleableCheck(true);
+
             // Store must be initialized before products
             // ---------------------------------------
             $this->associateWithStore();
@@ -611,27 +643,35 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             // ---------------------------------------
             $proxy = $this->getProxy()->setStore($this->getStore());
 
-            /** @var $magentoQuoteBuilder \Ess\M2ePro\Model\Magento\Quote */
-            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento\Quote', ['proxyOrder' => $proxy]);
-            $magentoQuoteBuilder->buildQuote();
+            /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
+            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento\Quote\Builder', ['proxyOrder' => $proxy]);
+            $magentoQuote        = $magentoQuoteBuilder->build();
 
-            /** @var $magentoOrderBuilder \Ess\M2ePro\Model\Magento\Order */
-            $magentoOrderBuilder = $this->modelFactory->getObject(
-                'Magento\Order', ['quote' => $magentoQuoteBuilder->getQuote()]
-            );
-            $magentoOrderBuilder->buildOrder();
+            try {
+                $this->magentoOrder = $this->quoteManager->submit($magentoQuote);
+            } catch (FailDuringEventProcessing $e) {
 
-            $this->magentoOrder = $magentoOrderBuilder->getOrder();
+                $this->addWarningLog(
+                    'Magento Order was created successfully. 
+                    However one or more post-processing actions on Magento Order failed. This may lead to some issues in the future. 
+                    Please check the configuration of the ancillary services of your Magento. 
+                    For more details, read the original Magento warning: %msg%.
+                    ',
+                    array(
+                        'msg' => $e->getMessage()
+                    )
+                );
+                $this->magentoOrder = $e->getOrder();
+            }
 
             $this->setData('magento_order_id', $this->magentoOrder->getId());
-            $this->setMagentoOrder($this->magentoOrder);
 
+            $this->setMagentoOrder($this->magentoOrder);
             $this->save();
 
             $this->afterCreateMagentoOrder();
 
             unset($magentoQuoteBuilder);
-            unset($magentoOrderBuilder);
             // ---------------------------------------
 
         } catch (\Exception $e) {
@@ -660,10 +700,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
             $this->_eventManager->dispatch('m2epro_order_place_failure', array('order' => $this));
 
+            $this->save();
+
             $this->addErrorLog('Magento Order was not created. Reason: %msg%', array('msg' => $e->getMessage()));
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
 
-            // reserve qty back only if it was canceled before the order creation process started
             // ---------------------------------------
             if ($this->isReservable() && $this->getReserve()->getFlag('order_reservation')) {
                 $this->getReserve()->place();

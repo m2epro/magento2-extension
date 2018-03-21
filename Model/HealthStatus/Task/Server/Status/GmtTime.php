@@ -39,9 +39,9 @@ class GmtTime extends IssueType
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
         $connectorObj = $dispatcherObject->getVirtualConnector('server','get','gmtTime');
 
-        $requestTimeStart = microtime();
+        $requestTimeStart = microtime(true);
         $dispatcherObject->process($connectorObj);
-        $requestTimeEnd = microtime();
+        $requestTimeEnd = microtime(true);
 
         $responseData = $connectorObj->getResponseData();
         $requestTime = (int)($requestTimeEnd - $requestTimeStart);

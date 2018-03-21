@@ -7,6 +7,21 @@ use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Element extends MagentoElement
 {
+    /** @var \Ess\M2ePro\Helper\Factory */
+    protected $helperFactory;
+
+    //########################################
+
+    public function __construct(
+        \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
+        array $data = []
+    ){
+        $this->helperFactory = $context->getHelperFactory();
+        parent::__construct($context, $data);
+    }
+
+    //########################################
+
     protected function getTooltipHtml($content)
     {
         return <<<HTML
@@ -44,4 +59,23 @@ HTML;
 
         return parent::render($element);
     }
+
+    //########################################
+
+    /**
+     * @param array|string $data
+     * @param null $allowedTags
+     * @return array|string
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     *
+     * Starting from version 2.2.3 Magento forcibly escapes content of tooltips. But we are using HTML there
+     */
+    public function escapeHtml($data, $allowedTags = NULL)
+    {
+        return $this->helperFactory->getObject('Data')->escapeHtml(
+            $data, ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li'], ENT_NOQUOTES
+        );
+    }
+
+    //########################################
 }

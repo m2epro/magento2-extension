@@ -306,6 +306,33 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->getVariationOptions();
     }
 
+    public function canCreateMagentoOrder()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    public function isReservable()
+    {
+        return $this->isOrdersCreationEnabled();
+    }
+
+    // ---------------------------------------
+
+    private function isOrdersCreationEnabled()
+    {
+        $ebayItem = $this->getChannelItem();
+
+        if (!is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
+            return false;
+        }
+
+        if (is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
+            return false;
+        }
+
+        return true;
+    }
+
     //########################################
 
     /**
@@ -493,7 +520,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         );
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
-            $this->getId(), $action, $creator, $component, $params
+            $this->getParentObject()->getOrderId(), $action, $creator, $component, $params
         );
 
         return true;

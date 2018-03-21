@@ -78,7 +78,8 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\AbstractMode
 
     public function getActionsTitles()
     {
-        return $this->getHelper('Module\Log')->getActionsTitlesByClass(static::class);
+        $className = $this->getHelper('Client')->getClassName($this);
+        return $this->getHelper('Module\Log')->getActionsTitlesByClass($className);
     }
 
     //########################################

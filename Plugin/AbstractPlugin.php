@@ -52,5 +52,10 @@ abstract class AbstractPlugin
                $this->helperFactory->getObject('Module')->isReadyToWork();
     }
 
+    protected function getHelper($helperName, array $arguments = [])
+    {
+        return $this->helperFactory->getObject($helperName, $arguments);
+    }
+
     //########################################
 }

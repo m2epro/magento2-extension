@@ -204,11 +204,6 @@ class Form extends AbstractForm
                 'label' => $this->__('India'),
                 'note' => 'amazon.in',
             ],
-            [
-                'group_id' => 1,
-                'label' => $this->__('Mexico'),
-                'note' => 'amazon.com.mx',
-            ],
         ];
 
         foreach ($staticData as $marketplace) {

@@ -190,18 +190,28 @@ HTML
                 ]
             )->setFieldExtraAttributes('style="display: none"');
 
+            $accessDataFieldConfig = [
+                'container_id' => 'marketplaces_register_url_container_' . $marketplace['id'],
+                'label'        => '',
+                'href'         => '',
+                'onclick'      => '',
+                'target'       => '_blank',
+                'value'        => $this->__('Get Access Data'),
+                'class'        => 'external-link',
+            ];
+
+            if ($marketplace['is_automatic_token_retrieving_available']) {
+                $accessDataFieldConfig['onclick'] = 'return AmazonAccountObj.getToken('.$marketplace['id'].')';
+            } else {
+                $accessDataFieldConfig['href'] = $this->getHelper('Component\Amazon')->getRegisterUrl(
+                    $marketplace['id']
+                );
+            }
+
             $fieldset->addField(
                 'marketplaces_register_url_' . $marketplace['id'],
                 'link',
-                [
-                    'container_id' => 'marketplaces_register_url_container_' . $marketplace['id'],
-                    'label' => '',
-                    'href' => '',
-                    'onclick' => 'return AmazonAccountObj.getToken('.$marketplace['id'].')',
-                    'target' => '_blank',
-                    'value' => $this->__('Get Access Data'),
-                    'class' => 'external-link',
-                ]
+                $accessDataFieldConfig
             )->setFieldExtraAttributes('style="display: none"');
         }
 

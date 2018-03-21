@@ -84,6 +84,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingSingle::NICK,
             \Ess\M2ePro\Model\Cron\Task\ConnectorRequesterPendingPartial::NICK,
             \Ess\M2ePro\Model\Cron\Task\Amazon\Actions::NICK,
+            \Ess\M2ePro\Model\Cron\Task\LogsClearing::NICK,
             \Ess\M2ePro\Model\Cron\Task\Ebay\Actions::NICK,
             \Ess\M2ePro\Model\Cron\Task\Servicing::NICK,
             \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK,

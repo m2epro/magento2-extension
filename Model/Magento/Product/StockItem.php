@@ -15,29 +15,34 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\CatalogInventory\Model\Stock\Item */
     private $stockItem = null;
 
+    /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor */
+    private $indexStockProcessor = null;
+
+    /** @var \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface */
+    private $stockStateProvider;
+
+    /** @var bool */
+    private $stockStatusChanged = false;
+
     //########################################
 
     public function __construct(
         \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
-    )
-    {
-        $this->stockConfiguration = $stockConfiguration;
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
+        \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface $stockStateProvider,
+        \Magento\CatalogInventory\Model\Stock\Item $stockItem
+    ){
+        $this->stockConfiguration  = $stockConfiguration;
+        $this->indexStockProcessor = $indexStockProcessor;
+        $this->stockStateProvider  = $stockStateProvider;
+        $this->stockItem           = $stockItem;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
     //########################################
-
-    /**
-     * @param \Magento\CatalogInventory\Model\Stock\Item $stockItem
-     * @return $this
-     */
-    public function setStockItem(\Magento\CatalogInventory\Model\Stock\Item $stockItem)
-    {
-        $this->stockItem = $stockItem;
-        return $this;
-    }
 
     /**
      * @return \Magento\CatalogInventory\Model\Stock\Item
@@ -70,8 +75,13 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
             $stockItem->setQty($stockItem->getQty() - $qty);
         }
 
+        if ($stockItem->getManageStock() && !$this->stockStateProvider->verifyStock($stockItem)) {
+            $this->stockStatusChanged = true;
+        }
+
         if ($save) {
             $stockItem->save();
+            $this->afterSave();
         }
     }
 
@@ -82,11 +92,30 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
 
         if ($stockItem->getQty() > $stockItem->getMinQty()) {
             $stockItem->setIsInStock(true);
+            $this->stockStatusChanged = true;
         }
 
         if ($save) {
             $stockItem->save();
+            $this->afterSave();
         }
+    }
+
+    //########################################
+
+    public function afterSave()
+    {
+        if ($this->indexStockProcessor->isIndexerScheduled()) {
+
+            $this->indexStockProcessor->reindexRow($this->stockItem->getProductId(), true);
+        }
+    }
+
+    //----------------------------------------
+
+    public function isStockStatusChanged()
+    {
+        return (bool)$this->stockStatusChanged;
     }
 
     //########################################

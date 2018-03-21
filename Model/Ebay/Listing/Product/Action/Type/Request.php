@@ -289,21 +289,30 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             return $data;
         }
 
-        $additionalData = $this->getListingProduct()->getAdditionalData();
-        if (!empty($additionalData['without_mpn_variation_issue'])) {
+        $withoutMpnIssue = $this->getListingProduct()->getSetting('additional_data', 'without_mpn_variation_issue');
+        $isMpnOnChannel  = $this->getListingProduct()->getSetting('additional_data', 'is_variation_mpn_filled');
+
+        if ($withoutMpnIssue === true) {
             $data['without_mpn_variation_issue'] = true;
-            return $data;
         }
 
-        foreach ($data['variation'] as &$variationData) {
-            if (!empty($variationData['details']['mpn'])) {
-                continue;
-            }
+        if (isset($data['variation']) && is_array($data['variation'])) {
 
-            if (!isset($additionalData['is_variation_mpn_filled']) ||
-                $additionalData['is_variation_mpn_filled'] === true
-            ) {
-                $variationData['details']['mpn'] = Description::PRODUCT_DETAILS_DOES_NOT_APPLY;
+            foreach ($data['variation'] as &$variationData) {
+
+                /**
+                 * Item was listed without MPN, but then the Description Policy setting was changed and
+                 * MPN values are being send to eBay
+                 */
+                if (isset($variationData['details']['mpn']) && $isMpnOnChannel === false) {
+                    unset($variationData['details']['mpn']);
+                }
+
+                if (!isset($variationData['details']['mpn']) &&
+                    ($isMpnOnChannel === true || (is_null($isMpnOnChannel) && !$withoutMpnIssue))
+                ) {
+                    $variationData['details']['mpn'] = Description::PRODUCT_DETAILS_DOES_NOT_APPLY;
+                }
             }
         }
 
@@ -322,39 +331,42 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             }
         }
 
-        foreach ($data['variation'] as &$variationItem) {
+        if (isset($data['variation']) && is_array($data['variation'])) {
+
+            foreach ($data['variation'] as &$variationItem) {
+                foreach ($replacements as $findIt => $replaceBy) {
+
+                    if (!isset($variationItem['specifics'][$findIt])) {
+                        continue;
+                    }
+
+                    $variationItem['specifics'][$replaceBy] = $variationItem['specifics'][$findIt];
+                    unset($variationItem['specifics'][$findIt]);
+                }
+            }
+
             foreach ($replacements as $findIt => $replaceBy) {
 
-                if (!isset($variationItem['specifics'][$findIt])) {
-                   continue;
+                if (!isset($data['variations_sets'][$findIt])) {
+                    continue;
                 }
 
-                $variationItem['specifics'][$replaceBy] = $variationItem['specifics'][$findIt];
-                unset($variationItem['specifics'][$findIt]);
-            }
-        }
+                $data['variations_sets'][$replaceBy] = $data['variations_sets'][$findIt];
+                unset($data['variations_sets'][$findIt]);
 
-        foreach ($replacements as $findIt => $replaceBy) {
-
-            if (!isset($data['variations_sets'][$findIt])) {
-                continue;
-            }
-
-            $data['variations_sets'][$replaceBy] = $data['variations_sets'][$findIt];
-            unset($data['variations_sets'][$findIt]);
-
-            // M2ePro\TRANSLATIONS
-            // The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute Label instead of "%replaced_it%". This replacement cannot be edit in future by Relist/Revise Actions.
-            $this->addWarningMessage(
-                $this->getHelper('Module\Translation')->__(
-                    'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific
+                // M2ePro\TRANSLATIONS
+                // The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute Label instead of "%replaced_it%". This replacement cannot be edit in future by Relist/Revise Actions.
+                $this->addWarningMessage(
+                    $this->getHelper('Module\Translation')->__(
+                        'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific
                     "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible
                     to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute
                     Label instead of "%replaced_it%". This replacement cannot be edit in future by
                     Relist/Revise Actions.',
-                    $findIt, $replaceBy
-                )
-            );
+                        $findIt, $replaceBy
+                    )
+                );
+            }
         }
 
         return $data;

@@ -66,13 +66,14 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function usingMap(Task\AbstractModel $task)
     {
-        $key = get_class($task);
+        $key = $this->helperFactory->getObject('Client')->getClassName($task);
         return array_key_exists($key, $this->getMap()) ? $this->getMap()[$key] : null;
     }
 
     private function usingClassName(Task\AbstractModel $task)
     {
-        $className = str_replace('Ess\M2ePro\Model\HealthStatus\Task\\', '', get_class($task));
+        $fullClassName = $this->getHelper('Client')->getClassName($task);
+        $className = str_replace('Ess\M2ePro\Model\HealthStatus\Task\\', '', $fullClassName);
         $className = explode('\\', $className);
 
         if (count($className) != 3) {

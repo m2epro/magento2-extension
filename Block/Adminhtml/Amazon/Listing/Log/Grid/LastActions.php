@@ -51,13 +51,13 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Listing\Log\Grid\LastActio
 
             $descArr = [];
             foreach ($actionsRow['items'] as $key => &$item) {
-                if (array_key_exists($item['description'], $descArr)) {
-                    $descArr[$item['description']]['count']++;
+                if (array_key_exists((string)$item['description'], $descArr)) {
+                    $descArr[(string)$item['description']]['count']++;
                     unset($actionsRow['items'][$key]);
                     continue;
                 }
                 $item['count'] = 1;
-                $descArr[$item['description']] = $item;
+                $descArr[(string)$item['description']] = $item;
             }
             $actionsRow['items'] = array_values($descArr);
         }

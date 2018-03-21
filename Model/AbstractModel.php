@@ -38,7 +38,7 @@ abstract class AbstractModel extends DataObject
 
     public function getCacheGroupTags()
     {
-        $modelName = str_replace('Ess\M2ePro\Model\\', '', get_class($this));
+        $modelName = str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this));
 
         $tags[] = $modelName;
 

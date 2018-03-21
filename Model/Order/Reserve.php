@@ -17,9 +17,9 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
     const ACTION_ADD = 'add';
     const ACTION_SUB = 'sub';
-
-    private $stockItem;
+    /** @var \Magento\Framework\DB\Transaction  */
     private $transaction;
+
     /** @var \Ess\M2ePro\Model\Order */
     private $order = null;
 
@@ -28,14 +28,12 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\Magento\Product\StockItem $stockItem,
         \Magento\Framework\DB\Transaction $transaction,
         \Ess\M2ePro\Model\Order $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->stockItem = $stockItem;
         $this->transaction = $transaction;
         $this->order = $order;
         parent::__construct($helperFactory, $modelFactory);
@@ -176,7 +174,8 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         $productsDeletedCount  = 0;
         $productsExistCount    = 0;
 
-        $stockItems = array();
+        $productStockItems = array();
+        $magentoStockItems = array();
 
         foreach ($this->order->getItemsCollection()->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Order\Item $item */
@@ -210,15 +209,18 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
                 $productsExistCount++;
 
-                if (!isset($stockItems[$productId])) {
-                    $stockItems[$productId] = $magentoProduct->getStockItem();
+                if (!isset($productStockItems[$productId])) {
+                    $productStockItems[$productId] = $magentoProduct->getStockItem();
                 }
 
-                $stockItem = $stockItems[$productId];
+                $stockItem = $productStockItems[$productId];
 
-                $this->stockItem->setStockItem($stockItem);
+                /** @var \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem */
+                $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem', [
+                    'stockItem' => $stockItem
+                ]);
 
-                if (!$this->changeProductQty($magentoProduct, $this->stockItem, $action, $qty)) {
+                if (!$this->changeProductQty($magentoProduct, $magentoStockItem, $action, $qty)) {
                     if ($action == self::ACTION_SUB) {
                         unset($products[$key]);
                     }
@@ -232,18 +234,31 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
                 $productsAffectedCount++;
 
-                $this->transaction->addObject($this->stockItem->getStockItem());
+                $this->transaction->addObject($magentoStockItem->getStockItem());
+
+                //--------------------------------------
                 if ($item->getMagentoProduct()->isSimpleType() ||
                     $item->getMagentoProduct()->isDownloadableType()) {
-                    $item->getProduct()->setStockItem($this->stockItem->getStockItem());
+                    $item->getProduct()->setStockItem($magentoStockItem->getStockItem());
                 }
+
+                /**
+                 * After making changes to Stock Item, Magento Product model will contain invalid "salable" status.
+                 * Reset Magento Product model for further reload.
+                 */
+                if ($magentoStockItem->isStockStatusChanged()) {
+                    $item->setProduct(NULL);
+                }
+                //--------------------------------------
+
+                $magentoStockItems[] = $magentoStockItem;
             }
 
             $item->setReservedProducts($products);
             $this->transaction->addObject($item);
         }
 
-        unset($stockItems);
+        unset($productStockItems);
 
         if ($productsExistCount == 0 && $productsDeletedCount == 0) {
             $this->order->setData('reservation_state', self::STATE_UNKNOWN)->save();
@@ -277,6 +292,10 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
         $this->transaction->addObject($this->order);
         $this->transaction->save();
+
+        foreach ($magentoStockItems as $magentoStockItem) {
+            $magentoStockItem->afterSave();
+        }
     }
 
     private function changeProductQty(

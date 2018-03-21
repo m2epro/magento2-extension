@@ -406,7 +406,7 @@ define([
                                             EbayListingTemplateSwitcherObj.updateButtonsVisibility(template.nick);
                                             EbayListingTemplateSwitcherObj.updateEditVisibility(template.nick);
                                             EbayListingTemplateSwitcherObj.updateTemplateLabelVisibility(template.nick);
-                                            EbayListingTemplateSwitcherHandlerObj.checkMessages(template.nick);
+                                            EbayListingTemplateSwitcherObj.checkMessages(template.nick);
                                         });
                                     }.bind(this)
                                 });

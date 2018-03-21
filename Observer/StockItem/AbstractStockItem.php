@@ -45,7 +45,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
 
     public function beforeProcess()
     {
-        $stockItem = $this->getEventObserver()->getData('object');
+        $stockItem = $this->getEventObserver()->getData('item');
 
         if (!($stockItem instanceof \Magento\CatalogInventory\Model\Stock\Item)) {
             throw new \Ess\M2ePro\Model\Exception('StockItem event doesn\'t have correct StockItem instance.');

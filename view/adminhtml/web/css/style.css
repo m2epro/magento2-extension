@@ -42,6 +42,13 @@
 }
 /* ================================================ */
 
+/* Magento 2.2 compatibility */
+/* ================================================ */
+.admin__field-value {
+    display: block;
+}
+/* ================================================ */
+
 .admin__old .fieldset > .legend {
     position: static;
     float: left;

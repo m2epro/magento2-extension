@@ -392,33 +392,41 @@ HTML;
 
             $proxy = $order->getProxy()->setStore($order->getStore());
 
-            $magentoQuote = $this->modelFactory->getObject('Magento\Quote', ['proxyOrder' => $proxy]);
-            $magentoQuote->buildQuote();
-            $magentoQuote->getQuote()->setIsActive(false)->save();
+            /** @var \Ess\M2ePro\Model\Magento\Quote\Builder $magentoQuoteBuilder */
+            $magentoQuoteBuilder = $this->modelFactory->getObject('Magento\Quote\Builder', ['proxyOrder' => $proxy]);
+            /** @var  \Ess\M2ePro\Model\Magento\Quote\Manager $magentoQuoteManager */
+            $magentoQuoteManager = $this->modelFactory->getObject('Magento\Quote\Manager');
 
-            $shippingAddressData = $magentoQuote->getQuote()->getShippingAddress()->getData();
+            $quote = $magentoQuoteBuilder->build();
+
+            $shippingAddressData = $quote->getShippingAddress()->getData();
             unset(
                 $shippingAddressData['cached_items_all'],
                 $shippingAddressData['cached_items_nominal'],
                 $shippingAddressData['cached_items_nonnominal']
             );
-            $billingAddressData  = $magentoQuote->getQuote()->getBillingAddress()->getData();
+            $billingAddressData  = $quote->getBillingAddress()->getData();
             unset(
                 $billingAddressData['cached_items_all'],
                 $billingAddressData['cached_items_nominal'],
                 $billingAddressData['cached_items_nonnominal']
             );
-
-            $quote = $magentoQuote->getQuote();
+            $quoteData = $quote->getData();
+            unset(
+                $quoteData['items'],
+                $quoteData['extension_attributes']
+            );
 
             $html = '';
 
             $html .= '<pre><b>Grand Total:</b> ' .$quote->getGrandTotal(). '<br>';
             $html .= '<pre><b>Shipping Amount:</b> ' .$quote->getShippingAddress()->getShippingAmount(). '<br>';
 
-            $html .= '<pre><b>Quote Data:</b> ' .print_r($quote->getData(), true). '<br>';
+            $html .= '<pre><b>Quote Data:</b> ' .print_r($quoteData, true). '<br>';
             $html .= '<pre><b>Shipping Address Data:</b> ' .print_r($shippingAddressData, true). '<br>';
             $html .= '<pre><b>Billing Address Data:</b> ' .print_r($billingAddressData, true). '<br>';
+
+            $magentoQuoteManager->save($quote->setIsActive(false));
 
             return $html;
         }
