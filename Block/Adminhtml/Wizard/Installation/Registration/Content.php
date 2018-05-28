@@ -170,6 +170,35 @@ HTML
             ]
         );
 
+        if (!$this->getData('isLicenseStepFinished')) {
+            $this->css->add(
+                <<<CSS
+#licence_agreement .admin__field {
+    padding-top: 8px;
+}
+CSS
+            );
+
+            $fieldset->addField(
+                'licence_agreement',
+                'checkbox',
+                [
+                    'field_extra_attributes' => 'id="licence_agreement"',
+                    'name' => 'licence_agreement',
+                    'class' => 'admin__control-checkbox',
+                    'style' => 'padding-top: 8px;',
+                    'label' => $this->__('Terms and Privacy'),
+                    'checked' => false,
+                    'value' => 1,
+                    'required' => true,
+                    'after_element_html' => $this->__(<<<HTML
+&nbsp; I agree to terms and <a href="https://m2epro.com/privacy-policy" target="_blank">privacy policy</a>
+HTML
+                    )
+                ]
+            );
+        }
+
         $form->setUseContainer(true);
         $this->setForm($form);
 

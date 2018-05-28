@@ -1,3 +1,7 @@
+* 1.3.4 (r2539) (24/05/2018)
+
+* Added: Compliance with the General Data Protection Regulation (GDPR)
+
 * 1.3.3 (r2494) (20/03/2018)
 
 * Fix: 'Magento Order was not created' error even if Magento Order was actually created in some cases
