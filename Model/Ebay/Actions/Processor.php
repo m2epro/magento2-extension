@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -94,7 +94,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();
         $actionCollection->getSelect()->joinLeft(
-            array('p' => $this->resource->getTableName('m2epro_processing')),
+            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
             'p.id = main_table.processing_id',
             array()
         );
@@ -115,7 +115,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     {
         $actionCollection = $this->activeRecordFactory->getObject('Ebay\Processing\Action')->getCollection();
         $actionCollection->getSelect()->joinLeft(
-            array('lp' => $this->resource->getTableName('m2epro_listing_product')),
+            array(
+                'lp' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_product')
+            ),
             'lp.id = main_table.related_id',
             'need_synch_rules_check'
         );

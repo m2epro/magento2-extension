@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -101,6 +101,7 @@ abstract class Runner extends \Ess\M2ePro\Model\AbstractModel
             'model',
             str_replace('Ess\M2ePro\Model\\', '', $this->getHelper('Client')->getClassName($this))
         );
+
         $processingObject->setSettings('params', $this->getParams());
 
         $processingObject->setData('expiration_date', $this->helperFactory->getObject('Data')->getDate(

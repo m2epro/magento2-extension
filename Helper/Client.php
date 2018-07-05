@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -144,6 +144,11 @@ class Client extends AbstractHelper
         return php_sapi_name();
     }
 
+    public function getPhpIniFileLoaded()
+    {
+        return @php_ini_loaded_file();
+    }
+
     // ---------------------------------------
 
     public function isPhpApiApacheHandler()
@@ -169,6 +174,10 @@ class Client extends AbstractHelper
 
     public function getPhpInfoArray()
     {
+        if (in_array('phpinfo', $this->getDisabledFunctions())) {
+            return [];
+        }
+
         try {
 
             ob_start(); phpinfo(INFO_ALL);
@@ -262,7 +271,7 @@ class Client extends AbstractHelper
         $totalRecords = 0;
         foreach ($moduleTables as $moduleTable) {
 
-            $moduleTable = $this->resource->getTableName($moduleTable);
+            $moduleTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($moduleTable);
 
             if (!in_array($moduleTable, $magentoTables)) {
                 continue;
@@ -290,6 +299,13 @@ class Client extends AbstractHelper
         } catch (\Exception $exception) {
             $connection->closeConnection();
         }
+    }
+
+    //########################################
+
+    public function getDisabledFunctions()
+    {
+       return array_filter(explode(',', ini_get('disable_functions')));
     }
 
     //########################################

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -472,6 +472,7 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     //########################################
 
+    //TODO: Improve this functionality so that is was able to fix some sort of variation product errors
     protected function tryToResolveVariationMpnErrors()
     {
         if (!$this->canPerformGetItemCall()) {
@@ -643,10 +644,10 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
                 $additionalData = $variation->getAdditionalData();
 
-                if (!isset($additionalData['ebay_mpn_value']) ||
-                    $additionalData['ebay_mpn_value'] != $variationMpnValue['mpn']
+                if (!isset($additionalData['online_product_details']['mpn']) ||
+                    $additionalData['online_product_details']['mpn'] != $variationMpnValue['mpn']
                 ) {
-                    $additionalData['ebay_mpn_value'] = $variationMpnValue['mpn'];
+                    $additionalData['online_product_details']['mpn'] = $variationMpnValue['mpn'];
 
                     $variation->setSettings('additional_data', $additionalData);
                     $variation->save();
@@ -662,9 +663,9 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
     protected function processDuplicateByUUID(Message $message)
     {
         $duplicateItemId = null;
-        preg_match('/item ID=(\d+)\.$/', $message->getText(), $matches);
-        if (!empty($matches[1])) {
-            $duplicateItemId = $matches[1];
+        preg_match('/item\s*ID=(?<itemId>\d+)\.$/i', $message->getText(), $matches);
+        if (!empty($matches['itemId'])) {
+            $duplicateItemId = $matches['itemId'];
         }
 
         $this->listingProduct->getChildObject()->setData('is_duplicate', 1);

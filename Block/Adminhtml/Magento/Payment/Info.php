@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -23,6 +23,7 @@ class Info extends \Magento\Payment\Block\Info
     //########################################
 
     public function __construct(
+        \Magento\Store\Model\App\Emulation $appEmulation,
         \Magento\Sales\Model\OrderFactory $orderFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\View\Element\Template\Context $context,

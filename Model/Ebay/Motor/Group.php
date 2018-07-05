@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -30,7 +30,8 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         }
 
         $connection = $this->getResource()->getConnection();
-        $filterGroupRelation = $this->getResource()->getTable('m2epro_ebay_motor_filter_to_group');
+        $filterGroupRelation = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
         $connection->delete($filterGroupRelation, array('group_id = ?' => $this->getId()));
 
         return true;
@@ -125,7 +126,8 @@ class Group extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     public function getFiltersIds()
     {
         $connection = $this->getResource()->getConnection();
-        $table = $this->getResource()->getTable('m2epro_ebay_motor_filter_to_group');
+        $table = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
         $select = $connection->select();
         $select->from(array('emftg' => $table), array('filter_id'))

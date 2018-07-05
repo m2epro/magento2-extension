@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Create;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
@@ -158,6 +164,16 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
     protected function createListing()
     {
         $sessionData = $this->getSessionValue();
+
+        if ($sessionData['restock_date_value'] === '') {
+            $sessionData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
+        } else {
+
+            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+                $sessionData['restock_date_value'], \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT
+            );
+            $sessionData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
+        }
 
         // Add new Listing
         // ---------------------------------------

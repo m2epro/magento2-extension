@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -65,20 +71,16 @@ class General extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>Fill in the Title, choose the Marketplace you want to work with and click on the Get Access Data link.
-You will be redirected to Amazon Website.</p><br>
-<p><strong>Note:</strong> To be eligible to sell on Amazon, Sellers must have at least one of the following:
-a non-individual <i>Selling on Amazon Account</i>, an <i>Amazon WebStore Account</i>, a
-<i>Checkout by Amazon Account</i>, or an <i>Amazon Product Ads Account</i>. If you are an individual Seller you
-have to upgrade to a Pro Merchant Seller Account from the Amazon Services Selling on Amazon Page.</p><br>
-<p>Sign-in and complete the steps to obtain access to a specific Marketplace:</p>
+<p><strong>Important note:</strong> to be eligible to sell on Amazon, seller must have at least one of the following Amazon accounts: <br>
+Non-individual Amazon seller, Amazon Payments, Amazon Fresh, Amazon Business, Amazon Prime Now, Amazon Webstore, Amazon Product Ads, Amazon Supply.</p>
+<p>Individual sellers may upgrade to a Pro Merchant seller account.</p> <br>
+<p>Specify an Account Title, select an Amazon Marketplace, click <strong>Get Access Data</strong> and proceed with the following steps to grant M2E Pro access to your Amazon data:</p>
 <ul>
-<li><p>Select - 'I want to use an application to access my Amazon Seller Account with MWS.'</p></li>
-<li><p>Accept the Amazon MWS License Agreement.</p></li>
-<li><p>The Merchant ID and MWS Auth Token will be automatically filled in.</p></li>
-</ul><br>
-<p>More detailed information about how to work with this
-Page you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+<li>sign in to your Seller Central account;</li>
+<li>confirm you allow M2E Pro to access your Amazon selling account;</li>
+</ul>
+<p>Amazon Authorization Token will be generated automatically. After you get back to M2E Pro Amazon Account Configuration page, click <strong>Save</strong> to apply the changes.</p><br>
+<p>More detailed information on how to work with this page can be found <a href="%url%" target="_blank">here</a>.</p>
 HTML
                 , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MgItAQ'))
             ]
@@ -227,7 +229,7 @@ HTML
                 'value' => $isAuthMode ? $merchantId : ($isEdit ? $formData['merchant_id'] : ''),
                 'display' => $isEdit,
                 'disabled' => $isEdit,
-                'tooltip' => $this->__('Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).')
+                'tooltip' => $this->__('Your Amazon Seller ID.')
             ]
         );
         if (!$isEdit) {
@@ -245,9 +247,7 @@ HTML
                 'required' => true,
                 'value' => $isAuthMode ? $mwsToken : ($isEdit ? $formData['token'] : ''),
                 'display' => $isEdit,
-                'tooltip' => $this->__(
-                    'Paste generated MWS Auth Token from Amazon.
-                    (It must look like: amzn.mws.bna3f75c-a683-49c7-6da0-749y33313dft).')
+                'tooltip' => $this->__('An obtained Amazon Authorization Token.')
             ]
         );
         if (!$isEdit) {

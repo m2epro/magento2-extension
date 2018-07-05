@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -28,14 +28,13 @@ class Stock extends AbstractModel
         return $this->getHelper('Module\Translation')->__('Stock Availability');
     }
 
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @return bool|int
+     */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        $stockItem = $this->stockItemFactory->create();
-        $stockItem->getResource()->loadByProductId(
-            $stockItem, $product->getId(), $stockItem->getStockId()
-        );
-
-        return $stockItem->getIsInStock();
+        return $this->getStockItemByProductInstance($product)->getIsInStock();
     }
 
     //########################################

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -301,7 +301,7 @@ class Description extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\
 
         $statusDisabled =\Ess\M2ePro\Helper\Component\Ebay\Category\Ebay::PRODUCT_IDENTIFIER_STATUS_DISABLED;
 
-        foreach (array('ean','upc','isbn') as $identifier) {
+        foreach (array('ean','upc','isbn','epid') as $identifier) {
 
             $key = $identifier.'_enabled';
             if (!isset($categoryFeatures[$key]) || $categoryFeatures[$key] != $statusDisabled) {

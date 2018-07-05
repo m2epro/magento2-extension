@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -132,10 +132,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            /** @var $taskModel \Ess\M2ePro\Model\Servicing\Task */
-            $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
-            $taskModel->setParams($this->getParams());
-            $taskModel->setInitiator($this->getInitiator());
+            $taskModel = $this->getTaskModel($taskName);
 
             if (!$this->getForceTasksRunning() && !$taskModel->isAllowed()) {
                 continue;
@@ -155,9 +152,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
                 continue;
             }
 
-            /** @var $taskModel \Ess\M2ePro\Model\Servicing\Task */
-            $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
-            $taskModel->setParams($this->getParams());
+            $taskModel = $this->getTaskModel($taskName);
 
             if (!isset($responseData[$taskModel->getPublicNick()]) ||
                 !is_array($responseData[$taskModel->getPublicNick()])) {
@@ -166,6 +161,22 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
             $taskModel->processResponseData($responseData[$taskModel->getPublicNick()]);
         }
+    }
+
+    //########################################
+
+    private function getTaskModel($taskName)
+    {
+        $taskName = preg_replace_callback('/_([a-z])/i', function($matches) {
+            return ucfirst($matches[1]);
+        }, $taskName);
+
+        /** @var $taskModel \Ess\M2ePro\Model\Servicing\Task */
+        $taskModel = $this->modelFactory->getObject('Servicing\Task\\'.ucfirst($taskName));
+        $taskModel->setParams($this->getParams());
+        $taskModel->setInitiator($this->getInitiator());
+
+        return $taskModel;
     }
 
     //########################################
@@ -182,7 +193,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             'exceptions',
             'marketplaces',
             'cron',
-            'statistic'
+            'statistic',
+            'changed_sources'
         );
     }
 
@@ -193,7 +205,8 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
     {
         return array(
             'exceptions',
-            'statistic'
+            'statistic',
+            'changed_sources'
         );
     }
 

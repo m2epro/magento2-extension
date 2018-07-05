@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -42,7 +42,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getTitle()
     {
-        return $this->getHelper('Module\Translation')->__('Amazon Integration (Beta)');
+        return $this->getHelper('Module\Translation')->__('Amazon Integration');
     }
 
     //########################################

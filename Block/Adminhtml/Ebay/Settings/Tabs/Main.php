@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -42,6 +42,9 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
         $uploadImagesMode = (int)$configModel->getGroupValue(
             '/ebay/description/','upload_images_mode'
         );
+        $shouldBeUlrsSecure = (int)$configModel->getGroupValue(
+            '/ebay/description/','should_be_ulrs_secure'
+        );
 
         $viewEbayFeedbacksNotificationMode = (int)$configModel->getGroupValue(
             '/view/ebay/feedbacks/notification/','mode'
@@ -78,6 +81,55 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
             ]
         );
 
+        $fieldset = $form->addFieldset('images',
+            [
+                'legend' => $this->__('Images Uploading'),
+                'collapsable' => false,
+            ]
+        );
+
+        $fieldset->addField('upload_images_mode',
+            'select',
+            [
+                'name'   => 'upload_images_mode',
+                'label'  => $this->__('Main Image/Gallery Hosting Mode'),
+                'values' => [
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_AUTO
+                    => $this->__('Automatic'),
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_SELF
+                    => $this->__('Self-Hosted'),
+                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_EPS
+                    => $this->__('EPS-Hosted'),
+                ],
+                'value' => $uploadImagesMode,
+                'tooltip' => $this->__('
+                    Select the Mode which you would like to use for uploading Images on eBay:<br/><br/>
+                    <strong>Automatic</strong> — if you try to upload more then 1 Image for an Item or
+                    separate Variational Attribute the EPS-hosted mode will be used automatically.
+                    Otherwise, the Self-hosted mode will be used automatically;<br/>
+                    <strong>Self-Hosted</strong> — all the Images are provided as a direct Links to the
+                    Images saved in your Magento;<br/>
+                    <strong>EPS-Hosted</strong> — the Images are uploaded to eBay EPS service.
+                ')
+            ]
+        );
+
+        $fieldset->addField('should_be_ulrs_secure',
+            'select',
+            [
+                'name'   => 'should_be_ulrs_secure',
+                'label'  => $this->__('Use Secure Image URLs in Item Description'),
+                'values' => [
+                    \Ess\M2ePro\Helper\Component\Ebay\Images::SHOULD_BE_URLS_SECURE_YES => $this->__('Yes'),
+                    \Ess\M2ePro\Helper\Component\Ebay\Images::SHOULD_BE_URLS_SECURE_NO  => $this->__('No'),
+                ],
+                'value' => $shouldBeUlrsSecure,
+                'tooltip' => $this->__('
+                    Set <strong>Yes</strong> to use the secure content in eBay Item Description.
+                ')
+            ]
+        );
+
         $fieldset = $form->addFieldset('additional',
             [
                 'legend' => $this->__('Additional'),
@@ -104,32 +156,6 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                      <p><strong>Note:</strong> Applies only to Products Listed automatically on live Marketplaces
                      (i.e. not using a Sandbox Account).</p>'
                 )
-            ]
-        );
-
-        $fieldset->addField('upload_images_mode',
-            'select',
-            [
-                'name'   => 'upload_images_mode',
-                'label'  => $this->__('Upload Images to eBay'),
-                'values' => [
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_AUTO
-                        => $this->__('Automatic'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_SELF
-                        => $this->__('Self-Hosted'),
-                    \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\Description::UPLOAD_IMAGES_MODE_EPS
-                        => $this->__('EPS-Hosted'),
-                ],
-                'value' => $uploadImagesMode,
-                'tooltip' => $this->__('
-                    Select the Mode which you would like to use for uploading Images on eBay:<br/><br/>
-                    <strong>Automatic</strong> — if you try to upload more then 1 Image for an Item or
-                    separate Variational Attribute the EPS-hosted mode will be used automatically.
-                    Otherwise, the Self-hosted mode will be used automatically;<br/>
-                    <strong>Self-Hosted</strong> — all the Images are provided as a direct Links to the
-                    Images saved in your Magento;<br/>
-                    <strong>EPS-Hosted</strong> — the Images are uploaded to eBay EPS service.
-                ')
             ]
         );
 

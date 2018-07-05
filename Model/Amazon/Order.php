@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -538,8 +538,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     public function beforeCreateMagentoOrder()
     {
         if ($this->isPending() || $this->isCanceled()) {
-            throw new \Ess\M2ePro\Model\Exception('Magento Order Creation is not allowed for pending and
-                canceled Amazon Orders.');
+
+            throw new \Ess\M2ePro\Model\Exception(
+                'Magento Order Creation is not allowed for pending and canceled Amazon Orders.'
+            );
         }
     }
 
@@ -677,11 +679,19 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
      */
     public function canUpdateShippingStatus(array $trackingDetails = array())
     {
-        if ($this->isShipped() && empty($trackingDetails)) {
+        if ($this->isFulfilledByAmazon()) {
             return false;
         }
 
-        if ($this->isPending() || $this->isCanceled() || $this->isFulfilledByAmazon()) {
+        if ($this->isPending() || $this->isCanceled()) {
+            return false;
+        }
+
+        if ($this->isUnshipped()) {
+            return true;
+        }
+
+        if (empty($trackingDetails)) {
             return false;
         }
 
@@ -706,36 +716,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $params = array(
             'amazon_order_id'  => $this->getAmazonOrderId(),
             'fulfillment_date' => $trackingDetails['fulfillment_date'],
-            'tracking_number'  => NULL,
-            'carrier_name'     => NULL,
-            'shipping_method'  => NULL,
             'items'            => array()
         );
 
-        if (!empty($trackingDetails['tracking_number'])) {
-            $params['tracking_number'] = preg_replace('/[^A-Za-z0-9\s]/', '', $trackingDetails['tracking_number']);
-            $params['carrier_name'] = 'custom';
-        }
-
-        if (!empty($trackingDetails['carrier_title'])) {
-            $params['shipping_method'] = $trackingDetails['carrier_title'];
-        }
-
-        if (!empty($trackingDetails['carrier_code'])) {
-            try {
-                $carrier = $this->carrierFactory->create(
-                    $trackingDetails['carrier_code'], $this->getParentObject()->getStoreId()
-                );
-            } catch (\Exception $e) {
-                $carrier = false;
-            }
-
-            if ($carrier) {
-                $params['carrier_name'] = $carrier->getConfigData('title');
-            } else {
-                $params['carrier_name'] = $trackingDetails['carrier_code'];
-            }
-        }
+        $params = array_merge($params, $trackingDetails);
 
         foreach ($items as $item) {
             if (!isset($item['amazon_order_item_id']) || !isset($item['qty'])) {

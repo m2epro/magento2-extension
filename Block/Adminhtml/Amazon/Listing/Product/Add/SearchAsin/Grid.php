@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -67,19 +67,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
 
-        $collection->setStoreId($this->listing['store_id'])
+        $collection
+            ->setListing($this->listing)
+            ->setStoreId($this->listing['store_id'])
             ->setListingProductModeOn()
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku');
-        $collection->joinTable(
-            array('cisi' => 'cataloginventory_stock_item'),
-            'product_id=entity_id',
-            array(
-                'qty' => 'qty'
-            ),
-            '{{table}}.stock_id=1',
-            'left'
-        );
+
+        $collection->joinStockItem();
 
         // ---------------------------------------
         $lpTable = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
@@ -143,6 +138,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
+            'escape'       => false,
             'frame_callback' => array($this, 'callbackColumnProductTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));

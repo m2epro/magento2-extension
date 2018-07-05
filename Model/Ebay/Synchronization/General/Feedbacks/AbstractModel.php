@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -32,16 +32,6 @@ abstract class AbstractModel
     protected function processTask($taskPath)
     {
         return parent::processTask('Feedbacks\\'.$taskPath);
-    }
-
-    protected function intervalIsLocked()
-    {
-        if ($this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER ||
-            $this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
-            return false;
-        }
-
-        return parent::intervalIsLocked();
     }
 
     //########################################

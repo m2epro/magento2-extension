@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -128,7 +128,8 @@ class Categories extends AbstractModel
     protected function deleteAllCategories(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $tableCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $connWrite->delete($tableCategories,array('marketplace_id = ?' => $marketplace->getId()));
     }
@@ -140,7 +141,8 @@ class Categories extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableCategories = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $tableCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;

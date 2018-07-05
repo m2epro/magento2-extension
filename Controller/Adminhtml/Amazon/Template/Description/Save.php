@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
@@ -88,6 +94,9 @@ class Save extends Description
             'manufacturer_part_number_mode',
             'manufacturer_part_number_custom_value',
             'manufacturer_part_number_custom_attribute',
+
+            'msrp_rrp_mode',
+            'msrp_rrp_custom_attribute',
 
             'item_package_quantity_mode',
             'item_package_quantity_custom_value',
@@ -316,7 +325,8 @@ class Save extends Description
 
     private function sortSpecifics(&$specifics, $productData, $marketplaceId)
     {
-        $table = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_specific');
+        $table = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
 
         $dictionarySpecifics = $this->resourceConnection->getConnection()->select()
             ->from($table,['id', 'xpath'])

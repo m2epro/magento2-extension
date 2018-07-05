@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -85,7 +85,8 @@ class Store extends \Ess\M2ePro\Helper\AbstractHelper
 
         $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
             ->getResource()->getMainTable();
-        $eascTable = $this->resourceConnection->getTableName('m2epro_ebay_account_store_category');
+        $eascTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $primarySelect = $connection->select();
         $primarySelect->from(

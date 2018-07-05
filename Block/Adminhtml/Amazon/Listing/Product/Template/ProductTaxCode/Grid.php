@@ -1,9 +1,9 @@
 <?php
 
-/**
+/*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2017 ESS-UA [M2E Pro]
- * @license    Any usage is forbidden
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Product\Template\ProductTaxCode;
@@ -22,8 +22,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Set default values
         // ---------------------------------------
-        $this->setFilterVisibility(false);
-        $this->setDefaultSort('id');
+        $this->setFilterVisibility(true);
+        $this->setDefaultSort('title');
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(false);
         $this->setUseAjax(true);
@@ -68,8 +68,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'        => 'left',
             'type'         => 'text',
             'index'        => 'title',
-            'filter'       => false,
-            'sortable'     => false,
+            'filter_index' => 'title',
+            'escape'       => false,
+            'sortable'     => true,
             'frame_callback' => array($this, 'callbackColumnTitle')
         ));
 

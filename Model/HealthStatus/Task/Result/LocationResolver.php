@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -66,7 +66,7 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
 
     private function usingMap(Task\AbstractModel $task)
     {
-        $key = $this->helperFactory->getObject('Client')->getClassName($task);
+        $key = $this->getHelper('Client')->getClassName($task);
         return array_key_exists($key, $this->getMap()) ? $this->getMap()[$key] : null;
     }
 
@@ -108,6 +108,7 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
                 self::KEY_FIELD_SET => 'Database',
                 self::KEY_FIELD     => 'Scheme (tables, columns)'
             ],
+
             \Ess\M2ePro\Model\HealthStatus\Task\Server\Status\SystemLogs::class => [
                 self::KEY_TAB       => 'Problems',
                 self::KEY_FIELD_SET => 'Server',
@@ -118,15 +119,27 @@ class LocationResolver extends \Ess\M2ePro\Model\AbstractModel
                 self::KEY_FIELD_SET => 'Server',
                 self::KEY_FIELD     => 'Current Time'
             ],
+
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Amazon::class => [
                 self::KEY_TAB       => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'Amazon'
+                self::KEY_FIELD     => 'Amazon Retrieving'
             ],
             \Ess\M2ePro\Model\HealthStatus\Task\Orders\IntervalToTheLatest\Ebay::class => [
                 self::KEY_TAB       => 'Problems',
                 self::KEY_FIELD_SET => 'Orders',
-                self::KEY_FIELD     => 'eBay'
+                self::KEY_FIELD     => 'eBay Retrieving'
+            ],
+
+            \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Amazon::class => [
+                self::KEY_TAB       => 'Problems',
+                self::KEY_FIELD_SET => 'Orders',
+                self::KEY_FIELD     => 'Amazon Magento Order Creation'
+            ],
+            \Ess\M2ePro\Model\HealthStatus\Task\Orders\MagentoCreationFailed\Ebay::class => [
+                self::KEY_TAB       => 'Problems',
+                self::KEY_FIELD_SET => 'Orders',
+                self::KEY_FIELD     => 'eBay Magento Order Creation'
             ],
         ];
     }

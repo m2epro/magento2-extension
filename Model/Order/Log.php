@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,6 +10,7 @@ namespace Ess\M2ePro\Model\Order;
 
 class Log extends \Ess\M2ePro\Model\Log\AbstractModel
 {
+    /** @var int|null */
     protected $initiator = NULL;
 
     //########################################
@@ -30,6 +31,14 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     {
         $this->initiator = (int)$initiator;
         return $this;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getInitiator()
+    {
+        return $this->initiator;
     }
 
     // ########################################

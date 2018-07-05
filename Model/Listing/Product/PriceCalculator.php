@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -526,7 +526,7 @@ abstract class PriceCalculator extends AbstractModel
 
                 if ($isConversionEnabled &&
                     ($this->getSource('attribute') == Attribute::PRICE_CODE ||
-                        $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
+                     $this->getSource('attribute') == Attribute::SPECIAL_PRICE_CODE)
                 ) {
                     $value = $this->convertValueFromStoreToMarketplace($value);
                 }
@@ -614,6 +614,7 @@ abstract class PriceCalculator extends AbstractModel
             );
 
             $tempAttributeTitles = array_map('strtolower', array_filter($tempAttributeTitles));
+            $tempAttributeTitles = $this->prepareAttributeTitles($tempAttributeTitles);
 
             if (!in_array($attributeName, $tempAttributeTitles)) {
                 continue;
@@ -687,10 +688,15 @@ abstract class PriceCalculator extends AbstractModel
                 continue;
             }
 
-            if ((is_null($tempAttribute->getData('title')) ||
-                    strtolower($tempAttribute->getData('title')) != $attributeName) &&
-                (is_null($tempAttribute->getData('default_title')) ||
-                    strtolower($tempAttribute->getData('default_title')) != $attributeName)) {
+            $tempAttributeNames = array(
+                $tempAttribute->getData('title'),
+                $tempAttribute->getData('default_title')
+            );
+
+            $tempAttributeNames = array_map('strtolower', array_filter($tempAttributeNames));
+            $tempAttributeNames = $this->prepareAttributeTitles($tempAttributeNames);
+
+            if (!in_array($attributeName, $tempAttributeNames)) {
                 continue;
             }
 
@@ -1085,6 +1091,11 @@ abstract class PriceCalculator extends AbstractModel
     protected function prepareOptionTitles($optionTitles)
     {
         return $optionTitles;
+    }
+
+    protected function prepareAttributeTitles($attributeTitles)
+    {
+        return $attributeTitles;
     }
 
     //########################################

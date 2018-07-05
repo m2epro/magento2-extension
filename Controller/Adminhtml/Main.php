@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml;
 
 use Ess\M2ePro\Helper\Module;
@@ -360,9 +366,7 @@ abstract class Main extends Base
             $this->getHelper('Module\Cron')->isLastRunMoreThan(1, true) &&
             !$this->getHelper('Module')->isDevelopmentEnvironment()) {
 
-            $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl(
-                '692955-why-cron-service-is-not-working-in-my-magento'
-            );
+            $url = $this->getHelper('Module\Support')->getKnowledgebaseArticleUrl('cron-running');
 
             // M2ePro_TRANSLATIONS
             // Attention! AUTOMATIC Synchronization is not running at the moment. It does not allow M2E Pro to work correctly.<br/>Please check this <a href="%url% target="_blank" class="external-link">article</a> for the details on how to resolve the problem.

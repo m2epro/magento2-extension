@@ -28,6 +28,12 @@ define([
 
             // ---
 
+            $('msrp_rrp_mode')
+                .observe('change', AmazonTemplateDescriptionDefinitionObj.onChangeMsrpRrpMode)
+                .simulate('change');
+
+            // ---
+
             $('item_package_quantity_mode')
                 .observe('change', AmazonTemplateDescriptionDefinitionObj.onChangeItemPackageQuantityMode)
                 .simulate('change');
@@ -211,6 +217,19 @@ define([
 
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::NUMBER_OF_ITEMS_MODE_CUSTOM_ATTRIBUTE')) {
                 AmazonTemplateDescriptionObj.updateHiddenValue(this, targetCustomAttribute);
+            }
+        },
+
+        // ---------------------------------------
+
+        onChangeMsrpRrpMode: function()
+        {
+            var customAttribute = $('msrp_rrp_custom_attribute');
+
+            customAttribute.value = '';
+
+            if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Template\\Description\\Definition::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE')) {
+                AmazonTemplateDescriptionDefinitionObj.updateHiddenValue(this, customAttribute);
             }
         },
 

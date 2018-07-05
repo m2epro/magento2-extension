@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -99,7 +105,7 @@ HTML
             'related_store_id',
             self::STORE_SWITCHER,
             [
-                'container_id' => 'marketplaces_related_store_id_container',
+                'container_id' => 'other_listings_store_view_tr',
                 'name' => 'related_store_id',
                 'label' => $this->__('Related Store View'),
                 'value' => $formData['related_store_id'],

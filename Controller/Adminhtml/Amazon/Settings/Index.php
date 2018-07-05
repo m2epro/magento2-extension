@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -43,7 +43,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Settings
         $this->addLeft($tabsBlock);
         $this->addContent($this->createBlock('Amazon\Settings'));
 
-        $this->setPageHelpLink('x/8AEtAQ');
+        $this->setPageHelpLink('x/kRBPAQ');
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Settings'));
 

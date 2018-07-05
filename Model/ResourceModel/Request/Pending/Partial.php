@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -22,7 +22,11 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     public function getResultData(\Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial, $partNumber)
     {
         $select = $this->getConnection()->select()
-            ->from($this->getTable('m2epro_request_pending_partial_data'), 'data')
+            ->from(
+                $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_request_pending_partial_data'),
+                'data'
+            )
             ->where('request_pending_partial_id = ?', $requestPendingPartial->getId())
             ->where('part_number = ?', $partNumber);
 
@@ -37,7 +41,8 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
                                   array $data)
     {
         $this->getConnection()->insert(
-            $this->getTable('m2epro_request_pending_partial_data'),
+            $this->getHelper('Module\Database\Structure')
+                 ->getTableNameWithPrefix('m2epro_request_pending_partial_data'),
             array(
                 'request_pending_partial_id' => $requestPendingPartial->getId(),
                 'part_number' => $partNumber,
@@ -49,7 +54,8 @@ class Partial extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractModel
     public function deleteResultData(\Ess\M2ePro\Model\Request\Pending\Partial $requestPendingPartial)
     {
         $this->getConnection()->delete(
-            $this->getTable('m2epro_request_pending_partial_data'),
+            $this->getHelper('Module\Database\Structure')
+                 ->getTableNameWithPrefix('m2epro_request_pending_partial_data'),
             array('request_pending_partial_id = ?' => $requestPendingPartial->getId())
         );
     }

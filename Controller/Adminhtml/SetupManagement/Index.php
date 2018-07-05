@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\SetupManagement;
 
 use Magento\Framework\Message\MessageInterface;
@@ -55,6 +61,9 @@ class Index extends \Magento\Backend\App\Action
     /** @var \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieManager */
     protected $cookieMetadataFactory;
 
+    /** @var  \Ess\M2ePro\Helper\Factory */
+    protected $helperFactory;
+
     //########################################
 
     public function __construct(
@@ -70,7 +79,8 @@ class Index extends \Magento\Backend\App\Action
         \Magento\Framework\App\DeploymentConfig $deploymentConfig,
         \Magento\Framework\Stdlib\CookieManagerInterface $cookieManager,
         \Magento\Framework\Stdlib\Cookie\CookieMetadataFactory $cookieMetadataFactory,
-        \Magento\Backend\App\Action\Context $context
+        \Magento\Backend\App\Action\Context $context,
+        \Ess\M2ePro\Helper\Factory $helperFactory
     ) {
         parent::__construct($context);
 
@@ -89,6 +99,7 @@ class Index extends \Magento\Backend\App\Action
         $this->deploymentConfig      = $deploymentConfig;
         $this->cookieManager         = $cookieManager;
         $this->cookieMetadataFactory = $cookieMetadataFactory;
+        $this->helperFactory         = $helperFactory;
     }
 
     //########################################
@@ -309,12 +320,9 @@ HTML;
         $applicationState = $this->appState->getMode();
         $memoryLimit      = trim(ini_get('memory_limit'));
 
-        $phpVersion = explode(' ', shell_exec('php -v'))[1];
-
         $html .= <<<HTML
 <span>Application mode: <span style="font-weight: bold;">{$applicationState}</span></span><br>
 <span>Memory limit: <span>{$memoryLimit}</span></span><br>
-<span>CLI PHP version: <span>{$phpVersion}</span></span><br>
 HTML;
 
         if (!$this->cacheState->isEnabled(\Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER)) {
@@ -568,7 +576,8 @@ HTML;
     {
         $html = "<div>";
 
-        $tableName = $this->resourceConnection->getTableName('m2epro_setup');
+        $tableName = $this->helperFactory->getObject('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_setup');
         if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
             $html .= <<<HTML
 <span class="feature-enabled">m2epro_setup table is not installed.</span>
@@ -649,7 +658,8 @@ HTML;
     {
         $html = "<div>";
 
-        $tableName = $this->resourceConnection->getTableName('m2epro_versions_history');
+        $tableName = $this->helperFactory->getObject('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_versions_history');
         if (!$this->resourceConnection->getConnection()->isTableExists($tableName)) {
             $html .= <<<HTML
 <span class="feature-enabled">m2epro_versions_history table is not installed.</span>
@@ -746,7 +756,11 @@ HTML;
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->resourceConnection->getTableName('core_config_data'), 'value')
+            ->from(
+                $this->helperFactory->getObject('Module\Database\Structure')
+                    ->getTableNameWithPrefix('core_config_data'),
+                'value'
+            )
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', $path);
@@ -774,7 +788,8 @@ HTML;
         if ($this->getMagentoCoreConfigValue($path) === false) {
 
             $this->resourceConnection->getConnection()->insert(
-                $this->resourceConnection->getTableName('core_config_data'),
+                $this->helperFactory->getObject('Module\Database\Structure')
+                    ->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope'    => 'default',
                     'scope_id' => 0,
@@ -786,7 +801,8 @@ HTML;
         } else {
 
             $this->resourceConnection->getConnection()->update(
-                $this->resourceConnection->getTableName('core_config_data'),
+                $this->helperFactory->getObject('Module\Database\Structure')
+                    ->getTableNameWithPrefix('core_config_data'),
                 ['value' => $value],
                 [
                     'scope = ?'    => 'default',
@@ -911,8 +927,10 @@ HTML;
         }
 
         $this->resourceConnection->getConnection()
-             ->delete($this->resourceConnection->getTableName('m2epro_setup'),
-                      ['id = ?' => (int)$id]);
+             ->delete(
+                 $this->helperFactory->getObject('Module\Database\Structure')->getTableNameWithPrefix('m2epro_setup'),
+                      ['id = ?' => (int)$id]
+             );
 
         $this->getMessageManager()->addSuccessMessage('Successfully removed.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));
@@ -931,9 +949,11 @@ HTML;
         }
 
         $this->resourceConnection->getConnection()
-            ->update($this->resourceConnection->getTableName('m2epro_setup'),
-                     [$column => $value],
-                     ['id = ?' => (int)$id]);
+            ->update(
+                $this->helperFactory->getObject('Module\Database\Structure')->getTableNameWithPrefix('m2epro_setup'),
+                [$column => $value],
+                ['id = ?' => (int)$id]
+            );
 
         $this->getMessageManager()->addSuccessMessage('Successfully updated.');
         return $this->_redirect($this->_url->getUrl('*/*/*'));

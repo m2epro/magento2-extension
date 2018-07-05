@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -68,7 +68,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $select = $this->resourceConnection->getConnection()->select()
-              ->from($this->resourceConnection->getTableName('m2epro_amazon_dictionary_specific'))
+              ->from(
+                  $this->getHelper('Module\Database\Structure')
+                      ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific')
+              )
               ->where('marketplace_id = ?', (int)$this->marketplaceId)
               ->where('product_data_nick = ?', $this->productDataNick)
               ->where('type != ?', \Ess\M2ePro\Model\Amazon\Template\Description\Specific::DICTIONARY_TYPE_CONTAINER)
@@ -135,6 +138,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'           => 'text',
             'index'          => 'title',
             'width'          => '700px',
+            'escape'         => false,
             'filter'         => false,
             'sortable'       => false,
             'frame_callback' => array($this, 'callbackColumnTitle')

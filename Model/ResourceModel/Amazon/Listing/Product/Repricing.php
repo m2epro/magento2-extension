@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -42,17 +42,20 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
 
     //########################################
 
-    public function getAllSkus(Account $account, $repricingDisabled = null)
+    public function getSkus(Account $account, $filterSkus = NULL, $repricingDisabled = null)
     {
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
-            array('l' => $this->getTable('m2epro_listing')),
+            array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
             'l.id = main_table.listing_id'
         );
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
         $listingProductCollection->addFieldToFilter('is_repricing', 1);
         $listingProductCollection->addFieldToFilter('l.account_id', $account->getId());
         $listingProductCollection->addFieldToFilter('second_table.sku', array('notnull' => true));
+        if (!empty($filterSkus)) {
+            $listingProductCollection->addFieldToFilter('second_table.sku', array('in' => $filterSkus));
+        }
         $listingProductCollection->addFieldToFilter('second_table.online_regular_price', array('notnull' => true));
 
         if (!is_null($repricingDisabled)) {
@@ -78,7 +81,10 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array('is_process_required' => 1),
+            array(
+                'update_date'         => $this->getHelper('Data')->getCurrentGmtDate(),
+                'is_process_required' => 1
+            ),
             array(
                 'listing_product_id IN (?)' => array_unique($listingsProductsIds),
                 'is_process_required = ?'   => 0,
@@ -90,7 +96,10 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
     {
         $this->getConnection()->update(
             $this->getMainTable(),
-            array('is_process_required' => 0),
+            array(
+                'update_date'         => $this->getHelper('Data')->getCurrentGmtDate(),
+                'is_process_required' => 0
+            ),
             array(
                 'listing_product_id IN (?)' => array_unique($listingsProductsIds),
                 'is_process_required = ?'   => 1,

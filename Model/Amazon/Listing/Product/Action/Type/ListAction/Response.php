@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -59,7 +59,7 @@ class Response extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Resp
 
         $isGeneralIdOwner = $this->getIsGeneralIdOwner();
         if (!is_null($isGeneralIdOwner)) {
-            $data['general_id_owner'] = $isGeneralIdOwner;
+            $data['is_general_id_owner'] = $isGeneralIdOwner;
         }
 
         if (!empty($generalId)) {

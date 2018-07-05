@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -56,9 +56,11 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
 
     private function updateStatisticCountColumns()
     {
-        $listingTable = $this->getTable('m2epro_listing');
-        $listingProductTable = $this->getTable('m2epro_listing_product');
-        $amazonListingProductTable = $this->getTable('m2epro_amazon_listing_product');
+        $listingTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing');
+        $listingProductTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product');
+        $amazonListingProductTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $statisticsData = array();
         $statusListed = Product::STATUS_LISTED;

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -252,7 +252,7 @@ class Receive extends AbstractModel
 
     private function createMagentoOrders($ebayOrders, $percentsForOneOrder)
     {
-        $iteration = 1;
+        $iteration = 0;
         $currentPercents = $this->getActualLockItem()->getPercents();
 
         foreach ($ebayOrders as $order) {
@@ -262,8 +262,17 @@ class Receive extends AbstractModel
                 continue;
             }
 
+            if ($iteration % 5 == 0) {
+                $this->getActualLockItem()->activate();
+            }
+
+            $iteration++;
+
             if ($order->canCreateMagentoOrder()) {
                 try {
+                    $order->addNoticeLog(
+                        'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
+                    );
                     $order->createMagentoOrder();
                 } catch (\Exception $exception) {
                     continue;
@@ -292,10 +301,6 @@ class Receive extends AbstractModel
 
             $currentPercents = $currentPercents + $percentsForOneOrder * $iteration;
             $this->getActualLockItem()->setPercents($currentPercents);
-
-            if ($iteration % 5 == 0) {
-                $this->getActualLockItem()->activate();
-            }
         }
     }
 

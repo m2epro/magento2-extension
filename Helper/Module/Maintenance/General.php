@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -37,7 +37,7 @@ class General extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->resourceConnection->getTableName('core_config_data'), 'value')
+            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', self::CONFIG_PATH);
@@ -51,14 +51,14 @@ class General extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->resourceConnection->getTableName('core_config_data'), 'value')
+            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'), 'value')
             ->where('scope = ?', 'default')
             ->where('scope_id = ?', 0)
             ->where('path = ?', self::CONFIG_PATH);
 
         if ($this->resourceConnection->getConnection()->fetchOne($select) === false) {
             $this->resourceConnection->getConnection()->insert(
-                $this->resourceConnection->getTableName('core_config_data'),
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
                 [
                     'scope' => 'default',
                     'scope_id' => 0,
@@ -70,7 +70,7 @@ class General extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $this->resourceConnection->getConnection()->update(
-            $this->resourceConnection->getTableName('core_config_data'),
+            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
             ['value' => 1],
             [
                 'scope = ?' => 'default',
@@ -83,7 +83,7 @@ class General extends \Ess\M2ePro\Helper\AbstractHelper
     public function disable()
     {
         $this->resourceConnection->getConnection()->update(
-            $this->resourceConnection->getTableName('core_config_data'),
+            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('core_config_data'),
             ['value' => 0],
             [
                 'scope = ?' => 'default',

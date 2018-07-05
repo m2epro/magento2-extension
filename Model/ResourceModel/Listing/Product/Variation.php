@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -69,7 +69,7 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
 
     // ---------------------------------------
 
-    public function isAllHaveStockAvailabilities($listingProductId)
+    public function isAllHaveStockAvailabilities($listingProductId, $storeId)
     {
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
@@ -77,12 +77,12 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
             return NULL;
         }
 
-        $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds);
+        $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
 
         return (int)min($stocks);
     }
 
-    public function isAllDoNotHaveStockAvailabilities($listingProductId)
+    public function isAllDoNotHaveStockAvailabilities($listingProductId, $storeId)
     {
         $variationsProductsIds = $this->getVariationsProductsIds($listingProductId);
 
@@ -90,7 +90,7 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
             return NULL;
         }
 
-        $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds);
+        $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
 
         return !(int)max($stocks);
     }
@@ -162,7 +162,7 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         return $variationsStatuses;
     }
 
-    private function getVariationsStockAvailabilities(array $variationsProductsIds)
+    private function getVariationsStockAvailabilities(array $variationsProductsIds, $storeId)
     {
         $productsIds = array();
 
@@ -173,15 +173,18 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         }
 
         $productsIds = array_values(array_unique($productsIds));
-        $catalogInventoryTable = $this->getTable('cataloginventory_stock_item');
+        $catalogInventoryTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('cataloginventory_stock_item');
 
         $select = $this->getConnection()
-                       ->select()
-                       ->from(
-                            array('cisi' => $catalogInventoryTable),
-                            array('product_id','is_in_stock', 'manage_stock', 'use_config_manage_stock')
-                       )
-                       ->where('cisi.product_id IN ('.implode(',',$productsIds).')');
+           ->select()
+           ->from(
+                array('cisi' => $catalogInventoryTable),
+                array('product_id','is_in_stock', 'manage_stock', 'use_config_manage_stock')
+           )
+           ->where('cisi.product_id IN ('.implode(',',$productsIds).')')
+           ->where('cisi.stock_id = ?', $this->helperFactory->getObject('Magento\Stock')->getStockId($storeId))
+           ->where('cisi.website_id = ?', $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($storeId));
 
         $stocks = $select->query()->fetchAll();
 

@@ -194,6 +194,30 @@ define([
             $('magento_orders_status_mapping_mode').observe('change', AmazonAccountObj.magentoOrdersStatusMappingModeChange);
 
             $('order_number_example-note').previous().remove();
+
+            if ($('regular_price_mode')) {
+                $('regular_price_mode')
+                    .observe('change', AmazonAccountObj.regular_price_mode_change)
+                    .simulate('change');
+            }
+
+            if ($('min_price_mode')) {
+                $('min_price_mode')
+                    .observe('change', AmazonAccountObj.min_price_mode_change)
+                    .simulate('change');
+            }
+
+            if ($('max_price_mode')) {
+                $('max_price_mode')
+                    .observe('change', AmazonAccountObj.max_price_mode_change)
+                    .simulate('change');
+            }
+
+            if ($('disable_mode')) {
+                $('disable_mode')
+                    .observe('change', AmazonAccountObj.disable_mode_change)
+                    .simulate('change');
+            }
         },
 
         // ---------------------------------------
@@ -243,7 +267,6 @@ define([
 
             $$('[id^="marketplaces_developer_key_container_"],[id^="marketplaces_register_url_container_"]').invoke('hide');
 
-            $('marketplaces_related_store_id_container').show();
             $('marketplaces_merchant_id_container').show();
             $('marketplaces_token_container').show();
 
@@ -264,12 +287,12 @@ define([
         {
             if (this.value == M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_SYNCHRONIZATION_YES')) {
                 $('other_listings_mapping_mode_tr').show();
-                $('marketplaces_related_store_id_container').show();
+                $('other_listings_store_view_tr').show();
             } else {
                 $('other_listings_mapping_mode').value = M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Amazon\\Account::OTHER_LISTINGS_MAPPING_MODE_NO');
                 $('other_listings_mapping_mode').simulate('change');
                 $('other_listings_mapping_mode_tr').hide();
-                $('marketplaces_related_store_id_container').hide();
+                $('other_listings_store_view_tr').hide();
             }
         },
 
@@ -595,7 +618,7 @@ define([
                 regularPriceCoeficient = $('regular_price_coefficient_td'),
                 variationRegularPrice = $('regular_price_variation_mode_tr');
 
-            regularPriceAttr.value = '';
+            regularPriceAttr && (regularPriceAttr.value = '');
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account_Repricing::PRICE_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(this, regularPriceAttr);
             }
@@ -657,7 +680,7 @@ define([
             minPriceCoeficient.hide();
             variationMinPrice.hide();
 
-            minPriceAttr.value = '';
+            minPriceAttr && (minPriceAttr.value = '');
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account_Repricing::PRICE_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(this, minPriceAttr);
 
@@ -694,7 +717,7 @@ define([
             maxPriceCoeficient.hide();
             variationMaxPrice.hide();
 
-            maxPriceAttr.value = '';
+            maxPriceAttr && (maxPriceAttr.value = '');
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account_Repricing::PRICE_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(this, maxPriceAttr);
 
@@ -718,7 +741,7 @@ define([
             var self = AmazonAccountObj,
                 disableModeAttr = $('disable_mode_attribute');
 
-            disableModeAttr.value = '';
+            disableModeAttr && (disableModeAttr.value = '');
             if (this.value == M2ePro.php.constant('Ess_M2ePro_Model_Amazon_Account_Repricing::DISABLE_MODE_ATTRIBUTE')) {
                 self.updateHiddenValue(this, disableModeAttr);
             }

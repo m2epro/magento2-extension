@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Shipping\Edit\Form;
 
 use Ess\M2ePro\Model\Ebay\Template\Shipping;
@@ -338,11 +344,12 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                     'field_extra_attributes' => 'id="click_and_collect_mode_tr"',
                     'css_class' => 'local-shipping-tr',
                     'tooltip' => $this->__(
-                        'Click & Collect at Argos enables your Buyers to collect Items at a time that
-                         suits them from over 650 Argos Stores across the UK.
-                         <br/>For more details please read
-                         <a href="http://sellercentre.ebay.co.uk/click-and-collect"
-                            target="_blank" class="external-link">this documentation</a>.'
+                        'Select "No" to enable the Click & Collect option for your Products in M2E Pro Listing.
+                         Details about the Click & Collect delivery option can be found on
+                         <a href="%url_uk%" target="_blank" class="external-link">eBay UK</a>,
+                         <a href="%url_au%" target="_blank" class="external-link">eBay Australia</a> sites.',
+                        'http://pages.ebay.co.uk/sell/click-and-collect/',
+                        'http://sellercentre.ebay.com.au/click-and-collect/'
                     )
                 ]
             );
@@ -920,17 +927,19 @@ class Data extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                        cellspacing="0">
                     <thead>
                         <tr class="headings">
-                            <th class="data-grid-th">{$this->__('Service')} <span class="required">*</span></th>
-                            <th class="data-grid-th" style="width: 190px;">{$this->__('Mode')}</th>
-                            <th class="data-grid-th" style="width: 175px;">{$this->__('Cost')}
+                            <th class="data-grid-th" style="width: 35%;">{$this->__('Service')}
                                 <span class="required">*</span>
                             </th>
-                            <th class="data-grid-th" style="width: 175px;">{$this->__('Additional Cost')}
+                            <th class="data-grid-th" style="width: 14%;">{$this->__('Mode')}</th>
+                            <th class="data-grid-th" style="width: 14%;">{$this->__('Cost')}
                                 <span class="required">*</span>
                             </th>
-                            <th class="data-grid-th" style="width: 80px;">{$this->__('Currency')}</th>
-                            <th class="data-grid-th" style="width: 80px;">{$this->__('Priority')}</th>
-                            <th class="type-butt last data-grid-th" style="width: 105px;">&nbsp;</th>
+                            <th class="data-grid-th" style="width: 14%;">{$this->__('Additional Cost')}
+                                <span class="required">*</span>
+                            </th>
+                            <th class="data-grid-th" style="width: 7%;">{$this->__('Currency')}</th>
+                            <th class="data-grid-th" style="width: 7%; min-width: 80px;">{$this->__('Priority')}</th>
+                            <th class="type-butt last data-grid-th" style="width: 10%; min-width: 80px;">&nbsp;</th>
                         </tr>
                     </thead>
                     <tbody id="shipping_local_tbody">
@@ -987,17 +996,19 @@ HTML;
                style="display: none">
             <thead>
                 <tr class="headings">
-                    <th class="data-grid-th">{$this->__('Service')} <span class="required">*</span></th>
-                    <th class="data-grid-th" style="width: 190px;">{$this->__('Mode')}</th>
-                    <th class="data-grid-th" style="width: 175px;">
+                    <th class="data-grid-th" style="width: 35%;">{$this->__('Service')}
+                        <span class="required">*</span>
+                    </th>
+                    <th class="data-grid-th" style="width: 14%;">{$this->__('Mode')}</th>
+                    <th class="data-grid-th" style="width: 14%;">
                         {$this->__('Cost')} <span class="required">*</span>
                     </th>
-                    <th class="data-grid-th" style="width: 175px;">
+                    <th class="data-grid-th" style="width: 14%;">
                         {$this->__('Additional Cost')} <span class="required">*</span>
                     </th>
-                    <th class="data-grid-th" style="width: 80px;">{$this->__('Currency')}</th>
-                    <th class="data-grid-th" style="width: 80px;">{$this->__('Priority')}</th>
-                    <th class="type-butt last data-grid-th" style="width: 105px;">&nbsp;</th>
+                    <th class="data-grid-th" style="width: 7%;">{$this->__('Currency')}</th>
+                    <th class="data-grid-th" style="width: 7%;">{$this->__('Priority')}</th>
+                    <th class="type-butt last data-grid-th" style="width: 10%;">&nbsp;</th>
                 </tr>
             </thead>
             <tbody id="shipping_international_tbody">

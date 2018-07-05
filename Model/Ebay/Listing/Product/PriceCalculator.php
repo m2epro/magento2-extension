@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -41,12 +41,21 @@ class PriceCalculator extends \Ess\M2ePro\Model\Listing\Product\PriceCalculator
     protected function prepareOptionTitles($optionTitles)
     {
         foreach ($optionTitles as &$optionTitle) {
-            $optionTitle = $this->helperFactory->getObject('Data')->reduceWordsInString(
+            $optionTitle = trim($this->helperFactory->getObject('Data')->reduceWordsInString(
                 $optionTitle, \Ess\M2ePro\Helper\Component\Ebay::MAX_LENGTH_FOR_OPTION_VALUE
-            );
+            ));
         }
 
         return $optionTitles;
+    }
+
+    protected function prepareAttributeTitles($attributeTitles)
+    {
+        foreach ($attributeTitles as &$attributeTitle) {
+            $attributeTitle = trim($attributeTitle);
+        }
+
+        return $attributeTitles;
     }
 
     //########################################

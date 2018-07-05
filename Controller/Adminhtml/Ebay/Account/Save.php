@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Account;
@@ -368,7 +374,15 @@ class Save extends Account
         $this->messageManager->addSuccess($this->__('Account was successfully saved'));
 
         return $this->_redirect($this->getHelper('Data')->getBackUrl(
-            'list',array(),array('edit'=>array('id'=>$id, 'update_ebay_store' => null, '_current'=>true))
+            'list',
+            [],
+            array(
+                'edit' => array(
+                    'id'                => $id,
+                    'update_ebay_store' => NULL,
+                    '_current'          => true
+                )
+            )
         ));
     }
 }

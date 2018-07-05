@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -60,6 +60,20 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Ebay\Connector\Command\Re
     public function getStatus()
     {
         return $this->status;
+    }
+
+    //----------------------------------------
+
+    /**
+     * @return int|null
+     */
+    public function getOrderChangeId()
+    {
+        if (isset($this->params['change_id'])) {
+            return (int)$this->params['change_id'];
+        }
+
+        return NULL;
     }
 
     // ########################################

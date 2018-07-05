@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Listing\Other\Moving;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -35,7 +41,10 @@ class PrepareMoveToListing extends Listing
             }
 
             $listingOtherCollection->getSelect()->join(
-                array('cpe'=>$this->resourceConnection->getTableName('catalog_product_entity')),
+                array(
+                    'cpe'=>$this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('catalog_product_entity')
+                ),
                 '`main_table`.`product_id` = `cpe`.`entity_id`'
             );
 

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Renderer\Description;
 
 class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
@@ -17,7 +23,7 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
         $this->setId('rendererDescriptionGallery');
         // ---------------------------------------
 
-        $this->setTemplate('renderer/description/gallery.phtml');
+        $this->setTemplate('Ess_M2ePro::renderer/description/gallery.phtml');
     }
 
     //########################################
@@ -36,14 +42,14 @@ class Gallery extends \Ess\M2ePro\Block\Adminhtml\Renderer\Description
 
     //########################################
 
+    public function isModeDefault()
+    {
+        return $this->getData('linked_mode') == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_DEFAULT;
+    }
+
     public function isModeGallery()
     {
         return $this->getData('linked_mode') == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_GALLERY;
-    }
-
-    public function isLinkMode()
-    {
-        return $this->getData('linked_mode') == \Ess\M2ePro\Helper\Module\Renderer\Description::IMAGES_MODE_NEW_WINDOW;
     }
 
     public function isLayoutColumnMode()

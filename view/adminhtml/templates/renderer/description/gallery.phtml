@@ -111,7 +111,6 @@ $data = $block->getData();
         #m2e-gallery-list-<?php echo $block->getGalleryId(); ?> img {
         <?php if ($data['width'] != '') : echo "width: {$data['width']}px;"; endif; ?>
         <?php if ($data['height'] != '') : echo "height: {$data['height']}px;"; endif; ?>
-        <?php if ($block->isLinkMode()) : echo 'cursor: pointer; border: none;'; endif; ?>
         <?php if ($data['margin'] != '') : echo "margin-bottom: {$data['margin']}px; margin-right: {$data['margin']}px;"; endif; ?>
         }
 
@@ -121,15 +120,7 @@ $data = $block->getData();
 
         <?php foreach ($block->getGalleryImages() as $imageIndex => $imageUrl) : ?>
 
-            <?php if ($block->isLinkMode()): ?>
-                <a href="<?php echo $imageUrl; ?>" target="_blank"<?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?>>
-            <?php endif; ?>
-
             <img src="<?php echo $imageUrl; ?>" class="m2e-gallery-list" <?php if ($data['watermark'] != 0): echo ' m2e_watermark="1"'; endif; ?> />
-
-            <?php if ($block->isLinkMode()): ?>
-                </a>
-            <?php endif; ?>
 
             <?php if ($block->isLayoutColumnMode()): ?>
                 <br/>

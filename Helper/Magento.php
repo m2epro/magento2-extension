@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,6 +10,13 @@ namespace Ess\M2ePro\Helper;
 
 class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 {
+    const CLOUD_COMPOSER_KEY        = 'magento/magento-cloud-metapackage';
+    const APPLICATION_CLOUD_NICK    = 'cloud';
+    const APPLICATION_PERSONAL_NICK = 'personal';
+
+    const ENTERPRISE_EDITION_NICK   = 'enterprise';
+    const COMMUNITY_EDITION_NICK    = 'community';
+
     protected $deploymentVersionStorageFile;
     protected $filesystem;
     protected $themeResolver;
@@ -28,6 +35,7 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
     protected $appCache;
     protected $eventConfig;
     protected $sequenceManager;
+    protected $composerInformation;
 
     //########################################
 
@@ -51,27 +59,29 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         \Magento\Framework\Event\Config $eventConfig,
         \Magento\SalesSequence\Model\Manager $sequenceManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Magento\Framework\Composer\ComposerInformation $composerInformation,
         \Magento\Framework\App\Helper\Context $context
     )
     {
         $this->deploymentVersionStorageFile = $deploymentVersionStorageFile;
-        $this->filesystem = $filesystem;
-        $this->themeResolver = $themeResolver;
-        $this->productMetadata = $productMetadata;
-        $this->resource = $resource;
-        $this->moduleList = $moduleList;
-        $this->deploymentConfig = $deploymentConfig;
-        $this->cronScheduleFactory = $scheduleFactory;
-        $this->localeResolver = $localeResolver;
-        $this->appState = $appState;
-        $this->translatedLists = $translatedLists;
-        $this->countryFactory = $countryFactory;
-        $this->notificationFactory = $notificationFactory;
-        $this->entityStore = $entityStore;
-        $this->objectManager = $objectManager;
-        $this->appCache = $appCache;
-        $this->eventConfig = $eventConfig;
-        $this->sequenceManager = $sequenceManager;
+        $this->filesystem                   = $filesystem;
+        $this->themeResolver                = $themeResolver;
+        $this->productMetadata              = $productMetadata;
+        $this->resource                     = $resource;
+        $this->moduleList                   = $moduleList;
+        $this->deploymentConfig             = $deploymentConfig;
+        $this->cronScheduleFactory          = $scheduleFactory;
+        $this->localeResolver               = $localeResolver;
+        $this->appState                     = $appState;
+        $this->translatedLists              = $translatedLists;
+        $this->countryFactory               = $countryFactory;
+        $this->notificationFactory          = $notificationFactory;
+        $this->entityStore                  = $entityStore;
+        $this->objectManager                = $objectManager;
+        $this->appCache                     = $appCache;
+        $this->eventConfig                  = $eventConfig;
+        $this->sequenceManager              = $sequenceManager;
+        $this->composerInformation          = $composerInformation;
 
         parent::__construct($helperFactory, $context);
     }
@@ -105,12 +115,26 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function isEnterpriseEdition()
     {
-        return $this->getEditionName() == 'enterprise';
+        return $this->getEditionName() == self::ENTERPRISE_EDITION_NICK;
     }
 
     public function isCommunityEdition()
     {
-        return $this->getEditionName() == 'community';
+        return $this->getEditionName() == self::COMMUNITY_EDITION_NICK;
+    }
+
+    // ---------------------------------------
+
+    public function getLocation()
+    {
+        return $this->isCloudApplication() ?
+            self::APPLICATION_CLOUD_NICK :
+            self::APPLICATION_PERSONAL_NICK;
+    }
+
+    public function isCloudApplication()
+    {
+        return $this->composerInformation->isPackageInComposerJson(self::CLOUD_COMPOSER_KEY);
     }
 
     //########################################

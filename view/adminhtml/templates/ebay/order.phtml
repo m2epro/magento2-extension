@@ -213,7 +213,7 @@
                                     <?php if ($this->order->getChildObject()->getFinalFee() <= 0) { ?>
                                         <?php echo $block->__('N/A'); ?>
                                     <?php } else { ?>
-                                        <?php echo $block->formatPrice($this->order->getCurrency(), round($this->order->getChildObject()->getFinalFee(), 2)); ?>
+                                        <?php echo $block->formatPrice($this->order->getChildObject()->getCurrency(), round($this->order->getChildObject()->getFinalFee(), 2)); ?>
                                     <?php } ?>
                                 </strong>
                             </td>
@@ -224,7 +224,7 @@
                                 <td class="label"><?php echo $block->__('Cash On Delivery Cost');?>:</td>
                                 <td class="value">
                                     <strong>
-                                        <?php echo $block->formatPrice($this->order->getCurrency(), round($this->order->getChildObject()->getCashOnDeliveryCost(), 2)); ?>
+                                        <?php echo $block->formatPrice($this->order->getChildObject()->getCurrency(), round($this->order->getChildObject()->getCashOnDeliveryCost(), 2)); ?>
                                     </strong>
                                 </td>
                             </tr>
@@ -310,7 +310,7 @@
                                         <?php if ($this->order->getChildObject()->getShippingPrice() <= 0) { ?>
                                             <?php echo 0; ?>
                                         <?php } else { ?>
-                                            <?php echo $block->formatPrice($this->order->getCurrency(), $this->order->getChildObject()->getShippingPrice()); ?>
+                                            <?php echo $block->formatPrice($this->order->getChildObject()->getCurrency(), $this->order->getChildObject()->getShippingPrice()); ?>
                                         <?php } ?>
                                     </strong>
                                 </td>

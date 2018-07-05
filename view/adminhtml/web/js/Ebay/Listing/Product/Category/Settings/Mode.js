@@ -47,6 +47,9 @@ define([
                         text: M2ePro.translator.translate('Continue'),
                         class: 'action-primary action-accept',
                         click: function () {
+                            var modeSameRememberCheckbox = $('mode_same_remember_checkbox');
+                            modeSameRememberCheckbox.checked = true;
+                            modeSameRememberCheckbox.disabled = false;
                             $('categories_mode_form').submit();
                         }
                     }]

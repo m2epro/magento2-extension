@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Repricing;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -38,8 +44,8 @@ class GetUpdatedPriceBySkus extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Main
 
             $currency = $amazonAccount->getMarketplace()->getChildObject()->getDefaultCurrency();
 
-            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
-            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
+            /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\ActualPrice */
+            $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\ActualPrice');
             $repricingSynchronization->setAccount($account);
             $repricingSynchronization->run($skus);
 

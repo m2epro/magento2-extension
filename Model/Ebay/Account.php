@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -115,7 +115,9 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
             return false;
         }
 
-        $storeCategoriesTable = $this->getResource()->getTable('m2epro_ebay_account_store_category');
+        $storeCategoriesTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
+
         $this->getResource()->getConnection()
             ->delete($storeCategoriesTable,array('account_id = ?' => $this->getId()));
 
@@ -1041,7 +1043,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     {
         $connection = $this->getResource()->getConnection();
 
-        $tableAccountStoreCategories = $this->getResource()->getTable('m2epro_ebay_account_store_category');
+        $tableAccountStoreCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $dbSelect = $connection->select()
             ->from($tableAccountStoreCategories,'*')
@@ -1059,8 +1062,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getEbayStoreCategories()
     {
-        $tableAccountStoreCategories = $this->getResource()
-            ->getTable('m2epro_ebay_account_store_category');
+        $tableAccountStoreCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $connRead = $this->getResource()->getConnection();
 
@@ -1136,7 +1139,8 @@ class Account extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
 
         $connection = $this->getResource()->getConnection();
 
-        $tableAccountStoreCategories = $this->getResource()->getTable('m2epro_ebay_account_store_category');
+        $tableAccountStoreCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
 
         $connection->delete($tableAccountStoreCategories,array('account_id = ?'=>$this->getId()));
 

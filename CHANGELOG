@@ -1,3 +1,76 @@
+* 1.3.5 (r2678) (05/07/2018)
+
+* Added: New Cron Task which will try to create a Magento Order again after some time if initial creation was failed
+* Added: Ability to make M2e Pro compatible with the multi-stock QTY management
+* Added: Ability to create Credit Memo in Magento Invoice
+* Added: [Amazon] Added 'MSRP / RRP' field to Definition tab of Description template
+* Added: [Amazon] Ability to edit the "Recipient Name" field for Shipping Address in Order page
+* Improvement: Magento Order can be created even if Channel Order Item has zero price
+* Improvement: Reserve the Order quantity if Magento Order creation was failed
+* Improvement: Update Billing/Shipping addresses to a Magento Customer (during order creation)
+* Improvement: Significant improvements in the performance of 3rd Party Listings grids
+* Improvement: Send Magento location (cloud/personal) in Statistic data
+* Improvement: Implement usage of \Magento\CatalogInventory\Api\Data\StockItemInterface instead of \Magento\CatalogInventory\Model\Stock\Item
+* Improvement: [eBay] Ability to return Product Image URLs based on a configuration (http / https)
+* Improvement: [eBay] Try to get changes from eBay step by step, increasing the sinceDate, in order to prevent losing changes
+* Improvement: [eBay] Ignore spaces for Variation Attributes values
+* Improvement: [eBay] Write an additional log message when Order Items count have been modified on the channel (but Magento order is already created)
+* Improvement: [eBay] Ability to specify ProductReferenceID for each variation
+* Improvement: [eBay] Save online VariationDetails after a successful action to the channel
+* Improvement: [Amazon] Significant improvements of the performance of Repricing synchronization
+* Improvement: [Amazon] Log errors during repricing actions
+* Improvement: [Amazon] Ability to sort and filter Policies in "Assign policy grids" (Product Tax Code, Shipping, Description)
+* Fix: Exception when Variation Product becomes Simple in Magento
+* Fix: Filters by date are not working for specific locales (Grids)
+* Fix: Notice: "A non well formed numeric value encountered" appeared in the system logs (on the latest php versions)
+* Fix: "Notice: Undefined variable: prefix" if another extension uses Plugin for one of low-level Magento classes
+* Fix: Errors during processing were not logged to the system log
+* Fix: "Headers are already sent" message which appears during work of Cron Service
+* Fix: 'Middlename' field is not being filled during customer creating
+* Fix: The "Show Component Order" button is not being displayed (at the View Magento Order Page)
+* Fix: Tracking numbers for particular order items are not being sent to the channel
+* Fix: A newest logs records were not displayed in the Latest Actions widget (due sorting issues) if a not default user locale was set
+* Fix: Mistaken records in the listing log: "QTY was changed from 0 to -1" for configurable products (sometimes during orders creation)
+* Fix: "'m2epro_order_place_failure' is not a valid value of the atomic type 'eventName'" error if someone observes this event
+* Fix: "Translation not found: Another Synchronization Is Already Running." during a new listing creation process in some cases
+* Fix: MySQL Error "Duplicate column name 'price'" in the Grid of Adding Products (when filtering and sorting by price is used)
+* Fix: Removing Variation Product from Magento Catalog cause errors in some cases
+* Fix: Shipment was not created. Reason: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails in some cases
+* Fix: Incorrect working of QTY reservation feature in some cases
+* Fix: "Unable to serialize value" on saving an Account or a Policy (when "Add Secret Key to URLs" setting is enabled)
+* Fix: "No Such Entity With Cart ID xx" during Order creation (on Magento 2.1.x branch)
+* Fix: Thumbnails are not displaying (in some cases)
+* Fix: Attribute value is being used incorrectly (is escaped) when it contains HTML entities
+* Fix: Column not found: 1054 Unknown column 'count' in 'having clause' on editing some setting if Magento Version is 2.2.4
+* Fix: 'Magento Order was not created' error even if Magento Order was actually created in some cases
+* Fix: "Magento Order was not created: This product is out of stock." in some cases, if Magento version >= 2.2.0
+* Fix: Updating of Region ID of customer did not work during Order creation process
+* Fix: Different problems during quote building
+* Fix: Fatal error is occured when Reservation QTY was not canceled
+* Fix: Impossible to select all items in grid (just a current page)
+* Fix: [eBay] Channel errors related to MPN for Variation Items
+* Fix: [eBay] The recognizing of the already listed item by a UUID does not work (due to change of the error message format)
+* Fix: [eBay] Error message "Variation specific %value% used for pictures does not exist in variation specific set." occurred on Revise action in some cases
+* Fix: [eBay] Media gallery from eBay description policy is not sent to channel on auto-actions
+* Fix: [eBay] Specifics for recent eBay category don't load automatically in Settings view mode
+* Fix: [eBay] Wrong currency symbol is displayed on eBay order page in some cases
+* Fix: [eBay] Tracking numbers are not being sent to Channel in some cases
+* Fix: [eBay] "Notice: Undefined variable: onlineCurrentStr" on Listing View grid (in some cases)
+* Fix: [Amazon] The Count of Repricing Products for an Account is getting equal zero (mistakenly) sometimes
+* Fix: [Amazon] Carrier Code and Shipping Method were not sent during updating Tracking Information for Orders
+* Fix: [Amazon] Some Products marked as 'creator of ASIN/ISBN' after List Action mistakenly
+* Fix: [Amazon] Unable to save restock date for specific locales (DateTime::__construct(): Failed to parse time string)
+* Fix: [Amazon] Settings on Repricing tab of Account settings did not work in some cases
+* Fix: [Amazon] An order log message that a tracking number has been sent to the channel was not being recorded
+* Fix: [Amazon] "We can't save the address: Email has a wrong format" error on Magento Order creating
+* Fix: [Amazon] Removing Policies did not work
+* Fix: [Amazon] It is not possible to select a Description Policy for a Simple Product (with no required custom option)
+* Fix: [Amazon] Notice during manual ASIN search if the server connection is failed
+* Fix: [Amazon] Listings Log grid was not displayed in some cases
+* Fix: [Amazon] Javascript exception "ReferenceError Calendar is not defined" on editing Amazon Description Policy (if DateTime Specifics are used)
+* Removed: Support Magento Commerce and Open Source versions lower than 2.1.0
+* Removed: [eBay] Ability to open a gallery image in a new browser tab (custom description)
+
 * 1.3.4 (r2539) (24/05/2018)
 
 * Added: Compliance with the General Data Protection Regulation (GDPR)
@@ -133,7 +206,6 @@
 * Fix: [Amazon] Taxes were counted incorrect if shipping tax rate and product tax rate were different
 * Fix: [Amazon] Unable to open a Description Policy for editing (mysql syntax error) in some cases
 * Fix: [Amazon] Full Revise did not work, when Shipping Template was assigned or Synchronization Policy was changed
-* Removed: Ability to migrate from Magento1 module v6.5.0.9
 * Removed: Action "Remove from Listing" from Listing grid
 * Removed: [eBay] Integration with Terapeak service
 * Removed: [eBay] Ability to use USD currency for Canada Site (eBay does not support it)

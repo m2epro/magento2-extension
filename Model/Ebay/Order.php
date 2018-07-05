@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -715,6 +715,14 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         return true;
     }
 
+    /**
+     * @return bool
+     */
+    public function isReservable()
+    {
+        return true;
+    }
+
     //########################################
 
     public function beforeCreateMagentoOrder()
@@ -1028,25 +1036,33 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
 
         $params = array();
 
-        if (!empty($trackingDetails['tracking_number'])) {
+        if (!empty($trackingDetails['carrier_code'])) {
 
-            // Prepare tracking information
-            // ---------------------------------------
-            $params['tracking_number'] = $trackingDetails['tracking_number'];
-            $params['carrier_code'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
-                $trackingDetails['carrier_code'], $trackingDetails['carrier_title']
+            $trackingDetails['carrier_title'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
+                $trackingDetails['carrier_code'],
+                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
             );
+        }
+
+        if (!empty($trackingDetails['carrier_title'])) {
+
+            if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
+                !empty($trackingDetails['shipping_method']))
+            {
+                $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
+            }
 
             // remove unsupported by eBay symbols
-            $params['carrier_code'] = str_replace(array('\'', '"', '+', '(', ')'), array(), $params['carrier_code']);
-            // ---------------------------------------
+            $trackingDetails['carrier_title'] = str_replace(
+                array('\'', '"', '+', '(', ')'), array(), $trackingDetails['carrier_title']
+            );
         }
+
+        $params = array_merge($params, $trackingDetails);
 
         $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
         $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-
-        $params = array('tracking_details' => $trackingDetails);
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
             $this->getId(), $action, $creator, $component, $params

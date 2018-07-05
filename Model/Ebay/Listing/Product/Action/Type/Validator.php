@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -203,6 +203,45 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    protected function validatePrice()
+    {
+        if ($this->getEbayListingProduct()->isVariationsReady()) {
+
+            if (!$this->validateVariationsFixedPrice()) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if ($this->getEbayListingProduct()->isListingTypeAuction()) {
+
+            if (!$this->validateStartPrice()) {
+                return false;
+            }
+
+            if (!$this->validateReservePrice()) {
+                return false;
+            }
+
+            if (!$this->validateBuyItNowPrice()) {
+                return false;
+            }
+
+            return true;
+
+        } else {
+
+            if (!$this->validateFixedPrice()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // ---------------------------------------
+
     protected function validateQty()
     {
         if (!$this->getConfigurator()->isQtyAllowed()) {
@@ -260,6 +299,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
 
         foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
+            /** @var \Ess\M2ePro\Model\Ebay\Listing\Product\Variation $ebayVariation */
+
+            $ebayVariation = $variation->getChildObject();
 
             foreach ($variation->getOptions(true) as $option) {
                 /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
@@ -294,7 +336,7 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $totalVariationsCount++;
-            $variation->isDeleted() && $totalDeletedVariationsCount++;
+            $ebayVariation->isDelete() && $totalDeletedVariationsCount++;
 
             // Not more that 250 possible variations
             if ($totalVariationsCount > 250) {

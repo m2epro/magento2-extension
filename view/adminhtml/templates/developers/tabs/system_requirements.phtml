@@ -8,13 +8,7 @@
         </tr>
         </thead>
         <tbody>
-        <?php
-        foreach($this->requirements as $key => $requirement) {
-            if ($requirement['title'] == 'PHP Version' || $requirement['title'] == 'Magento Version') {
-                continue;
-            }
-        ?>
-
+        <?php foreach($this->requirements as $key => $requirement) { ?>
             <tr>
                 <td class="label">
                     <label><?php echo $requirement['title']; ?></label>

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -29,7 +29,7 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
 
     public function sendUnlinkActionData($backUrl)
     {
-        $skus = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource()->getAllSkus(
+        $skus = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource()->getSkus(
             $this->getAccount()
         );
 
@@ -68,11 +68,19 @@ class Account extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         try {
             $result = $this->getHelper('Component\Amazon\Repricing')->sendRequest($command, $requestData);
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($exception->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
+            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 
-        $response = $this->getHelper('Data')->jsonDecode($result['response']);
+        $response = $result['response'];
+        $this->processErrorMessages($response);
 
         return !empty($response['request_token']) ? $response['request_token'] : false;
     }

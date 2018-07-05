@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -46,7 +46,8 @@ class Controller extends \Ess\M2ePro\Helper\AbstractHelper
 
             $readConn = $this->resourceConnection->getConnection();
 
-            $dictionaryTable = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_marketplace');
+            $dictionaryTable = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
             $rows = $readConn->select()->from($dictionaryTable,'marketplace_id')
                              ->where('client_details_last_update_date IS NOT NULL')

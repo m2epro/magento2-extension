@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Template;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -24,7 +30,7 @@ abstract class ProductTaxCode extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
 
     protected function filterLockedProducts($productsIdsParam)
     {
-        $table = $this->resourceConnection->getTableName('m2epro_processing_lock');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing_lock');
 
         $productsIds = array();
         $productsIdsParam = array_chunk($productsIdsParam, 1000);
@@ -104,7 +110,8 @@ abstract class ProductTaxCode extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Li
 
     protected function runProcessorForParents($productsIds)
     {
-        $tableAmazonListingProduct = $this->resourceConnection->getTableName('m2epro_amazon_listing_product');
+        $tableAmazonListingProduct = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $this->resourceConnection->getConnection()->select();
         $select->from(array('alp' => $tableAmazonListingProduct), array('listing_product_id'))

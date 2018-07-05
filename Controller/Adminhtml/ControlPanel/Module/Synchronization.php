@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
@@ -33,7 +39,46 @@ class Synchronization extends Command
     //########################################
 
     /**
-     * @title "General"
+     * @title "Global - Processing"
+     * @description "Run only processing synchronization as developer mode"
+     * @confirm "Are you sure?"
+     */
+    public function synchGlobalProcessingAction()
+    {
+        $this->processSynchTasks(array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING
+        ));
+    }
+
+    /**
+     * @title "Global - Magento Products"
+     * @description "Run only global magento products synchronization as developer mode"
+     * @confirm "Are you sure?"
+     */
+    public function synchGlobalMagentoProductsAction()
+    {
+        $this->processSynchTasks(array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS
+        ));
+    }
+
+    /**
+     * @title "Global - Queue"
+     * @description "Run only queue synchronization as developer mode"
+     * @confirm "Are you sure?"
+     * @new_line
+     */
+    public function synchGlobalQueueAction()
+    {
+        $this->processSynchTasks(array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::STOP_QUEUE
+        ));
+    }
+
+    //########################################
+
+    /**
+     * @title "Component - General"
      * @description "Run only general synchronization as developer mode"
      * @confirm "Are you sure?"
      * @components
@@ -46,21 +91,7 @@ class Synchronization extends Command
     }
 
     /**
-     * @title "Processing"
-     * @description "Run only defaults synchronization as developer mode"
-     * @confirm "Are you sure?"
-     */
-    public function synchProcessingAction()
-    {
-        $this->processSynchTasks(array(
-            \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::PROCESSING
-        ));
-    }
-
-    //########################################
-
-    /**
-     * @title "Listings Products"
+     * @title "Component - Listings Products"
      * @description "Run only listings products synchronization as developer mode"
      * @confirm "Are you sure?"
      * @components
@@ -73,7 +104,7 @@ class Synchronization extends Command
     }
 
     /**
-     * @title "Other Listings"
+     * @title "Component - Other Listings"
      * @description "Run only Other listings synchronization as developer mode"
      * @confirm "Are you sure?"
      * @components
@@ -85,10 +116,8 @@ class Synchronization extends Command
         ));
     }
 
-    //########################################
-
     /**
-     * @title "Templates"
+     * @title "Component - Templates"
      * @description "Run only stock level synchronization as developer mode"
      * @confirm "Are you sure?"
      * @components
@@ -100,10 +129,21 @@ class Synchronization extends Command
         ));
     }
 
-    //########################################
+    /**
+     * @title "Component - Orders"
+     * @description "Run only orders synchronization as developer mode"
+     * @confirm "Are you sure?"
+     * @components
+     */
+    public function synchOrdersAction()
+    {
+        $this->processSynchTasks(array(
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS
+        ));
+    }
 
     /**
-     * @title "Marketplaces"
+     * @title "Component - Marketplaces"
      * @description "Run only marketplaces synchronization as developer mode"
      * @prompt "Please enter Marketplace ID."
      * @prompt_var "marketplace_id"
@@ -123,32 +163,16 @@ class Synchronization extends Command
         ), $params);
     }
 
-    //########################################
-
     /**
-     * @title "Orders"
-     * @description "Run only orders synchronization as developer mode"
+     * @title "Component - Policies"
+     * @description "Run only policies synchronization as developer mode"
      * @confirm "Are you sure?"
      * @components
      */
-    public function synchOrdersAction()
+    public function synchPoliciesAction()
     {
         $this->processSynchTasks(array(
-            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::ORDERS
-        ));
-    }
-
-    //########################################
-
-    /**
-     * @title "Magento Products"
-     * @description "Run only magento products synchronization as developer mode"
-     * @confirm "Are you sure?"
-     */
-    public function synchMagentoProductsAction()
-    {
-        $this->processSynchTasks(array(
-            \Ess\M2ePro\Model\Synchronization\Task\AbstractGlobal::MAGENTO_PRODUCTS
+            \Ess\M2ePro\Model\Synchronization\Task\AbstractComponent::POLICIES
         ));
     }
 

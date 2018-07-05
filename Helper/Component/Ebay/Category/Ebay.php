@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -20,6 +20,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     protected $activeRecordFactory;
     protected $ebayFactory;
     protected $resourceConnection;
+    protected $messageManager;
 
     //########################################
 
@@ -28,6 +29,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\Message\ManagerInterface $messageManager,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
@@ -36,6 +38,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         $this->activeRecordFactory = $activeRecordFactory;
         $this->ebayFactory = $ebayFactory;
         $this->resourceConnection = $resourceConnection;
+        $this->messageManager = $messageManager;
         parent::__construct($helperFactory, $context);
     }
 
@@ -147,7 +150,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategory = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $tableDictCategory = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
                              ->from($tableDictCategory, 'features')
@@ -186,7 +190,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictCategory = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $tableDictCategory = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
                              ->from($tableDictCategory,'*')
@@ -212,22 +217,33 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
         } else {
 
-            /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector('category','get','specifics',
-                                                                   array('category_id' => $categoryId), 'specifics',
-                                                                   $marketplaceId, NULL, NULL);
+            try {
 
-            $dispatcherObject->process($connectorObj);
-            $specifics = (array)$connectorObj->getResponseData();
-            $encodedSpecifics = $this->getHelper('Data')->jsonEncode($specifics);
+                /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObject */
+                $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+                $connectorObj = $dispatcherObject->getVirtualConnector('category','get','specifics',
+                                                                       array('category_id' => $categoryId),'specifics',
+                                                                       $marketplaceId, NULL, NULL);
+
+                $dispatcherObject->process($connectorObj);
+                $specifics = (array)$connectorObj->getResponseData();
+
+            } catch (\Exception $exception) {
+
+                $this->getHelper('Module\Exception')->process($exception);
+                return NULL;
+            }
 
             /** @var $connWrite \Magento\Framework\DB\Adapter\AdapterInterface */
             $connWrite = $this->resourceConnection->getConnection();
-            $connWrite->update($tableDictCategory,
-                               array('item_specifics' => $encodedSpecifics),
-                               array('marketplace_id = ?' => (int)$marketplaceId,
-                                     'category_id = ?' => (int)$categoryId));
+            $connWrite->update(
+                $tableDictCategory,
+                array('item_specifics' => $this->getHelper('Data')->jsonEncode($specifics)),
+                array(
+                    'marketplace_id = ?' => (int)$marketplaceId,
+                    'category_id = ?'    => (int)$categoryId
+                )
+            );
         }
 
         $this->getHelper('Data\Cache\Permanent')->setValue($cacheKey,$specifics,array(self::CACHE_TAG));
@@ -248,7 +264,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     {
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
         $connRead = $this->resourceConnection->getConnection('core_read');
-        $tableDictCategories = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $tableDictCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connRead->select()
                              ->from($tableDictCategories, 'COUNT(*)')
@@ -266,7 +283,8 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         $etcTable = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->getMainTable();
         $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')
             ->getResource()->getMainTable();
-        $edcTable = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+        $edcTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $etcSelect = $connRead->select();
         $etcSelect->from(

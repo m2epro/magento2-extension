@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -49,7 +49,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         }
 
         $rawMagentoVariations = $this->getHelper('Component\Ebay')
-                                            ->reduceOptionsForVariations($rawMagentoVariations);
+                                            ->prepareOptionsForVariations($rawMagentoVariations);
 
         $magentoVariations = $this->prepareMagentoVariations($rawMagentoVariations);
 
@@ -338,8 +338,8 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
             $haveOption = false;
 
             foreach ($currentVariation as $cOption) {
-                if ($mOption['attribute'] == $cOption['attribute'] &&
-                    $mOption['option'] == $cOption['option']) {
+                if (trim($mOption['attribute']) == trim($cOption['attribute']) &&
+                    trim($mOption['option']) == trim($cOption['option'])) {
                     $haveOption = true;
                     break;
                 }
@@ -358,7 +358,7 @@ class Updater extends \Ess\M2ePro\Model\Listing\Product\Variation\Updater
         $hash = array();
 
         foreach ($variation['options'] as $option) {
-            $hash[] = $option['attribute'] .'-'. $option['option'];
+            $hash[] = trim($option['attribute']) .'-'. trim($option['option']);
         }
 
         return implode('##', $hash);

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
@@ -178,7 +184,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
             return;
         }
 
-        $this->setPageHelpLink('x/4wYtAQ');
+        $this->setPageHelpLink('x/6gYtAQ');
 
         $gridContainer = $this->createBlock('Amazon\Listing\Product\Add\SourceMode\Category');
         $this->addContent($gridContainer);
@@ -340,7 +346,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\Product\Add
     protected function getLockedProductsInAction($productsIds)
     {
         $connection = $this->resourceConnection->getConnection();
-        $table = $connection->getTableName('m2epro_processing_lock');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing_lock');
 
         $select = $connection->select();
         $select->from(array('pl' => $table), array('object_id'))

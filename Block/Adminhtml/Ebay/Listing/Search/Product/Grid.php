@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -299,8 +299,14 @@ HTML;
             $columnIndex = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
 
             if ($columnIndex == 'online_qty') {
+                // fix for wrong fields wrapping with "`" when statement in ()
+                $onlineQty = 'IF(
+                    1=1,
+                    elp.online_qty - elp.online_qty_sold,
+                    NULL
+                )';
                 $collection->getSelect()->order(
-                    '(elp.online_qty - elp.online_qty_sold) ' . strtoupper($column->getDir())
+                    $onlineQty . ' ' . strtoupper($column->getDir())
                 );
             } else {
                 $collection->setOrder($columnIndex, strtoupper($column->getDir()));

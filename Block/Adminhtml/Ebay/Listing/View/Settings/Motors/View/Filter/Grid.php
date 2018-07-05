@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -64,6 +64,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'         => 'text',
             'index'        => 'title',
             'filter_index' => 'title',
+            'escape'       => true,
             'frame_callback' => [$this, 'callbackColumnTitle']
         ]);
 

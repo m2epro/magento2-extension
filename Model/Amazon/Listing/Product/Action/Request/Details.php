@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -171,6 +171,10 @@ class Details extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Request\Ab
         $this->searchNotFoundAttributes();
         $data['title'] = $this->getDefinitionSource()->getTitle();
         $this->processNotFoundAttributes('Title');
+
+        $this->searchNotFoundAttributes();
+        $data['msrp_rrp'] = $this->getDefinitionSource()->getMsrpRrp();
+        $this->processNotFoundAttributes('MSRP / RRP');
 
         $this->searchNotFoundAttributes();
         $data['description'] = $this->getDefinitionSource()->getDescription();

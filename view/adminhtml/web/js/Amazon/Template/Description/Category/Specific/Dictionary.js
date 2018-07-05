@@ -57,6 +57,23 @@ define([], function () {
 
         // ---------------------------------------
 
+        hasCalendarWidget: function(specific)
+        {
+            return this.hasCalendarDateTimeWidget(specific) || this.hasCalendarDateWidget(specific);
+        },
+
+        hasCalendarDateTimeWidget: function(specific)
+        {
+            return specific.params.type === 'date_time';
+        },
+
+        hasCalendarDateWidget: function(specific)
+        {
+            return specific.params.type === 'date';
+        },
+
+        // ---------------------------------------
+
         getParentSpecific: function(specific)
         {
             if (specific.parent_specific_id == null) {

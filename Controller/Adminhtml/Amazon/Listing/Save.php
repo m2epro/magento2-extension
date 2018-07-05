@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing;
 
 class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
@@ -123,10 +129,11 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
         if ($templateData['restock_date_value'] === '') {
             $templateData['restock_date_value'] = $this->getHelper('Data')->getCurrentGmtDate();
         } else {
-            $templateData['restock_date_value'] = $data['sale_price_start_date_value'] = $this->dateTime->formatDate(
-                $templateData['restock_date_value'],
-                true
+
+            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
+                $templateData['restock_date_value'], \IntlDateFormatter::SHORT, \IntlDateFormatter::SHORT
             );
+            $templateData['restock_date_value'] = $this->getHelper('Data')->getDate($timestamp);
         }
         // ---------------------------------------
 

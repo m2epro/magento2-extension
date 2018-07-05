@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -382,8 +382,10 @@ JS
             ->select()
             ->from(
                 $type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE
-                    ? $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_ktype')
-                    : $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_epid'),
+                    ? $this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype')
+                    : $this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_epid'),
                 array(
                     'count' => new \Zend_Db_Expr('COUNT(*)'),
                     'is_custom'

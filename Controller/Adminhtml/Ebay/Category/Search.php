@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Category;
 
 class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
@@ -29,9 +35,11 @@ class Search extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Category
 
         $connection = $this->resourceConnection->getConnection();
         if (in_array($categoryType, $ebayCategoryTypes)) {
-            $tableName = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_category');
+            $tableName = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
         } else {
-            $tableName = $this->resourceConnection->getTableName('m2epro_ebay_account_store_category');
+            $tableName = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_ebay_account_store_category');
         }
 
         $dbSelect = $connection->select();

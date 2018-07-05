@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -366,7 +366,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $tempDate = $this->getHelper('Data')->getDate($tempDate->format('U'));
 
         $connWrite->delete(
-            $this->resourceConnection->getTableName('m2epro_product_change'),
+            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change'),
             array(
                 'update_date <= (?)' => $tempDate
             )
@@ -385,7 +385,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         $connWrite = $this->resourceConnection->getConnection();
 
         $connWrite->delete(
-            $this->resourceConnection->getTableName('m2epro_product_change'),
+            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change'),
             array(
                 'id IN (?)' => $productChangeCollection->getColumnValues('id'),
                 '(update_date <= \''.$this->getOperationHistory()->getObject()->getData('start_date').'\' OR

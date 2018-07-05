@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -57,7 +57,8 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
             ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE);
 
         $connection = $this->resource->getConnection();
-        $dictionaryTable = $this->resource->getTableName('m2epro_ebay_dictionary_marketplace');
+        $dictionaryTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
         foreach ($enabledMarketplaces as $marketplace) {
@@ -101,7 +102,8 @@ class Marketplaces extends \Ess\M2ePro\Model\Servicing\Task
             ->getMarketplacesAvailableForApiCreation();
 
         $connection = $this->resource->getConnection();
-        $dictionaryTable = $this->resource->getTableName('m2epro_amazon_dictionary_marketplace');
+        $dictionaryTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
         /* @var $marketplace \Ess\M2ePro\Model\Marketplace */
         foreach ($enabledMarketplaces as $marketplace) {

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Account;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
@@ -45,6 +51,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'create_date',
@@ -56,6 +63,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'update_date',

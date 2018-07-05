@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -32,28 +32,6 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         $this->customerFactory = $customerFactory;
         $this->customerRepository = $customerRepository;
         parent::__construct($currency, $order, $helperFactory, $modelFactory);
-    }
-
-    //########################################
-
-    /**
-     * @param \Ess\M2ePro\Model\Order\Item\Proxy[] $items
-     * @return \Ess\M2ePro\Model\Order\Item\Proxy[]
-     * @throws \Exception
-     */
-    protected function mergeItems(array $items)
-    {
-        foreach ($items as $key => $item) {
-            if ($item->getPrice() <= 0) {
-                unset($items[$key]);
-            }
-        }
-
-        if (count($items) == 0) {
-            throw new \Ess\M2ePro\Model\Exception('Every Item in Order has zero Price.');
-        }
-
-        return parent::mergeItems($items);
     }
 
     //########################################
@@ -112,16 +90,6 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
     //########################################
 
     /**
-     * @return mixed
-     */
-    public function getBuyerEmail()
-    {
-        return $this->order->getBuyerEmail();
-    }
-
-    //########################################
-
-    /**
      * @return \Magento\Customer\Api\Data\CustomerInterface
      * @throws \Ess\M2ePro\Model\Exception
      */
@@ -140,7 +108,11 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             return $customerDataObject;
         }
 
+        /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
+        $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
+
         if ($this->order->getAmazonAccount()->isMagentoOrdersCustomerNew()) {
+
             $customerInfo = $this->getAddressData();
 
             $customerObject = $this->customerFactory->create();
@@ -148,14 +120,16 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             $customerObject->loadByEmail($customerInfo['email']);
 
             if (!is_null($customerObject->getId())) {
+
+                $customerBuilder->setData($customerInfo);
+                $customerBuilder->updateAddress($customerObject);
+
                 return $customerObject->getDataModel();
             }
 
             $customerInfo['website_id'] = $this->order->getAmazonAccount()->getMagentoOrdersCustomerNewWebsiteId();
             $customerInfo['group_id'] = $this->order->getAmazonAccount()->getMagentoOrdersCustomerNewGroupId();
 
-            /** @var $customerBuilder \Ess\M2ePro\Model\Magento\Customer */
-            $customerBuilder = $this->modelFactory->getObject('Magento\Customer');
             $customerBuilder->setData($customerInfo);
             $customerBuilder->buildCustomer();
             $customerBuilder->getCustomer()->save();
@@ -185,6 +159,7 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
 
         return array(
             'firstname'  => $customerNameParts['firstname'],
+            'middlename' => $customerNameParts['middlename'],
             'lastname'   => $customerNameParts['lastname'],
             'country_id' => '',
             'region'     => '',

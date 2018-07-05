@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -25,7 +25,7 @@ class Index extends HealthStatus
 
         /** @var \Ess\M2ePro\Model\HealthStatus\CurrentStatus $currentStatus */
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-        $currentStatus->set($resultSet->getWorstState());
+        $currentStatus->set($resultSet);
 
         /** @var \Ess\M2ePro\Block\Adminhtml\HealthStatus\Tabs $tabsBlock */
         $tabsBlock = $this->createBlock('HealthStatus\Tabs', '', [
@@ -49,9 +49,9 @@ class Index extends HealthStatus
         $referrer = $this->getRequest()->getParam('referrer', false);
 
         if ($referrer == 'ebay') {
-            $this->setPageHelpLink('x/fwItAQ');
+            $this->setPageHelpLink('x/sglPAQ');
         } else {
-            $this->setPageHelpLink('x/XAQtAQ');
+            $this->setPageHelpLink('x/nxBPAQ');
         }
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));

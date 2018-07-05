@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -16,7 +16,7 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
     {
         // ---------------------------------------
         $listingId = $this->getRequest()->getParam('id');
-        $listingProductIds = $this->getRequestIds();
+        $listingProductIds = $this->getRequestIds('ids');
         $categoryMode = $this->getRequest()->getParam('category_mode');
         $categoryValue = $this->getRequest()->getParam('category_value');
         $listing = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
@@ -29,51 +29,8 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
         $specific->setCategoryValue($categoryValue);
 
         // ---------------------------------------
-        /* @var $template \Ess\M2ePro\Model\Ebay\Template\Category|null */
-        $template = NULL;
 
-        $templateIds = $this->activeRecordFactory
-                            ->getObject('Ebay\Listing\Product')
-                            ->getResource()
-                            ->getTemplateCategoryIds($listingProductIds);
-
-        $templateIds    = array_values($templateIds);
-        $countTemplates = count($templateIds);
-
-        $isChanged   = false;
-        $isDifferent = false;
-
-        foreach ($templateIds as $templateId) {
-            $tempTemplate = $this->getCategoryTemplate($templateId);
-
-            if ($this->isMainCategoryWasChanged($tempTemplate, $categoryValue)) {
-                $template = $this->loadLastCategoryTemplate(
-                    $categoryMode, $categoryValue, $listing->getMarketplaceId()
-                );
-
-                $isChanged = true;
-                break;
-            }
-        }
-
-        if (!$isChanged && $countTemplates > 0) {
-            if ($countTemplates == 1 && $templateId = reset($templateIds)) {
-                $template = $this->getCategoryTemplate($templateId);
-            } else {
-                for ($i = 0; $i < $countTemplates - 1; $i++) {
-                    $templateCurr = $this->getCategoryTemplate($templateIds[$i]);
-                    $templateNext = $this->getCategoryTemplate($templateIds[$i + 1]);
-
-                    if ($this->isDifferentSpecifics($templateCurr->getSpecifics(),
-                        $templateNext->getSpecifics())) {
-                        $isDifferent = true;
-                        break;
-                    }
-                }
-
-                !$isDifferent && $template = $templateNext;
-            }
-        }
+        $template = $this->identifyCategoryTemplate($listingProductIds, $listingId, $categoryValue, $categoryMode);
 
         if ($template) {
             $specific->setInternalData($template->getData());
@@ -89,6 +46,86 @@ class GetCategorySpecificHtml extends \Ess\M2ePro\Controller\Adminhtml\Ebay\List
 
         $this->setAjaxContent($wrapper);
         return $this->getResult();
+    }
+
+    //########################################
+
+    /**
+     * @param array $listingProductIds
+     * @param $listingId
+     * @param $categoryValue
+     * @param $categoryMode
+     * @return \Ess\M2ePro\Model\Ebay\Template\Category|null
+     */
+    private function identifyCategoryTemplate(array $listingProductIds, $listingId, $categoryValue, $categoryMode)
+    {
+        /* @var $template \Ess\M2ePro\Model\Ebay\Template\Category|null */
+        $template       = NULL;
+        $listing        = $this->ebayFactory->getCachedObjectLoaded('Listing', $listingId);
+        $templateIds    = $this->getCategoryTemplateCandidates($listingProductIds, $listingId);
+        $countTemplates = count($templateIds);
+
+        if ($countTemplates == 0) {
+            return NULL;
+        }
+
+        foreach ($templateIds as $templateId) {
+            $tempTemplate = $this->getCategoryTemplate($templateId);
+
+            if ($this->isMainCategoryWasChanged($tempTemplate, $categoryValue)) {
+                $template = $this->loadLastCategoryTemplate(
+                    $categoryMode, $categoryValue, $listing->getMarketplaceId()
+                );
+
+                return $template;
+            }
+        }
+
+        if ($countTemplates == 1) {
+
+            $templateId = reset($templateIds);
+            $template = $this->getCategoryTemplate($templateId);
+        } else {
+
+            $isDifferent = false;
+            for ($i = 0; $i < $countTemplates - 1; $i++) {
+                $templateCurr = $this->getCategoryTemplate($templateIds[$i]);
+                $templateNext = $this->getCategoryTemplate($templateIds[$i + 1]);
+
+                if ($this->isDifferentSpecifics($templateCurr->getSpecifics(), $templateNext->getSpecifics())) {
+                    $isDifferent = true;
+                    break;
+                }
+            }
+
+            !$isDifferent && $template = $templateNext;
+        }
+
+        return $template;
+    }
+
+    /**
+     * @param array $listingProductIds
+     * @param $listingId
+     * @return array
+     */
+    private function getCategoryTemplateCandidates(array $listingProductIds, $listingId)
+    {
+        $templateIds = $this->activeRecordFactory
+            ->getObject('Ebay\Listing\Product')
+            ->getResource()
+            ->getTemplateCategoryIds($listingProductIds);
+        /**
+         * If there are no templates for particular listing product ids, consider action as assigning new template
+         */
+        if (empty($templateIds)) {
+            $templateIds = $this->activeRecordFactory
+                ->getObject('Ebay\Listing')
+                ->getResource()
+                ->getTemplateCategoryIds($listingId);
+        }
+
+        return array_values($templateIds);
     }
 
     //########################################

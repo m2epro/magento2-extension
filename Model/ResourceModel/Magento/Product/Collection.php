@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -12,12 +12,16 @@ use Magento\Catalog\Api\Data\ProductAttributeInterface;
 
 class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 {
+    /** @var bool  */
     private $listingProductMode = false;
 
     /** @var \Ess\M2ePro\Model\Listing */
     private $listing;
 
+    /** @var bool  */
     private $isNeedToInjectPrices = false;
+
+    /** @var bool  */
     private $isNeedToUseIndexerParent = false;
 
     /** @var \Ess\M2ePro\Helper\Factory */
@@ -29,16 +33,12 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
     /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
     protected $activeRecordFactory;
 
-    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface */
-    protected $stockConfiguration;
-
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Magento\Framework\Data\Collection\EntityFactory $entityFactory,
         \Psr\Log\LoggerInterface $logger,
         \Magento\Framework\Data\Collection\Db\FetchStrategyInterface $fetchStrategy,
@@ -64,7 +64,6 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
-        $this->stockConfiguration = $stockConfiguration;
 
         parent::__construct(
             $entityFactory,
@@ -156,28 +155,29 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
 
     //########################################
 
+    /**
+     * @return int
+     */
     public function getSize()
     {
         if (is_null($this->_totalRecords)) {
+
             $this->_renderFilters();
+            $countSelect = $this->_getClearSelect()
+                ->reset(\Zend_Db_Select::HAVING);
 
-            $countSelect = clone $this->getSelect();
-            $countSelect->reset(\Zend_Db_Select::ORDER);
-            $countSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
-            $countSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
+            $tableAlias = 'lp';
 
-            if ($this->listingProductMode) {
-                $query = $countSelect->__toString();
-                $query = <<<SQL
-SELECT COUNT(temp_table.id) FROM ({$query}) temp_table
-SQL;
-            } else {
+            if (!$this->listingProductMode) {
+                $tableAlias = self::MAIN_TABLE_ALIAS;
                 $countSelect->reset(\Zend_Db_Select::GROUP);
-                $query = $countSelect->__toString();
-                $query = <<<SQL
-SELECT COUNT(DISTINCT temp_table.entity_id) FROM ({$query}) temp_table
-SQL;
             }
+
+            $countSelect->columns("{$tableAlias}.{$this->getIdFieldName()}");
+
+            $query = <<<SQL
+SELECT COUNT(DISTINCT temp_table.{$this->getIdFieldName()}) FROM ({$countSelect->__toString()}) temp_table
+SQL;
 
             $this->_totalRecords = $this->getConnection()->fetchOne($query, $this->_bindParams);
         }
@@ -464,13 +464,20 @@ SQL;
 
     public function joinStockItem($columnsMap = array('qty' => 'qty'))
     {
+        if (is_null($this->_storeId)) {
+            throw new \Ess\M2ePro\Model\Exception('Store view was not set.');
+        }
+
         $this->joinTable(
-            array('cisi' => $this->getTable('cataloginventory_stock_item')),
+            array(
+                'cisi' => $this->helperFactory->getObject('Module\Database\Structure')
+                    ->getTableNameWithPrefix('cataloginventory_stock_item')
+            ),
             'product_id=entity_id',
             $columnsMap,
             array(
-                'stock_id'   => \Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID,
-                'website_id' => $this->stockConfiguration->getDefaultScopeId()
+                'stock_id'   => $this->helperFactory->getObject('Magento\Stock')->getStockId($this->getStoreId()),
+                'website_id' => $this->helperFactory->getObject('Magento\Stock')->getWebsiteId($this->getStoreId())
             ),
             'left'
         );

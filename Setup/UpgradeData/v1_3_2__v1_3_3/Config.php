@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -17,7 +17,7 @@ class Config extends AbstractConfig
     public function getFeaturesList()
     {
         return [
-            'AmazonMarketplaces',
+            'AmazonMarketplaces'
         ];
     }
 

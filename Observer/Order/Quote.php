@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,15 +10,16 @@ namespace Ess\M2ePro\Observer\Order;
 
 class Quote extends \Ess\M2ePro\Observer\AbstractModel
 {
+    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory  */
     private $stockItemFactory;
-    /**
-     * @var null|\Magento\Catalog\Model\Product
-     */
+
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    private $stockRegistry;
+
+    /** @var null|\Magento\Catalog\Model\Product  */
     private $product = NULL;
 
-    /**
-     * @var null|\Magento\CatalogInventory\Model\Stock\Item
-     */
+    /** @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface  */
     private $stockItem = NULL;
 
     private $affectedListingsProducts = array();
@@ -26,13 +27,15 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
     //########################################
 
     public function __construct(
-        \Magento\CatalogInventory\Model\Stock\ItemFactory $stockItemFactory,
+        \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
         $this->stockItemFactory = $stockItemFactory;
+        $this->stockRegistry    = $stockRegistry;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -149,7 +152,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
     }
 
     /**
-     * @return \Magento\CatalogInventory\Model\Stock\Item
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      */
     private function getStockItem()
     {
@@ -157,9 +160,9 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
             return $this->stockItem;
         }
 
-        $stockItem = $this->stockItemFactory->create();
-        $stockItem->getResource()->loadByProductId(
-            $stockItem, $this->getProduct()->getId(), $stockItem->getStockId()
+        $stockItem = $this->stockRegistry->getStockItem(
+            $this->getProduct()->getId(),
+            $this->getProduct()->getStore()->getWebsiteId()
         );
 
         return $this->stockItem = $stockItem;
@@ -217,7 +220,7 @@ class Quote extends \Ess\M2ePro\Observer\AbstractModel
             $action,
             $this->getHelper('Module\Log')->encodeDescription(
                 'From [%from%] to [%to%].',
-                array('from'=>$oldValue,'to'=>$newValue)
+                array('!from'=>$oldValue,'!to'=>$newValue)
             ),
             \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
             \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW

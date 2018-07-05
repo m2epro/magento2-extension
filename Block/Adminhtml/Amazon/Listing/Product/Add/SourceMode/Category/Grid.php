@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -121,7 +121,10 @@ CSS
     public function setCollection($collection)
     {
         $collection->joinTable(
-            array('ccp' => $collection->getConnection()->getTableName('catalog_category_product')),
+            array(
+                'ccp' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_category_product')
+            ),
             'product_id=entity_id',
             array('category_id' => 'category_id')
         );

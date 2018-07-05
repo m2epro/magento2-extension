@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -37,11 +37,9 @@ class Repricing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\AbstractMod
             return;
         }
 
-        $this->getConnection()->update(
-            $this->getTable('m2epro_amazon_listing_product_repricing'),
-            array('is_process_required' => 1),
-            array('listing_product_id IN ('.implode(',', $listingsProductsIds).')')
-        );
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $resource */
+        $resource = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource();
+        $resource->markAsProcessRequired($listingsProductsIds);
     }
 
     // ---------------------------------------

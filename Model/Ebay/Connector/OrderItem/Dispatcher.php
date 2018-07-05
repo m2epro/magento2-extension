@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -15,6 +15,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
 
     const ACTION_ADD_DISPUTE   = 1;
     const ACTION_UPDATE_STATUS = 2;
+    const ACTION_UPDATE_TRACK  = 3;
 
     protected $ebayFactory;
 
@@ -45,6 +46,10 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
         switch ($action) {
             case self::ACTION_ADD_DISPUTE:
                 $connector = 'Ebay\Connector\OrderItem\Add\Dispute';
+                break;
+            case self::ACTION_UPDATE_STATUS:
+            case self::ACTION_UPDATE_TRACK:
+                $connector = 'Ebay\Connector\OrderItem\Update\Status';
                 break;
         }
 

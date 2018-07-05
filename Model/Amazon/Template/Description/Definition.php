@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -46,6 +46,9 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
     const MANUFACTURER_PART_NUMBER_MODE_NONE             = 0;
     const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_VALUE     = 1;
     const MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE = 2;
+
+    const MSRP_RRP_MODE_NONE             = 0;
+    const MSRP_RRP_MODE_CUSTOM_ATTRIBUTE = 1;
 
     const DIMENSION_VOLUME_MODE_NONE             = 0;
     const DIMENSION_VOLUME_MODE_CUSTOM_VALUE     = 1;
@@ -173,7 +176,7 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
      */
     public function getAmazonDescriptionTemplate()
     {
-        $this->getDescriptionTemplate()->getChildObject();
+        return $this->getDescriptionTemplate()->getChildObject();
     }
 
     //########################################
@@ -858,6 +861,58 @@ class Definition extends \Ess\M2ePro\Model\ActiveRecord\Component\AbstractModel
         $src = $this->getManufacturerPartNumberSource();
 
         if ($src['mode'] == self::MANUFACTURER_PART_NUMBER_MODE_CUSTOM_ATTRIBUTE) {
+            $attributes[] = $src['custom_attribute'];
+        }
+
+        return $attributes;
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @return int
+     */
+    public function getMsrpRrpMode()
+    {
+        return (int)$this->getData('msrp_rrp_mode');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMsrpRrpModeNone()
+    {
+        return $this->getMsrpRrpMode() == self::MSRP_RRP_MODE_NONE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMsrpRrpModeCustomAttribute()
+    {
+        return $this->getMsrpRrpMode() == self::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMsrpRrpSource()
+    {
+        return array(
+            'mode'             => $this->getMsrpRrpMode(),
+            'custom_attribute' => $this->getData('msrp_rrp_custom_attribute')
+        );
+    }
+
+    /**
+     * @return array
+     */
+    public function getMsrpRrpAttributes()
+    {
+        $attributes = array();
+        $src = $this->getMsrpRrpSource();
+
+        if ($src['mode'] == self::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE) {
             $attributes[] = $src['custom_attribute'];
         }
 

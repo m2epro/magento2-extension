@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -116,6 +116,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'header' => $this->__('Buyer Feedback Date'),
             'width'  => '155px',
             'type'   => 'datetime',
+            'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'  => 'buyer_feedback_date',
@@ -134,6 +135,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'header' => $this->__('Seller Feedback Date'),
             'width'  => '155px',
             'type'   => 'datetime',
+            'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'  => 'seller_feedback_date',

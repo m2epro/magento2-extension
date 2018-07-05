@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -58,7 +58,7 @@ class Multiple extends \Ess\M2ePro\Model\Connector\AbstractModel
         please, install/update CURL library on your server and ensure it supports HTTPS Protocol.
         More information you can find <a target="_blank" href="'.
             $this->getHelper('Module\Support')
-            ->getKnowledgebaseArticleUrl('664870-issues-with-m2e-pro-server-connection')
+            ->getKnowledgebaseArticleUrl('server-connection')
         .'">here</a>';
 
         foreach ($result as $key => $response) {

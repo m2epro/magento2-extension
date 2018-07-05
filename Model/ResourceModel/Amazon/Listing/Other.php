@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -42,11 +42,15 @@ class Other extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Child
 
     //########################################
 
-    public function getAllRepricingSkus(Account $account, $repricingDisabled = null)
+    public function getRepricingSkus(Account $account, $filterSkus = NULL, $repricingDisabled = NULL)
     {
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('is_repricing', 1);
         $listingOtherCollection->addFieldToFilter('account_id', $account->getId());
+
+        if (!empty($filterSkus)) {
+            $listingOtherCollection->addFieldToFilter('sku', array('in' => $filterSkus));
+        }
 
         if (!is_null($repricingDisabled)) {
             $listingOtherCollection->addFieldToFilter('is_repricing_disabled', (int)$repricingDisabled);

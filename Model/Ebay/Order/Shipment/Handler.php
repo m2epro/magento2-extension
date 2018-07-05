@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -17,12 +17,13 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
         $this->ebayFactory = $ebayFactory;
-        parent::__construct($activeRecordFactory, $helperFactory, $modelFactory);
+        parent::__construct($activeRecordFactory, $carrierFactory, $helperFactory, $modelFactory);
     }
 
     //########################################
@@ -33,7 +34,7 @@ class Handler extends \Ess\M2ePro\Model\Order\Shipment\Handler
             throw new \InvalidArgumentException('Invalid component mode.');
         }
 
-        $trackingDetails = $this->getTrackingDetails($shipment);
+        $trackingDetails = $this->getTrackingDetails($order, $shipment);
 
         if (!$order->getChildObject()->canUpdateShippingStatus($trackingDetails)) {
             return self::HANDLE_RESULT_SKIPPED;

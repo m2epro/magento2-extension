@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -195,6 +195,27 @@ class Listing extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Chi
                 $storeId
             );
         }
+    }
+
+    //########################################
+
+    public function getTemplateCategoryIds($listingId)
+    {
+        $lpTable  = $this->activeRecordFactory->getObject('Listing\Product')->getResource()->getMainTable();
+        $elpTable = $this->activeRecordFactory->getObject('Ebay\Listing\Product')->getResource()->getMainTable();
+
+        $select = $this->getConnection()
+            ->select()
+            ->from(array('elp' => $elpTable))
+            ->joinLeft(array('lp' => $lpTable), 'lp.id = elp.listing_product_id')
+            ->reset(\Zend_Db_Select::COLUMNS)
+            ->columns(array('template_category_id'))
+            ->where('lp.listing_id = ?', $listingId)
+            ->where('template_category_id IS NOT NULL');
+
+        $ids = $select->query()->fetchAll(\PDO::FETCH_COLUMN);
+
+        return array_unique($ids);
     }
 
     //########################################

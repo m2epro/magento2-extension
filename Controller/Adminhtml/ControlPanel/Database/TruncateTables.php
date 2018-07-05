@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Database;
 
 class TruncateTables extends Table
@@ -12,7 +18,7 @@ class TruncateTables extends Table
         foreach ($tables as $table) {
 
             $this->resourceConnection->getConnection()->truncateTable(
-                $this->resourceConnection->getTableName($table)
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($table)
             );
             $this->afterTableAction($table);
         }

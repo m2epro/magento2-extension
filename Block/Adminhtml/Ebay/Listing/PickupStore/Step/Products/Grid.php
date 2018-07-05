@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -71,8 +71,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         // ---------------------------------------
         // Get collection
         // ---------------------------------------
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
+        $collection->setStoreId($this->listing->getStoreId());
+        $collection->setListing($this->listing->getId());
+
         $collection->addAttributeToSelect('sku');
         $collection->addAttributeToSelect('name');
         // ---------------------------------------
@@ -223,6 +227,7 @@ CSS
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'online_title',
+            'escape'    => а,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
@@ -439,7 +444,7 @@ HTML;
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
-            if ($row->getData('online_bids') > 0) {
+            if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $this->__('Current Price');
                 $onlineCurrentStr = $this->convertAndFormatPriceCurrency($onlineCurrentPrice, $currency);
                 $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';

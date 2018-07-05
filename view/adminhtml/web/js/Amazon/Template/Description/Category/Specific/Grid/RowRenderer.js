@@ -1,6 +1,8 @@
 define([
-    'M2ePro/Amazon/Template/Description/Category/Specific/Renderer'
-], function () {
+    'jquery',
+    'M2ePro/Amazon/Template/Description/Category/Specific/Renderer',
+    'mage/calendar'
+], function (jquery) {
 
     window.AmazonTemplateDescriptionCategorySpecificGridRowRenderer = Class.create(AmazonTemplateDescriptionCategorySpecificRenderer, {
 
@@ -192,12 +194,18 @@ define([
 
             customValue     && customValue.hide();
             customValueNote && customValueNote.hide();
+            if (this.dictionaryHelper.hasCalendarWidget(this.specific) && customValue) {
+                customValue.next('button').hide();
+            }
 
             recommendedValue && recommendedValue.hide();
 
             if (event.target.value == this.MODE_CUSTOM_VALUE) {
                 customValue     && customValue.show();
                 customValueNote && customValueNote.show();
+                if (this.dictionaryHelper.hasCalendarWidget(this.specific) && customValue) {
+                    customValue.next('button').show();
+                }
             }
             if (event.target.value == this.MODE_CUSTOM_ATTRIBUTE) {
                 customAttribute     && customAttribute.show();
@@ -220,7 +228,9 @@ define([
                 var note = this.getCustomValueTypeNote();
                 if (note) td.appendChild(this.getToolTipBlock(this.indexedXPath + '_custom_value_note', note));
 
-                td.appendChild(this.getTextTypeInput());
+                var input = this.getTextTypeInput();
+                td.appendChild(input);
+                this.initCalendarWidget(input);
             }
 
             if (this.dictionaryHelper.isSpecificTypeSelect(this.specific)) {
@@ -271,28 +281,42 @@ define([
                     'class'         : 'input-text admin__control-text M2ePro-required-when-visible M2ePro-specifics-validation',
                     'style'         : 'display: none; width: 85%;'
                 });
-
-                this.specific.params.type == 'date_time' && Calendar.setup({
-                    'inputField': input,
-                    'ifFormat': "%Y-%m-%d %H:%M:%S",
-                    'showsTime': true,
-                    'button': input,
-                    'align': 'Bl',
-                    'singleClick': true
-                });
-
-                this.specific.params.type == 'date' && Calendar.setup({
-                    'inputField': input,
-                    'ifFormat': "%Y-%m-%d",
-                    'showsTime': true,
-                    'button': input,
-                    'align': 'Bl',
-                    'singleClick': true
-                });
             }
 
             input.observe('change', this.onChangeValue.bind(this));
             return input;
+        },
+
+        initCalendarWidget: function(input)
+        {
+            if (!this.dictionaryHelper.hasCalendarWidget(this.specific)) {
+                return;
+            }
+
+            var selector = "*[id='"+input.id+"']";
+
+            if (this.dictionaryHelper.hasCalendarDateTimeWidget(this.specific)) {
+                jquery(selector).calendar({
+                    dateFormat: "yy-mm-dd",
+                    showsTime: true,
+                    timeFormat: "HH:mm:ss",
+                    buttonText: "Select Date",
+                    showButtonPanel: false,
+                    singleClick: true
+                });
+            }
+
+            if (this.dictionaryHelper.hasCalendarDateWidget(this.specific)) {
+                jquery(selector).calendar({
+                    dateFormat: "yy-mm-dd",
+                    showsTime: false,
+                    buttonText: "Select Date",
+                    showButtonPanel: false,
+                    singleClick: true
+                });
+            }
+
+            jquery(selector).next('button').hide();
         },
 
         getSelectTypeInput: function()

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -20,7 +20,6 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
         if (is_null($childMode)) {
             return NULL;
         }
-
         $className = $this->getHelper('Client')->getClassName($this);
         return str_replace('Ess\M2ePro\Model\ResourceModel',ucwords($childMode), $className);
     }

@@ -16,8 +16,8 @@ define(function () {
                             asynchronous: true,
                             onSuccess: function(transport)
                             {
-                                $$('.content-header')[0].insert({
-                                    after: transport.responseText
+                                $('container').insert({
+                                    before: transport.responseText
                                 });
                             }
                         });

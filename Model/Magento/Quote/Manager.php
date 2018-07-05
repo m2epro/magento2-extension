@@ -67,7 +67,12 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return $order;
         } catch (\Exception $e) {
 
-            $order = $this->orderFactory->create()->loadByIncrementId($quote->getReservedOrderId());
+            $order = $this->orderFactory
+                          ->create()
+                          ->loadByIncrementIdAndStoreId(
+                              $quote->getReservedOrderId(),
+                              $quote->getStoreId()
+                          );
 
             if ($order->getId()) {
                 $this->helperFactory->getObject('Module\Exception')->process($e, false);
@@ -89,15 +94,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function save(\Magento\Quote\Model\Quote $quote)
     {
         $this->quoteRepository->save($quote);
-
-        /**
-         * vendor/magento/module-quote/Model/QuoteRepository.php::loadQuote()
-         * is going to override store_id for a quote, so we are forced to set it again
-         */
-        $reloadedQuote = $this->quoteRepository->get($quote->getId());
-        $reloadedQuote->setStoreId($quote->getStoreId());
-
-        return $reloadedQuote;
+        return $quote;
     }
 
     public function replaceCheckoutQuote(\Magento\Quote\Model\Quote $quote)

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -93,10 +93,22 @@ class Repricing extends \Ess\M2ePro\Helper\AbstractHelper
             );
         }
 
+        $responseDecoded = $this->getHelper('Data')->jsonDecode($response);
+        if (!$responseDecoded || !is_array($responseDecoded)) {
+
+            throw new \Ess\M2ePro\Model\Exception\Connection(
+                'The Action was not completed because server responded with an incorrect response.',
+                array(
+                    'raw_response' => $response,
+                    'curl_info'    => $curlInfo
+                )
+            );
+        }
+
         return array(
             'curl_error_number' => $errorNumber,
             'curl_info'         => $curlInfo,
-            'response'          => $response
+            'response'          => $responseDecoded
         );
     }
 

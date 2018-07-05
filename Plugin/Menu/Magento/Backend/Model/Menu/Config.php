@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -177,10 +177,6 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $menu->getChildren()->exchangeArray([]);
 
         $actionUrl = 'm2epro/wizard_' . $activeBlocker->getNick();
-
-        if ($activeBlocker instanceof \Ess\M2ePro\Model\Wizard\MigrationFromMagento1) {
-            $actionUrl .= '/index/referrer/' . $viewNick;
-        }
 
         $menu->setAction($actionUrl);
     }

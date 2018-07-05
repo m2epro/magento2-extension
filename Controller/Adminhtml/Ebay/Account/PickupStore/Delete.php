@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -37,13 +37,34 @@ class Delete extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
             return $this->_redirect('*/ebay_account_pickupStore/index', $params);
         }
 
-        if ($this->getHelper('Component\Ebay\PickupStore')
-            ->deletePickupStore($model->getLocationId(), $model->getAccountId())) {
+        try {
 
-            $model->delete();
+            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'store', 'delete', 'entity',
+                array(
+                    'location_id' => $model->getLocationId()
+                ), NULL, NULL, $model->getAccountId()
+            );
 
-            $this->getMessageManager()->addSuccessMessage($this->__('Store was successfully deleted.'));
+            $dispatcherObject->process($connectorObj);
+
+        } catch (\Exception $exception) {
+
+            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->getMessageManager()->addErrorMessage($this->__(
+                'The Store has not been deleted. Reason: %error_message%', $exception->getMessage()
+            ));
+
+            return $this->_redirect('*/ebay_account_pickupStore/index', $params);
         }
+
+        $model->delete();
+
+        $this->getMessageManager()->addSuccessMessage($this->__(
+            'Store was successfully deleted.'
+        ));
 
         return $this->_redirect('*/ebay_account_pickupStore/index', $params);
     }

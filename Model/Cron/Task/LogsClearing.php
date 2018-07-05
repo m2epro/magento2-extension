@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -57,7 +57,7 @@ class LogsClearing extends AbstractModel
 
     private function clearSystemLogByAmount()
     {
-        $tableName = $this->resource->getTableName('m2epro_system_log');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_system_log');
 
         $connection = $this->resource->getConnection();
 
@@ -82,7 +82,7 @@ class LogsClearing extends AbstractModel
 
     private function clearSystemLogByTime()
     {
-        $tableName = $this->resource->getTableName('m2epro_system_log');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_system_log');
         $connection = $this->resource->getConnection();
 
         $currentDate = $this->getHelper('Data')->getCurrentGmtDate();

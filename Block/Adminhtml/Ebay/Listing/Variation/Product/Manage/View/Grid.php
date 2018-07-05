@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -24,6 +24,14 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $variationAttributes;
 
     protected $listingProductId;
+
+    protected $identifiers = array(
+        'upc'  => 'UPC',
+        'ean'  => 'EAN',
+        'isbn' => 'ISBN',
+        'mpn'  => 'MPN',
+        'epid' => 'ePID'
+    );
 
     //########################################
 
@@ -213,12 +221,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index' => 'additional_data',
             'filter_index' => 'additional_data',
             'filter' => 'Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\AttributesOptions',
-            'options' => array(
-                'upc'  => 'UPC',
-                'ean'  => 'EAN',
-                'isbn' => 'ISBN',
-                'mpn'  => 'MPN'
-            ),
+            'options' => $this->identifiers,
             'frame_callback' => array($this, 'callbackColumnIdentifiers'),
             'filter_condition_callback' => array($this, 'callbackFilterIdentifiers')
         ));
@@ -357,20 +360,37 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     {
         $html = '';
         $formHtml = '';
+
         $variationId = $row->getData('id');
         $additionalData = $this->getHelper('Data')->jsonDecode($row->getData('additional_data'));
+
         $linkTitle = $this->__('Change');
         $linkContent = $this->__('Change');
 
         $html .= '<div id="variation_identifiers_' . $variationId .
             '" style="font-size: 12px; color: grey; margin-left: 7px">';
+
         if (!empty($additionalData['product_details'])) {
             foreach ($additionalData['product_details'] as $identifier => $identifierValue) {
-                !$identifierValue && $identifierValue = '--';
-                $html .= '<span><span><strong>' .
-                    $this->getHelper('Data')->escapeHtml(strtoupper($identifier)) .
-                    '</strong></span>:&nbsp;<span class="value">' .
-                    $this->getHelper('Data')->escapeHtml($identifierValue) . '</span></span><br/>';
+
+                $identifier = isset($this->identifiers[$identifier])
+                    ? $this->getHelper('Data')->escapeHtml($this->identifiers[$identifier])
+                    : $this->getHelper('Data')->escapeHtml($identifier);
+
+                $identifierValue = $identifierValue ? $this->getHelper('Data')->escapeHtml($identifierValue)
+                                                    : '--';
+
+                $html .= <<<HTML
+<span>
+    <span>
+        <strong>{$identifier}</strong>
+    </span>:&nbsp;
+    <span class="value">
+        {$identifierValue}
+    </span>
+</span>
+<br/>
+HTML;
             }
         } else {
             $linkTitle = $this->__('Set');

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -76,6 +76,40 @@ class Tabs extends AbstractTabs
                     [
                         'data' => [
                             'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
+        $this->addTab(
+            'integration_ebay',
+            [
+                'label' => __('Integration [eBay]'),
+                'title' => __('Integration [eBay]'),
+                'content' => $this->getLayout()->createBlock(
+                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_EBAY
+                        ]
+                    ]
+                )->toHtml()
+            ]
+        );
+
+        $this->addTab(
+            'integration_amazon',
+            [
+                'label' => __('Integration [Amazon]'),
+                'title' => __('Integration [Amazon]'),
+                'content' => $this->getLayout()->createBlock(
+                    '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Command\Group',
+                    '',
+                    [
+                        'data' => [
+                            'controller_name' => Command::CONTROLLER_MODULE_INTEGRATION_AMAZON
                         ]
                     ]
                 )->toHtml()

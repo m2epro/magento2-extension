@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -37,7 +37,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Settings\Motors
         $collection->setConnection($this->resourceConnection->getConnection());
         $collection->setIdFieldName('ktype');
 
-        $table = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_ktype');
+        $table = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $collection->getSelect()->reset()->from([
             'main_table' => $table

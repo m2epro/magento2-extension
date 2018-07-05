@@ -2,12 +2,12 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 /**
- * @method Ess\M2ePro\Model\Order\Item getParentObject()
+ * @method \Ess\M2ePro\Model\Order\Item getParentObject()
  */
 namespace Ess\M2ePro\Model\Amazon\Order;
 
@@ -253,6 +253,27 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         return $channelItem->getVariationChannelOptions();
     }
 
+    //########################################
+
+    /**
+     * @return int
+     */
+    public function getAssociatedStoreId()
+    {
+        // Item was listed by M2E
+        // ---------------------------------------
+        if (!is_null($this->getChannelItem())) {
+            return $this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()
+                ? $this->getAmazonAccount()->getMagentoOrdersListingsStoreId()
+                : $this->getChannelItem()->getStoreId();
+        }
+        // ---------------------------------------
+
+        return $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
+    }
+
+    //########################################
+
     public function canCreateMagentoOrder()
     {
         return $this->isOrdersCreationEnabled();
@@ -283,32 +304,11 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
     //########################################
 
     /**
-     * @return int
-     */
-    public function getAssociatedStoreId()
-    {
-        // Item was listed by M2E
-        // ---------------------------------------
-        if (!is_null($this->getChannelItem())) {
-            return $this->getAmazonAccount()->isMagentoOrdersListingsStoreCustom()
-                ? $this->getAmazonAccount()->getMagentoOrdersListingsStoreId()
-                : $this->getChannelItem()->getStoreId();
-        }
-        // ---------------------------------------
-
-        return $this->getAmazonAccount()->getMagentoOrdersListingsOtherStoreId();
-    }
-
-    //########################################
-
-    /**
      * @return int|mixed
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function getAssociatedProductId()
     {
-        $this->validate();
-
         // Item was listed by M2E
         // ---------------------------------------
         if (!is_null($this->getChannelItem())) {
@@ -346,26 +346,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstrac
         ));
 
         return $product->getId();
-    }
-
-    /**
-     * @throws \Ess\M2ePro\Model\Exception
-     */
-    private function validate()
-    {
-        $channelItem = $this->getChannelItem();
-
-        if (!is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsModeEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception(
-                'Magento Order Creation for Items Listed by M2E Pro is disabled in Account Settings.'
-            );
-        }
-
-        if (is_null($channelItem) && !$this->getAmazonAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception(
-                'Magento Order Creation for Items Listed by 3rd party software is disabled in Account Settings.'
-            );
-        }
     }
 
     /**

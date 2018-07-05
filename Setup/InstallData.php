@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Setup;
 
 use Ess\M2ePro\Helper\Module;
@@ -182,7 +188,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert(
             '/cron/task/amazon/repricing_update_settings/', 'mode', '1', '0 - disable, \r\n1 - enable'
         );
-        $moduleConfigModifier->insert('/cron/task/amazon/repricing_update_settings/', 'interval', '3600', 'in seconds');
+        $moduleConfigModifier->insert('/cron/task/amazon/repricing_update_settings/', 'interval', '180', 'in seconds');
         $moduleConfigModifier->insert(
             '/cron/task/amazon/repricing_update_settings/', 'last_access', NULL, 'date of last access'
         );
@@ -393,14 +399,6 @@ class InstallData implements InstallDataInterface
 
         $this->getConnection()->insertMultiple($this->getFullTableName('wizard'), [
             [
-                'nick'     => 'migrationFromMagento1',
-                'view'     => '*',
-                'status'   => 2,
-                'step'     => NULL,
-                'type'     => 1,
-                'priority' => 1,
-            ],
-            [
                 'nick'     => 'installationEbay',
                 'view'     => 'ebay',
                 'status'   => 0,
@@ -430,6 +428,7 @@ class InstallData implements InstallDataInterface
             '0 - disable, \r\n1 - enable'
         );
         $moduleConfigModifier->insert('/ebay/connector/listing/', 'check_the_same_product_already_listed', '1', NULL);
+        $moduleConfigModifier->insert('/component/ebay/variation/', 'mpn_can_be_changed', '0', NULL);
         $moduleConfigModifier->insert(
             '/view/ebay/template/category/', 'use_last_specifics', '0', '0 - false, \r\n1 - true'
         );
@@ -442,6 +441,7 @@ class InstallData implements InstallDataInterface
         $moduleConfigModifier->insert('/ebay/translation_services/silver/', 'avg_cost', '1.21', NULL);
         $moduleConfigModifier->insert('/ebay/translation_services/platinum/', 'avg_cost', '17.51', NULL);
         $moduleConfigModifier->insert('/ebay/description/', 'upload_images_mode', 2, NULL);
+        $moduleConfigModifier->insert('/ebay/description/', 'should_be_ulrs_secure', 0, '0 - No, \r\n1 - Yes');
         $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'interval', '60', 'in seconds');
         $moduleConfigModifier->insert('/cron/task/ebay/actions/', 'last_access', NULL, 'date of last access');
@@ -520,6 +520,9 @@ class InstallData implements InstallDataInterface
         $synchronizationConfigModifier->insert(
             '/ebay/orders/reserve_cancellation/', 'last_time', NULL, 'Last check time'
         );
+        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/','mode','1','0 - disable, \r\n1 - enable');
+        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'interval', '300', 'in seconds');
+        $synchronizationConfigModifier->insert('/ebay/orders/create_failed/', 'last_time', NULL, 'Last check time');
         $synchronizationConfigModifier->insert('/ebay/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
             '/ebay/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'
@@ -1528,6 +1531,9 @@ class InstallData implements InstallDataInterface
         );
         $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'interval', 3600, 'in seconds');
         $synchronizationConfigModifier->insert('/amazon/orders/receive_details/', 'last_time', NULL, 'Last check time');
+        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/','mode','1','0 - disable, \r\n1 - enable');
+        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'interval', 300, 'in seconds');
+        $synchronizationConfigModifier->insert('/amazon/orders/create_failed/', 'last_time', NULL, 'Last check time');
         $synchronizationConfigModifier->insert('/amazon/other_listings/', 'mode', '1', '0 - disable, \r\n1 - enable');
         $synchronizationConfigModifier->insert(
             '/amazon/other_listings/update/', 'mode', '1', '0 - disable, \r\n1 - enable'

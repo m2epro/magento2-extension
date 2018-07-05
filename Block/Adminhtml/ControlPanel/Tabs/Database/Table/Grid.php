@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -118,8 +118,13 @@ class Grid extends AbstractGrid
             );
 
             if ($this->getColumnType($column) == 'datetime') {
+
+                // will be replaced by UTC
+                // vendor\magento\module-backend\Block\Widget\Grid\Column\Renderer\Datetime.php
+                $params['timezone']    = false;
                 $params['filter_time'] = true;
                 $params['format']      = \IntlDateFormatter::MEDIUM;
+                $params['filter']      = '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime';
             }
 
             if($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -300,7 +300,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $connection = $this->resourceConnection->getConnection();
 
         $databaseName = $this->getHelper('Magento')->getDatabaseName();
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getTableNameWithPrefix($tableName);
 
         $result = $connection->query("SHOW TABLE STATUS FROM `{$databaseName}` WHERE `name` = '{$tableName}'")
                            ->fetch() ;
@@ -320,7 +320,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
         try {
 
-            $tableName = $this->resourceConnection->getTableName($tableName);
+            $tableName = $this->getTableNameWithPrefix($tableName);
             $connection->select()->from($tableName, new \Zend_Db_Expr('1'))
                      ->limit(1)
                      ->query();
@@ -342,7 +342,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
     public function getCountOfRecords($tableName)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getTableNameWithPrefix($tableName);
 
         $count = $connection->select()->from($tableName, new \Zend_Db_Expr('COUNT(*)'))
                           ->query()
@@ -356,7 +356,7 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         $connection = $this->resourceConnection->getConnection();
 
         $databaseName = $this->getHelper('Magento')->getDatabaseName();
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getTableNameWithPrefix($tableName);
 
         $dataLength = $connection->select()
                      ->from('information_schema.tables', array(new \Zend_Db_Expr('data_length + index_length')))
@@ -383,13 +383,11 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function getTableInfo($tableName)
     {
-        $tableName = str_replace($this->getHelper('Magento')->getDatabaseTablesPrefix(), '', $tableName);
-
-        if (!$this->isTableExists($tableName)) {
+        if (!$this->isTableExists($this->getTableNameWithoutPrefix($tableName))) {
             return false;
         }
 
-        $moduleTableName = $this->resourceConnection->getTableName($tableName);
+        $moduleTableName = $this->getTableNameWithPrefix($tableName);
 
         $stmtQuery = $this->resourceConnection->getConnection()->query(
             "SHOW COLUMNS FROM {$moduleTableName}"
@@ -533,6 +531,20 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         return $result;
+    }
+
+    public function getTableNameWithPrefix($tableName)
+    {
+        return $this->resourceConnection->getTableName($tableName);
+    }
+
+    public function getTableNameWithoutPrefix($tableName)
+    {
+        return str_replace(
+            $this->getHelper('Magento')->getDatabaseTablesPrefix(),
+            '',
+            $this->getTableNameWithPrefix($tableName)
+        );
     }
 
     //########################################

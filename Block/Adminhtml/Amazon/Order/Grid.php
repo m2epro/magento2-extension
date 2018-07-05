@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
@@ -56,7 +62,7 @@ class Grid extends AbstractGrid
 
         $collection->getSelect()
             ->joinLeft(
-                array('so' => $this->resourceConnection->getTableName('sales_order')),
+                array('so' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order')),
                 '(so.entity_id = `main_table`.magento_order_id)',
                 array('magento_order_num' => 'increment_id'));
 
@@ -100,6 +106,7 @@ class Grid extends AbstractGrid
             'header' => $this->__('Sale Date'),
             'align'  => 'left',
             'type'   => 'datetime',
+            'filter' => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format' => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'  => 'purchase_create_date',

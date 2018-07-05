@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer;
@@ -106,6 +112,15 @@ class View extends AbstractContainer
             ));
             // ---------------------------------------
         }
+    }
+
+    //########################################
+
+    protected function _beforeToHtml()
+    {
+        $this->js->addRequireJs(['debug' => 'M2ePro/Order/Debug'], '');
+
+        return parent::_beforeToHtml();
     }
 
     //########################################

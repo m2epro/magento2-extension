@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
@@ -62,9 +68,18 @@ class Item extends AbstractGrid
             ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId());
 
+        $where = [
+            'cisi.product_id = `main_table`.product_id',
+            'cisi.stock_id = '   . $this->getHelper('Magento\Stock')->getStockId($this->order->getStore()),
+            'cisi.website_id = ' . $this->getHelper('Magento\Stock')->getWebsiteId($this->order->getStore())
+        ];
+
         $collection->getSelect()->joinLeft(
-            array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')),
-            '(cisi.product_id = `main_table`.product_id AND cisi.stock_id = 1)',
+            array(
+                'cisi' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('cataloginventory_stock_item')
+            ),
+            sprintf("(%s)", implode(' AND ', $where)),
             array('is_in_stock')
         );
 

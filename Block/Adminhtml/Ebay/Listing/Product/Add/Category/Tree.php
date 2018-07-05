@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -239,7 +239,11 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
 
         $dbSelect = $collection->getConnection()->select()
-             ->from($this->resourceConnection->getTableName('catalog_category_product'), 'category_id')
+             ->from(
+                 $this->getHelper('Module\Database\Structure')
+                     ->getTableNameWithPrefix('catalog_category_product'),
+                 'category_id'
+             )
              ->where('`product_id` IN(?)',$this->getSelectedIds());
 
         $affectedCategoriesCount = $collection->getSelectCountSql()
@@ -267,7 +271,10 @@ HTML;
         $collection = $this->_categoryFactory->create()->getCollection();
         $select = $collection->getSelect();
         $select->joinLeft(
-            ['ccp' => $this->resourceConnection->getTableName('catalog_category_product')],
+            [
+                'ccp' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_category_product')
+            ],
             "e.entity_id = ccp.category_id AND ccp.product_id IN ({$ids})",
             array('product_id')
         );
@@ -332,7 +339,10 @@ HTML;
 
         $select = $collection->getConnection()->select();
         $select->from(
-                array('main_table' => $this->resourceConnection->getTableName('catalog_category_product')),
+                array(
+                    'main_table' => $this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('catalog_category_product')
+                ),
                 array('category_id', new \Zend_Db_Expr('COUNT(main_table.product_id)'))
             )
             ->where($collection->getConnection()->quoteInto('main_table.category_id IN(?)', array_keys($items)))

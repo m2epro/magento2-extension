@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -70,19 +70,6 @@ class Cancellation extends AbstractModel
     protected function intervalIsEnabled()
     {
         return true;
-    }
-
-    /**
-     * @return bool
-     */
-    protected function intervalIsLocked()
-    {
-        if ($this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER ||
-            $this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
-            return false;
-        }
-
-        return parent::intervalIsLocked();
     }
 
     //########################################
@@ -343,6 +330,9 @@ class Cancellation extends AbstractModel
     {
         if ($order->canCreateMagentoOrder()) {
             try {
+                $order->addNoticeLog(
+                    'Magento order creation rules are met. M2E Pro will attempt to create Magento order.'
+                );
                 $order->createMagentoOrder();
             } catch (\Exception $exception) {
                 return;

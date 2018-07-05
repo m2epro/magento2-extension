@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -22,7 +22,9 @@ class Updating extends AbstractModel
         $updatedSkus = array();
 
         foreach ($listingsProductsRepricing as $listingProductRepricing) {
-            if ($changeData = $this->getChangeData($listingProductRepricing)) {
+
+            $changeData = $this->getChangeData($listingProductRepricing);
+            if ($changeData && !in_array($changeData['sku'], $updatedSkus, true)) {
                 $changesData[] = $changeData;
                 $updatedSkus[] = $changeData['sku'];
             }
@@ -69,7 +71,7 @@ class Updating extends AbstractModel
     private function sendData(array $changesData)
     {
         try {
-            $this->getHelper('Component\Amazon\Repricing')->sendRequest(
+            $result = $this->getHelper('Component\Amazon\Repricing')->sendRequest(
                 \Ess\M2ePro\Helper\Component\Amazon\Repricing::COMMAND_SYNCHRONIZE_USER_CHANGES,
                 array(
                     'account_token' => $this->getAmazonAccountRepricing()->getToken(),
@@ -77,10 +79,18 @@ class Updating extends AbstractModel
                 )
             );
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($exception->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
+            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 
+        $this->processErrorMessages($result['response']);
         return true;
     }
 

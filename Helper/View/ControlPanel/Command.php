@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -15,10 +15,12 @@ class Command extends \Ess\M2ePro\Helper\AbstractHelper
 {
     //########################################
 
-    const CONTROLLER_MODULE_MODULE          = 'controlPanel_module/module';
-    const CONTROLLER_MODULE_SYNCHRONIZATION = 'controlPanel_module/synchronization';
-    const CONTROLLER_MODULE_INTEGRATION     = 'controlPanel_module/integration';
-    const CONTROLLER_MODULE_SERVICING       = 'controlPanel_module/servicing';
+    const CONTROLLER_MODULE_MODULE             = 'controlPanel_module/module';
+    const CONTROLLER_MODULE_SYNCHRONIZATION    = 'controlPanel_module/synchronization';
+    const CONTROLLER_MODULE_INTEGRATION        = 'controlPanel_module/integration';
+    const CONTROLLER_MODULE_INTEGRATION_EBAY   = 'controlPanel_module_integration/ebay';
+    const CONTROLLER_MODULE_INTEGRATION_AMAZON = 'controlPanel_module_integration/amazon';
+    const CONTROLLER_MODULE_SERVICING          = 'controlPanel_module/servicing';
 
     const CONTROLLER_TOOLS_M2EPRO_GENERAL   = 'controlPanel_tools_m2ePro/general';
     const CONTROLLER_TOOLS_M2EPRO_INSTALL   = 'controlPanel_tools_m2ePro/install';

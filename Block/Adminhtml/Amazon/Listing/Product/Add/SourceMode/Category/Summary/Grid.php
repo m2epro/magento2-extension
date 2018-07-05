@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -62,7 +62,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Category\Grid
 
         $dbSelect = $collection->getConnection()
              ->select()
-             ->from($collection->getConnection()->getTableName('catalog_category_product'), 'category_id')
+             ->from(
+                 $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_category_product'),
+                 'category_id'
+             )
              ->where('`product_id` IN(?)',$this->getProductsIds());
 
         $collection->getSelect()->where('entity_id IN ('.$dbSelect->__toString().')');

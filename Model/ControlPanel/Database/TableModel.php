@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -204,7 +204,7 @@ class TableModel extends \Magento\Framework\DataObject
                 if ($field == $idFieldName && !$isIdAutoIncrement) {
 
                     $this->resourceConnection->getConnection()->update(
-                        $this->resourceConnection->getTableName($this->tableName),
+                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($this->tableName),
                         array($idFieldName => $value),
                         "`{$idFieldName}` = {$item->getId()}"
                     );

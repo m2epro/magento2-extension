@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -249,13 +249,13 @@ class Motors extends \Ess\M2ePro\Helper\AbstractHelper
     public function getDictionaryTable($type)
     {
         if ($this->isTypeBasedOnEpids($type)) {
-            return $this->resourceConnection->getTableName(
+            return $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_epid'
             );
         }
 
         if ($this->isTypeBasedOnKtypes($type)) {
-            return $this->resourceConnection->getTableName(
+            return $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix(
                 'm2epro_ebay_dictionary_motor_ktype'
             );
         }

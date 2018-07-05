@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -46,6 +46,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 $generalAttributes,
                 ['text', 'image', 'media_image', 'gallery', 'multiline', 'textarea', 'select', 'multiselect']
             ),
+            'text_price'  => $magentoAttributeHelper->filterByInputTypes($generalAttributes, ['text', 'price']),
         ];
 
         $this->allAttributesByInputTypes = [
@@ -88,7 +89,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
         // ---------------------------------------
 
         $fieldSet = $form->addFieldset('magento_block_amazon_template_description_general', [
-           'legend' => $this->__('General'), 'collapsable' => false
+           'legend' => $this->__('General'), 'collapsable' => true
         ]);
 
         $fieldSet->addField('title_mode', self::SELECT,
@@ -272,8 +273,6 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             ]
         );
 
-        // ---------------------------------------
-
         $fieldSet->addField('general_separator_2', self::SEPARATOR, []);
 
         // ---------------------------------------
@@ -289,9 +288,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         $defaultValue = '';
         if ($this->formData['item_package_quantity_mode']
-                            == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_NONE ||
+            == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_NONE ||
             $this->formData['item_package_quantity_mode']
-                            == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE
+            == DefinitionTemplate::ITEM_PACKAGE_QUANTITY_MODE_CUSTOM_VALUE
         ) {
             $defaultValue = $this->formData['item_package_quantity_mode'];
         }
@@ -374,6 +373,50 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'css_class' => 'entry-edit'
             ]
         )->addCustomAttribute('min_value', 1);
+
+        // ---------------------------------------
+
+        // ---------------------------------------
+        // Price
+        // ---------------------------------------
+
+        $fieldSet = $form->addFieldset('magento_block_amazon_template_description_price', [
+            'legend' => $this->__('Price'), 'collapsable' => true
+        ]);
+
+        // ---------------------------------------
+
+        $fieldSet->addField('msrp_rrp_custom_attribute', 'hidden',
+            [
+                'name' => 'definition[msrp_rrp_custom_attribute]',
+                'value' => $this->formData['msrp_rrp_custom_attribute']
+            ]
+        );
+
+        // ---------------------------------------
+
+        $defaultValue = '';
+        if ($this->formData['msrp_rrp_mode'] == DefinitionTemplate::MSRP_RRP_MODE_NONE ) {
+            $defaultValue = $this->formData['msrp_rrp_mode'];
+        }
+
+        $fieldSet->addField('msrp_rrp_mode', self::SELECT,
+            [
+                'name' => 'definition[msrp_rrp_mode]',
+                'label' => $this->__('MSRP / RRP'),
+                'title' => $this->__('MSRP / RRP'),
+                'values' => $this->getMsrpRrpOptions(),
+                'value' => $defaultValue,
+                'class' => 'select',
+                'create_magento_attribute' => true,
+                'tooltip' => $this->__(
+                    'Manufacturer\'s recommended selling price for a product. 
+                     MSRP term is used in the US, while in the UK it is known as RRP.<br/><br/>
+                     <b>Note:</b> Title value is required for creation of all 
+                     Description Policies because of technical reasons.'
+                )
+            ]
+        )->addCustomAttribute('allowed_attribute_types', 'text,price');
 
         // ---------------------------------------
 
@@ -1161,7 +1204,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $this->appendKeywordsFields($fieldSet, 4, 'target_audience');
+        $this->appendKeywordsFields($fieldSet, 4, 'target_audience', $this->__('Target Audience'));
 
         $fieldSet->addField('target_audience_mode_separator', self::SEPARATOR, []);
 
@@ -1185,7 +1228,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $this->appendKeywordsFields($fieldSet, 5, 'search_terms');
+        $this->appendKeywordsFields($fieldSet, 5, 'search_terms', $this->__('Search Terms'));
 
         $fieldSet->addField('search_terms_mode_separator', self::SEPARATOR, []);
 
@@ -1207,7 +1250,7 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
         // ---------------------------------------
 
-        $this->appendKeywordsFields($fieldSet, 5, 'bullet_points');
+        $this->appendKeywordsFields($fieldSet, 5, 'bullet_points', $this->__('Bullet Points'));
 
         // ---------------------------------------
 
@@ -1216,8 +1259,10 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 
     // ---------------------------------------
 
-    public function appendKeywordsFields(\Magento\Framework\Data\Form\Element\Fieldset $fieldSet, $fieldCount, $name)
-    {
+    public function appendKeywordsFields(
+        \Magento\Framework\Data\Form\Element\Fieldset $fieldSet,
+        $fieldCount, $name, $fieldTitle
+    ){
         $helper = $this->getHelper('Data');
         for ($i = 0; $i < $fieldCount; $i++) {
 
@@ -1231,8 +1276,8 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
             $fieldSet->addField($name.'_'.$i, 'text',
                 [
                     'name' => 'definition['.$name.']['.$i.']',
-                    'label' => $this->__('Target Audience Value #%s%', $i + 1),
-                    'title' => $this->__('Target Audience Value #%s%', $i + 1),
+                    'label' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
+                    'title' => $this->__('%title% Value #%number%', $fieldTitle, $i + 1),
                     'value' => $value,
                     'onkeyup' => 'AmazonTemplateDescriptionDefinitionObj.multi_element_keyup(\''.$name.'\',this)',
                     'required' => true,
@@ -1515,6 +1560,19 @@ HTML
         ));
     }
 
+    public function getMsrpRrpOptions()
+    {
+        $optionsResult = [
+            ['value' => DefinitionTemplate::MSRP_RRP_MODE_NONE, 'label' => $this->__('None')]
+        ];
+
+        return array_merge($optionsResult, $this->getAttributeOptions(
+            DefinitionTemplate::MSRP_RRP_MODE_CUSTOM_ATTRIBUTE,
+            'msrp_rrp_custom_attribute',
+            'text_price'
+        ));
+    }
+
     public function getPackageQuantityOptions()
     {
         $optionsResult = [
@@ -1747,6 +1805,9 @@ HTML
             'manufacturer_part_number_mode'             => DefinitionTemplate::MANUFACTURER_PART_NUMBER_MODE_NONE,
             'manufacturer_part_number_custom_value'     => '',
             'manufacturer_part_number_custom_attribute' => '',
+
+            'msrp_rrp_mode'             => DefinitionTemplate::MSRP_RRP_MODE_NONE,
+            'msrp_rrp_custom_attribute' => '',
 
             // ---
 

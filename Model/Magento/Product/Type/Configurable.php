@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -29,6 +29,12 @@ class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Confi
         }
 
         return $collection;
+    }
+
+    public function cleanProductCache($product)
+    {
+        $cache = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\App\Cache\Type\Collection::class);
+        $cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [self::TYPE_CODE . '_' . $product->getId()]);
     }
 
     //########################################

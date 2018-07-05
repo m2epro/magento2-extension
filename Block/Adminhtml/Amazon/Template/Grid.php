@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template;
 
 use Magento\Framework\DB\Select;
@@ -281,8 +287,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'filter_time' => true,
-//            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
+            'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
         ));
@@ -292,8 +299,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'filter_time' => true,
-//            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
+            'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'
         ));

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -90,7 +90,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             if (is_null($ebayWizard)) {
                 $this->menuTitlesUsing[View\Ebay::MENU_ROOT_NODE_NICK] = true;
-                return 'eBay Integration (Beta)';
+                return 'eBay Integration';
             }
         }
 
@@ -104,7 +104,7 @@ class Item extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             if (is_null($amazonWizard)) {
                 $this->menuTitlesUsing[View\Amazon::MENU_ROOT_NODE_NICK] = true;
-                return 'Amazon Integration (Beta)';
+                return 'Amazon Integration';
             }
         }
 

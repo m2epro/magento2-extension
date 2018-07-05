@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -359,7 +359,8 @@ JS
     {
         if (is_null($this->overrideDictionaryData)) {
             $connection = $this->resourceConnection->getConnection();
-            $table = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_shipping_override');
+            $table = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_amazon_dictionary_shipping_override');
 
             $this->overrideDictionaryData = $connection->select()->from($table)->query()->fetchAll();
         }

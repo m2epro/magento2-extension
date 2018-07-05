@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -54,7 +54,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $categoryProductTableName = $this->resourceConnection->getTableName('catalog_category_product');
+        $categoryProductTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_category_product');
 
         $dbSelect = $connection->select()
             ->from(array('ccp' => $categoryProductTableName), 'category_id')
@@ -65,7 +66,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             $storeModel = $this->storeFactory->create()->load($storeId);
             if (!is_null($storeModel)) {
                 $websiteId = $storeModel->getWebsiteId();
-                $productWebsiteTableName = $this->resourceConnection->getTableName('catalog_product_website');
+                $productWebsiteTableName = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_website');
                 $dbSelect->joinLeft(array('cpw' => $productWebsiteTableName), 'ccp.product_id = cpw.product_id')
                          ->where('cpw.website_id = ?', (int)$websiteId);
             }
@@ -107,8 +109,10 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     public function getUncategorizedProducts($storeId = 0, $returnType = self::RETURN_TYPE_IDS)
     {
         $connection = $this->resourceConnection->getConnection();
-        $productTableName = $this->resourceConnection->getTableName('catalog_product_entity');
-        $categoryProductTableName = $this->resourceConnection->getTableName('catalog_category_product');
+        $productTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_entity');
+        $categoryProductTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_category_product');
 
         $dbSelect = $connection->select()
             ->from(array('cp' => $productTableName), 'entity_id')
@@ -119,7 +123,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             $storeModel = $this->storeFactory->create()->load($storeId);
             if (!is_null($storeModel)) {
                 $websiteId = $storeModel->getWebsiteId();
-                $productWebsiteTableName = $this->resourceConnection->getTableName('catalog_product_website');
+                $productWebsiteTableName = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_website');
                 $dbSelect->joinLeft(array('cpw' => $productWebsiteTableName), 'cp.entity_id = cpw.product_id')
                          ->where('cpw.website_id = ?', (int)$websiteId);
             }
@@ -140,7 +145,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $categoryProductTableName = $this->resourceConnection->getTableName('catalog_category_product');
+        $categoryProductTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_category_product');
 
         $dbSelect = $connection->select()
             ->from(array('ccp' => $categoryProductTableName), 'product_id')
@@ -150,7 +156,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             $storeModel = $this->storeFactory->create()->load($storeId);
             if (!is_null($storeModel)) {
                 $websiteId = $storeModel->getWebsiteId();
-                $productWebsiteTableName = $this->resourceConnection->getTableName('catalog_product_website');
+                $productWebsiteTableName = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_website');
                 $dbSelect->joinLeft(array('cpw' => $productWebsiteTableName), 'ccp.product_id = cpw.product_id')
                          ->where('cpw.website_id = ?', (int)$websiteId);
             }
@@ -166,7 +173,7 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
     public function getLimitedCategoriesByProducts($productIds, $storeId = 0)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('catalog_category_product');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_category_product');
 
         $dbSelect = $connection->select()
             ->from(array('ccp' => $tableName))
@@ -176,7 +183,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             $storeModel = $this->storeFactory->create()->load($storeId);
             if (!is_null($storeModel)) {
                 $websiteId = $storeModel->getWebsiteId();
-                $productWebsiteTableName = $this->resourceConnection->getTableName('catalog_product_website');
+                $productWebsiteTableName = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_website');
                 $dbSelect->joinLeft(array('cpw' => $productWebsiteTableName), 'ccp.product_id = cpw.product_id')
                     ->where('cpw.website_id = ?', (int)$websiteId);
             }
@@ -224,7 +232,7 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('catalog_category_product');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_category_product');
 
         $dbSelect = $connection->select()
             ->from(array('ccp' => $tableName), 'product_id')
@@ -239,7 +247,8 @@ class Category extends \Ess\M2ePro\Helper\Magento\AbstractHelper
             $storeModel = $this->storeFactory->create()->load($storeId);
             if (!is_null($storeModel)) {
                 $websiteId = $storeModel->getWebsiteId();
-                $productWebsiteTableName = $this->resourceConnection->getTableName('catalog_product_website');
+                $productWebsiteTableName = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_website');
                 $dbSelect->joinLeft(array('cpw' => $productWebsiteTableName), 'ccp.product_id = cpw.product_id')
                     ->where('cpw.website_id = ?', (int)$websiteId);
             }

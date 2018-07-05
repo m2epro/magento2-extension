@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -228,7 +234,10 @@ HTML;
 
                 $tempResult = $this->resourceConnection->getConnection()->select()
                     ->distinct()
-                    ->from($this->resourceConnection->getTableName($tableName), array($columnInfo['name']))
+                    ->from(
+                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
+                        array($columnInfo['name'])
+                    )
                     ->where("{$columnInfo['name']} IS NOT NULL")
                     ->query()
                     ->fetchAll(\Zend_Db::FETCH_COLUMN);
@@ -301,7 +310,7 @@ HTML;
                 if ($columnInfo['type'] == 'int') {
 
                     $this->resourceConnection->getConnection()->update(
-                        $this->resourceConnection->getTableName($tableName),
+                        $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
                         array($columnInfo['name'] => $replaceIdTo),
                         "`{$columnInfo['name']}` = {$replaceIdFrom}"
                     );
@@ -327,7 +336,7 @@ HTML;
                 ));
 
                 $this->resourceConnection->getConnection()->update(
-                    $this->resourceConnection->getTableName($tableName),
+                    $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
                     $bind,
                     "`{$columnInfo['name']}` LIKE '%store_id\":\"{$replaceIdFrom}\"%' OR
                      `{$columnInfo['name']}` LIKE '%store_id\":{$replaceIdFrom},%' OR
@@ -348,81 +357,175 @@ HTML;
     public function repairListingProductStructureAction()
     {
         ini_set('display_errors', 1);
-        $result = '';
 
-        foreach (array('Ebay', 'Amazon') as $component) {
+        // -- Listing to un-existed Account
+        $accountTable = $this->activeRecordFactory->getObject('Account')->getResource()->getMainTable();
 
-            $deletedOptions = $deletedVariations = $deletedProducts = $deletedListings = array();
+        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        $collection = $this->activeRecordFactory->getObject('Listing')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['ma' => $accountTable],
+            'main_table.account_id=ma.id',
+            []
+        );
+        $collection->addFieldToFilter('ma.id', array('null' => true));
+        $collection->getSelect()->group('main_table.id');
 
-            $collection = $this->parentFactory->getObject($component, 'Listing\Product\Variation\Option')
-                                              ->getCollection();
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(array(
+            'main_table.id', 'main_table.component_mode'
+        ));
 
-            /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
-            while ($option = $collection->fetchItem()) {
+        $itemsIdsToDelete = $collection->getColumnValues('id');
+        $deletedListings = count($itemsIdsToDelete);
 
-                try {
-                    $option->getListingProductVariation();
-                } catch (Logic $e) {
+        if ($itemsIdsToDelete) {
 
-                    if (in_array($option->getId(), $deletedOptions)) {
-                        continue;
-                    }
+            /* @var $item \Ess\M2ePro\Model\Listing\Product */
+            $item = $collection->getFirstItem();
 
-                    $option->getResource()->delete($option);
-                    $deletedOptions[] = $option->getId();
-                }
-            }
+            $item->getResource()->getConnection()->delete(
+                $item->getResource()->getMainTable(),
+                array('id IN (?)' => $itemsIdsToDelete)
+            );
 
-            $collection = $this->parentFactory->getObject($component, 'Listing\Product\Variation')
-                                              ->getCollection();
-
-            /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
-            while ($variation = $collection->fetchItem()) {
-
-                try {
-                    $variation->getListingProduct();
-                    $variation->getOptions(true);
-
-                } catch (Logic $e) {
-                    $variation->getResource()->delete($variation);
-                    $deletedVariations[] = $variation->getId();
-                }
-            }
-
-            $collection = $this->parentFactory->getObject($component, 'Listing\Product')
-                                              ->getCollection();
-
-            /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
-            while ($listingProduct = $collection->fetchItem()) {
-
-                try {
-                    $listingProduct->getListing();
-                } catch (Logic $e) {
-                    $listingProduct->getResource()->delete($listingProduct);
-                    $deletedProducts[] = $listingProduct->getId();
-                }
-            }
-
-            $collection = $this->parentFactory->getObject($component, 'Listing')
-                                              ->getCollection();
-
-            /* @var $listing \Ess\M2ePro\Model\Listing */
-            while ($listing = $collection->fetchItem()) {
-
-                try {
-                    $listing->getAccount();
-                } catch (Logic $e) {
-                    $listing->getResource()->delete($listing);
-                    $deletedListings[] = $listing->getId();
-                }
-            }
-
-            $result .= sprintf('Deleted options on %s count = %d <br/>', $component, count($deletedOptions));
-            $result .= sprintf('Deleted variations on %s count = %d <br/>', $component, count($deletedVariations));
-            $result .= sprintf('Deleted products on %s count = %d <br/>', $component, count($deletedProducts));
-            $result .= sprintf('Deleted listings on %s count = %d <br/>', $component, count($deletedListings));
-            $result .= '<br/>Please run repair broken tables feature.<br/>';
+            $item->getResource()->getConnection()->delete(
+                $item->getChildObject()->getResource()->getMainTable(),
+                array('listing_id IN (?)' => $itemsIdsToDelete)
+            );
         }
+        // --
+
+        // -- Listing_Product to un-existed Listing
+        $listingTable = $this->activeRecordFactory->getObject('Listing')->getResource()->getMainTable();
+
+        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        $collection = $this->activeRecordFactory->getObject('Listing\Product')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['ml' => $listingTable],
+            'main_table.listing_id=ml.id',
+            []
+        );
+        $collection->addFieldToFilter('ml.id', array('null' => true));
+        $collection->getSelect()->group('main_table.id');
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(array(
+            'main_table.id', 'main_table.component_mode'
+        ));
+
+        $itemsIdsToDelete = $collection->getColumnValues('id');
+        $deletedProducts = count($itemsIdsToDelete);
+
+        if ($itemsIdsToDelete) {
+
+            /* @var $item \Ess\M2ePro\Model\Listing\Product */
+            $item = $collection->getFirstItem();
+
+            $item->getResource()->getConnection()->delete(
+                $item->getResource()->getMainTable(),
+                array('id IN (?)' => $itemsIdsToDelete)
+            );
+
+            $item->getResource()->getConnection()->delete(
+                $item->getChildObject()->getResource()->getMainTable(),
+                array('listing_product_id IN (?)' => $itemsIdsToDelete)
+            );
+        }
+        // --
+
+        // -- Listing_Product_Variation to un-existed Listing_Product OR with no Listing_Product_Variation_Option
+        $listingProductTable = $this->activeRecordFactory->getObject('Listing\Product')
+            ->getResource()->getMainTable();
+
+        $listingProductVariationOptionTable = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')
+            ->getResource()->getMainTable();
+
+        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        $collection = $this->activeRecordFactory->getObject('Listing\Product\Variation')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['mlp' => $listingProductTable],
+            'main_table.listing_product_id=mlp.id',
+            []
+        );
+        $collection->getSelect()->joinLeft(
+            ['mlpvo' => $listingProductVariationOptionTable],
+            'main_table.id=mlpvo.listing_product_variation_id',
+            []
+        );
+
+        $collection->getSelect()->where('mlp.id IS NULL OR mlpvo.id IS NULL');
+        $collection->getSelect()->group('main_table.id');
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(array(
+            'main_table.id', 'main_table.component_mode'
+        ));
+
+        $itemsIdsToDelete = $collection->getColumnValues('id');
+        $deletedVariations = count($itemsIdsToDelete);
+
+        if ($itemsIdsToDelete) {
+
+            /* @var $item \Ess\M2ePro\Model\Listing\Product\Variation */
+            $item = $collection->getFirstItem();
+
+            $item->getResource()->getConnection()->delete(
+                $item->getResource()->getMainTable(),
+                array('id IN (?)' => $itemsIdsToDelete)
+            );
+
+            $item->getResource()->getConnection()->delete(
+                $item->getChildObject()->getResource()->getMainTable(),
+                array('listing_product_variation_id IN (?)' => $itemsIdsToDelete)
+            );
+        }
+        // --
+
+        // -- Listing_Product_Variation_Option to un-existed Listing_Product_Variation
+        $listingProductVariationTable = $this->activeRecordFactory->getObject('Listing\Product\Variation')
+            ->getResource()->getMainTable();
+
+        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
+        $collection = $this->activeRecordFactory->getObject('Listing\Product\Variation\Option')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['mlpv' => $listingProductVariationTable],
+            'main_table.listing_product_variation_id=mlpv.id',
+            []
+        );
+        $collection->addFieldToFilter('mlpv.id', array('null' => true));
+        $collection->getSelect()->group('main_table.id');
+
+        $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
+        $collection->getSelect()->columns(array(
+            'main_table.id', 'main_table.component_mode'
+        ));
+
+        $itemsIdsToDelete = $collection->getColumnValues('id');
+        $deletedOptions = count($itemsIdsToDelete);
+
+        if ($itemsIdsToDelete) {
+
+            /* @var $item \Ess\M2ePro\Model\Listing\Product\Variation\Option */
+            $item = $collection->getFirstItem();
+
+            $item->getResource()->getConnection()->delete(
+                $item->getResource()->getMainTable(),
+                array('id IN (?)' => $itemsIdsToDelete)
+            );
+
+            $item->getResource()->getConnection()->delete(
+                $item->getChildObject()->getResource()->getMainTable(),
+                array('listing_product_variation_option_id IN (?)' => $itemsIdsToDelete)
+            );
+        }
+        // --
+
+        $result  = '';
+        $result .= sprintf('Deleted options: %d <br/>', $deletedOptions);
+        $result .= sprintf('Deleted variations: %d <br/>', $deletedVariations);
+        $result .= sprintf('Deleted products: %d <br/>', $deletedProducts);
+        $result .= sprintf('Deleted listings: %d <br/>', $deletedListings);
 
         $backUrl = $this->getHelper('View\ControlPanel')->getPageToolsTabUrl();
 
@@ -442,17 +545,20 @@ HTML;
     {
         ini_set('display_errors', 1);
 
-        $deletedOrderItems = 0;
+        /** @var $collection \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection */
         $collection = $this->activeRecordFactory->getObject('Order\Item')->getCollection();
+        $collection->getSelect()->joinLeft(
+            ['mo' => $this->activeRecordFactory->getObject('Order')->getResource()->getMainTable()],
+            'main_table.order_id=mo.id',
+            []
+        );
+        $collection->addFieldToFilter('mo.id', array('null' => true));
 
+        $deletedOrderItems = 0;
+
+        /* @var $item \Ess\M2ePro\Model\Order\Item */
         while ($item = $collection->fetchItem()) {
-
-            try {
-                $order = $item->getOrder();
-            } catch (Logic $e) {
-
-                $item->delete() && $deletedOrderItems++;
-            }
+            $item->delete() && $deletedOrderItems++;
         }
 
         $result = sprintf('Deleted OrderItems records: %d', $deletedOrderItems);

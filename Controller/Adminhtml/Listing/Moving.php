@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -20,7 +20,7 @@ abstract class Moving extends \Ess\M2ePro\Controller\Adminhtml\Listing
 
         // Add attribute set filter
         // ---------------------------------------
-        $table = $this->resourceConnection->getTableName('catalog_product_entity');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
         $dbSelect = $this->resourceConnection->getConnection()
             ->select()
             ->from($table,new \Zend_Db_Expr('DISTINCT `entity_id`'))

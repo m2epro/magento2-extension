@@ -2,14 +2,15 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
-/**
- * @method Ess\M2ePro\Model\Order\Item getParentObject()
- */
 namespace Ess\M2ePro\Model\Ebay\Order;
+
+/**
+ * @method \Ess\M2ePro\Model\Order\Item getParentObject()
+ */
 
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractModel
 {
@@ -306,6 +307,8 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
         return $this->getVariationOptions();
     }
 
+    //########################################
+
     public function canCreateMagentoOrder()
     {
         return $this->isOrdersCreationEnabled();
@@ -356,8 +359,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     public function getAssociatedProductId()
     {
-        $this->validate();
-
         // Item was listed by M2E
         // ---------------------------------------
         if (!is_null($this->getChannelItem())) {
@@ -395,24 +396,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
 
     public function prepareMagentoOptions($options)
     {
-        return $this->getHelper('Component\Ebay')->reduceOptionsForOrders($options);
-    }
-
-    private function validate()
-    {
-        $ebayItem = $this->getChannelItem();
-
-        if (!is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsModeEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception(
-                'Magento Order Creation for Items Listed by M2E Pro is disabled in Account Settings.'
-            );
-        }
-
-        if (is_null($ebayItem) && !$this->getEbayAccount()->isMagentoOrdersListingsOtherModeEnabled()) {
-            throw new \Ess\M2ePro\Model\Exception(
-                'Magento Order Creation for Items Listed by 3rd party Software is disabled in Account Settings.'
-            );
-        }
+        return $this->getHelper('Component\Ebay')->prepareOptionsForOrders($options);
     }
 
     /**
@@ -498,26 +482,37 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\AbstractM
             return false;
         }
 
-        $params = array();
+        $params = array(
+            'item_id' => $this->getId(),
+        );
 
-        if (isset($trackingDetails['tracking_number'])) {
-            $params['tracking_number'] = $trackingDetails['tracking_number'];
-            $params['carrier_code'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
-                $trackingDetails['carrier_code'], $trackingDetails['carrier_title']
+        if (!empty($trackingDetails['carrier_code'])) {
+
+            $trackingDetails['carrier_title'] = $this->getHelper('Component\Ebay')->getCarrierTitle(
+                $trackingDetails['carrier_code'],
+                isset($trackingDetails['carrier_title']) ? $trackingDetails['carrier_title'] : ''
             );
+        }
+
+        if (!empty($trackingDetails['carrier_title'])) {
+
+            if ($trackingDetails['carrier_title'] == \Ess\M2ePro\Model\Order\Shipment\Handler::CUSTOM_CARRIER_CODE &&
+                !empty($trackingDetails['shipping_method']))
+            {
+                $trackingDetails['carrier_title'] = $trackingDetails['shipping_method'];
+            }
 
             // remove unsupported by eBay symbols
-            $params['carrier_code'] = str_replace(array('\'', '"', '+', '(', ')'), array(), $params['carrier_code']);
+            $trackingDetails['carrier_title'] = str_replace(
+                array('\'', '"', '+', '(', ')'), array(), $trackingDetails['carrier_title']
+            );
         }
+
+        $params = array_merge($params, $trackingDetails);
 
         $action    = \Ess\M2ePro\Model\Order\Change::ACTION_UPDATE_SHIPPING;
         $creator   = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
         $component = \Ess\M2ePro\Helper\Component\Ebay::NICK;
-
-        $params = array(
-            'tracking_details' => $params,
-            'item_id'          => $this->getId(),
-        );
 
         $this->activeRecordFactory->getObject('Order\Change')->create(
             $this->getParentObject()->getOrderId(), $action, $creator, $component, $params

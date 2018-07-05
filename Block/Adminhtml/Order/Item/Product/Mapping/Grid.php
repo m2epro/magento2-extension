@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Order\Item\Product\Mapping;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
@@ -10,12 +16,12 @@ class Grid extends AbstractGrid
 
     protected $cacheConfig;
     protected $productTypeModel;
-    protected $productModel;
+    protected $magentoProductCollectionFactory;
 
     public function __construct(
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Magento\Catalog\Model\Product\Type $productTypeModel,
-        \Magento\Catalog\Model\Product $productModel,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
@@ -23,7 +29,7 @@ class Grid extends AbstractGrid
     {
         $this->cacheConfig = $cacheConfig;
         $this->productTypeModel = $productTypeModel;
-        $this->productModel = $productModel;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
 
         parent::__construct($context, $backendHelper, $data);
     }
@@ -48,26 +54,24 @@ class Grid extends AbstractGrid
 
     protected function _prepareCollection()
     {
-        $collection = $this->productModel->getCollection()
-            ->addAttributeToSelect('sku')
+        /** @var $orderItem \Ess\M2ePro\Model\Order\Item */
+        $itemId = $this->getRequest()->getParam('item_id');
+        $orderItem = $this->activeRecordFactory->getObjectLoaded('Order\Item', $itemId);
+
+        $storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
+        if (!is_null($orderItem->getId())) {
+            $storeId = $orderItem->getStoreId();
+        }
+
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->setStoreId($storeId);
+
+        $collection
             ->addAttributeToSelect('name')
+            ->addAttributeToSelect('sku')
             ->addAttributeToSelect('type_id')
-            ->joinField(
-                'qty',
-                'cataloginventory_stock_item',
-                'qty',
-                'product_id=entity_id',
-                '{{table}}.stock_id=1',
-                'left'
-            )
-            ->joinField(
-                'is_in_stock',
-                'cataloginventory_stock_item',
-                'is_in_stock',
-                'product_id=entity_id',
-                '{{table}}.stock_id=1',
-                'left'
-            );
+            ->joinStockItem(array('qty' => 'qty', 'is_in_stock' => 'is_in_stock'));
 
         $this->setCollection($collection);
 
@@ -93,6 +97,7 @@ class Grid extends AbstractGrid
             'width'        => '350px',
             'index'        => 'name',
             'filter_index' => 'name',
+            'escape'       => false,
             'frame_callback' => array($this, 'callbackColumnTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));

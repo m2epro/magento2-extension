@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -29,9 +29,14 @@ class Save extends Settings
             '/ebay/connector/listing/', 'check_the_same_product_already_listed',
             (int)$this->getRequest()->getParam('check_the_same_product_already_listed_mode')
         );
+
         $this->getHelper('Module')->getConfig()->setGroupValue(
             '/ebay/description/', 'upload_images_mode',
             (int)$this->getRequest()->getParam('upload_images_mode')
+        );
+        $this->getHelper('Module')->getConfig()->setGroupValue(
+            '/ebay/description/', 'should_be_ulrs_secure',
+            (int)$this->getRequest()->getParam('should_be_ulrs_secure')
         );
 
         $this->setAjaxContent($this->getHelper('Data')->jsonEncode([

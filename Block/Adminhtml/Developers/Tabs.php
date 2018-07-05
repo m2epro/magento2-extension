@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -14,7 +14,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
     const TAB_ID_SYSTEM_REQUIREMENTS = 'system_requirements';
     const TAB_ID_CRON_JOB_INFO = 'cron_job_info';
     const TAB_ID_SYNCHRONIZATION_LOG = 'synchronization_log';
-    const TAB_ID_MAGMI_PLUGIN = 'magmi_plugin';
     const TAB_ID_DIRECT_DATABASE_CHANGES = 'direct_database_changes';
     const TAB_ID_PERFORMANCE_NOTES = 'performance_notes';
 
@@ -77,17 +76,6 @@ class Tabs extends \Ess\M2ePro\Block\Adminhtml\Magento\Tabs\AbstractTabs
         );
 
         $this->addTab(self::TAB_ID_SYNCHRONIZATION_LOG, $tab);
-
-        // ---------------------------------------
-
-        // ---------------------------------------
-        $tab = array(
-            'label' => $this->__('Magmi Import Tool Plugin'),
-            'title' => $this->__('Magmi Plugin'),
-            'content' => $this->createBlock('Developers\Tabs\MagmiPlugin')->toHtml()
-        );
-
-        $this->addTab(self::TAB_ID_MAGMI_PLUGIN, $tab);
 
         // ---------------------------------------
 

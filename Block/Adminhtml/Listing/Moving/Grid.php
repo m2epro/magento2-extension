@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -90,6 +90,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'         => 'text',
             'width'        => '200px',
             'index'        => 'title',
+            'escape'       => false,
             'filter_index' => 'main_table.title',
             'frame_callback' => array($this, 'callbackColumnTitle')
         ));
@@ -135,10 +136,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     public function callbackColumnTitle($value, $row, $column, $isExport)
     {
+        $title = $this->getHelper('Data')->escapeHtml($value);
         $url = $this->getHelper('View')->getUrl(
             $row, 'listing', 'view', array('id' => $row->getData('id'))
         );
-        return '&nbsp;<a href="'.$url.'" target="_blank">'.$value.'</a>';
+        return '&nbsp;<a href="'.$url.'" target="_blank">'.$title.'</a>';
     }
 
     public function callbackColumnStore($value, $row, $column, $isExport)

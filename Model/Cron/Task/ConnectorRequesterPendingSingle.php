@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -44,7 +44,7 @@ class ConnectorRequesterPendingSingle extends AbstractModel
         $collection = $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array('p' => $this->resource->getTableName('m2epro_processing')),
+            array('p' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_processing')),
             'p.id = main_table.processing_id',
             array()
         );
@@ -70,7 +70,10 @@ class ConnectorRequesterPendingSingle extends AbstractModel
         $collection = $this->activeRecordFactory->getObject('Connector\Command\Pending\Requester\Single')
             ->getCollection();
         $collection->getSelect()->joinLeft(
-            array('rps' => $this->resource->getTableName('m2epro_request_pending_single')),
+            array(
+                'rps' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_request_pending_single')
+            ),
             'rps.id = main_table.request_pending_single_id',
             array()
         );

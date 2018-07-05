@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Create;
 
 class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
@@ -328,6 +334,23 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
         $model = $this->ebayFactory->getObject('Listing');
         $model->addData($data);
         $model->save();
+
+        // Set message to log
+        // ---------------------------------------
+        $tempLog = $this->activeRecordFactory->getObject('Listing\Log');
+        $tempLog->setComponentMode($model->getComponentMode());
+        $tempLog->addListingMessage(
+            $model->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_USER,
+            NULL,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_ADD_LISTING,
+            // M2ePro_TRANSLATIONS
+            // Listing was successfully Added
+            'Listing was successfully Added',
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+        );
+        // ---------------------------------------
 
         return $model;
     }

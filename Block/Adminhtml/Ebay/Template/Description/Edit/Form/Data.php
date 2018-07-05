@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Template\Description\Edit\Form;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -1764,18 +1770,6 @@ HTML
                 'label' => $this->__('Gallery Hint'),
                 'value' => $this->__('Click on the image below to get zoomed view of the Item'),
                 'css_class' => 'products-images-gallery-view'
-            ]
-        );
-
-        $fieldset->addField('image_linked_mode',
-            'select',
-            [
-                'label' => $this->__('Open Original Size in a New Window'),
-                'values' => [
-                    0 => $this->__('No'),
-                    1 => $this->__('Yes'),
-                ],
-                'css_class' => 'products-images-custom-settings'
             ]
         );
 

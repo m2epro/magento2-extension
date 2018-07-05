@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\Edit\ShippingAddress;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -17,6 +23,12 @@ class Form extends AbstractForm
             $regionCode = $order->getShippingAddress()->getRegionCode();
         } catch (\Exception $e) {
             $regionCode = null;
+        }
+
+        $state = $order->getShippingAddress()->getState();
+
+        if (empty($regionCode) && !empty($state)) {
+            $regionCode = $state;
         }
 
         $address = $order->getShippingAddress()->getData();
@@ -52,6 +64,18 @@ class Form extends AbstractForm
                 'name' => 'buyer_email',
                 'label' => $this->__('Buyer Email'),
                 'value' => $order->getChildObject()->getData('buyer_email'),
+                'required' => true,
+            ]
+        );
+
+        $fieldset->addField(
+            'recipient_name',
+            'text',
+            [
+                'name' => 'recipient_name',
+                'label' => $this->__('Recipient Name'),
+                'value' => isset($address['recipient_name'])
+                    ? $this->getHelper('Data')->escapeHtml($address['recipient_name']) : '',
                 'required' => true,
             ]
         );

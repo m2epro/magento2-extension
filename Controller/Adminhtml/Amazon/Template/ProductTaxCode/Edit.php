@@ -2,7 +2,7 @@
 
 /**
  * @author     M2E Pro Developers Team
- * @copyright  2011-2017 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Any usage is forbidden
  */
 
@@ -42,8 +42,7 @@ class Edit extends Template
 
         $this->addContent($this->createBlock('Amazon\Template\ProductTaxCode\Edit'));
 
-        // todo must be added when develop branch becomes "public"
-        $this->setPageHelpLink('TODO LINK');
+        $this->setPageHelpLink('x/1BBPAQ');
 
         return $this->getResultPage();
     }

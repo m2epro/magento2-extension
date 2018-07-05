@@ -169,7 +169,7 @@ define([
 
             var html = '<div class="'+classContainer+'">';
 
-            html += '<div class="hl_date">'+action.date+'</div>';
+            html += '<div class="hl_date">'+action.localized_date+'</div>';
 
             if (action.initiator != '') {
                 html += '<div class="hl_action">' +

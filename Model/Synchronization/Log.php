@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -30,6 +30,8 @@ class Log extends \Ess\M2ePro\Model\Log\AbstractModel
     const _TASK_OTHER_LISTINGS = '3rd Party Listings Synchronization';
     const TASK_POLICIES = 7;
     const _TASK_OTHER_POLICIES = 'Business Policies Synchronization';
+    const TASK_REPRICING = 8;
+    const _TASK_REPRICING = 'Repricing Synchronization';
 
     /**
      * @var null|int

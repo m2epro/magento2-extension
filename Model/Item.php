@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -41,7 +41,8 @@ class Item extends \Ess\M2ePro\Model\AbstractModel
         }
 
         foreach ($components as $component) {
-            $itemTable = $this->resourceConnection->getTableName("m2epro_{$component}_item");
+            $itemTable = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix("m2epro_{$component}_item");
             if (!in_array($itemTable, $existTables)) {
                 continue;
             }

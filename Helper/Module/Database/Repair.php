@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -74,8 +74,9 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
                     continue;
                 }
 
-                $parentTablePrefix = $this->resourceConnection->getTableName($parentTable);
-                $childTablePrefix  = $this->resourceConnection->getTableName($childTable);
+                $parentTablePrefix = $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix($parentTable);
+                $childTablePrefix  = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($childTable);
 
                 $parentIdColumn = $this->getHelper('Module\Database\Structure')->getIdColumn($parentTable);
                 $childIdColumn  = $this->getHelper('Module\Database\Structure')->getIdColumn($childTable);
@@ -142,7 +143,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
             }
             $brokenIds = array_slice($brokenIds,0,50000);
 
-            $tableWithPrefix = $this->resourceConnection->getTableName($table);
+            $tableWithPrefix = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($table);
             $idColumnName = $this->getHelper('Module\Database\Structure')->getIdColumn($table);
 
             foreach (array_chunk($brokenIds,1000) as $brokenIdsPart) {
@@ -173,7 +174,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
     {
         $connWrite = $this->resourceConnection->getConnection('core_write');
 
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         $result = $connWrite->query("REPAIR TABLE `{$tableName}`")->fetch();
         return $result['Msg_text'];
@@ -188,7 +189,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $writeConnection = $this->resourceConnection->getConnection('core_write');
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         if (empty($columnInfo['key'])) {
             $writeConnection->dropIndex($tableName, $columnInfo['name']);
@@ -216,7 +217,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         !empty($columnInfo['after']) && $definition .= "AFTER `{$columnInfo['after']}`";
 
         $writeConnection = $this->resourceConnection->getConnection('core_write');
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         if ($writeConnection->tableColumnExists($tableName, $columnInfo['name']) === false) {
             $writeConnection->addColumn($tableName, $columnInfo['name'], $definition);
@@ -233,7 +234,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $writeConnection = $this->resourceConnection->getConnection('core_write');
-        $tableName = $this->resourceConnection->getTableName($tableName);
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         $writeConnection->dropColumn($tableName, $columnInfo['name']);
     }

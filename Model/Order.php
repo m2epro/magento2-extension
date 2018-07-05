@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model;
 use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
 
 /**
- * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Amazon\Order getChildObject()
+ * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Ebay\Order getChildObject()
  */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
@@ -153,6 +153,21 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     public function getMagentoOrderId()
     {
         return $this->getData('magento_order_id');
+    }
+
+    public function isMagentoOrderCreationFailed()
+    {
+        return (bool)(int)$this->getData('magento_order_creation_failure');
+    }
+
+    public function getMagentoOrderCreationFailsCount()
+    {
+        return (int)$this->getData('magento_order_creation_fails_count');
+    }
+
+    public function getMagentoOrderCreationLatestAttemptDate()
+    {
+        return $this->getData('magento_order_creation_latest_attempt_date');
     }
 
     public function getStoreId()
@@ -484,11 +499,9 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Find the store, where order should be placed
-     *
-     * @param bool $strict
      * @throws \Ess\M2ePro\Model\Exception
      */
-    public function associateWithStore($strict = true)
+    public function associateWithStore()
     {
         $storeId = $this->getStoreId() ? $this->getStoreId() : $this->getChildObject()->getAssociatedStoreId();
         $store = $this->storeManager->getStore($storeId);
@@ -501,14 +514,16 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             $this->setData('store_id', $store->getId())->save();
         }
 
-        if (!$store->getConfig('payment/m2epropayment/active') && $strict) {
-            throw new \Ess\M2ePro\Model\Exception('Payment method "M2E Pro Payment" is disabled in
-                Magento Configuration.');
+        if (!$store->getConfig('payment/m2epropayment/active')) {
+            throw new \Ess\M2ePro\Model\Exception(
+                'Payment method "M2E Pro Payment" is disabled in Magento Configuration.'
+            );
         }
 
-        if (!$store->getConfig('carriers/m2eproshipping/active') && $strict) {
-            throw new \Ess\M2ePro\Model\Exception('Shipping method "M2E Pro Shipping" is disabled in
-                Magento Configuration.');
+        if (!$store->getConfig('carriers/m2eproshipping/active')) {
+            throw new \Ess\M2ePro\Model\Exception(
+                'Shipping method "M2E Pro Shipping" is disabled in Magento Configuration.'
+            );
         }
     }
 
@@ -516,27 +531,13 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     /**
      * Associate each order item with product in magento
-     *
-     * @param bool $strict
-     * @throws \Exception|null
+     * @throws Exception|null
      */
-    public function associateItemsWithProducts($strict = true)
+    public function associateItemsWithProducts()
     {
-        $exception = null;
-
         foreach ($this->getItemsCollection()->getItems() as $item) {
-            try {
-                /** @var $item \Ess\M2ePro\Model\Order\Item */
-                $item->associateWithProduct();
-            } catch (\Exception $e) {
-                if (is_null($exception)) {
-                    $exception = $e;
-                }
-            }
-        }
-
-        if ($strict && $exception) {
-            throw $exception;
+            /** @var $item \Ess\M2ePro\Model\Order\Item */
+            $item->associateWithProduct();
         }
     }
 
@@ -552,8 +553,16 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             return false;
         }
 
-        if (method_exists($this->getChildObject(), 'isReservable')) {
-            return $this->getChildObject()->isReservable();
+        if (!$this->getChildObject()->isReservable()) {
+            return false;
+        }
+
+        foreach ($this->getItemsCollection()->getItems() as $item) {
+            /** @var $item \Ess\M2ePro\Model\Order\Item */
+
+            if (!$item->isReservable()) {
+                return false;
+            }
         }
 
         return true;
@@ -653,10 +662,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
                 $this->addWarningLog(
                     'Magento Order was created successfully. 
-                    However one or more post-processing actions on Magento Order failed. This may lead to some issues in the future. 
-                    Please check the configuration of the ancillary services of your Magento. 
-                    For more details, read the original Magento warning: %msg%.
-                    ',
+                     However one or more post-processing actions on Magento Order failed. 
+                     This may lead to some issues in the future. 
+                     Please check the configuration of the ancillary services of your Magento. 
+                     For more details, read the original Magento warning: %msg%.',
                     array(
                         'msg' => $e->getMessage()
                     )
@@ -664,7 +673,11 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 $this->magentoOrder = $e->getOrder();
             }
 
-            $this->setData('magento_order_id', $this->magentoOrder->getId());
+            $this->addData([
+                'magento_order_id'                           => $this->magentoOrder->getId(),
+                'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_NO,
+                'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+            ]);
 
             $this->setMagentoOrder($this->magentoOrder);
             $this->save();
@@ -675,6 +688,8 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             // ---------------------------------------
 
         } catch (\Exception $e) {
+
+            unset($magentoQuoteBuilder);
 
             /**
              * \Magento\CatalogInventory\Model\StockManagement::registerProductsSale()
@@ -698,15 +713,20 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 }
             }
 
-            $this->_eventManager->dispatch('m2epro_order_place_failure', array('order' => $this));
+            $this->_eventManager->dispatch('ess_order_place_failure', array('order' => $this));
 
+            $this->addData([
+                'magento_order_creation_failure'             => self::MAGENTO_ORDER_CREATION_FAILED_YES,
+                'magento_order_creation_fails_count'         => $this->getMagentoOrderCreationFailsCount() + 1,
+                'magento_order_creation_latest_attempt_date' => $this->getHelper('Data')->getCurrentGmtDate()
+            ]);
             $this->save();
 
             $this->addErrorLog('Magento Order was not created. Reason: %msg%', array('msg' => $e->getMessage()));
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
 
             // ---------------------------------------
-            if ($this->isReservable() && $this->getReserve()->getFlag('order_reservation')) {
+            if ($this->isReservable()) {
                 $this->getReserve()->place();
             }
             // ---------------------------------------
@@ -726,7 +746,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         $magentoOrderUpdater->finishUpdate();
         // ---------------------------------------
 
-        $this->_eventManager->dispatch('m2epro_order_place_success', array('order' => $this));
+        $this->_eventManager->dispatch('ess_order_place_success', array('order' => $this));
 
         $this->addSuccessLog('Magento Order #%order_id% was created.', array(
             '!order_id' => $this->getMagentoOrder()->getRealOrderId()
@@ -782,6 +802,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId()
             ));
         } catch (\Exception $e) {
+            $this->helperFactory->getObject('Module\Exception')->process($e, false);
             $this->addErrorLog('Magento Order #%order_id% was not canceled. Reason: %msg%', array(
                 '!order_id' => $this->getMagentoOrder()->getRealOrderId(),
                 'msg' => $e->getMessage()
@@ -799,6 +820,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $invoice = $this->getChildObject()->createInvoice();
         } catch (\Exception $e) {
+            $this->helperFactory->getObject('Module\Exception')->process($e, false);
             $this->addErrorLog('Invoice was not created. Reason: %msg%', array('msg' => $e->getMessage()));
         }
 
@@ -820,6 +842,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         try {
             $shipment = $this->getChildObject()->createShipment();
         } catch (\Exception $e) {
+            $this->helperFactory->getObject('Module\Exception')->process($e, false);
             $this->addErrorLog('Shipment was not created. Reason: %msg%', array('msg' => $e->getMessage()));
         }
 

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -12,16 +12,29 @@ use Ess\M2ePro\Model\Magento\Product\Image;
 
 class Images extends \Ess\M2ePro\Helper\AbstractHelper
 {
+    const SHOULD_BE_URLS_SECURE_NO  = 0;
+    const SHOULD_BE_URLS_SECURE_YES = 1;
+
+    //########################################
+
+    public function shouldBeUrlsSecure()
+    {
+        return (bool)(int)$this->getHelper('Module')->getConfig()->getGroupValue(
+            '/ebay/description/', 'should_be_ulrs_secure'
+        );
+    }
+
     //########################################
 
     /**
      * @param Image[] $images
+     * @param string|NULL $attributeLabel for Variation product
      * @return string $hash
      */
-    public function getHash(array $images)
+    public function getHash(array $images, $attributeLabel = NULL)
     {
         if (empty($images)) {
-            return null;
+            return NULL;
         }
 
         $hashes = array();
@@ -39,6 +52,7 @@ class Images extends \Ess\M2ePro\Helper\AbstractHelper
         }
 
         $hash = md5($this->getHelper('Data')->jsonEncode($hashes));
+        $attributeLabel && $hash .= $attributeLabel;
 
         if ($haveNotSelfHostedImage) {
             $date = new \DateTime('now', new \DateTimeZone('UTC'));

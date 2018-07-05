@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -80,7 +80,10 @@ class Filters extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
         $collection = $this->activeRecordFactory->getObject('Ebay\Motor\Filter')->getCollection();
 
         $collection->getSelect()->join(
-            ['ftg' => $this->resourceConnection->getTableName('m2epro_ebay_motor_filter_to_group')],
+            [
+                'ftg' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group')
+            ],
             'ftg.filter_id=main_table.id',
             []
         );

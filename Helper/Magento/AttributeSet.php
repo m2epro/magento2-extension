@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -65,7 +65,7 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('catalog_product_entity');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
 
         $dbSelect = $connection->select()
             ->from($tableName, 'attribute_set_id')
@@ -173,7 +173,7 @@ class AttributeSet extends \Ess\M2ePro\Helper\Magento\AbstractHelper
         }
 
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('eav_entity_attribute');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_attribute');
 
         $dbSelect = $connection->select()
             ->from($tableName, 'attribute_set_id')

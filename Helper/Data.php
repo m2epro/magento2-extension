@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -24,6 +24,7 @@ class Data extends AbstractHelper
     protected $dir;
     protected $urlBuilder;
     protected $localeDate;
+    protected $timezone;
 
     //########################################
 
@@ -31,6 +32,7 @@ class Data extends AbstractHelper
         \Magento\Framework\Module\Dir $dir,
         \Magento\Backend\Model\UrlInterface $urlBuilder,
         \Magento\Framework\Stdlib\DateTime\DateTime $localeDate,
+        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $timezone,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
@@ -38,39 +40,54 @@ class Data extends AbstractHelper
         $this->dir = $dir;
         $this->urlBuilder = $urlBuilder;
         $this->localeDate = $localeDate;
+        $this->timezone   = $timezone;
         parent::__construct($helperFactory, $context);
     }
 
     //########################################
 
-    public function getCurrentGmtDate($returnTimestamp = false, $format = NULL)
+    public function getConfigTimezone()
     {
-        if ($returnTimestamp) {
-            return (int)$this->localeDate->gmtTimestamp();
-        }
-        return $this->localeDate->gmtDate($format);
+        return $this->timezone->getConfigTimezone();
     }
 
-    public function getCurrentTimezoneDate($returnTimestamp = false, $format = NULL)
+    public function getDefaultTimezone()
     {
-        if ($returnTimestamp) {
-            return (int)$this->localeDate->timestamp();
-        }
-        return $this->localeDate->date($format);
+        return $this->timezone->getDefaultTimezone();
     }
 
     // ---------------------------------------
 
-    public function getDate($date, $returnTimestamp = false, $format = NULL)
+    public function getCurrentGmtDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
+    {
+        $dateObject = new \DateTime('now', new \DateTimeZone($this->getDefaultTimezone()));
+
+        if ($returnTimestamp) {
+            return (int)$dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
+    }
+
+    public function getCurrentTimezoneDate($returnTimestamp = false, $format = 'Y-m-d H:i:s')
+    {
+        $dateObject = new \DateTime('now', new \DateTimeZone($this->getConfigTimezone()));
+
+        if ($returnTimestamp) {
+            return (int)$dateObject->getTimestamp();
+        }
+
+        return $dateObject->format($format);
+    }
+
+    // ---------------------------------------
+
+    public function getDate($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
         if (is_numeric($date)) {
             $result = (int)$date;
         } else {
             $result = strtotime($date);
-        }
-
-        if (is_null($format)) {
-            $format = 'Y-m-d H:i:s';
         }
 
         $result = date($format, $result);
@@ -84,20 +101,58 @@ class Data extends AbstractHelper
 
     // ---------------------------------------
 
-    public function gmtDateToTimezone($dateGmt, $returnTimestamp = false, $format = NULL)
+    public function gmtDateToTimezone($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
+        $dateObject = new \DateTime($date, new \DateTimeZone($this->getDefaultTimezone()));
+        $dateObject->setTimezone(new \DateTimeZone($this->getConfigTimezone()));
+
         if ($returnTimestamp) {
-            return (int)$this->localeDate->timestamp($dateGmt);
+            return (int)$dateObject->getTimestamp();
         }
-        return $this->localeDate->date($format,$dateGmt);
+
+        return $dateObject->format($format);
     }
 
-    public function timezoneDateToGmt($dateTimezone, $returnTimestamp = false, $format = NULL)
+    public function timezoneDateToGmt($date, $returnTimestamp = false, $format = 'Y-m-d H:i:s')
     {
+        $dateObject = new \DateTime($date, new \DateTimeZone($this->getConfigTimezone()));
+        $dateObject->setTimezone(new \DateTimeZone($this->getDefaultTimezone()));
+
         if ($returnTimestamp) {
-            return (int)$this->localeDate->gmtTimestamp($dateTimezone);
+            return (int)$dateObject->getTimestamp();
         }
-        return $this->localeDate->gmtDate($format,$dateTimezone);
+
+        return $dateObject->format($format);
+    }
+
+    // ---------------------------------------
+
+    public function parseTimestampFromLocalizedFormat($localDate,
+                                                      $localIntlDateFormat = \IntlDateFormatter::SHORT,
+                                                      $localIntlTimeFormat = \IntlDateFormatter::SHORT,
+                                                      $localTimezone = NULL)
+    {
+        is_null($localTimezone) && $localTimezone = $this->timezone->getConfigTimezone();
+
+        $pattern = '';
+        if ($localIntlDateFormat != \IntlDateFormatter::NONE) {
+            $pattern = $this->timezone->getDateFormat($localIntlDateFormat);
+        }
+        if ($localIntlTimeFormat != \IntlDateFormatter::NONE) {
+            $timeFormat = $this->timezone->getTimeFormat($localIntlTimeFormat);
+            $pattern = empty($pattern) ? $timeFormat : $pattern .' '. $timeFormat;
+        }
+
+        $formatter = new \IntlDateFormatter(
+            $localTimezone,
+            $localIntlDateFormat,
+            $localIntlTimeFormat,
+            new \DateTimeZone($localTimezone),
+            null,
+            $pattern
+        );
+
+        return $formatter->parse($localDate);
     }
 
     //########################################
@@ -134,6 +189,26 @@ class Data extends AbstractHelper
                 } else {
                     $result = htmlspecialchars($data, $flags);
                 }
+            } else {
+                $result = $data;
+            }
+        }
+        return $result;
+    }
+
+    //########################################
+
+    public function deEscapeHtml($data, $flags = ENT_COMPAT)
+    {
+        if (is_array($data)) {
+            $result = array();
+            foreach ($data as $item) {
+                $result[] = $this->deEscapeHtml($item, $flags);
+            }
+        } else {
+            // process single item
+            if (strlen($data)) {
+                $result = htmlspecialchars_decode($data, $flags);
             } else {
                 $result = $data;
             }
@@ -472,8 +547,8 @@ class Data extends AbstractHelper
                                     array $defaultBackParams = array())
     {
         $requestParams = $this->_getRequest()->getParams();
-        return isset($requestParams['back'])
-            ? $requestParams['back'] : $this->makeBackUrlParam($defaultBackIdOrRoute,$defaultBackParams);
+        return isset($requestParams['back']) ? $requestParams['back']
+                                             : $this->makeBackUrlParam($defaultBackIdOrRoute, $defaultBackParams);
     }
 
     // ---------------------------------------
@@ -482,7 +557,8 @@ class Data extends AbstractHelper
                                array $defaultBackParams = array(),
                                array $extendedRoutersParams = array())
     {
-        $back = base64_decode($this->getBackUrlParam($defaultBackIdOrRoute,$defaultBackParams));
+        $back = $this->getBackUrlParam($defaultBackIdOrRoute,$defaultBackParams);
+        $back = base64_decode($back);
 
         $params = array();
 
@@ -514,7 +590,8 @@ class Data extends AbstractHelper
             }
         }
 
-        return $this->urlBuilder->getUrl($route,$params);
+        $params['_escape_params'] = false;
+        return $this->urlBuilder->getUrl($route, $params);
     }
 
     //########################################

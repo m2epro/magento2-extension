@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -202,16 +202,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $collection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $collection->getSelect()->reset(\Zend_Db_Select::COLUMNS);
-        $collection->getSelect()->columns(
-            array('account_id', 'marketplace_id', 'status')
-        );
+        $collection->getSelect()->columns(array(
+            'count' => new \Zend_Db_Expr('COUNT(id)'),
+            'account_id',
+            'marketplace_id',
+            'status'
+        ));
+        $collection->getSelect()->group(array('account_id','marketplace_id','status'));
 
-        /* @var $item \Ess\M2ePro\Model\Listing\Other */
         foreach ($collection->getItems() as $item) {
 
-            $accountId = $item->getAccountId();
-            $marketplaceId = $item->getMarketplaceId();
-            $key = $accountId . ',' . $marketplaceId;
+            $key = $item->getData('account_id') . ',' . $item->getData('marketplace_id');
 
             empty($this->cacheData[$key]) && ($this->cacheData[$key] = array(
                 'total_items' => 0,
@@ -219,13 +220,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 'inactive_items' => 0
             ));
 
-            ++$this->cacheData[$key]['total_items'];
-
-            if ($item->getStatus() == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
-                ++$this->cacheData[$key]['active_items'];
+            if ($item->getData('status') == \Ess\M2ePro\Model\Listing\Product::STATUS_LISTED) {
+                $this->cacheData[$key]['active_items'] += (int)$item['count'];
             } else {
-                ++$this->cacheData[$key]['inactive_items'];
+                $this->cacheData[$key]['inactive_items'] += (int)$item['count'];
             }
+            $this->cacheData[$key]['total_items'] += (int)$item['count'];
         }
     }
 

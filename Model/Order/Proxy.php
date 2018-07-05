@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -148,16 +148,12 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
 
     abstract public function getOrderNumberPrefix();
 
-    //########################################
-
-    abstract public function getBuyerEmail();
-
-    //########################################
-
     /**
      * @return \Magento\Customer\Model\Data\Customer
      */
     abstract public function getCustomer();
+
+    //########################################
 
     public function getCustomerFirstName()
     {
@@ -173,6 +169,13 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
         return $addressData['lastname'];
     }
 
+    public function getBuyerEmail()
+    {
+        $addressData = $this->getAddressData();
+
+        return $addressData['email'];
+    }
+
     //########################################
 
     /**
@@ -184,12 +187,14 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
             $rawAddressData = $this->order->getShippingAddress()->getRawData();
 
             $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-            $this->addressData['firstname'] = $recipientNameParts['firstname'];
-            $this->addressData['lastname'] = $recipientNameParts['lastname'];
+            $this->addressData['firstname']  = $recipientNameParts['firstname'];
+            $this->addressData['lastname']   = $recipientNameParts['lastname'];
+            $this->addressData['middlename'] = $recipientNameParts['middlename'];
 
             $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-            $this->addressData['customer_firstname'] = $customerNameParts['firstname'];
-            $this->addressData['customer_lastname'] = $customerNameParts['lastname'];
+            $this->addressData['customer_firstname']  = $customerNameParts['firstname'];
+            $this->addressData['customer_lastname']   = $customerNameParts['lastname'];
+            $this->addressData['customer_middlename'] = $customerNameParts['middlename'];
 
             $this->addressData['email'] = $rawAddressData['email'];
             $this->addressData['country_id'] = $rawAddressData['country_id'];
@@ -228,15 +233,27 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
     {
         $fullName = trim($fullName);
 
-        $spacePosition = strpos($fullName, ' ');
-        $spacePosition === false && $spacePosition = strlen($fullName);
+        $parts      = explode(' ', $fullName);
+        $partsCount = count($parts);
 
-        $firstName = trim(substr($fullName, 0, $spacePosition));
-        $lastName = trim(substr($fullName, $spacePosition + 1));
+        $firstName  = '';
+        $middleName = '';
+        $lastName   = '';
+
+        if ($partsCount > 1) {
+            $firstName = array_shift($parts);
+            $lastName  = array_pop($parts);
+            if (!empty($parts)) {
+                $middleName = implode(' ', $parts);
+            }
+        } else {
+            $firstName = $fullName;
+        }
 
         return array(
-            'firstname' => $firstName ? $firstName : 'N/A',
-            'lastname'  => $lastName ? $lastName : 'N/A'
+            'firstname'  => $firstName ? $firstName : 'N/A',
+            'middlename' => $middleName ? trim($middleName) : '',
+            'lastname'   => $lastName ? $lastName : 'N/A'
         );
     }
 

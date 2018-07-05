@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -100,15 +100,45 @@ class Save extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         }
         // ---------------------------------------
 
-        if (!$this->getHelper('Component\Ebay\PickupStore')->createPickupStore($data, $data['account_id'])) {
+        // creating of pickup store
+        // ---------------------------------------
+        if (!$this->getHelper('Component\Ebay\PickupStore')->validateRequiredFields($data)) {
+
             $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
 
-            if ($id) {
-                return $this->_redirect('*/*/edit', ['id' => $id]);
-            }
+            $this->getMessageManager()->addErrorMessage(
+                $this->__('Validation error. You must fill all required fields.'),
+                self::GLOBAL_MESSAGES_GROUP
+            );
 
-            return $this->_redirect('*/*/new', ['account_id' => $this->getRequest()->getParam('account_id')]);
+            return $id ? $this->_redirect('*/*/edit', ['id' => $id])
+                       : $this->_redirect('*/*/new', ['account_id' => $this->getRequest()->getParam('account_id')]);
         }
+
+        try {
+
+            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+            $connectorObj = $dispatcherObject->getVirtualConnector(
+                'store','add','entity',
+                $this->getHelper('Component\Ebay\PickupStore')->prepareRequestData($data),
+                NULL, NULL, $this->getRequest()->getParam('account_id')
+            );
+
+            $dispatcherObject->process($connectorObj);
+
+        } catch (\Exception $exception) {
+
+            $this->getHelper('Module\Exception')->process($exception);
+            $this->getHelper('Data\Session')->setValue('pickup_store_form_data', $data);
+
+            $this->getMessageManager()->addErrorMessage($this->__(
+                'The New Store has not been created. <br/>Reason: %error_message%', $exception->getMessage()
+            ));
+
+            return $id ? $this->_redirect('*/*/edit', ['id' => $id])
+                       : $this->_redirect('*/*/new', ['account_id' => $this->getRequest()->getParam('account_id')]);
+        }
+        // ---------------------------------------
 
         $model = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore');
         if ($id) {

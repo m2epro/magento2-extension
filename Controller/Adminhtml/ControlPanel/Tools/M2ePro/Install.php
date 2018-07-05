@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Tools\M2ePro;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -46,8 +52,7 @@ class Install extends Command
     public function checkFilesValidityAction()
     {
         $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
-        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info',
-                                                               ['magento_version' => 2]);
+        $connectorObj = $dispatcherObject->getVirtualConnector('files','get','info');
         $dispatcherObject->process($connectorObj);
         $responseData = $connectorObj->getResponseData();
 
@@ -356,6 +361,10 @@ new $.ajax({
 });
 
 JS;
+            $group = is_null($row['item']['group']) ? 'null' : $row['item']['group'];
+            $key   = is_null($row['item']['key'])   ? 'null' : $row['item']['key'];
+            $value = is_null($row['item']['value']) ? 'null' : $row['item']['value'];
+
             $html .= <<<HTML
 <tr>
     <td>{$row['table']}</td>
@@ -367,9 +376,9 @@ JS;
             <input type="checkbox" name="cells[]" value="key" style="display: none;" checked="checked">
             <input type="checkbox" name="cells[]" value="value" style="display: none;" checked="checked">
 
-            <input type="hidden" name="value_group" value="{$row['item']['group']}">
-            <input type="hidden" name="value_key" value="{$row['item']['key']}">
-            <input type="text" name="value_value" value="{$row['item']['value']}">
+            <input type="hidden" name="value_group" value="{$group}">
+            <input type="hidden" name="value_key" value="{$key}">
+            <input type="text" name="value_value" value="{$value}">
         </form>
     </td>
     <td align="center">
@@ -424,9 +433,8 @@ HTML;
         $fullPath = $basePath .DIRECTORY_SEPARATOR. $filePath;
 
         $params = array(
-            'magento_version' => 2,
-            'content'         => '',
-            'path'            => $originalPath ? $originalPath : $filePath
+            'content' => '',
+            'path'    => $originalPath ? $originalPath : $filePath
         );
 
         if ($this->filesystemDriver->isExists($fullPath)) {

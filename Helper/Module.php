@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -91,7 +91,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.3.4';
+        return '1.3.5';
     }
 
     public function getSetupVersion()
@@ -126,7 +126,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '2356';
+        return '2678';
     }
 
     //########################################
@@ -290,7 +290,8 @@ class Module extends AbstractHelper
                     'value' => '768 MB'
                 ],
                 'current' => [
-                    'value' => (int)$clientPhpData['memory_limit'] . ' MB',
+                    'value' => (float)$clientPhpData['memory_limit'] <= 0
+                            ? 'unlimited' : $clientPhpData['memory_limit'] . ' MB',
                     'status' => true
                 ]
             ],
@@ -306,14 +307,31 @@ class Module extends AbstractHelper
                         ? 'unknown' : $clientPhpData['max_execution_time'] . ' sec',
                     'status' => true
                 ]
+            ],
+
+            'magento_version' => [
+                'title' => $this->getHelper('Module\Translation')->__('Magento Version'),
+                'condition' => [
+                    'sign' => '>=',
+                    'value' => '2.1.0'
+                ],
+                'current' => [
+                    'value' => $this->getHelper('Magento')->getVersion(),
+                    'status' => true
+                ]
             ]
         ];
 
         foreach ($requirements as $key => &$requirement) {
 
-            // max execution time is unlimited or fcgi handler
+            // max_execution_time is unlimited or fcgi handler
             if ($key == 'max_execution_time' &&
                 ($clientPhpData['max_execution_time'] == 0 || is_null($clientPhpData['max_execution_time']))) {
+                continue;
+            }
+
+            // memory_limit is unlimited
+            if ($key == 'memory_limit' && $clientPhpData['memory_limit'] <= 0) {
                 continue;
             }
 

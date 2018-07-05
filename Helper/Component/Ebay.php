@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -207,34 +207,39 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    public function reduceOptionsForVariations(array $options)
+    public function prepareOptionsForVariations(array $options)
     {
-        foreach ($options['set'] as &$optionsSet) {
-            foreach ($optionsSet as &$singleOption) {
-                $singleOption = $this->getHelper('Data')->reduceWordsInString(
+        $set = array();
+        foreach ($options['set'] as $optionTitle => $optionsSet) {
+            foreach ($optionsSet as $singleOptionKey => $singleOption) {
+                $set[trim($optionTitle)][$singleOptionKey] = trim($this->getHelper('Data')->reduceWordsInString(
                     $singleOption, self::MAX_LENGTH_FOR_OPTION_VALUE
-                );
+                ));
             }
         }
+        $options['set'] = $set;
 
         foreach ($options['variations'] as &$variation) {
             foreach ($variation as &$singleOption) {
-                $singleOption['option'] = $this->getHelper('Data')->reduceWordsInString(
+                $singleOption['option'] = trim($this->getHelper('Data')->reduceWordsInString(
                     $singleOption['option'], self::MAX_LENGTH_FOR_OPTION_VALUE
-                );
+                ));
+                $singleOption['attribute'] = trim($singleOption['attribute']);
             }
         }
+        unset($singleOption);
+        unset($variation);
 
         return $options;
     }
 
-    public function reduceOptionsForOrders(array $options)
+    public function prepareOptionsForOrders(array $options)
     {
         foreach ($options as &$singleOption) {
             if ($singleOption instanceof \Magento\Catalog\Model\Product) {
-                $reducedName = $this->getHelper('Data')->reduceWordsInString(
+                $reducedName = trim($this->getHelper('Data')->reduceWordsInString(
                     $singleOption->getName(), self::MAX_LENGTH_FOR_OPTION_VALUE
-                );
+                ));
                 $singleOption->setData('name', $reducedName);
 
                 continue;
@@ -242,11 +247,18 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
 
             foreach ($singleOption['values'] as &$singleOptionValue) {
                 foreach ($singleOptionValue['labels'] as &$singleOptionLabel) {
-                    $singleOptionLabel = $this->getHelper('Data')->reduceWordsInString(
+                    $singleOptionLabel = trim($this->getHelper('Data')->reduceWordsInString(
                         $singleOptionLabel, self::MAX_LENGTH_FOR_OPTION_VALUE
-                    );
+                    ));
                 }
             }
+        }
+
+        if (isset($options['additional']['attributes'])) {
+            foreach ($options['additional']['attributes'] as $code => &$title) {
+                $title = trim($title);
+            }
+            unset($title);
         }
 
         return $options;

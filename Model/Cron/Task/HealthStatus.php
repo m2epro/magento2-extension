@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -47,7 +47,7 @@ class HealthStatus extends AbstractModel
         $resultSet = $healthManager->doCheck(IssueType::TYPE);
 
         $currentStatus = $this->modelFactory->getObject('HealthStatus\CurrentStatus');
-        $currentStatus->set($resultSet->getWorstState());
+        $currentStatus->set($resultSet);
     }
 
     private function processEmailNotification()

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -226,22 +226,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         return array_shift($storeIds);
     }
 
- /**
-     * @return bool
-     */
-    public function canCreateMagentoOrder()
-    {
-        return $this->getChildObject()->canCreateMagentoOrder();
-    }
-
-    /**
-     * @return bool
-     */
-    public function isReservable()
-    {
-        return $this->getChildObject()->isReservable();
-    }
-
     //########################################
 
     /**
@@ -272,6 +256,22 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         if (!$this->getMagentoProduct()->isStatusEnabled()) {
             throw new \Ess\M2ePro\Model\Exception('Product is disabled.');
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function canCreateMagentoOrder()
+    {
+        return $this->getChildObject()->canCreateMagentoOrder();
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReservable()
+    {
+        return $this->getChildObject()->isReservable();
     }
 
     //########################################

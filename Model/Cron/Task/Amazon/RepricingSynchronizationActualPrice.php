@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -39,6 +39,7 @@ class RepricingSynchronizationActualPrice extends \Ess\M2ePro\Model\Cron\Task\Ab
             $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\ActualPrice');
             $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->run();
+            $this->getLockItem()->activate();
         }
     }
 

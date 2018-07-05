@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -39,6 +39,7 @@ class RepricingSynchronizationGeneral extends \Ess\M2ePro\Model\Cron\Task\Abstra
             $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
             $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->run();
+            $this->getLockItem()->activate();
         }
     }
 
@@ -51,7 +52,10 @@ class RepricingSynchronizationGeneral extends \Ess\M2ePro\Model\Cron\Task\Abstra
     {
         $accountCollection = $this->activeRecordFactory->getObject('Account')->getCollection();
         $accountCollection->getSelect()->joinInner(
-            array('aar' => $this->resource->getTableName('m2epro_amazon_account_repricing')),
+            array(
+                'aar' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_account_repricing')
+            ),
             'aar.account_id=main_table.id',
             array()
         );

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -36,10 +36,15 @@ class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
             $operationDate = $this->getHelper('Data')->getCurrentGmtDate();
             $skus = $this->getNewNoneSyncSkus($permittedAccount);
 
+            if (empty($skus)) {
+                continue;
+            }
+
             /** @var $repricingSynchronization \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General */
             $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
             $repricingSynchronization->setAccount($permittedAccount);
             $repricingSynchronization->run($skus);
+            $this->getLockItem()->activate();
 
             $this->setLastUpdateDate($permittedAccount, $operationDate);
         }
@@ -55,7 +60,10 @@ class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         $accountCollection = $this->activeRecordFactory->getObject('Account')->getCollection();
 
         $accountCollection->getSelect()->joinInner(
-            array('aar' => $this->resource->getTableName('m2epro_amazon_account_repricing')),
+            array(
+                'aar' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_account_repricing')
+            ),
             'aar.account_id=main_table.id', array()
         );
 
@@ -75,7 +83,7 @@ class RepricingInspectProducts extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         )->getCollection();
 
         $listingProductCollection->getSelect()->join(
-            array('l' => $this->resource->getTableName('m2epro_listing')),
+            array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
             'l.id=main_table.listing_id', array()
         );
         $listingProductCollection->addFieldToFilter('l.account_id', $accountId);

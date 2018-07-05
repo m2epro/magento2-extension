@@ -1,7 +1,8 @@
 define([
     'jquery',
+    'moment',
     'M2ePro/Amazon/Template/Edit'
-], function (jQuery) {
+], function (jQuery, moment) {
 
     window.AmazonTemplateSellingFormat = Class.create(AmazonTemplateEdit, {
 
@@ -73,14 +74,16 @@ define([
                     return true;
                 }
 
-                fromTime = new Date(fromTime.value);
-                toTime = new Date(toTime.value);
+                var format = $('local_date_format').value.toUpperCase();
+
+                fromTime = moment(fromTime.value, format);
+                toTime = moment(toTime.value, format);
 
                 if (!fromTime || !toTime) {
                     return true;
                 }
 
-                return toTime.getTime() > fromTime.getTime();
+                return toTime.unix() > fromTime.unix();
             }, M2ePro.translator.translate('Wrong date range.'));
 
             jQuery.validator.addMethod('M2ePro-customer-allowed-types', function(value, element) {

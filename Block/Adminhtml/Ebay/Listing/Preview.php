@@ -1,8 +1,15 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock;
+use Ess\M2ePro\Model\Ebay\Template\Description\Source as DescriptionSource;
 
 class Preview extends AbstractBlock
 {
@@ -346,9 +353,12 @@ JS
 
                 if ((int)$attribute->getAttributeId() == (int)$configurableAttribute->getAttributeId()) {
 
-                    $attributeLabels = array_values($attribute->getStoreLabels());
-                    $attributeLabels[] = $configurableAttribute->getData('label');
-                    $attributeLabels[] = $attribute->getFrontendLabel();
+                    $attributeLabels = [];
+                    foreach ($attribute->getStoreLabels() as $storeLabel) {
+                        $attributeLabels[] = trim($storeLabel);
+                    }
+                    $attributeLabels[] = trim($configurableAttribute->getData('label'));
+                    $attributeLabels[] = trim($attribute->getFrontendLabel());
 
                     $attributeLabels = array_filter($attributeLabels);
 
@@ -363,11 +373,10 @@ JS
     private function getImagesDataByAttributeLabels(array $attributeLabels)
     {
         $images = array();
+        $imagesLinks = array();
         $attributeLabel = false;
 
-        $variations = $this->ebayListingProduct->getVariations(true);
-
-        foreach ($variations as $variation) {
+        foreach ($this->ebayListingProduct->getVariations(true) as $variation) {
 
             /** @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
 
@@ -375,16 +384,17 @@ JS
                 continue;
             }
 
-            $options = $variation->getOptions(true);
-
-            foreach ($options as $option) {
+            foreach ($variation->getOptions(true) as $option) {
 
                 /** @var $option \Ess\M2ePro\Model\Listing\Product\Variation\Option */
 
+                $optionLabel = trim($option->getAttribute());
+                $optionValue = trim($option->getOption());
+
                 $foundAttributeLabel = false;
                 foreach ($attributeLabels as $tempLabel) {
-                    if (strtolower($tempLabel) == strtolower($option->getAttribute())) {
-                        $foundAttributeLabel = $option->getAttribute();
+                    if (strtolower($tempLabel) == strtolower($optionLabel)) {
+                        $foundAttributeLabel = $optionLabel;
                         break;
                     }
                 }
@@ -393,37 +403,41 @@ JS
                     continue;
                 }
 
-                $attributeLabel = $foundAttributeLabel;
+                if (!isset($imagesLinks[$optionValue])) {
+                    $imagesLinks[$optionValue] = [];
+                }
 
+                $attributeLabel = $foundAttributeLabel;
                 $optionImages = $this->ebayListingProduct->getEbayDescriptionTemplate()
                     ->getSource($option->getMagentoProduct())
                     ->getVariationImages();
 
-                $links = array();
                 foreach ($optionImages as $image) {
 
                     if (!$image->getUrl()) {
                         continue;
                     }
 
-                    $links[] = $image->getUrl();
-                }
+                    if (count($imagesLinks[$optionValue]) >= DescriptionSource::VARIATION_IMAGES_COUNT_MAX) {
+                        break 2;
+                    }
 
-                if (count($links) <= 0) {
-                    continue;
-                }
+                    if (!isset($images[$image->getHash()])) {
 
-                $images[$option->getOption()] = $links;
+                        $imagesLinks[$optionValue][] = $image->getUrl();
+                        $images[$image->getHash()] = $image;
+                    }
+                }
             }
         }
 
-        if (!$attributeLabel || !$images) {
+        if (!$attributeLabel || !$imagesLinks) {
             return array();
         }
 
         return array(
             'specific' => $attributeLabel,
-            'images' => $images
+            'images'   => $imagesLinks
         );
     }
 

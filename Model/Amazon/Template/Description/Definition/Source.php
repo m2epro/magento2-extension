@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -171,6 +171,31 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $result;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getMsrpRrp()
+    {
+        $result = '';
+
+        if ($this->getDescriptionDefinitionTemplate()->isMsrpRrpModeNone()) {
+            return NULL;
+        }
+
+        if ($this->getDescriptionDefinitionTemplate()->isMsrpRrpModeCustomAttribute()) {
+
+            $src = $this->getDescriptionDefinitionTemplate()->getMsrpRrpSource();
+            $result = $this->getMagentoProductAttributeValue(
+                $src['custom_attribute'],
+                $this->getMagentoProduct()->getStoreId()
+            );
+        }
+
+        is_string($result) && $result = str_replace(',','.',$result);
+
+        return round((float)$result,2);
     }
 
     /**
@@ -677,6 +702,33 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return array($image);
+    }
+
+    protected function getMagentoProductAttributeValue($attributeCode, $store)
+    {
+        $attributeValue = $this->getMagentoProduct()->getAttributeValue($attributeCode);
+
+        if (empty($attributeValue) || is_null($store)) {
+            return $attributeValue;
+        }
+
+        $isPriceConvertEnabled = $this->getHelper('Module')->getConfig()->getGroupValue(
+            '/magento/attribute/', 'price_type_converting'
+        );
+
+        if ($isPriceConvertEnabled &&
+            $this->getHelper('Magento\Attribute')->isAttributeInputTypePrice($attributeCode)) {
+
+            $currency = $this->getDescriptionDefinitionTemplate()
+                ->getAmazonDescriptionTemplate()
+                ->getMarketplace()
+                ->getChildObject()
+                ->getCurrency();
+
+            return $this->modelFactory->getObject('Currency')->convertPrice($attributeValue, $currency, $store);
+        }
+
+        return $attributeValue;
     }
 
     //########################################

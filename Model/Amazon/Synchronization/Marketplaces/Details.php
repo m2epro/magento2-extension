@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -92,8 +92,10 @@ class Details extends AbstractModel
     protected function saveDetailsToDb(\Ess\M2ePro\Model\Marketplace $marketplace, array $details)
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableMarketplaces = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_marketplace');
-        $tableShippingOverride = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_shipping_override');
+        $tableMarketplaces = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
+        $tableShippingOverride = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_shipping_override');
 
         $connection->delete($tableMarketplaces,array('marketplace_id = ?' => $marketplace->getId()));
 

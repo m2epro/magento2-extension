@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Setup;
 
 use Ess\M2ePro\Helper\Factory;
@@ -987,6 +993,18 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'default' => NULL]
             )
             ->addColumn(
+                'magento_order_creation_failure', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'magento_order_creation_fails_count', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'magento_order_creation_latest_attempt_date', Table::TYPE_DATETIME, NULL,
+                ['default' => NULL]
+            )
+            ->addColumn(
                 'store_id', Table::TYPE_INTEGER, NULL,
                 ['unsigned' => true, 'default' => NULL]
             )
@@ -1017,6 +1035,9 @@ class InstallSchema implements InstallSchemaInterface
             ->addIndex('account_id', 'account_id')
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('magento_order_id', 'magento_order_id')
+            ->addIndex('magento_order_creation_failure', 'magento_order_creation_failure')
+            ->addIndex('magento_order_creation_fails_count', 'magento_order_creation_fails_count')
+            ->addIndex('magento_order_creation_latest_attempt_date', 'magento_order_creation_latest_attempt_date')
             ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('reservation_state', 'reservation_state')
             ->setOption('type', 'INNODB')
@@ -6454,6 +6475,14 @@ class InstallSchema implements InstallSchemaInterface
             ->addColumn(
                 'manufacturer_part_number_custom_attribute', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
+            )
+            ->addColumn(
+                'msrp_rrp_mode', Table::TYPE_SMALLINT, NULL,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'msrp_rrp_custom_attribute', Table::TYPE_TEXT, 255,
+                ['default' => NULL]
             )
             ->addColumn(
                 'item_package_quantity_mode', Table::TYPE_SMALLINT, NULL,

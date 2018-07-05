@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -23,7 +23,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ResourceModel\ActiveRecor
     {
         $connection = $this->getConnection();
 
-        $table = $this->getTable('m2epro_module_config');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_module_config');
         $groupConfig = '/logs/'.$this->getConfigGroupSuffix().'/';
 
         $lastActionId = (int)$connection->select()

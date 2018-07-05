@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -77,69 +77,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     //########################################
 
-    public function createPickupStore($data, $accountId)
-    {
-        if (!$this->validateRequiredFields($data)) {
-            $this->messageManager->addErrorMessage(
-                $this->getHelper('Module\Translation')->__('Validation error. You must fill all required fields.')
-            );
-            return false;
-        }
-
-        try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
-                'store','add','entity', $this->prepareData($data),
-                NULL, NULL, $accountId
-            );
-
-            $dispatcherObject->process($connectorObj);
-
-        } catch (\Exception $exception) {
-
-            $this->getHelper('Module\Exception')->process($exception);
-            $error = 'The New Store has not been created. <br/>Reason: %error_message%';
-            $error = $this->getHelper('Module\Translation')->__($error, $exception->getMessage());
-
-            $this->messageManager->addErrorMessage($error);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    public function deletePickupStore($locationId, $accountId)
-    {
-        try {
-
-            $dispatcherObject = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-            $connectorObj = $dispatcherObject->getVirtualConnector(
-                'store', 'delete', 'entity', array(
-                    'location_id' => $locationId
-                ), NULL, NULL, $accountId
-            );
-
-            $dispatcherObject->process($connectorObj);
-
-        } catch (\Exception $exception) {
-
-            $this->getHelper('Module\Exception')->process($exception);
-            $error = 'The Store has not been deleted. Reason: %error_message%';
-            $error = $this->getHelper('Module\Translation')->__($error, $exception->getMessage());
-
-            $this->messageManager->addErrorMessage($error);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    // ---------------------------------------
-
-    protected function validateRequiredFields(array $data)
+    public function validateRequiredFields(array $data)
     {
         $requiredFields = array(
             'name', 'location_id', 'account_id', 'marketplace_id',
@@ -159,7 +97,7 @@ class PickupStore extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
-    protected function prepareData(array $data)
+    public function prepareRequestData(array $data)
     {
         $requestData = array();
         $requestData['location_id'] = $data['location_id'];

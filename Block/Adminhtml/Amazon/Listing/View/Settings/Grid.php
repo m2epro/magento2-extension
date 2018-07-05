@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -61,13 +61,15 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         $collection = $this->magentoProductCollectionFactory->create();
 
         $collection->setListingProductModeOn();
+        $collection->setStoreId($this->listing->getStoreId());
         $collection->setListing($this->listing->getId());
 
         if ($this->isFilterOrSortByPriceIsUsed(null, 'amazon_online_price')) {
             $collection->setIsNeedToUseIndexerParent(true);
         }
 
-        $collection->addAttributeToSelect('name')
+        $collection
+            ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku')
             ->joinStockItem();
 
@@ -209,6 +211,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
+            'escape'       => false,
             'frame_callback' => array($this, 'callbackColumnProductTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));

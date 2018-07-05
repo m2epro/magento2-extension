@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -325,14 +325,16 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
                 $data['online_qty_sold'] = $saveQtySold ? (int)$ebayVariation->getOnlineQtySold() : 0;
                 $data['online_qty'] = $requestVariation['qty'] + $data['online_qty_sold'];
 
-                if (!empty($requestVariation['details']['mpn'])) {
-                    $variationAdditionalData = $variation->getAdditionalData();
-                    $variationAdditionalData['ebay_mpn_value'] = $requestVariation['details']['mpn'];
-
-                    $data['additional_data'] = $this->getHelper('Data')->jsonEncode($variationAdditionalData);
-                }
-
                 $variation->getChildObject()->addData($data)->save();
+
+                if (!empty($requestVariation['details'])) {
+
+                    $additionalData = $variation->getAdditionalData();
+                    $additionalData['online_product_details'] = $requestVariation['details'];
+
+                    $variation->setData('additional_data', $this->getHelper('Data')->jsonEncode($additionalData));
+                    $variation->save();
+                }
             }
 
             $variation->getChildObject()->setStatus($this->getListingProduct()->getStatus());

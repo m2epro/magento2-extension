@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -25,20 +25,19 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected $createNewTemplateJsFn =
         'ListingGridHandlerObj.templateDescriptionHandler.createTemplateDescriptionInNewTab';
 
-    protected $customCollectionFactory;
     protected $resourceConnection;
+
+    protected $cacheData = array();
 
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->customCollectionFactory = $customCollectionFactory;
         $this->resourceConnection = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
@@ -127,8 +126,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Set default values
         // ---------------------------------------
-        $this->setFilterVisibility(false);
-        $this->setDefaultSort('id');
+        $this->setFilterVisibility(true);
+        $this->setDefaultSort('title');
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(false);
         $this->setUseAjax(true);
@@ -148,63 +147,52 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         $descriptionCollection->addFieldToFilter('marketplace_id', $this->getMarketplaceId());
 
-        $preparedCollection = $this->customCollectionFactory->create();
-        $preparedCollection->setConnection($this->resourceConnection->getConnection());
+        $this->setCollection($descriptionCollection);
+        $this->prepareCacheData();
 
-        $data = $descriptionCollection->getData();
-        $preparedData = [];
-        foreach ($data as $item) {
+        return parent::_prepareCollection();
+    }
+
+    // ---------------------------------------
+
+    private function prepareCacheData()
+    {
+        $this->cacheData = array();
+        $tempCollection = clone $this->getCollection();
+
+        foreach ($tempCollection->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Amazon\Template\Description $item */
+
             if (!$this->getCheckNewAsinAccepted()) {
-                $item['description_template_action_status'] = self::ACTION_STATUS_READY_TO_BE_ASSIGNED;
-                $preparedData[] = $item;
+                $this->cacheData[$item->getId()] = self::ACTION_STATUS_READY_TO_BE_ASSIGNED;
                 continue;
             }
 
-            if (!$item['is_new_asin_accepted']) {
-                $item['description_template_action_status'] = self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED;
-                $preparedData[] = $item;
+            if (!$item->getChildObject()->getData('is_new_asin_accepted')) {
+                $this->cacheData[$item->getId()] = self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED;
                 continue;
             }
 
             $variationProductsIds = $this->getVariationsProductsIds();
-
             if (!empty($variationProductsIds)) {
+
                 $detailsModel = $this->modelFactory->getObject('Amazon\Marketplace\Details');
                 $detailsModel->setMarketplaceId($this->getMarketplaceId());
-                $themes = $detailsModel->getVariationThemes($item['product_data_nick']);
 
+                $themes = $detailsModel->getVariationThemes($item->getChildObject()->getData('product_data_nick'));
                 if (empty($themes)) {
-                    $item['description_template_action_status'] = self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED;
-                    $preparedData[] = $item;
+
+                    $this->cacheData[$item->getId()] = self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED;
                     continue;
                 }
             }
 
-            $item['description_template_action_status'] = self::ACTION_STATUS_READY_TO_BE_ASSIGNED;
-            $preparedData[] = $item;
+            $this->cacheData[$item->getId()] = self::ACTION_STATUS_READY_TO_BE_ASSIGNED;
             continue;
         }
-
-        if (!empty($preparedData)) {
-            usort($preparedData, function($a, $b)
-            {
-                return $a["description_template_action_status"] < $b["description_template_action_status"];
-            });
-
-            foreach ($preparedData as $item) {
-                $preparedCollection->addItem(new \Magento\Framework\DataObject($item));
-            }
-        }
-
-        $preparedCollection->setCustomSize(count($preparedData));
-        $this->setCollection($preparedCollection);
-
-        parent::_prepareCollection();
-
-        $preparedCollection->setCustomIsLoaded(true);
-
-        return $this;
     }
+
+    // ---------------------------------------
 
     protected function _prepareColumns()
     {
@@ -213,19 +201,33 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'align'        => 'left',
             'type'         => 'text',
             'index'        => 'title',
-            'filter'       => false,
-            'sortable'     => false,
+            'filter_index' => 'title',
+            'escape'       => false,
+            'sortable'     => true,
+            'filter_condition_callback' => array($this, 'callbackFilterTitle'),
             'frame_callback' => array($this, 'callbackColumnTitle')
         ));
 
         $this->addColumn('status', array(
             'header'       => $this->__('Status/Reason'),
             'align'        => 'left',
-            'type'         => 'text',
+            'type'         => 'options',
+            'options'      => array(
+                self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED => $this->__(
+                    'New ASIN/ISBN feature is disabled'
+                ),
+                self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED => $this->__(
+                    'Selected Category doesn\'t support Variational Products'
+                ),
+                self::ACTION_STATUS_READY_TO_BE_ASSIGNED => $this->__(
+                    'Ready to be assigned'
+                ),
+            ),
             'width'        => '140px',
-            'index'        => 'title',
-            'filter'       => false,
+            'index'        => 'description_template_action_status',
+            'filter_index' => 'description_template_action_status',
             'sortable'     => false,
+            'filter_condition_callback' => array($this, 'callbackFilterStatus'),
             'frame_callback' => array($this, 'callbackColumnStatus')
         ));
 
@@ -258,6 +260,40 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     //########################################
 
+    protected function callbackFilterTitle($collection, $column)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description\Collection $collection */
+
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
+        }
+
+        $collection->getSelect()->where(
+            'title LIKE ? OR category_path LIKE ? OR browsenode_id LIKE ?', '%'.$value.'%'
+        );
+    }
+
+    protected function callbackFilterStatus($collection, $column)
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Template\Description\Collection $collection */
+
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
+        }
+
+        foreach ($collection->getItems() as $item) {
+            /**@var \Ess\M2ePro\Model\Amazon\Template\Description $item */
+
+            if ($this->cacheData[$item->getId()] != $value) {
+                $collection->removeItemByKey($item->getId());
+            }
+        }
+    }
+
+    //########################################
+
     public function getRefreshButtonHtml()
     {
         return $this->getChildHtml('refresh_button');
@@ -285,8 +321,11 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $title = $this->getHelper('Data')->escapeHtml($row->getData('title'));
 
         $categoryWord = $this->__('Category');
-        $categoryPath = !empty($row['category_path']) ? "{$row['category_path']} ({$row['browsenode_id']})"
-            : $this->__('N/A');
+        $categoryPath = $row->getChildObject()->getData('category_path');
+        $browseNode   = $row->getChildObject()->getData('browsenode_id');
+
+        $categoryPath = !empty($categoryPath) ? "{$categoryPath} ({$browseNode})"
+                                              : $this->__('N/A');
 
         return <<<HTML
 <a target="_blank" href="{$templateDescriptionEditUrl}">{$title}</a>
@@ -299,10 +338,14 @@ HTML;
 
     public function callbackColumnStatus($value, $row, $column, $isExport)
     {
-        switch($row->getData('description_template_action_status')) {
+        $status = $this->cacheData[$row->getId()];
+
+        switch($status) {
+
             case self::ACTION_STATUS_NEW_ASIN_NOT_ACCEPTED:
                 return '<span style="color: #808080;">' .
                     $this->__('New ASIN/ISBN feature is disabled') . '</span>';
+
             case self::ACTION_STATUS_VARIATIONS_NOT_SUPPORTED:
                 return '<span style="color: #808080;">' .
                     $this->__(

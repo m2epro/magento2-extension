@@ -2,13 +2,14 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Model\Magento\Product;
 
 use Ess\M2ePro\Model\AbstractModel;
+use \Magento\Framework\App\Area;
 
 class Image extends AbstractModel
 {
@@ -21,7 +22,9 @@ class Image extends AbstractModel
     protected $path = null;
 
     protected $hash = null;
+
     protected $storeId = 0;
+    protected $area = Area::AREA_FRONTEND;
 
     //########################################
 
@@ -91,6 +94,26 @@ class Image extends AbstractModel
     /**
      * @return string
      */
+    public function getArea()
+    {
+        return $this->area;
+    }
+
+    /**
+     * @param string $area
+     * @return $this
+     */
+    public function setArea($area)
+    {
+        $this->area = $area;
+        return $this;
+    }
+
+    //----------------------------------------
+
+    /**
+     * @return string
+     */
     public function getHash()
     {
         if ($this->hash) {
@@ -145,10 +168,7 @@ class Image extends AbstractModel
         $imageUrl = str_replace('%20', ' ', $this->getUrl());
         $imageUrl = preg_replace('/^http(s)?:\/\//i', '', $imageUrl);
 
-        $baseMediaUrl = $this->storeManager->getStore($this->storeId)->getBaseUrl(
-            \Magento\Framework\UrlInterface::URL_TYPE_MEDIA, false
-        );
-
+        $baseMediaUrl = $this->getBaseMediaUrl();
         $baseMediaUrl = preg_replace('/^http(s)?:\/\//i', '', $baseMediaUrl);
 
         $baseMediaPath = $this->filesystem
@@ -164,10 +184,7 @@ class Image extends AbstractModel
 
     public function getUrlByPath()
     {
-        $baseMediaUrl = $this->storeManager->getStore($this->storeId)->getBaseUrl(
-            \Magento\Framework\UrlInterface::URL_TYPE_MEDIA, false
-        );
-
+        $baseMediaUrl  = $this->getBaseMediaUrl();
         $baseMediaPath = $this->filesystem
             ->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
             ->getAbsolutePath();
@@ -176,6 +193,19 @@ class Image extends AbstractModel
         $imageLink = str_replace(DIRECTORY_SEPARATOR, '/', $imageLink);
 
         return str_replace(' ', '%20', $imageLink);
+    }
+
+    //########################################
+
+    private function getBaseMediaUrl()
+    {
+        $shouldBeSecure = $this->getArea() == Area::AREA_FRONTEND
+            ? $this->getHelper('Component\Ebay\Images')->shouldBeUrlsSecure()
+            : NULL;
+
+        return $this->storeManager->getStore($this->storeId)->getBaseUrl(
+            \Magento\Framework\UrlInterface::URL_TYPE_MEDIA, $shouldBeSecure
+        );
     }
 
     //########################################

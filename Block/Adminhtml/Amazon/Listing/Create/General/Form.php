@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\General;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -230,6 +236,12 @@ HTML
         );
         $this->jsTranslator->add(
             'Preparing to start. Please wait ...', $this->__('Preparing to start. Please wait ...')
+        );
+        $this->jsTranslator->add(
+            'Another Synchronization Is Already Running.', $this->__('Another Synchronization Is Already Running.')
+        );
+        $this->jsTranslator->add(
+            'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
         );
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Amazon'));

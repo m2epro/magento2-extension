@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -1127,6 +1127,7 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         );
     }
 
+    //todo
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @param string $ruleModelPrefix

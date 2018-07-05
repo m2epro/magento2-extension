@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template\Description;
@@ -13,7 +19,8 @@ class GetAvailableProductTypes extends Description
         $marketplaceId = (int)$this->getRequest()->getPost('marketplace_id');
         $browsenodeId  = $this->getRequest()->getPost('browsenode_id');
 
-        $tableName = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_category_product_data');
+        $tableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_category_product_data');
 
         $queryStmt = $this->resourceConnection->getConnection()
             ->select()
@@ -108,7 +115,8 @@ class GetAvailableProductTypes extends Description
             );
         }
 
-        $tableName = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_category_product_data');
+        $tableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_category_product_data');
         $this->resourceConnection->getConnection()->insertMultiple($tableName, $insertsData);
 
         return $insertsData;

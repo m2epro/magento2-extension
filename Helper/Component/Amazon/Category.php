@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -135,7 +135,10 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
 
         $select = $this->resourceConnection->getConnection()
             ->select()
-            ->from($this->resourceConnection->getTableName('m2epro_amazon_dictionary_category'))
+            ->from(
+                $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_dictionary_category')
+            )
             ->where('marketplace_id = ?', $marketplaceId)
             ->where('browsenode_id IN (?)', array_unique($nodeIdsForCheck));
 

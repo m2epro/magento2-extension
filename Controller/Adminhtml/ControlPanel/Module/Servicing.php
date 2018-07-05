@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -154,6 +154,27 @@ class Servicing extends Command
             $this->getMessageManager()->addSuccess('Servicing Statistic was successfully performed.');
         } else {
             $this->getMessageManager()->addError('Servicing Statistic was performed with errors.');
+        }
+
+        $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());
+    }
+
+    //########################################
+
+    /**
+     * @title "Process Changed Sources"
+     * @description "Process Changed Sources Task"
+     */
+    public function runChangedSourcesAction()
+    {
+        /** @var \Ess\M2ePro\Model\Servicing\Dispatcher $servicingDispatcher */
+        $servicingDispatcher = $this->modelFactory->getObject('Servicing\Dispatcher');
+        $servicingDispatcher->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER);
+
+        if ($servicingDispatcher->processTask('changed_sources')) {
+            $this->getMessageManager()->addSuccess('Servicing Changed Sources was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Servicing Changed Sources was performed with errors.');
         }
 
         $this->_redirect($this->getHelper('View\ControlPanel')->getPageModuleTabUrl());

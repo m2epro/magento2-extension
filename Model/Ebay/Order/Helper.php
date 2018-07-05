@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -116,7 +116,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $tableDictMarketplace = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_marketplace');
+        $tableDictMarketplace = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
         $dbSelect = $connRead->select()
             ->from($tableDictMarketplace, 'payments')
@@ -145,7 +146,8 @@ class Helper extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead          = $this->resourceConnection->getConnection();
-        $tableDictShipping = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_shipping');
+        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         $dbSelect = $connRead->select()
             ->from($tableDictShipping, 'title')

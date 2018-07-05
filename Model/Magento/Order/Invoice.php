@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,22 +10,24 @@ namespace Ess\M2ePro\Model\Magento\Order;
 
 class Invoice extends \Ess\M2ePro\Model\AbstractModel
 {
-    protected $transaction;
+    /** @var \Magento\Framework\DB\TransactionFactory  */
+    protected $transactionFactory = NULL;
+
     /** @var $magentoOrder \Magento\Sales\Model\Order */
-    protected $magentoOrder = NULL;
+    protected $magentoOrder       = NULL;
 
     /** @var $invoice \Magento\Sales\Model\Order\Invoice */
-    protected $invoice = NULL;
+    protected $invoice            = NULL;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\DB\Transaction $transaction,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->transaction = $transaction;
+        $this->transactionFactory = $transactionFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -83,7 +85,8 @@ class Invoice extends \Ess\M2ePro\Model\AbstractModel
         // it is necessary for updating qty_invoiced field in sales_flat_order_item table
         $this->invoice->getOrder()->setIsInProcess(true);
 
-        $this->transaction
+        $this->transactionFactory
+             ->create()
              ->addObject($this->invoice)
              ->addObject($this->invoice->getOrder())
              ->save();

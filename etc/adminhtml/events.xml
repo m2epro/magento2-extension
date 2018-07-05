@@ -6,8 +6,8 @@
     <!-- external orders -->
 
     <event name="controller_action_postdispatch_sales_order_view">
-        <observer name="m2epro_observer_order_view_before"
-                  instance="Ess\M2ePro\Observer\Order\View\Before"
+        <observer name="m2epro_observer_order_view"
+                  instance="Ess\M2ePro\Observer\Order\View"
                   shared="false" />
     </event>
     <event name="controller_action_postdispatch_adminhtml_order_shipment_view">
@@ -23,11 +23,6 @@
     <event name="controller_action_postdispatch_adminhtml_order_creditmemo_view">
         <observer name="m2epro_observer_creditmemo_view"
                   instance="Ess\M2ePro\Observer\CreditMemo\View"
-                  shared="false" />
-    </event>
-    <event name="core_layout_block_create_after">
-        <observer name="m2epro_observer_order_view_after"
-                  instance="Ess\M2ePro\Observer\Order\View\After"
                   shared="false" />
     </event>
 

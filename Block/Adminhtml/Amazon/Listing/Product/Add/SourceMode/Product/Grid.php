@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -74,6 +74,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('type_id');
 
+        /**
+         * We have to use Admin Store view for collection. Otherwise magento will use index table for price column
+         * vendor/magento/module-catalog/Model/ResourceModel/Product/Collection.php
+         * setOrder() | addAttributeToSort()
+         */
+        $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
         $collection->joinStockItem(array(
             'qty'         => 'qty',
             'is_in_stock' => 'is_in_stock'
@@ -169,8 +175,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             ))
         );
 
-        $store->getId() && $collection->setStoreId($store->getId());
-
         $this->setCollection($collection);
 
         $this->getCollection()->addWebsiteNamesToResult();
@@ -196,6 +200,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type' => 'text',
             'index' => 'name',
             'filter_index' => 'name',
+            'escape'       => false,
             'frame_callback' => array($this, 'callbackColumnProductTitle')
         ));
 

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -152,14 +152,14 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
             return $data;
         }
 
-        $additionalData = $this->getListingProduct()->getAdditionalData();
+        $specificsReplacements = $this->getEbayListingProduct()->getVariationSpecificsReplacements();
 
-        if (empty($additionalData['variations_specifics_replacements'])) {
+        if (empty($specificsReplacements)) {
             return $data;
         }
 
-        $data = $this->doReplaceVariationSpecifics($data, $additionalData['variations_specifics_replacements']);
-        $this->addMetaData('variations_specifics_replacements', $additionalData['variations_specifics_replacements']);
+        $data = $this->doReplaceVariationSpecifics($data, $specificsReplacements);
+        $this->addMetaData('variations_specifics_replacements', $specificsReplacements);
 
         return $data;
     }
@@ -283,6 +283,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      * @param array $data
      * @return array
      */
+    // todo PHPdoc should be changed
     protected function resolveVariationMpnIssue(array $data)
     {
         if (!$this->getIsVariationItem()) {
@@ -344,6 +345,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                     unset($variationItem['specifics'][$findIt]);
                 }
             }
+            unset($variationItem);
 
             foreach ($replacements as $findIt => $replaceBy) {
 

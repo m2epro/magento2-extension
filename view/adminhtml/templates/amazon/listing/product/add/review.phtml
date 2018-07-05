@@ -37,6 +37,7 @@ $block->css->add("
 
         echo $block->createBlock('HelpBlock')->addData([
             'no_collapse' => true,
+            'always_show' => true,
             'no_hide' => true,
             'content' => $helpBlockContent
         ])->toHtml();

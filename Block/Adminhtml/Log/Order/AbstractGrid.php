@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -80,7 +80,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
         }
 
         $collection->getSelect()->joinLeft(
-            array('so' => $this->resourceConnection->getTableName('sales_order')),
+            array('so' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order')),
             '(so.entity_id = `mo`.magento_order_id)',
             array('magento_order_number' => 'increment_id')
         );
@@ -110,8 +110,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'filter_time' => true,
-//            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
         ));

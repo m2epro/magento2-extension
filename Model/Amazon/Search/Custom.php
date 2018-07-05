@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -121,10 +121,10 @@ class Custom extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($searchData !== false && $this->getSearchMethod() == 'byAsin') {
-            if (is_null($searchData)) {
-                $searchData = array();
-            } else {
+            if (is_array($searchData) && !empty($searchData)) {
                 $searchData = array($searchData);
+            } else if (is_null($searchData)) {
+                $searchData = array();
             }
         }
 

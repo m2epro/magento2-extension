@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -82,6 +82,7 @@ class ExternalTransaction extends AbstractGrid
             'width'    => '150px',
             'index'    => 'transaction_date',
             'type'     => 'datetime',
+            'filter'   => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format'   => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'sortable' => false

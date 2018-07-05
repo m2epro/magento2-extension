@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -149,26 +149,40 @@ class Update extends AbstractModel
             array($change->getId())
         );
 
+        $connectorData = ['change_id' => $change->getId()];
+
         if ($change->isPaymentUpdateAction()) {
 
             /** @var \Ess\M2ePro\Model\Order $order */
             $order = $this->ebayFactory->getObjectLoaded('Order', $change->getOrderId());
             if ($order->getId()) {
                 $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
-                $dispatcher->process(\Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY, array($order));
+                $dispatcher->process(
+                    \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_PAY,
+                    array($order),
+                    $connectorData
+                );
             }
 
             return;
         }
 
         if ($change->isShippingUpdateAction()) {
-            $changeParams = $change->getParams();
-            $params = array();
+
+            $changeParams    = $change->getParams();
 
             $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP;
-            if (!empty($changeParams['tracking_details'])) {
+            if (!empty($changeParams['tracking_number']) && !empty($changeParams['carrier_title'])) {
+
                 $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK;
-                $params = $changeParams['tracking_details'];
+                /**
+                 * TODO check(rewrite) during orders refactoring.
+                 * Ess_M2ePro_Model_Ebay_Connector_Order_Dispatcher expects array of order to be proccessed.
+                 * But $connectorData has no link to order instance, so appears like discrepancy between these
+                 * two parameters.
+                 */
+                $connectorData['tracking_number'] = $changeParams['tracking_number'];
+                $connectorData['carrier_code']    = $changeParams['carrier_title'];
             }
 
             if (!empty($changeParams['item_id'])) {
@@ -178,7 +192,7 @@ class Update extends AbstractModel
 
                 if ($item->getId()) {
                     $dispatcher = $this->modelFactory->getObject('Ebay\Connector\OrderItem\Dispatcher');
-                    $dispatcher->process($action, array($item), $params);
+                    $dispatcher->process($action, array($item), $connectorData);
                 }
             } else {
 
@@ -187,7 +201,7 @@ class Update extends AbstractModel
 
                 if ($order->getId()) {
                     $dispatcher = $this->modelFactory->getObject('Ebay\Connector\Order\Dispatcher');
-                    $dispatcher->process($action, array($order), $params);
+                    $dispatcher->process($action, array($order), $connectorData);
                 }
             }
         }

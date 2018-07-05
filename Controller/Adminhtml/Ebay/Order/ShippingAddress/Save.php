@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Order\ShippingAddress;
 
 use Ess\M2ePro\Controller\Adminhtml\Ebay\Order;
@@ -51,6 +57,10 @@ class Save extends Order
             if (isset($post[$key])) {
                 $data[$key] = $post[$key];
             }
+        }
+
+        if (isset($data['street']) && is_array($data['street'])) {
+            $data['street'] = array_filter($data['street']);
         }
 
         $shippingDetails = $order->getChildObject()->getShippingDetails();

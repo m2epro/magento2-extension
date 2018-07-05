@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 namespace Ess\M2ePro\Block\Adminhtml\Ebay\Listing\View\Ebay;
@@ -78,6 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $collection->setListingProductModeOn();
         $collection->setListing($this->listing);
+        $collection->setStoreId($this->listing->getStoreId());
 
         if ($this->isFilterOrSortByPriceIsUsed('price', 'ebay_online_current_price')) {
             $collection->setIsNeedToUseIndexerParent(true);
@@ -164,6 +165,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'online_title',
+            'escape'    => false,
             'frame_callback' => array($this, 'callbackColumnTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterTitle')
         ));
@@ -221,6 +223,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'     => 'right',
             'width'     => '150px',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'end_date',
@@ -521,7 +524,7 @@ HTML;
             $onlineReservePriceHtml = '';
             $onlineBuyItNowPriceHtml = '';
 
-            if ($row->getData('online_bids') > 0) {
+            if ($row->getData('online_bids') > 0 || $onlineCurrentPrice > $onlineStartPrice) {
                 $currentPriceText = $this->__('Current Price');
                 $onlineCurrentStr = $this->convertAndFormatPriceCurrency($onlineCurrentPrice, $currency);
                 $onlineCurrentPriceHtml = '<strong>'.$currentPriceText.':</strong> '.$onlineCurrentStr.'<br/><br/>';

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing\Settings\Motors;
 
 class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
@@ -20,7 +26,8 @@ class RemoveFilter extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 
         foreach ($filters->getItems() as $filter) {
             $connection = $this->resourceConnection->getConnection();
-            $table = $this->resourceConnection->getTableName('m2epro_ebay_motor_filter_to_group');
+            $table = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_ebay_motor_filter_to_group');
 
             $select = $connection->select();
             $select->from(array('emftg' => $table), array('group_id'))

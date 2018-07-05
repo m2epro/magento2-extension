@@ -1,59 +1,77 @@
 <?php /** @var \Ess\M2ePro\Block\Adminhtml\Order\Debug $block */ ?>
 
-<div id="magento_block_debug_information" class="entry-edit box-left" collapseable="no">
+<div class="col-m-6">
+    <div class="fieldset-wrapper" id="magento_block_debug_information">
 
-    <div class="entry-edit-head">
-        <h4><?php echo $block->__('Store Debug Information');?></h4>
+        <div class="fieldset-wrapper-title admin__fieldset-wrapper-title">
+            <strong class="admin__collapsible-title">
+                <span><?php echo $block->__('Store Debug Information');?></span>
+            </strong>
+        </div>
+
+        <div class="fieldset-wrapper-content admin__fieldset-wrapper-content">
+            <div class="hor-scroll">
+
+                <table class="order-info form-list">
+                    <tbody>
+
+                        <?php if (!is_null($this->getData('store_tax_calculation_algorithm'))) : ?>
+                            <tr>
+                                <td class="label">Tax Calculation Method Based On:</td>
+                                <td class="value"><?php echo $this->getData('store_tax_calculation_algorithm') ?></td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label">Tax Calculation Based On:</td>
+                            <td class="value"><?php echo ucfirst($block->getData('store_tax_calculation_based_on')) ?> Address</td>
+                        </tr>
+
+                        <tr>
+                            <td class="label">Catalog Prices:</td>
+                            <td class="value"><?php echo $block->getData('product_price_includes_tax') ? 'Including Tax' : 'Excluding Tax' ?></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label">Shipping Prices:</td>
+                            <td class="value"><?php echo $block->getData('shipping_price_includes_tax') ? 'Including Tax' : 'Excluding Tax' ?></td>
+                        </tr>
+
+                        <tr>
+                            <td class="label">Store Shipping Tax Class:</td>
+                            <td class="value"><?php echo $block->getData('store_shipping_tax_class') != '' ? $block->getData('store_shipping_tax_class') : 'None' ?></td>
+                        </tr>
+
+                        <?php if (!is_null($this->getData('store_shipping_tax_rate'))) : ?>
+                            <tr>
+                                <td class="label">Store Shipping Tax Rate:</td>
+                                <td class="value"><?php echo $this->getData('store_shipping_tax_rate'); ?>%</td>
+                            </tr>
+                        <?php endif; ?>
+
+                        <tr>
+                            <td class="label">Actions:</td>
+                            <td class="value">
+                                <?php $url = $block->getUrl('*/controlPanel_module/integration', array(
+                                    'action' => 'getPrintOrderQuoteData',
+                                    'print' => '1',
+                                    'order_id' => $this->getRequest()->getParam('id')
+                                )); ?>
+                                <a href="<?php echo $url; ?>" target="_blank">Build Quote</a>
+                            </td>
+                            <td class="value">
+                                <?php $deleteUrl = $block->getUrl('*/*/delete', array('id' => $block->getRequest()->getParam('id'))); ?>
+                                <a href="javascript:void(0);" onclick="if (!confirm('Are you sure?')) return; setLocation('<?php echo $deleteUrl; ?>')">Delete Order</a>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
     </div>
-
-    <div class="fieldset">
-
-        <table cellspacing="0" width="100%" class="form-list">
-            <tbody>
-
-                <tr>
-                    <td class="label">Tax Calculation Method Based On:</td>
-                    <td class="value"><?php echo $block->getData('store_tax_calculation_algorithm') ?></td>
-                </tr>
-
-                <tr>
-                    <td class="label">Tax Calculation Based On:</td>
-                    <td class="value"><?php echo ucfirst($block->getData('store_tax_calculation_based_on')) ?> Address</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Catalog Prices:</td>
-                    <td class="value"><?php echo $block->getData('store_price_includes_tax') == 1 ? 'Including Tax' : 'Excluding Tax' ?></td>
-                </tr>
-
-                <tr>
-                    <td class="label">Shipping Prices:</td>
-                    <td class="value"><?php echo $block->getData('store_shipping_price_includes_tax') == 1 ? 'Including Tax' : 'Excluding Tax' ?></td>
-                </tr>
-
-                <tr>
-                    <td class="label">Store Shipping Tax Class:</td>
-                    <td class="value"><?php echo $block->getData('store_shipping_tax_class') != '' ? $block->getData('store_shipping_tax_class') : 'None' ?></td>
-                </tr>
-
-                <tr>
-                    <td class="label">Store Shipping Tax Rate:</td>
-                    <td class="value"><?php echo $block->getData('store_shipping_tax_rate') ?>%</td>
-                </tr>
-
-                <tr>
-                    <td class="label">Actions:</td>
-                    <td class="value">
-                        <?php $deleteUrl = $block->getUrl('*/*/delete', array('id' => $block->getRequest()->getParam('id'))); ?>
-                        <a href="javascript:void(0);" onclick="if (!confirm('Are you sure?')) return; setLocation('<?php echo $deleteUrl; ?>')">Delete Order</a>
-                    </td>
-                </tr>
-
-            </tbody>
-        </table>
-
-    </div>
-
 </div>
 
 <div style="clear: both;"></div>

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Magento\Form\Renderer;
 
 use Magento\Backend\Block\Widget\Form\Renderer\Fieldset\Element as MagentoElement;
@@ -73,7 +79,7 @@ HTML;
     public function escapeHtml($data, $allowedTags = NULL)
     {
         return $this->helperFactory->getObject('Data')->escapeHtml(
-            $data, ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li'], ENT_NOQUOTES
+            $data, ['div', 'a', 'strong', 'br', 'i', 'b', 'ul', 'li', 'p'], ENT_NOQUOTES
         );
     }
 

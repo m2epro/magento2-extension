@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\ControlPanel\Module;
 
 use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
@@ -29,7 +35,7 @@ class Module extends Command
     //########################################
 
     /**
-     * @title "Process Issues Resolver"
+     * @title "Issues Resolver"
      * @description "Process Issues Resolver Task"
      */
     public function issuesResolverAction()
@@ -48,55 +54,50 @@ class Module extends Command
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
     }
 
-    //########################################
-
     /**
-     * @title "Process Synchronization"
-     * @description "Process Synchronization Task"
+     * @title "Health Status Notifications"
+     * @description "Process Health Status"
      */
-    public function synchronizationAction()
+    public function healthStatusNotificationsAction()
     {
         $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
         $cronRunner->setAllowedTasks(array(
-            \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK
+            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK
         ));
 
         if ($cronRunner->process()) {
-            $this->getMessageManager()->addSuccess('Synchronization was successfully performed.');
+            $this->getMessageManager()->addSuccess('Health Status was successfully performed.');
         } else {
-            $this->getMessageManager()->addError('Synchronization was performed with errors.');
+            $this->getMessageManager()->addError('Health Status was performed with errors.');
         }
 
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
     }
 
-    //########################################
-
     /**
-     * @title "Process Servicing"
-     * @description "Process Servicing Task"
+     * @title "Archive Orders Entities"
+     * @description "Process Archive Orders Entities Task"
      */
-    public function processServicingAction()
+    public function archiveOrdersEntitiesAction()
     {
         $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
         $cronRunner->setAllowedTasks(array(
-            \Ess\M2ePro\Model\Cron\Task\Servicing::NICK
+            \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
         ));
 
         if ($cronRunner->process()) {
-            $this->getMessageManager()->addSuccess('Servicing was successfully performed.');
+            $this->getMessageManager()->addSuccess('Archive Orders Entities was successfully performed.');
         } else {
-            $this->getMessageManager()->addError('Servicing was performed with errors.');
+            $this->getMessageManager()->addError('Archive Orders Entities was performed with errors.');
         }
 
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
     }
 
-    //########################################
-
     /**
-     * @title "Process Logs Clearing"
+     * @title "Logs Clearing"
      * @description "Process Logs Clearing Task"
+     * @new_line
      */
     public function processLogsAction()
     {
@@ -117,7 +118,50 @@ class Module extends Command
     //########################################
 
     /**
-     * @title "Process eBay Actions"
+     * @title "Synchronization"
+     * @description "Process Synchronization Task"
+     */
+    public function synchronizationAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\Synchronization::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()->addSuccess('Synchronization was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Synchronization was performed with errors.');
+        }
+
+        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
+    }
+
+    /**
+     * @title "Servicing"
+     * @description "Process Servicing Task"
+     * @new_line
+     */
+    public function processServicingAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\Servicing::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()->addSuccess('Servicing was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Servicing was performed with errors.');
+        }
+
+        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
+    }
+
+    //########################################
+
+    /**
+     * @title "eBay Actions"
      * @description "Process eBay Actions Task"
      */
     public function ebayActionsAction()
@@ -136,11 +180,33 @@ class Module extends Command
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
     }
 
+    /**
+     * @title "eBay Update Account Preferences"
+     * @description "Process Account Preferences Task"
+     * @new_line
+     */
+    public function ebayAccountPreferencesAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\Ebay\UpdateAccountsPreferences::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()->addSuccess('eBay Update Account Preferences was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('eBay Update Account Preferences was performed with errors.');
+        }
+
+        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
+    }
+
     //########################################
 
     /**
-     * @title "Process Amazon Actions"
+     * @title "Amazon Actions"
      * @description "Process Amazon Actions Task"
+     * @new_line
      */
     public function amazonActionsAction()
     {
@@ -161,7 +227,7 @@ class Module extends Command
     //########################################
 
     /**
-     * @title "Process Request Pending Single"
+     * @title "Request Pending Single"
      * @description "Process Request Pending Single Task"
      */
     public function requestPendingSingleAction()
@@ -181,7 +247,7 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Request Pending Partial"
+     * @title "Request Pending Partial"
      * @description "Process Request Pending Partial Task"
      */
     public function requestPendingPartialAction()
@@ -200,10 +266,8 @@ class Module extends Command
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
     }
 
-    //########################################
-
     /**
-     * @title "Process Connector Pending Single"
+     * @title "Connector Pending Single"
      * @description "Process Connector Pending Single Task"
      */
     public function connectorPendingSingleAction()
@@ -223,8 +287,9 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Connector Pending Partial"
+     * @title "Connector Pending Partial"
      * @description "Process Connector Pending Partial Task"
+     * @new_line
      */
     public function connectorPendingPartialAction()
     {
@@ -245,7 +310,7 @@ class Module extends Command
     //########################################
 
     /**
-     * @title "Process Repricing Update Settings"
+     * @title "Repricing Update Settings"
      * @description "Process Repricing Update Settings"
      */
     public function repricingUpdateSettingsAction()
@@ -265,7 +330,7 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Repricing Synchronization General"
+     * @title "Repricing Synchronization General"
      * @description "Process Repricing Synchronization General"
      */
     public function repricingSynchronizationGeneralAction()
@@ -285,7 +350,7 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Repricing Synchronization Actual Price"
+     * @title "Repricing Synchronization Actual Price"
      * @description "Process Repricing Synchronization Actual Price"
      */
     public function repricingSynchronizationActualPriceAction()
@@ -306,7 +371,7 @@ class Module extends Command
     }
 
     /**
-     * @title "Process Repricing Inspect Products"
+     * @title "Repricing Inspect Products"
      * @description "Process Repricing Inspect Products Task"
      */
     public function repricingRepricingInspectProductsAction()
@@ -320,46 +385,6 @@ class Module extends Command
             $this->getMessageManager()->addSuccess('Repricing Inspect Products was successfully performed.');
         } else {
             $this->getMessageManager()->addError('Repricing Inspect Products was performed with errors.');
-        }
-
-        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
-    }
-
-    /**
-     * @title "Process Health Status"
-     * @description "Process Health Status"
-     */
-    public function healthStatusNotificationsAction()
-    {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
-            \Ess\M2ePro\Model\Cron\Task\HealthStatus::NICK
-        ));
-
-        if ($cronRunner->process()) {
-            $this->getMessageManager()->addSuccess('Health Status was successfully performed.');
-        } else {
-            $this->getMessageManager()->addError('Health Status was performed with errors.');
-        }
-
-        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
-    }
-
-    /**
-     * @title "Process Archive Orders Entities"
-     * @description "Process Archive Orders Entities Task"
-     */
-    public function archiveOrdersEntitiesAction()
-    {
-        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
-        $cronRunner->setAllowedTasks(array(
-            \Ess\M2ePro\Model\Cron\Task\ArchiveOrdersEntities::NICK
-        ));
-
-        if ($cronRunner->process()) {
-            $this->getMessageManager()->addSuccess('Archive Orders Entities was successfully performed.');
-        } else {
-            $this->getMessageManager()->addError('Archive Orders Entities was performed with errors.');
         }
 
         $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');

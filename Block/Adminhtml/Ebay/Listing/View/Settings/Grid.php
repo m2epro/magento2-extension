@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -79,6 +79,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $collection->setListingProductModeOn();
         $collection->setListing($this->listing);
+        $collection->setStoreId($this->listing->getStoreId());
 
         if ($this->isFilterOrSortByPriceIsUsed(null, 'ebay_online_current_price')) {
             $collection->setIsNeedToUseIndexerParent(true);
@@ -205,7 +206,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             );
 
             $collection->joinTable(
-                array('eea' => $this->resourceConnection->getTableName('eav_entity_attribute')),
+                array(
+                    'eea' => $this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('eav_entity_attribute')
+                ),
                 'attribute_set_id=attribute_set_id',
                 array(
                     'is_motors_attribute_in_product_attribute_set' => 'entity_attribute_id',
@@ -249,6 +253,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
+            'escape'    => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);
@@ -1214,7 +1219,8 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $filtersTable = $this->resourceConnection->getTableName('m2epro_ebay_motor_filter');
+        $filtersTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_motor_filter');
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(
@@ -1227,7 +1233,7 @@ JS
         //-------------------------------
 
         //-------------------------------
-        $groupsTable = $this->resourceConnection->getTableName('m2epro_ebay_motor_group');
+        $groupsTable = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_motor_group');
         $select = $this->resourceConnection->getConnection()
             ->select()
             ->from(

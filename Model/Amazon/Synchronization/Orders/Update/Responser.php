@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -82,15 +82,15 @@ class Responser extends \Ess\M2ePro\Model\Amazon\Connector\Orders\Update\ItemsRe
         $this->order->getLog()->setInitiator(\Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION);
         $this->order->addSuccessLog('Amazon Order status was updated to Shipped.');
 
-        if (empty($requestData['tracking_number']) || empty($requestData['carrier_name'])) {
+        if (empty($this->params['order']['tracking_number']) || empty($this->params['order']['carrier_name'])) {
             return;
         }
 
         $this->order->addSuccessLog(
             'Tracking number "%num%" for "%code%" has been sent to Amazon.',
             [
-                '!num' => $requestData['tracking_number'],
-                'code' => $requestData['carrier_name']
+                '!num' => $this->params['order']['tracking_number'],
+                'code' => $this->params['order']['carrier_name']
             ]
         );
         //----------------------

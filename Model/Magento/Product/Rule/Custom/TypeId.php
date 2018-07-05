@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -18,13 +18,14 @@ class TypeId extends AbstractModel
         $filterOperator, $filterCondition,
         \Magento\Catalog\Model\Product\Type $type,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\CatalogInventory\Model\Stock\ItemFactory $stockItemFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ){
         parent::__construct($filterOperator, $filterCondition,
-                            $localeDate, $stockItemFactory, $helperFactory, $modelFactory, $data);
+                            $localeDate, $stockRegistry, $stockConfiguration, $helperFactory, $modelFactory, $data);
         $this->type = $type;
     }
 

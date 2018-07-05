@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -149,6 +149,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'string_limit' => 10000,
             'width'        => '375px',
             'index'        => 'title',
+            'escape'       => false,
             'filter'       => false,
             'sortable'     => false,
             'frame_callback' => array($this, 'callbackColumnTitle'),

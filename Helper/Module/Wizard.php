@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -192,7 +192,7 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
     private function loadCache()
     {
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('m2epro_wizard');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_wizard');
 
         $this->cache = $connection->fetchAll(
             $connection->select()->from($tableName,'*')
@@ -258,7 +258,7 @@ class Wizard extends \Ess\M2ePro\Helper\AbstractHelper
         );
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('m2epro_wizard');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_wizard');
 
         $connWrite->update(
             $tableName,

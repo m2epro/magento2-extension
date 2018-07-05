@@ -551,8 +551,6 @@ define([
 
             if ($('select_attributes_image').value == 'media_gallery' && $('display_products_images').value == 'gallery_view')  {
                 template += '2';
-            } else if ($('image_linked_mode').value == '1') {
-                template += '1';
             } else {
                 template += "0";
             }

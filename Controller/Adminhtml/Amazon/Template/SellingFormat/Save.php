@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Template\SellingFormat;
 
 use Ess\M2ePro\Controller\Adminhtml\Amazon\Template;
@@ -100,9 +106,14 @@ class Save extends Template
                 false, 'Y-m-d 00:00:00'
             );
         } else {
-            $data['regular_sale_price_start_date_value'] = $this->dateTime->formatDate(
+            // UTC Date are shown on interface
+            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_start_date_value'],
-                true
+                \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE,
+                $this->getHelper('Data')->getDefaultTimezone()
+            );
+            $data['regular_sale_price_start_date_value'] = $this->getHelper('Data')->getDate(
+                $timestamp, false, 'Y-m-d 00:00:00'
             );
         }
         if ($data['regular_sale_price_end_date_value'] === '') {
@@ -110,9 +121,14 @@ class Save extends Template
                 false, 'Y-m-d 00:00:00'
             );
         } else {
-            $data['regular_sale_price_end_date_value'] = $this->dateTime->formatDate(
+            // UTC Date are shown on interface
+            $timestamp = $this->getHelper('Data')->parseTimestampFromLocalizedFormat(
                 $data['regular_sale_price_end_date_value'],
-                true
+                \IntlDateFormatter::SHORT, \IntlDateFormatter::NONE,
+                $this->getHelper('Data')->getDefaultTimezone()
+            );
+            $data['regular_sale_price_end_date_value'] = $this->getHelper('Data')->getDate(
+                $timestamp, false, 'Y-m-d 00:00:00'
             );
         }
 

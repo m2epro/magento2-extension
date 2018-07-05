@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -13,7 +13,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     protected $registry;
     protected $stockItemFactory;
     /**
-     * @var null|\Magento\CatalogInventory\Model\Stock\Item
+     * @var null|\Magento\CatalogInventory\Api\Data\StockItemInterface
      */
     protected $stockItem = NULL;
 
@@ -30,7 +30,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
 
     public function __construct(
         \Magento\Framework\Registry $registry,
-        \Magento\CatalogInventory\Model\Stock\ItemFactory $stockItemFactory,
+        \Magento\CatalogInventory\Api\Data\StockItemInterfaceFactory $stockItemFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
@@ -47,7 +47,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     {
         $stockItem = $this->getEventObserver()->getData('item');
 
-        if (!($stockItem instanceof \Magento\CatalogInventory\Model\Stock\Item)) {
+        if (!($stockItem instanceof \Magento\CatalogInventory\Api\Data\StockItemInterface)) {
             throw new \Ess\M2ePro\Model\Exception('StockItem event doesn\'t have correct StockItem instance.');
         }
 
@@ -60,12 +60,12 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     //########################################
 
     /**
-     * @return \Magento\CatalogInventory\Model\Stock\Item
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function getStockItem()
     {
-        if (!($this->stockItem instanceof \Magento\CatalogInventory\Model\Stock\Item)) {
+        if (!($this->stockItem instanceof \Magento\CatalogInventory\Api\Data\StockItemInterface)) {
             throw new \Ess\M2ePro\Model\Exception\Logic('Property "StockItem" should be set first.');
         }
 
@@ -73,7 +73,7 @@ abstract class AbstractStockItem extends \Ess\M2ePro\Observer\AbstractModel
     }
 
     /**
-     * @return \Magento\CatalogInventory\Model\Stock\Item
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     protected function reloadStockItem()

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -53,8 +53,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralId($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->resourceConnection
-            ->getTableName('m2epro_amazon_listing_product');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $connRead->select();
         $select->from(array('alp' => $table), array('listing_product_id'))
@@ -67,8 +66,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByGeneralIdOwner($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->resourceConnection
-            ->getTableName('m2epro_amazon_listing_product');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_amazon_listing_product');
 
         $select = $connRead->select();
         $select->from(array('alp' => $table), array('listing_product_id'))
@@ -81,8 +79,7 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByStatus($productsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $table = $this->resourceConnection
-            ->getTableName('m2epro_listing_product');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_product');
 
         $select = $connRead->select();
         $select->from(array('lp' => $table), array('id'))
@@ -118,9 +115,12 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
     public function filterProductsByMagentoProductType($listingProductsIds)
     {
         $connRead = $this->resourceConnection->getConnection();
-        $tableListingProduct = $this->resourceConnection->getTableName('m2epro_listing_product');
-        $tableProductEntity = $this->resourceConnection->getTableName('catalog_product_entity');
-        $tableProductOption = $this->resourceConnection->getTableName('catalog_product_option');
+        $tableListingProduct = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product');
+        $tableProductEntity = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_entity');
+        $tableProductOption = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_option');
 
         $productsIdsChunks = array_chunk($listingProductsIds, 1000);
         $listingProductsIds = array();
@@ -140,7 +140,11 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
             $select->joinLeft(
                 array('cpo' => $tableProductOption),
                 'cpe.entity_id=cpo.product_id',
-                array('option_id')
+                array(
+                    'option_id'         => 'option_id',
+                    'option_is_require' => 'is_require',
+                    'option_type'       => 'type'
+                )
             );
 
             $select->group('entity_id');
@@ -154,8 +158,14 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
 
+                if ($this->getHelper('Magento\Product')->isDownloadableType($product['type_id'])) {
+                    unset($productToListingProductIds[$product['entity_id']]);
+                }
+
                 if ($this->getHelper('Magento\Product')->isSimpleType($product['type_id']) &&
-                    !empty($product['option_id'])) {
+                    !empty($product['option_id']) && $product['option_is_require'] == 1 &&
+                    in_array($product['option_type'], array('drop_down', 'radio', 'multiple', 'checkbox')))
+                {
                     unset($productToListingProductIds[$product['entity_id']]);
                 }
             }
@@ -185,10 +195,10 @@ class Variation extends \Ess\M2ePro\Helper\AbstractHelper
         $productsIds = array();
 
         $connRead = $this->resourceConnection->getConnection();
-        $tableAmazonListingProduct = $this->resourceConnection
-            ->getTableName('m2epro_amazon_listing_product');
-        $tableAmazonTemplateDescription = $this->resourceConnection
-            ->getTableName('m2epro_amazon_template_description');
+        $tableAmazonListingProduct = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
+        $tableAmazonTemplateDescription = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_template_description');
 
         foreach ($productsIdsChunks as $productsIdsChunk) {
 

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -317,10 +317,15 @@ JS
 
             /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
             $collection = $this->magentoProductCollectionFactory->create();
+            $collection->setListing($this->listing);
+            $collection->setStoreId($this->listing->getStoreId());
             $collection->addFieldToFilter('entity_id', array('in' => $productsIds));
 
             $collection->joinTable(
-                array('ccp' => $this->resourceConnection->getTableName('catalog_category_product')),
+                array(
+                    'ccp' => $this->getHelper('Module\Database\Structure')
+                        ->getTableNameWithPrefix('catalog_category_product')
+                ),
                 'product_id=entity_id',
                 array('category_id' => 'category_id')
             );

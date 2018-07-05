@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -47,11 +47,12 @@ class LastActions extends \Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions
 
         foreach ($groupedLogsByAction as $actionLogs) {
             $actions[] = [
-                'type'      => $this->getMainType($actionLogs),
-                'date'      => $this->getMainDate($actionLogs),
-                'action'    => $this->getActionTitle($actionLogs),
-                'initiator' => $this->getInitiator($actionLogs),
-                'items'     => $actionLogs
+                'type'           => $this->getMainType($actionLogs),
+                'date'           => $date = $this->getMainDate($actionLogs),
+                'localized_date' => $this->_localeDate->formatDate($date, \IntlDateFormatter::MEDIUM, true),
+                'action'         => $this->getActionTitle($actionLogs),
+                'initiator'      => $this->getInitiator($actionLogs),
+                'items'          => $actionLogs
             ];
         }
 

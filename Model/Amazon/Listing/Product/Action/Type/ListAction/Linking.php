@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -187,7 +187,7 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
         $this->getAmazonListingProduct()->addData(array(
             'general_id'         => $this->getGeneralId(),
             'is_isbn_general_id' => $this->getHelper('Data')->isISBN($this->getGeneralId()),
-            'general_id_owner'   => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
+            'is_general_id_owner'   => \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO,
             'sku'                => $this->getSku(),
         ));
         $this->getListingProduct()->save();
@@ -251,9 +251,9 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         // improve check is sku existence
         if (empty($listingProductSku) && !empty($descriptionTemplate) && $descriptionTemplate->isNewAsinAccepted()) {
-            $dataForUpdate['general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES;
+            $dataForUpdate['is_general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_YES;
         } else {
-            $dataForUpdate['general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;
+            $dataForUpdate['is_general_id_owner'] = \Ess\M2ePro\Model\Amazon\Listing\Product::IS_GENERAL_ID_OWNER_NO;
         }
 
         $this->getAmazonListingProduct()->addData($dataForUpdate);

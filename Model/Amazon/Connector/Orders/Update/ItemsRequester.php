@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -70,28 +70,31 @@ abstract class ItemsRequester extends \Ess\M2ePro\Model\Amazon\Connector\Command
 
     protected function getRequestData()
     {
-        $fulfillmentDate = new \DateTime($this->params['order']['fulfillment_date'], new \DateTimeZone('UTC'));
+        $order = $this->params['order'];
+        $fulfillmentDate = new \DateTime($order['fulfillment_date'], new \DateTimeZone('UTC'));
 
-        $order = array(
-            'id'               => $this->params['order']['change_id'],
-            'order_id'         => $this->params['order']['amazon_order_id'],
-            'tracking_number'  => $this->params['order']['tracking_number'],
-            'carrier_name'     => $this->params['order']['carrier_name'],
+        $request = array(
+            'id'               => $order['change_id'],
+            'order_id'         => $order['amazon_order_id'],
+            'tracking_number'  => $order['tracking_number'],
+            'carrier_name'     => $order['carrier_name'],
+            'carrier_code'     => $order['carrier_code'],
             'fulfillment_date' => $fulfillmentDate->format('c'),
-            'shipping_method'  => isset($orderUpdate['shipping_method']) ? $orderUpdate['shipping_method'] : null,
+            'shipping_method'  => isset($order['shipping_method']) ? $order['shipping_method'] : null,
             'items'            => array()
         );
 
-        if (isset($this->params['order']['items']) && is_array($this->params['order']['items'])) {
-            foreach ($this->params['order']['items'] as $item) {
-                $order['items'][] = array(
+        if (isset($order['items']) && is_array($order['items'])) {
+
+            foreach ($order['items'] as $item) {
+                $request['items'][] = array(
                     'item_code' => $item['amazon_order_item_id'],
                     'qty'       => (int)$item['qty']
                 );
             }
         }
 
-        return $order;
+        return $request;
     }
 
     // ########################################

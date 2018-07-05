@@ -6,6 +6,7 @@
     <?php echo $block->getClass(); ?>
     <?php if ($block->hasNoCollapse()): ?>no_collapse<?php endif; ?>
     <?php if ($block->hasTooltiped()): ?>tooltiped<?php endif; ?>
+    <?php if ($block->hasAlwaysShow()): ?>always_show<?php endif; ?>
     "
     <?php if ($block->hasStyle()): ?>style="<?php echo $block->getStyle(); ?>"<?php endif; ?>
 >

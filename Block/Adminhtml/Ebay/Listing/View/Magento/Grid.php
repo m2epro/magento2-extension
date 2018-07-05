@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -65,6 +65,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
 
         $collection->getSelect()->group('e.entity_id');
         $collection->setListing($this->listing);
+        $collection->setStoreId($this->listing->getStoreId());
 
         $collection
             ->addAttributeToSelect('sku')
@@ -177,6 +178,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
+            'escape'    => false,
             'frame_callback' => array($this, 'callbackColumnProductTitle')
         ));
 

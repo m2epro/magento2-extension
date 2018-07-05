@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -534,7 +534,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
             $collection->getSelect()->where('`e`.`entity_id` NOT IN ('.$dbSelect->__toString().')');
         }
 
-        $table = $this->getResource()->getTable('catalog_category_product');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_category_product');
         $dbSelect = $connection->select()
             ->from($table,new \Zend_Db_Expr('DISTINCT `product_id`'))
             ->where("`category_id` = ?",(int)$categoryId);
@@ -661,7 +661,7 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                         $specifics[$option->getAttribute()] = $option->getOption();
                     }
 
-                    $tempVariation[] = array(
+                    $tempVariation = array(
                         'qty' => 0,
                         'price' => $ebayVariation->getOnlinePrice(),
                         'sku' => $ebayVariation->getOnlineSku(),
@@ -675,20 +675,26 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                         $tempVariation['sku'] = 'del-' . sha1(microtime(1).$ebayVariation->getOnlineSku());
                     }
 
-                    $key = 'variations_specifics_replacements';
-                    if (!empty($additionalData[$key])) {
-                        $tempVariation[$key] = $additionalData[$key];
+                    $specificsReplacements = $listingProduct->getChildObject()->getVariationSpecificsReplacements();
+                    if (!empty($specificsReplacements)) {
+                        $tempVariation['variations_specifics_replacements'] = $specificsReplacements;
                     }
 
                     $variationAdditionalData = $variation->getAdditionalData();
-                    if (isset($variationAdditionalData['ebay_mpn_value'])) {
-                        $tempVariation['details']['mpn'] = $variationAdditionalData['ebay_mpn_value'];
+                    if (isset($variationAdditionalData['online_product_details'])) {
+                        $tempVariation['details'] = $variationAdditionalData['online_product_details'];
                     }
 
                     $variationsThatCanNotBeDeleted[] = $tempVariation;
                     $additionalData['variations_that_can_not_be_deleted'] = $variationsThatCanNotBeDeleted;
 
                     $listingProduct->setSettings('additional_data', $additionalData)->save();
+                }
+
+                if ($listingProduct->getMagentoProduct()->isConfigurableType()) {
+                    $listingProduct->getMagentoProduct()->getTypeInstance()->cleanProductCache(
+                        $listingProduct->getMagentoProduct()->getProduct()
+                    );
                 }
 
                 $variation->delete();
@@ -727,6 +733,8 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                                     \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH);
         }
 
+        $amazonParentListingProductsForRemove = array();
+
         foreach ($listingsProductsForRemove as $listingProduct) {
             if ($listingProduct->isComponentModeAmazon()) {
                 /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
@@ -740,8 +748,17 @@ class Listing extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractMo
                     $amazonParentListingProduct->getVariationManager()->getTypeModel()->getProcessor()->process();
                     continue;
                 }
+
+                if ($variationManager->isVariationParent()) {
+                    $amazonParentListingProductsForRemove[] = $listingProduct;
+                    continue;
+                }
             }
 
+            $listingProduct->delete();
+        }
+
+        foreach ($amazonParentListingProductsForRemove as $listingProduct) {
             $listingProduct->delete();
         }
         // ---------------------------------------

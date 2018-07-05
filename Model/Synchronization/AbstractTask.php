@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -550,6 +550,11 @@ abstract class AbstractTask extends \Ess\M2ePro\Model\AbstractModel
 
     protected function intervalIsLocked()
     {
+        if ($this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER ||
+            $this->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER) {
+            return false;
+        }
+
         $lastTime = $this->intervalGetLastTime();
         if (empty($lastTime)) {
             return false;

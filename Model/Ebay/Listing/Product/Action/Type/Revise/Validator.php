@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -36,45 +36,23 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return false;
         }
 
-        if (!$this->validateCategory()) {
-            return false;
-        }
-
-        if (!$params['out_of_stock_control_result'] &&
-            !$this->validateQty()
-        ) {
-            return false;
-        }
-
         if ($this->getEbayListingProduct()->isVariationsReady()) {
 
             if (!$this->validateVariationsOptions()) {
                 return false;
             }
-
-            if (!$this->validateVariationsFixedPrice()) {
-                return false;
-            }
-
-            return true;
         }
 
-        if ($this->getEbayListingProduct()->isListingTypeAuction()) {
-            if (!$this->validateStartPrice()) {
-                return false;
-            }
+        if (!$this->validateCategory()) {
+            return false;
+        }
 
-            if (!$this->validateReservePrice()) {
-                return false;
-            }
+        if (!$this->validatePrice()) {
+            return false;
+        }
 
-            if (!$this->validateBuyItNowPrice()) {
-                return false;
-            }
-        } else {
-            if (!$this->validateFixedPrice()) {
-                return false;
-            }
+        if (!$params['out_of_stock_control_result'] && !$this->validateQty()) {
+            return false;
         }
 
         return true;

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -45,29 +45,29 @@ class DirectDatabaseChanges extends AbstractForm
                 'no_hide' => true,
                 'content' => $this->__(
                     <<<HTML
-                    <p>M2E Pro is developed to work based on standard Magento functionality.
-                    One of the main aspects of its work is a dynamic event catching of the Product Data
-                    changes - Price, Quantity, Images, Attributes, etc.</p><br>
-                    <p>However, if Product Data is changed via Magmi Import Tool,
-                    M2E Pro will not catch all of the changes. It is related to the fact that Magmi Import Tool
-                    (along with many other similar tools) makes changes directly in Magento Database
-                    without any Core Magento Functions involved. Inability to catch the events of Product Data
-                    change leads to inability to deliver these changes to the channels (eBay, Amazon, etc.).</p><br>
-                    <p>If you are using Magmi Import Tool to update the Product Data,
-                    which implements changes directly into the Magento Database, please, use a
-                    <a href="%url1%" target="_blank" class="external-link">Magmi Plugin</a>
-                    However, if you are a developer and
-                    change the Product Data directly in the Database, you can use a predefined
-                    <a href="%url2%" target="_blank" class="external-link">M2E Pro Models</a></p><br>
-                    <p>Only in case you cannot use these features, we would recommend you to enable <br> an
-                    additional option - <strong>Track Direct Database Changes</strong>.</p><br>
-                    <p><strong>Warning:</strong> Track Direct Database changes feature is resource-intensive and may
-                    affect Performance of your Magento Site and Synchronization with Channels. Choose 'Yes' only if you
-                    cannot use other predefined M2E Pro Models and you are absolutely confident that you need to
-                    use this functionality.</p>
+<p>
+M2E Pro is developed to work based on a standard Magento functionality. One of the main aspects of its work is a 
+dynamic event catching: the Product Price, Quantity, Image, Attribute, etc. changes.
+</p><br>
+<p>
+If you update Magento Product Information not via Magento backend and Standard Magento Model functionality 
+(e.g. direct SQL injections or Custom Code that does not support a Magento Core Models), 
+you can use the predefined M2E Pro Models to notify Extension about the Product changes.<br>
+More detailed information can be found <a href="%url1%" target="_blank" class="external-link">here</a>.
+</p><br>
+<p>
+It is <strong>highly recommended</strong> to use the option above to decrease the impact on M2E Pro performance.
+</p><br>
+<p>
+Alternatively, you can enable <strong>Track Direct Database Changes</strong> to detect the Product changes.
+</p><br>
+<p>
+<strong>Important note:</strong> the tracking of direct Database changes is resource-consuming and may affect the 
+performance of your Magento Site and Synchronization with Channels. 
+Set 'Yes' only in case of extreme necessity when the use of predefined M2E Pro Models is impossible for some reasons.
+</p>
 HTML
                     ,
-                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/yIQVAQ'),
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/xYQVAQ')
                 )
             ]

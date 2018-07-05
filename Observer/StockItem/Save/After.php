@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -23,7 +23,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     {
         parent::beforeProcess();
 
-        $productId = (int)$this->getStockItem()->getData('product_id');
+        $productId = (int)$this->getStockItem()->getProductId();
 
         if ($productId <= 0) {
             throw new \Ess\M2ePro\Model\Exception('Product ID should be greater than 0.');
@@ -58,7 +58,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     private function processQty()
     {
         $oldValue = (int)$this->getStoredStockItem()->getOrigData('qty');
-        $newValue = (int)$this->getStockItem()->getData('qty');
+        $newValue = (int)$this->getStockItem()->getQty();
 
         if (!$this->updateProductChangeRecord('qty',$oldValue,$newValue) || $oldValue == $newValue) {
             return;
@@ -77,7 +77,7 @@ class After extends \Ess\M2ePro\Observer\StockItem\AbstractStockItem
     private function processStockAvailability()
     {
         $oldValue = (bool)$this->getStoredStockItem()->getOrigData('is_in_stock');
-        $newValue = (bool)$this->getStockItem()->getData('is_in_stock');
+        $newValue = (bool)$this->getStockItem()->getIsInStock();
 
         // M2ePro\TRANSLATIONS
         // IN Stock

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -132,7 +132,8 @@ class MotorsKtypes extends AbstractModel
     protected function deleteAllKtypes()
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableMotorsKtypes = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_ktype');
+        $tableMotorsKtypes = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $connWrite->delete($tableMotorsKtypes, '`is_custom` = 0');
     }
@@ -145,7 +146,8 @@ class MotorsKtypes extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableMotorsKtype = $this->resourceConnection->getTableName('m2epro_ebay_dictionary_motor_ktype');
+        $tableMotorsKtype = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_motor_ktype');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;

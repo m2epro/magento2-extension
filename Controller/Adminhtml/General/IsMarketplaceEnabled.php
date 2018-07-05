@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -43,7 +43,7 @@ class IsMarketplaceEnabled extends Base
 
         $select = $connection
             ->select()
-            ->from($this->resourceConnection->getTableName($tableName), 'id')
+            ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName), 'id')
             ->where('marketplace_id = ?', $marketplaceId);
 
         $result = $connection->fetchOne($select);

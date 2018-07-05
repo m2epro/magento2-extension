@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -129,8 +129,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
             }
 
             $additionalData = $variation->getAdditionalData();
-            if (!empty($additionalData['ebay_mpn_value'])) {
-                unset($additionalData['ebay_mpn_value']);
+            if (!empty($additionalData['online_product_details'])) {
+                unset($additionalData['online_product_details']);
                 $variation->setSettings('additional_data', $additionalData);
 
                 $needSave = true;
@@ -175,8 +175,8 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
                 continue;
             }
 
-            $attrCode  = $specific->getData('value_custom_attribute');
-            $attrTitle = $specific->getData('attribute_title');
+            $attrCode  = trim($specific->getData('value_custom_attribute'));
+            $attrTitle = trim($specific->getData('attribute_title'));
 
             if (!array_key_exists($attrCode, $confAttributes) || $confAttributes[$attrCode] == $attrTitle) {
                 continue;

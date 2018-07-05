@@ -7,7 +7,7 @@
 
         <!-- ebay menu -->
 
-        <add id="Ess_M2ePro::ebay" title="Integration (Beta)" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
+        <add id="Ess_M2ePro::ebay" title="Integration" module="Ess_M2ePro" sortOrder="31" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::ebay" />
 
         <!-- ebay listings -->
 
@@ -43,7 +43,7 @@
 
         <!-- amazon menu -->
 
-        <add id="Ess_M2ePro::amazon" title="Integration (Beta)" module="Ess_M2ePro" sortOrder="32" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::amazon" />
+        <add id="Ess_M2ePro::amazon" title="Integration" module="Ess_M2ePro" sortOrder="32" dependsOnModule="Ess_M2ePro" resource="Ess_M2ePro::amazon" />
 
         <!-- amazon listings -->
 

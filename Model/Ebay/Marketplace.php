@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -314,7 +314,8 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         $connection = $this->getResource()->getConnection();
 
-        $tableCategories = $this->getResource()->getTable('m2epro_ebay_dictionary_category');
+        $tableCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connection->select()
             ->from($tableCategories,'*')
@@ -330,7 +331,8 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
     {
         $connection = $this->getResource()->getConnection();
 
-        $tableCategories = $this->getResource()->getTable('m2epro_ebay_dictionary_category');
+        $tableCategories = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
         $dbSelect = $connection->select()
             ->from($tableCategories,array('category_id','title','is_leaf'))
@@ -358,8 +360,10 @@ class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Ab
 
         $connection = $this->getResource()->getConnection();
 
-        $tableDictMarketplace = $this->getResource()->getTable('m2epro_ebay_dictionary_marketplace');
-        $tableDictShipping = $this->getResource()->getTable('m2epro_ebay_dictionary_shipping');
+        $tableDictMarketplace = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
+        $tableDictShipping = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_ebay_dictionary_shipping');
 
         // table m2epro_ebay_dictionary_marketplace
         // ---------------------------------------

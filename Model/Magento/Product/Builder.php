@@ -12,26 +12,36 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Framework\Filesystem\DriverPool  */
     protected $driverPool;
+
     /** @var \Magento\Framework\Filesystem  */
     protected $filesystem;
+
     /** @var \Magento\Store\Model\StoreFactory  */
     protected $storeFactory;
-    /** @var StockItem\Factory  */
-    protected $stockItemFactory;
+
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    protected $stockRegistry;
+
+    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface  */
+    protected $stockItemRepository;
+
     /** @var \Magento\Catalog\Model\Product\Media\Config  */
     protected $productMediaConfig;
+
     /** @var \Magento\Catalog\Model\ProductFactory  */
     protected $productFactory;
+
     /** @var \Ess\M2ePro\Helper\Factory  */
     protected $helperFactory;
+
     /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor  */
     protected $indexStockProcessor;
+
     /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface  */
     protected $stockConfiguration;
+
     /** @var \Magento\Catalog\Model\Product */
     private $product;
-    /** @var \Magento\CatalogInventory\Model\Stock\Item */
-    private $stockItem;
 
     //########################################
 
@@ -39,25 +49,27 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\Filesystem\DriverPool $driverPool,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\Store\Model\StoreFactory $storeFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
         \Magento\Catalog\Model\Product\Media\Config $productMediaConfig,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
-        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
-        \Ess\M2ePro\Model\Magento\Product\StockItem\Factory $stockItemFactory
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration
     )
     {
         $this->driverPool           = $driverPool;
         $this->filesystem           = $filesystem;
         $this->storeFactory         = $storeFactory;
-        $this->stockItemFactory     = $stockItemFactory;
+        $this->stockRegistry        = $stockRegistry;
         $this->productMediaConfig   = $productMediaConfig;
         $this->productFactory       = $productFactory;
         $this->helperFactory        = $helperFactory;
         $this->indexStockProcessor  = $indexStockProcessor;
         $this->stockConfiguration   = $stockConfiguration;
+        $this->stockItemRepository  = $stockItemRepository;
         parent::__construct(
             $helperFactory,
             $modelFactory
@@ -81,7 +93,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         /*
          * Since version 2.1.8 Magento performs check if there is a record for product in table
          * cataloginventory_stock_status during quantity validation. Force reindex for new product will be helpful
-         * if scheduled reindexing is enabled for stock status.
+         * if scheduled reindexing for stock status is enabled.
          */
         if ($this->indexStockProcessor->isIndexerScheduled() && $this->product->getId()) {
             $this->indexStockProcessor->reindexRow($this->product->getId(), true);
@@ -154,27 +166,24 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function createStockItem()
     {
-        $stockItem = $this->stockItemFactory
-                          ->create(
+        $stockItem = $this->stockRegistry
+                          ->getStockItem(
                               $this->product->getId(),
                               $this->stockConfiguration->getDefaultScopeId()
                           );
         $stockItem->setProduct($this->product);
 
-        $stockItem->addData(array(
-            'qty'                         => $this->getData('qty'),
-            'stock_id'                    => \Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID,
-            'website_id'                  => $this->stockConfiguration->getDefaultScopeId(),
-            'is_in_stock'                 => 1,
-            'use_config_min_qty'          => 1,
-            'use_config_min_sale_qty'     => 1,
-            'use_config_max_sale_qty'     => 1,
-            'is_qty_decimal'              => 0,
-            'use_config_backorders'       => 1,
-            'use_config_notify_stock_qty' => 1
-        ));
+        $stockItem->setQty($this->getData('qty'))
+                  ->setStockId(\Magento\CatalogInventory\Model\Stock::DEFAULT_STOCK_ID)
+                  ->setIsInStock(true)
+                  ->setUseConfigMinQty(true)
+                  ->setUseConfigMinSaleQty(true)
+                  ->setUseConfigMaxSaleQty(true)
+                  ->setUseConfigBackorders(true)
+                  ->setUseConfigNotifyStockQty(true)
+                  ->setIsQtyDecimal(false);
 
-        $stockItem->save();
+        $this->stockItemRepository->save($stockItem);
     }
 
     private function makeGallery()

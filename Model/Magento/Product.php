@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -71,10 +71,11 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     protected $_storeId = \Magento\Store\Model\Store::DEFAULT_STORE_ID;
 
-    /**
-     * @var \Magento\Catalog\Model\Product
-     */
+    /** @var \Magento\Catalog\Model\Product  */
     protected $_productModel = NULL;
+
+    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface  */
+    protected $stockItemRepository;
 
     /** @var \Ess\M2ePro\Model\Magento\Product\Variation */
     protected $_variationInstance = NULL;
@@ -101,6 +102,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Catalog\Model\Product\Type $productType,
         \Ess\M2ePro\Model\Magento\Product\Type\ConfigurableFactory $configurableFactory,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
         \Ess\M2ePro\Model\Magento\Product\Status $productStatus,
         \Magento\CatalogInventory\Model\Configuration $catalogInventoryConfiguration,
         \Magento\Store\Model\StoreFactory $storeFactory,
@@ -126,6 +128,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $this->objectManager = $objectManager;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
+        $this->stockItemRepository = $stockItemRepository;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -140,7 +143,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $table = $this->resourceModel->getTableName('catalog_product_entity');
+        $table = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
         $dbSelect = $this->resourceModel->getConnection()
              ->select()
              ->from($table, new \Zend_Db_Expr('COUNT(*)'))
@@ -240,7 +243,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     {
         $select = $this->resourceModel->getConnection()
             ->select()
-            ->from($this->resourceModel->getTableName('catalog_product_website'), 'website_id')
+            ->from(
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_website'),
+                'website_id'
+            )
             ->where('product_id = ?', (int)$this->getProductId());
 
         $websiteIds = $this->resourceModel->getConnection()->fetchCol($select);
@@ -314,7 +320,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     }
 
     /**
-     * @return \Magento\CatalogInventory\Model\Stock\Item
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
      * @throws \Ess\M2ePro\Model\Exception
      */
     public function getStockItem()
@@ -419,7 +425,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $typeId = $resource->getConnection()
              ->select()
-             ->from($resource->getTableName('catalog_product_entity'), ['type_id'])
+             ->from(
+                 $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity'),
+                 ['type_id']
+             )
              ->where('`entity_id` = ?',(int)$productId)
              ->query()
              ->fetchColumn();
@@ -444,7 +453,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             $attributeId = $resource->getConnection('core_read')
                 ->select()
-                ->from($resource->getTableName('eav_attribute'), array('attribute_id'))
+                ->from(
+                    $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute'),
+                    array('attribute_id')
+                )
                 ->where('attribute_code = ?', 'name')
                 ->where('entity_type_id = ?', $this->productFactory
                                                    ->create()->getResource()->getTypeId())
@@ -461,7 +473,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter('entity_id', (int)$productId);
         $collection->joinTable(
-            ['cpev' => $resource->getTableName('catalog_product_entity_varchar')],
+            [
+                'cpev' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity_varchar')
+            ],
             'entity_id = entity_id',
             ['value' => 'value']
         );
@@ -498,7 +513,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $sku = $resource->getConnection('core_read')
              ->select()
-             ->from($resource->getTableName('catalog_product_entity'), ['sku'])
+             ->from(
+                 $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity'),
+                 ['sku']
+             )
              ->where('`entity_id` = ?',(int)$productId)
              ->query()
              ->fetchColumn();
@@ -783,9 +801,9 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
     public function isStockAvailability()
     {
         return $this->calculateStockAvailability(
-            $this->getStockItem()->getData('is_in_stock'),
-            $this->getStockItem()->getData('manage_stock'),
-            $this->getStockItem()->getData('use_config_manage_stock')
+            $this->getStockItem()->getIsInStock(),
+            $this->getStockItem()->getManageStock(),
+            $this->getStockItem()->getUseConfigManageStock()
         );
     }
 
@@ -941,6 +959,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @param bool $lifeMode
+     * @return int
+     */
     public function getQty($lifeMode = false)
     {
         if ($lifeMode && (!$this->isStatusEnabled() || !$this->isStockAvailability())) {
@@ -962,16 +984,18 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         return $this->calculateQty(
             $this->getStockItem()->getQty(),
-            $this->getStockItem()->getData('manage_stock'),
+            $this->getStockItem()->getManageStock(),
             $this->getStockItem()->getUseConfigManageStock(),
-            $this->getStockItem()->getData('backorders'),
+            $this->getStockItem()->getBackorders(),
             $this->getStockItem()->getUseConfigBackorders()
         );
     }
 
     public function setQty($value)
     {
-        $this->getStockItem()->setQty($value)->save();
+        $this->stockItemRepository->save(
+            $this->getStockItem()->setQty($value)
+        );
     }
 
     // ---------------------------------------
@@ -1020,6 +1044,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
+    /**
+     * @param bool $lifeMode
+     * @return int
+     */
     protected function getConfigurableQty($lifeMode = false)
     {
         $totalQty = 0;
@@ -1031,17 +1059,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $childProduct->getStore()->getWebsiteId()
             );
 
-            $isInStock = $this->calculateStockAvailability(
-                $stockItem->getData('is_in_stock'),
-                $stockItem->getData('manage_stock'),
-                $stockItem->getData('use_config_manage_stock')
-            );
+            $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
                 $stockItem->getQty(),
-                $stockItem->getData('manage_stock'),
+                $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
-                $stockItem->getData('backorders'),
+                $stockItem->getBackorders(),
                 $stockItem->getUseConfigBackorders()
             );
 
@@ -1067,17 +1091,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $childProduct->getStore()->getWebsiteId()
             );
 
-            $isInStock = $this->calculateStockAvailability(
-                $stockItem->getData('is_in_stock'),
-                $stockItem->getData('manage_stock'),
-                $stockItem->getData('use_config_manage_stock')
-            );
+            $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
                 $stockItem->getQty(),
-                $stockItem->getData('manage_stock'),
+                $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
-                $stockItem->getData('backorders'),
+                $stockItem->getBackorders(),
                 $stockItem->getUseConfigBackorders()
             );
 
@@ -1092,6 +1112,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         return $totalQty;
     }
 
+    /**
+     * @param bool $lifeMode
+     * @return int
+     */
     protected function getBundleQty($lifeMode = false)
     {
         $product = $this->getProduct();
@@ -1119,18 +1143,14 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             $stockItem = $this->stockRegistry->getStockItem($_item->getId());
 
-            $isInStock = $this->calculateStockAvailability(
-                $stockItem->getData('is_in_stock'),
-                $stockItem->getData('manage_stock'),
-                $stockItem->getData('use_config_manage_stock')
-            );
+            $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
-                $stockItem->getData('qty'),
-                $stockItem->getData('manage_stock'),
-                $stockItem->getData('use_config_manage_stock'),
-                $stockItem->getData('backorders'),
-                $stockItem->getData('use_config_backorders')
+                $stockItem->getQty(),
+                $stockItem->getManageStock(),
+                $stockItem->getUseConfigManageStock(),
+                $stockItem->getBackorders(),
+                $stockItem->getUseConfigBackorders()
             );
 
             if ($lifeMode &&
@@ -1238,7 +1258,12 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
                 $attribute->setStoreId($this->getStoreId());
 
+                /* This value is htmlEscaped::getOptionText()
+                 * vendor/magento/module-eav/Model/Entity/Attribute/Source/Table.php
+                 */
                 $value = $attribute->getSource()->getOptionText($value);
+                $value = $this->getHelper('Data')->deEscapeHtml($value, ENT_QUOTES);
+
                 $value = is_array($value) ? implode(',', $value) : (string)$value;
             }
 
@@ -1262,9 +1287,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                 $value = '';
             } else {
                 if (!preg_match('((mailto\:|(news|(ht|f)tp(s?))\://){1}\S+)',$value)) {
+
                     $value = $this->storeFactory->create()
                                   ->load($this->getStoreId())
-                                  ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, false)
+                                  ->getBaseUrl(
+                                      \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                                      $this->getHelper('Component\Ebay\Images')->shouldBeUrlsSecure()
+                                  )
                                   . 'catalog/product/'.ltrim($value,'/');
                 }
             }
@@ -1303,7 +1332,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             $attributeId = $resource->getConnection()
                    ->select()
-                   ->from($resource->getTableName('eav_attribute'), ['attribute_id'])
+                   ->from(
+                       $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute'),
+                       ['attribute_id']
+                   )
                    ->where('attribute_code = ?', 'thumbnail')
                    ->where('entity_type_id = ?', $this->productFactory
                                                       ->create()->getResource()->getTypeId())
@@ -1320,7 +1352,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->addFieldToFilter('entity_id', (int)$this->getProductId());
         $collection->joinTable(
-            ['cpev' => $resource->getTableName('catalog_product_entity_varchar')],
+            [
+                'cpev' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity_varchar')
+            ],
             'entity_id = entity_id',
             ['value' => 'value']
         );
@@ -1346,13 +1381,12 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $thumbnailTempPath = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::MEDIA)
-                ->getAbsolutePath().DIRECTORY_SEPARATOR.'catalog/product'.$thumbnailTempPath;
-
-        $thumbnailTempPath = $this->prepareImageUrl($thumbnailTempPath);
+                ->getAbsolutePath().'catalog/product/'.ltrim($thumbnailTempPath, '/');
 
         /** @var Image $image */
         $image = $this->modelFactory->getObject('Magento\Product\Image');
-        $image->setUrl($thumbnailTempPath);
+        $image->setPath($thumbnailTempPath);
+        $image->setArea(\Magento\Framework\App\Area::AREA_ADMINHTML);
         $image->setStoreId($this->getStoreId());
 
         if (!$image->isSelfHosted()) {
@@ -1405,8 +1439,8 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $image->setPath($imagePathResized)
-            ->setUrl($image->getUrlByPath())
-            ->resetHash();
+              ->setUrl($image->getUrlByPath())
+              ->resetHash();
 
         return $image;
     }
@@ -1473,7 +1507,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
             $imageUrl = $this->storeFactory->create()
                              ->load($this->getStoreId())
-                             ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, false);
+                             ->getBaseUrl(
+                                 \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                                 $this->getHelper('Component\Ebay\Images')->shouldBeUrlsSecure()
+                             );
             $imageUrl .= 'catalog/product/'.ltrim($galleryImage['file'],'/');
             $imageUrl = $this->prepareImageUrl($imageUrl);
 
@@ -1533,7 +1570,10 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         $imagePath = 'catalog/product/' . ltrim($galleryImage['file'], '/');
         $imageUrl  = $this->storeFactory->create()
                 ->load($this->getStoreId())
-                ->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA, false) . $imagePath;
+                ->getBaseUrl(
+                    \Magento\Framework\UrlInterface::URL_TYPE_MEDIA,
+                    $this->getHelper('Component\Ebay\Images')->shouldBeUrlsSecure()
+                ) . $imagePath;
 
         $imageUrl = $this->prepareImageUrl($imageUrl);
 

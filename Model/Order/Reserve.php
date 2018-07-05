@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -17,8 +17,9 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
     const ACTION_ADD = 'add';
     const ACTION_SUB = 'sub';
-    /** @var \Magento\Framework\DB\Transaction  */
-    private $transaction;
+
+    /** @var \Magento\Framework\DB\TransactionFactory  */
+    private $transactionFactory = NULL;
 
     /** @var \Ess\M2ePro\Model\Order */
     private $order = null;
@@ -28,14 +29,14 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     public function __construct(
-        \Magento\Framework\DB\Transaction $transaction,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\Order $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->transaction = $transaction;
-        $this->order = $order;
+        $this->transactionFactory = $transactionFactory;
+        $this->order              = $order;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -85,20 +86,25 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         return $this->order->getReservationState() == self::STATE_CANCELED;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function place()
     {
         if ($this->isPlaced()) {
             throw new \Ess\M2ePro\Model\Exception\Logic('QTY is already reserved.');
         }
 
-        $this->order->associateWithStore(false);
-        $this->order->associateItemsWithProducts(false);
-
         try {
+
+            $this->order->associateWithStore();
+            $this->order->associateItemsWithProducts();
+
             $this->performAction(self::ACTION_SUB, self::STATE_PLACED);
 
-            if ($this->isPlaced()) {
-                $this->order->addSuccessLog('QTY has been reserved.');
+            if (!$this->isPlaced()) {
+                return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
@@ -109,9 +115,14 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
+        $this->order->addSuccessLog('QTY has been reserved.');
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function release()
     {
         if ($this->isReleased()) {
@@ -125,8 +136,8 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         try {
             $this->performAction(self::ACTION_ADD, self::STATE_RELEASED);
 
-            if ($this->isReleased()) {
-                $this->order->addSuccessLog('QTY has been released.');
+            if (!$this->isReleased()) {
+                return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
@@ -137,9 +148,14 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
+        $this->order->addSuccessLog('QTY has been released.');
         return true;
     }
 
+    /**
+     * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     public function cancel()
     {
         if ($this->isCanceled()) {
@@ -153,8 +169,8 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         try {
             $this->performAction(self::ACTION_ADD, self::STATE_CANCELED);
 
-            if ($this->isCanceled()) {
-                $this->order->addSuccessLog('QTY reserve has been canceled.');
+            if (!$this->isCanceled()) {
+                return false;
             }
         } catch (\Exception $e) {
             $this->order->addErrorLog(
@@ -165,9 +181,15 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
+        $this->order->addSuccessLog('QTY reserve has been canceled.');
         return true;
     }
 
+    /**
+     * @param $action
+     * @param $newState
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     private function performAction($action, $newState)
     {
         $productsAffectedCount = 0;
@@ -176,6 +198,8 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
         $productStockItems = array();
         $magentoStockItems = array();
+
+        $transaction = $this->transactionFactory->create();
 
         foreach ($this->order->getItemsCollection()->getItems() as $item) {
             /**@var \Ess\M2ePro\Model\Order\Item $item */
@@ -234,7 +258,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
                 $productsAffectedCount++;
 
-                $this->transaction->addObject($magentoStockItem->getStockItem());
+                $transaction->addObject($magentoStockItem->getStockItem());
 
                 //--------------------------------------
                 if ($item->getMagentoProduct()->isSimpleType() ||
@@ -255,7 +279,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $item->setReservedProducts($products);
-            $this->transaction->addObject($item);
+            $transaction->addObject($item);
         }
 
         unset($productStockItems);
@@ -290,14 +314,21 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             $this->order->setData('reservation_start_date', $this->getHelper('Data')->getCurrentGmtDate());
         }
 
-        $this->transaction->addObject($this->order);
-        $this->transaction->save();
+        $transaction->addObject($this->order)
+                    ->save();
 
         foreach ($magentoStockItems as $magentoStockItem) {
             $magentoStockItem->afterSave();
         }
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     * @param \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem
+     * @param $action
+     * @param $qty
+     * @return bool
+     */
     private function changeProductQty(
         \Ess\M2ePro\Model\Magento\Product $magentoProduct,
         \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem,
@@ -307,14 +338,17 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         $result = true;
 
         switch ($action) {
+
             case self::ACTION_ADD:
-                $magentoStockItem->addQty($qty, false);
+                if ($magentoStockItem->canChangeQty()) {
+                    $result = $magentoStockItem->addQty($qty, false);
+                }
                 break;
+
             case self::ACTION_SUB:
                 try {
-                    $magentoStockItem->subtractQty($qty, false);
+                    $result = $magentoStockItem->subtractQty($qty, false);
                 } catch (\Exception $e) {
-                    $result = false;
 
                     $this->order->addErrorLog(
                         'QTY for Product "%name%" cannot be reserved. Reason: %msg%',
@@ -323,13 +357,30 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
                             'msg' => $e->getMessage()
                         )
                     );
+                    return false;
                 }
                 break;
+        }
+
+        if ($result === false && $this->order->getLog()->getInitiator() == \Ess\M2ePro\Helper\Data::INITIATOR_USER) {
+            $msg = 'The QTY Reservation action (reserve/release/cancel) has not been performed for "%name%" '
+                . 'as the "Decrease Stock When Order is Placed" or/and "Manage Stock" options are disabled in your '
+                . 'Magento Inventory configurations.';
+
+            $this->order->addWarningLog(
+                $msg,
+                array('!name' => $magentoProduct->getName())
+            );
         }
 
         return $result;
     }
 
+    /**
+     * @param Item $item
+     * @param $action
+     * @return array|mixed|null
+     */
     private function getItemProductsByAction(\Ess\M2ePro\Model\Order\Item $item, $action)
     {
         $products = array();

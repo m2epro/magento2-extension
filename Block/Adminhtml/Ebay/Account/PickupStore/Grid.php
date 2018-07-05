@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -66,6 +66,7 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'name',
+            'escape'    => true,
             'filter_index' => 'main_table.name'
         ]);
 
@@ -95,7 +96,8 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'format' => \IntlDateFormatter::MEDIUM,
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'create_date',
             'filter_index' => 'main_table.create_date'
@@ -106,7 +108,8 @@ class Grid extends AbstractGrid
             'align'     => 'left',
             'width'     => '150px',
             'type'      => 'datetime',
-            'format' => \IntlDateFormatter::MEDIUM,
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
+            'format'    => \IntlDateFormatter::MEDIUM,
             'filter_time' => true,
             'index'     => 'update_date',
             'filter_index' => 'main_table.update_date'

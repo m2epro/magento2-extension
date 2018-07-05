@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -71,7 +71,9 @@ class Response extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Respon
                 $data['status'] = \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED;
             }
 
-            $variation->addData($data)->save();
+            $variation->addData($data);
+            $variation->getChildObject()->addData($data);
+            $variation->save();
         }
     }
 

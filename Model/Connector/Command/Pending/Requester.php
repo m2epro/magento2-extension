@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -79,6 +79,7 @@ abstract class Requester extends \Ess\M2ePro\Model\Connector\Command\AbstractMod
             $this->getResponser()->process();
             $this->getResponser()->eventAfterExecuting();
         } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception);
             $this->getResponser()->failDetected($exception->getMessage());
         }
     }

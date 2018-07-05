@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -130,8 +130,9 @@ class Update extends AbstractModel
                 'order_id'         => $change->getOrderId(),
                 'change_id'        => $change->getId(),
                 'amazon_order_id'  => $changeParams['amazon_order_id'],
-                'tracking_number'  => $changeParams['tracking_number'],
-                'carrier_name'     => $changeParams['carrier_name'],
+                'tracking_number'  => isset($changeParams['tracking_number']) ? $changeParams['tracking_number'] : null,
+                'carrier_name'     => isset($changeParams['carrier_title']) ? $changeParams['carrier_title'] : null,
+                'carrier_code'     => isset($changeParams['carrier_code']) ? $changeParams['carrier_code'] : null,
                 'fulfillment_date' => $changeParams['fulfillment_date'],
                 'shipping_method'  => isset($changeParams['shipping_method']) ? $changeParams['shipping_method'] : null,
                 'items'            => $changeParams['items']

@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Template\SellingFormat\Edit;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -93,14 +99,26 @@ class Form extends AbstractForm
         $formData = array_merge($default, $formData);
 
         if ($formData['regular_sale_price_start_date_value'] != '') {
-            $formData['regular_sale_price_start_date_value'] = $this->_localeDate->formatDate(
-                $formData['regular_sale_price_start_date_value']
+
+            $dateTime = new \DateTime(
+                $formData['regular_sale_price_start_date_value'],
+                new \DateTimeZone($this->_localeDate->getDefaultTimezone())
             );
+            // UTC Date will be shown on interface
+            //$dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+
+            $formData['regular_sale_price_start_date_value'] = $dateTime;
         }
         if ($formData['regular_sale_price_end_date_value'] != '') {
-            $formData['regular_sale_price_end_date_value'] = $this->_localeDate->formatDate(
-                $formData['regular_sale_price_end_date_value']
+
+            $dateTime = new \DateTime(
+                $formData['regular_sale_price_end_date_value'],
+                new \DateTimeZone($this->_localeDate->getDefaultTimezone())
             );
+            // UTC Date will be shown on interface
+            //$dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+
+            $formData['regular_sale_price_end_date_value'] = $dateTime;
         }
 
         /** @var \Ess\M2ePro\Helper\Magento\Attribute $magentoAttributeHelper */
@@ -143,6 +161,20 @@ class Form extends AbstractForm
                 'value' => $formData['title'],
                 'class' => 'M2ePro-price-tpl-title',
                 'required' => true,
+            ]
+        );
+
+        $fieldset->addField('local_timezone',
+            'hidden',
+            [
+                'value' => $this->_localeDate->getConfigTimezone()
+            ]
+        );
+
+        $fieldset->addField('local_date_format',
+            'hidden',
+            [
+                'value' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT)
             ]
         );
 
@@ -637,7 +669,7 @@ class Form extends AbstractForm
                 'label' => $this->__('Start Date Value'),
                 'name' => 'regular_sale_price_start_date_value',
                 'value' => $formData['regular_sale_price_start_date_value'],
-                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
+                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
             ]
         );
 
@@ -696,7 +728,7 @@ class Form extends AbstractForm
                 'label' => $this->__('End Date Value'),
                 'name' => 'regular_sale_price_end_date_value',
                 'value' => $formData['regular_sale_price_end_date_value'],
-                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
+                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
             ]
         );
 

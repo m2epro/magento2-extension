@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -203,7 +203,25 @@ class Attribute extends AbstractHelper
             ->addVisibleFilter()
             ->setInAllAttributeSetsFilter($attributeSetIds);
 
-        return $attributeCollection->getAllIds();
+        /**
+         * We can't use $attributeCollection->getAllIds().
+         * It will reset all columns and having clause will causes mysql syntax error
+         */
+        $idsSelect = clone $attributeCollection->getSelect();
+        $idsSelect->reset(\Magento\Framework\DB\Select::ORDER);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_COUNT);
+        $idsSelect->reset(\Magento\Framework\DB\Select::LIMIT_OFFSET);
+        $idsSelect->reset(\Magento\Framework\DB\Select::COLUMNS);
+
+        $idsSelect->columns($attributeCollection->getResource()->getIdFieldName(), 'main_table');
+        $idsSelect->columns(array(
+            'count' => new \Zend_Db_Expr('COUNT(*)')), 'main_table'
+        );
+
+        //todo uncomment when issue wil be fixed
+        //return $attributeCollection->getAllIds();
+
+        return $attributeCollection->getConnection()->fetchCol($idsSelect);
     }
 
     // ---------------------------------------
@@ -240,9 +258,10 @@ class Attribute extends AbstractHelper
         /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
 
-        $cpTable  = $this->resourceConnection->getTableName('catalog_product_entity');
-        $saTable  = $this->resourceConnection->getTableName('catalog_product_super_attribute');
-        $aTable   = $this->resourceConnection->getTableName('eav_attribute');
+        $cpTable  = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity');
+        $saTable  = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_super_attribute');
+        $aTable   = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute');
 
         $select = $connection->select()
             ->distinct(true)
@@ -291,7 +310,7 @@ class Attribute extends AbstractHelper
 
         /** @var $connection \Magento\Framework\DB\Adapter\AdapterInterface */
         $connection = $this->resourceConnection->getConnection();
-        $tableName = $this->resourceConnection->getTableName('eav_attribute');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute');
 
         $entityTypeId = $this->eavConfig->getEntityType(\Magento\Catalog\Model\Product::ENTITY)->getId();
         $dbSelect = $connection->select();

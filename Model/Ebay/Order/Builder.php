@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -22,6 +22,7 @@ class Builder extends AbstractModel
     const UPDATE_BUYER_MESSAGE      = 'buyer_message';
     const UPDATE_PAYMENT_DATA       = 'payment_data';
     const UPDATE_SHIPPING_TAX_DATA  = 'shipping_tax_data';
+    const UPDATE_ITEMS_COUNT        = 'items_count';
     const UPDATE_EMAIL              = 'email';
 
     //########################################
@@ -571,6 +572,9 @@ class Builder extends AbstractModel
         if ($this->hasUpdatedCompletedShipping()) {
             $this->updates[] = self::UPDATE_COMPLETED_SHIPPING;
         }
+        if ($this->hasUpdatedItemsCount()) {
+            $this->updates[] = self::UPDATE_ITEMS_COUNT;
+        }
         if ($this->hasUpdatedEmail()) {
             $this->updates[] = self::UPDATE_EMAIL;
         }
@@ -675,6 +679,17 @@ class Builder extends AbstractModel
 
     // ---------------------------------------
 
+    private function hasUpdatedItemsCount()
+    {
+        if (!$this->isUpdated()) {
+            return false;
+        }
+
+        return count($this->items) != $this->order->getItemsCollection()->getSize();
+    }
+
+    // ---------------------------------------
+
     private function hasUpdatedEmail()
     {
         if (!$this->isUpdated()) {
@@ -726,7 +741,14 @@ class Builder extends AbstractModel
 
         if ($this->hasUpdate(self::UPDATE_SHIPPING_TAX_DATA) && $this->order->getMagentoOrderId()) {
 
-            $message  = 'Attention! Shipping/Tax details have been modified on the channel.';
+            $message  = 'Attention! Shipping/Tax details have been modified on the channel. ';
+            $message .= 'Magento order is already created and cannot be updated to reflect these changes.';
+            $this->order->addWarningLog($message);
+        }
+
+        if ($this->hasUpdate(self::UPDATE_ITEMS_COUNT) && $this->order->getMagentoOrderId()) {
+
+            $message  = 'Attention! The number of ordered Items has been modified on the channel. ';
             $message .= 'Magento order is already created and cannot be updated to reflect these changes.';
             $this->order->addWarningLog($message);
         }

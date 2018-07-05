@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Controller\Adminhtml\Order;
 
 use Ess\M2ePro\Controller\Adminhtml\Context;
@@ -7,14 +13,14 @@ use Ess\M2ePro\Controller\Adminhtml\Order;
 
 class AssignProduct extends Order
 {
-    protected $productModel;
+    protected $magentoProductCollectionFactory;
 
     public function __construct(
-        \Magento\Catalog\Model\Product $productModel,
+        \Ess\M2ePro\Model\ResourceModel\Magento\Product\CollectionFactory $magentoProductCollectionFactory,
         Context $context
     )
     {
-        $this->productModel = $productModel;
+        $this->magentoProductCollectionFactory = $magentoProductCollectionFactory;
 
         parent::__construct($context);
     }
@@ -35,18 +41,13 @@ class AssignProduct extends Order
             return $this->getResult();
         }
 
-        $collection = $this->productModel->getCollection()
-            ->joinField(
-                'qty',
-                'cataloginventory_stock_item',
-                'qty',
-                'product_id=entity_id',
-                '{{table}}.stock_id=1',
-                'left'
-            );
+        /* @var $collection \Ess\M2ePro\Model\ResourceModel\Magento\Product\Collection */
+        $collection = $this->magentoProductCollectionFactory->create();
+        $collection->setStoreId($orderItem->getStoreId());
+        $collection->joinStockItem();
 
         $productId && $collection->addFieldToFilter('entity_id', $productId);
-        $sku && $collection->addFieldToFilter('sku', $sku);
+        $sku       && $collection->addFieldToFilter('sku', $sku);
 
         $productData = $collection->getSelect()->query()->fetch();
 

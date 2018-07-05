@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -109,7 +109,8 @@ class Specifics extends AbstractModel
     protected function deleteAllSpecifics(\Ess\M2ePro\Model\Marketplace $marketplace)
     {
         $connWrite = $this->resourceConnection->getConnection();
-        $tableSpecifics = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_specific');
+        $tableSpecifics = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
 
         $connWrite->delete($tableSpecifics, array('marketplace_id = ?' => $marketplace->getId()));
     }
@@ -122,7 +123,8 @@ class Specifics extends AbstractModel
         }
 
         $connWrite = $this->resourceConnection->getConnection();
-        $tableSpecifics = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_specific');
+        $tableSpecifics = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_specific');
 
         $iteration            = 0;
         $iterationsForOneStep = 1000;

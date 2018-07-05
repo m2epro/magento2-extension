@@ -2,128 +2,25 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Model\Connector\Connection\Response\Message;
 
-class Set extends \Ess\M2ePro\Model\AbstractModel
+/** @method \Ess\M2ePro\Model\Connector\Connection\Response\Message[] getErrorEntities */
+
+class Set extends \Ess\M2ePro\Model\Response\Message\Set
 {
-    /** @var \Ess\M2ePro\Model\Connector\Connection\Response\Message[] $entities */
-    private $entities = array();
-
     //########################################
 
-    public function init(array $responseData)
+    /** @return \Ess\M2ePro\Model\Connector\Connection\Response\Message */
+    protected function getEntityModel()
     {
-        foreach ($responseData as $messageData) {
-            $message = $this->modelFactory->getObject('Connector\Connection\Response\Message');
-            $message->initFromResponseData($messageData);
-
-            $this->entities[] = $message;
-        }
+        return $this->modelFactory->getObject('Connector\Connection\Response\Message');
     }
 
     //########################################
-
-    public function getEntities()
-    {
-        return $this->entities;
-    }
-
-    public function getEntitiesAsArrays()
-    {
-        $result = array();
-
-        foreach ($this->getEntities() as $message) {
-            $result[] = $message->asArray();
-        }
-
-        return $result;
-    }
-
-    //########################################
-
-    /**
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
-     */
-    public function getErrorEntities()
-    {
-        $messages = array();
-
-        foreach ($this->getEntities() as $message) {
-            $message->isError() && $messages[] = $message;
-        }
-
-        return $messages;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
-     */
-    public function getWarningEntities()
-    {
-        $messages = array();
-
-        foreach ($this->getEntities() as $message) {
-            $message->isWarning() && $messages[] = $message;
-        }
-
-        return $messages;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
-     */
-    public function getSuccessEntities()
-    {
-        $messages = array();
-
-        foreach ($this->getEntities() as $message) {
-            $message->isSuccess() && $messages[] = $message;
-        }
-
-        return $messages;
-    }
-
-    /**
-     * @return \Ess\M2ePro\Model\Connector\Connection\Response\Message[]
-     */
-    public function getNoticeEntities()
-    {
-        $messages = array();
-
-        foreach ($this->getEntities() as $message) {
-            $message->isNotice() && $messages[] = $message;
-        }
-
-        return $messages;
-    }
-
-    // ########################################
-
-    public function hasErrorEntities()
-    {
-        return count($this->getErrorEntities()) > 0;
-    }
-
-    public function hasWarningEntities()
-    {
-        return count($this->getWarningEntities()) > 0;
-    }
-
-    public function hasSuccessEntities()
-    {
-        return count($this->getSuccessEntities()) > 0;
-    }
-
-    public function hasNoticeEntities()
-    {
-        return count($this->getNoticeEntities()) > 0;
-    }
-
-    // ########################################
 
     public function hasSystemErrorEntity()
     {
@@ -134,17 +31,6 @@ class Set extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return false;
-    }
-
-    public function getCombinedErrorsString()
-    {
-        $messages = array();
-
-        foreach ($this->getErrorEntities() as $message) {
-            $messages[] = $message->getText();
-        }
-
-        return !empty($messages) ? implode(', ', $messages) : null;
     }
 
     public function getCombinedSystemErrorsString()

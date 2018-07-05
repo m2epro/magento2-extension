@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -184,7 +184,8 @@ Do not forget to press Save Button after returning back to Magento
             $marketplacesCollection = $this->ebayFactory->getObject('Marketplace')->getCollection();
 
             $resource = $marketplacesCollection->getResource();
-            $dictionaryTable = $resource->getTable('m2epro_ebay_dictionary_marketplace');
+            $dictionaryTable = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('m2epro_ebay_dictionary_marketplace');
 
             $rows = $resource->getConnection()->select()->from($dictionaryTable,'marketplace_id')
                 ->where('client_details_last_update_date IS NOT NULL')

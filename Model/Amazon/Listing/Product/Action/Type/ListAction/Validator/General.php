@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -48,6 +48,7 @@ class General extends \Ess\M2ePro\Model\Amazon\Listing\Product\Action\Type\Valid
             return false;
         }
 
+        //todo wrong?
         if (!$this->validateRegularPrice() || !$this->validateBusinessPrice()) {
             return false;
         }

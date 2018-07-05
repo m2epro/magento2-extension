@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -19,7 +19,6 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
     const AMAZON_SECTION_COMPONENT   = 'm2epro_amazon_integration';
     const BUY_SECTION_COMPONENT      = 'm2epro_buy_integration';
     const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
-    const ADVANCED_SECTION_WIZARD    = 'm2epro_migration_wizard';
 
     protected $urlBuilder;
 

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -16,6 +16,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var Account $account */
     private $account = NULL;
+
+    /** @var \Ess\M2ePro\Model\Synchronization\Log $synchronizationLog */
+    protected $synchronizationLog = NULL;
 
     protected $activeRecordFactory;
     protected $amazonFactory;
@@ -68,6 +71,49 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     protected function getAmazonAccountRepricing()
     {
         return $this->getAmazonAccount()->getRepricing();
+    }
+
+    //########################################
+
+    protected function processErrorMessages($response)
+    {
+        if (empty($response['messages'])) {
+            return;
+        }
+
+        foreach ($response['messages'] as $messageData) {
+
+            $message = $this->modelFactory->getObject('Response\Message');
+            $message->initFromResponseData($messageData);
+
+            if (!$message->isError()) {
+                continue;
+            }
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($message->getText()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
+            $exception = new \Ess\M2ePro\Model\Exception($message->getText());
+            $this->getHelper('Module\Exception')->process($exception, false);
+        }
+    }
+
+    //########################################
+
+    protected function getSynchronizationLog()
+    {
+        if (!is_null($this->synchronizationLog)) {
+            return $this->synchronizationLog;
+        }
+
+        $this->synchronizationLog = $this->activeRecordFactory->getObject('Synchronization\Log');
+        $this->synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Amazon::NICK);
+        $this->synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING);
+
+        return $this->synchronizationLog;
     }
 
     //########################################

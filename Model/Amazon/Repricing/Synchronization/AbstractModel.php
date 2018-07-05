@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -44,11 +44,19 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\Amazon\Repricing\Abstract
                 $requestData
             );
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($exception->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
+            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 
-        return $this->getHelper('Data')->jsonDecode($result['response']);
+        $this->processErrorMessages($result['response']);
+        return $result['response'];
     }
 
     //########################################

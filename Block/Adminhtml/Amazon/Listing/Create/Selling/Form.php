@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Create\Selling;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -889,13 +895,9 @@ HTML
                 'name' => 'restock_date_value',
                 'label' => $this->__('Restock Date'),
                 'required' => true,
-                'date_format' => $this->_localeDate->getDateFormatWithLongYear(),
+                'date_format' => $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT),
                 'time_format' => $this->_localeDate->getTimeFormat(\IntlDateFormatter::SHORT),
-                'value' => $this->_localeDate->formatDate(
-                    $formData['restock_date_value'],
-                    \IntlDateFormatter::SHORT,
-                    true
-                )
+                'value' => $formData['restock_date_value']
             ]
         );
 
@@ -1152,7 +1154,7 @@ JS
             'handling_time_custom_attribute' => '',
 
             'restock_date_mode' => \Ess\M2ePro\Model\Amazon\Listing::RESTOCK_DATE_MODE_NONE,
-            'restock_date_value' => $this->getHelper('Data')->getCurrentTimezoneDate(),
+            'restock_date_value' => $this->getHelper('Data')->getCurrentGmtDate(),
             'restock_date_custom_attribute' => ''
         );
     }
@@ -1217,6 +1219,17 @@ JS
         } else {
             $data = $this->getHelper('Data\Session')->getValue($this->sessionKey);
             $data = array_merge($this->getDefaultFieldsValues(), $data);
+        }
+
+        if ($data['restock_date_value'] != '') {
+
+            $dateTime = new \DateTime(
+                $data['restock_date_value'],
+                new \DateTimeZone($this->_localeDate->getDefaultTimezone())
+            );
+            $dateTime->setTimezone(new \DateTimeZone($this->_localeDate->getConfigTimezone()));
+
+            $data['restock_date_value'] = $dateTime;
         }
 
         return $data;

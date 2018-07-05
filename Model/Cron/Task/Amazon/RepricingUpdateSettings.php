@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -13,7 +13,8 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     const NICK = 'amazon/repricing_update_settings';
     const MAX_MEMORY_LIMIT = 512;
 
-    const MAX_ITEMS_COUNT_PER_REQUEST = 100;
+    const MAX_COUNT_OF_ITERATIONS     = 10;
+    const MAX_ITEMS_COUNT_PER_REQUEST = 500;
 
     //####################################
 
@@ -50,28 +51,37 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
     {
         $accountCollection = $this->activeRecordFactory->getObject('Account')->getCollection();
         $accountCollection->getSelect()->joinInner(
-            array('aar' => $this->resource->getTableName('m2epro_amazon_account_repricing')),
+            array(
+                'aar' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_account_repricing')
+            ),
             'aar.account_id=main_table.id', array()
         );
 
         return $accountCollection->getItems();
     }
 
-    private function processAccount(\Ess\M2ePro\Model\Account $account)
+    private function processAccount(\Ess\M2ePro\Model\Account $acc)
     {
         /** @var \Ess\M2ePro\Model\Amazon\Repricing\Updating $repricingUpdating */
         $repricingUpdating = $this->modelFactory->getObject('Amazon\Repricing\Updating');
-        $repricingUpdating->setAccount($account);
+        $repricingUpdating->setAccount($acc);
 
         /** @var \Ess\M2ePro\Model\Amazon\Repricing\Synchronization\General $repricingSynchronization */
         $repricingSynchronization = $this->modelFactory->getObject('Amazon\Repricing\Synchronization\General');
-        $repricingSynchronization->setAccount($account);
+        $repricingSynchronization->setAccount($acc);
 
-        while ($listingsProductsRepricing = $this->getProcessRequiredListingsProductsRepricing($account)) {
-            $updatedSkus = $repricingUpdating->process($listingsProductsRepricing);
+        $iteration = 0;
+        while (($products = $this->getProcessRequiredProducts($acc)) && $iteration <= self::MAX_COUNT_OF_ITERATIONS) {
 
-            $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')
-                ->getResource()->resetProcessRequired(array_unique(array_keys($listingsProductsRepricing)));
+            $iteration++;
+
+            $updatedSkus = $repricingUpdating->process($products);
+            $this->getLockItem()->activate();
+
+            /** @var \Ess\M2ePro\Model\ResourceModel\Amazon\Listing\Product\Repricing $resource */
+            $resource = $this->activeRecordFactory->getObject('Amazon\Listing\Product\Repricing')->getResource();
+            $resource->resetProcessRequired(array_unique(array_keys($products)));
 
             if (empty($updatedSkus)) {
                 continue;
@@ -85,13 +95,13 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
      * @param $account \Ess\M2ePro\Model\Account
      * @return \Ess\M2ePro\Model\Amazon\Listing\Product\Repricing[]
      */
-    private function getProcessRequiredListingsProductsRepricing(\Ess\M2ePro\Model\Account $account)
+    private function getProcessRequiredProducts(\Ess\M2ePro\Model\Account $account)
     {
         $listingProductCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
         )->getCollection();
         $listingProductCollection->getSelect()->joinLeft(
-            array('l' => $this->resource->getTableName('m2epro_listing')),
+            array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
             'l.id=main_table.listing_id',
             array()
         );
@@ -107,7 +117,10 @@ class RepricingUpdateSettings extends \Ess\M2ePro\Model\Cron\Task\AbstractModel
         );
 
         $listingProductCollection->getSelect()->joinInner(
-            array('alpr' => $this->resource->getTableName('m2epro_amazon_listing_product_repricing')),
+            array(
+                'alpr' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_amazon_listing_product_repricing')
+            ),
             'alpr.listing_product_id=main_table.id',
             array()
         );

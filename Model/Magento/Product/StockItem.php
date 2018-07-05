@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -12,7 +12,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
 {
     private $stockConfiguration;
 
-    /** @var \Magento\CatalogInventory\Model\Stock\Item */
+    /** @var \Magento\CatalogInventory\Api\Data\StockItemInterface|null  */
     private $stockItem = null;
 
     /** @var \Magento\CatalogInventory\Model\Indexer\Stock\Processor */
@@ -24,6 +24,9 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     /** @var bool */
     private $stockStatusChanged = false;
 
+    /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface|null  */
+    private $stockItemRepository = null;
+
     //########################################
 
     public function __construct(
@@ -32,12 +35,14 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory,
         \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
         \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface $stockStateProvider,
-        \Magento\CatalogInventory\Model\Stock\Item $stockItem
+        \Magento\CatalogInventory\Api\Data\StockItemInterface $stockItem,
+        \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository
     ){
         $this->stockConfiguration  = $stockConfiguration;
         $this->indexStockProcessor = $indexStockProcessor;
         $this->stockStateProvider  = $stockStateProvider;
         $this->stockItem           = $stockItem;
+        $this->stockItemRepository = $stockItemRepository;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -45,7 +50,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     //########################################
 
     /**
-     * @return \Magento\CatalogInventory\Model\Stock\Item
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface|null
      * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function getStockItem()
@@ -59,6 +64,10 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
 
     public function subtractQty($qty, $save = true)
     {
+        if (!$this->canChangeQty()) {
+            return false;
+        }
+
         $stockItem = $this->getStockItem();
 
         if ($stockItem->getQty() - $stockItem->getMinQty() - $qty < 0) {
@@ -75,18 +84,29 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
             $stockItem->setQty($stockItem->getQty() - $qty);
         }
 
-        if ($stockItem->getManageStock() && !$this->stockStateProvider->verifyStock($stockItem)) {
+        if (!$this->stockStateProvider->verifyStock($stockItem)) {
             $this->stockStatusChanged = true;
         }
 
         if ($save) {
-            $stockItem->save();
+            $this->stockItemRepository->save($stockItem);
             $this->afterSave();
         }
+
+        return true;
     }
 
+    /**
+     * @param $qty
+     * @param bool $save
+     * @return bool
+     */
     public function addQty($qty, $save = true)
     {
+        if (!$this->canChangeQty()) {
+            return false;
+        }
+
         $stockItem = $this->getStockItem();
         $stockItem->setQty($stockItem->getQty() + $qty);
 
@@ -96,9 +116,11 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($save) {
-            $stockItem->save();
+            $this->stockItemRepository->save($stockItem);
             $this->afterSave();
         }
+
+        return true;
     }
 
     //########################################
@@ -107,7 +129,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     {
         if ($this->indexStockProcessor->isIndexerScheduled()) {
 
-            $this->indexStockProcessor->reindexRow($this->stockItem->getProductId(), true);
+            $this->indexStockProcessor->reindexRow($this->getStockItem()->getProductId(), true);
         }
     }
 
@@ -116,6 +138,16 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     public function isStockStatusChanged()
     {
         return (bool)$this->stockStatusChanged;
+    }
+
+    //########################################
+
+    /**
+     * @return bool
+     */
+    public function canChangeQty()
+    {
+        return $this->getHelper('Magento\Stock')->canSubtractQty() && $this->getStockItem()->getManageStock();
     }
 
     //########################################

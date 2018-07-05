@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -52,6 +52,14 @@ abstract class AbstractPlugin
                $this->helperFactory->getObject('Module')->isReadyToWork();
     }
 
+    //########################################
+
+    /**
+     * @param $helperName
+     * @param array $arguments
+     * @return \Magento\Framework\App\Helper\AbstractHelper
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
     protected function getHelper($helperName, array $arguments = [])
     {
         return $this->helperFactory->getObject($helperName, $arguments);

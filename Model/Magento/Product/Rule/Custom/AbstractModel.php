@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,8 +10,14 @@ namespace Ess\M2ePro\Model\Magento\Product\Rule\Custom;
 
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
+    /** @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface  */
     protected $localeDate;
-    protected $stockItemFactory;
+
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    protected $stockRegistry;
+
+    /** @var \Magento\CatalogInventory\Api\StockConfigurationInterface  */
+    protected $stockConfiguration;
 
     protected $filterOperator  = NULL;
     protected $filterCondition = NULL;
@@ -21,14 +27,16 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function __construct(
         $filterOperator, $filterCondition,
         \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\CatalogInventory\Model\Stock\ItemFactory $stockItemFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
+        \Magento\CatalogInventory\Api\StockConfigurationInterface $stockConfiguration,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     )
     {
-        $this->localeDate = $localeDate;
-        $this->stockItemFactory = $stockItemFactory;
+        $this->localeDate          = $localeDate;
+        $this->stockRegistry       = $stockRegistry;
+        $this->stockConfiguration  = $stockConfiguration;
 
         $this->filterOperator  = $filterOperator;
         $this->filterCondition = $filterCondition;
@@ -68,6 +76,19 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
     public function getOptions()
     {
         return array();
+    }
+
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     * @return \Magento\CatalogInventory\Api\Data\StockItemInterface
+     */
+    protected function getStockItemByProductInstance(\Magento\Catalog\Model\Product $product)
+    {
+        return $this->stockRegistry
+                    ->getStockItem(
+                        $product->getId(),
+                        $product->getStore()->getWebsiteId()
+                    );
     }
 
     //########################################

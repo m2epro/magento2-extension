@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Account\Edit\Tabs;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm;
@@ -37,7 +43,7 @@ class Repricing extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-    You can use the <strong>Repricing Tool</strong> developed by M2E Pro Team to improve your
+    You can use the <strong>Repricing Tool</strong> developed by M2E Pro Team to improve your 
     Offer position on Amazon Channel. Repricing functionality provides you with the constant edge over your Competitors.
     <br /><br />
     Use <strong>Link Now</strong> button to add your M2E Pro Amazon Account to Amazon Repricing Service.
@@ -52,7 +58,7 @@ class Repricing extends AbstractForm
     You can <strong>Add/Remove Items</strong> to/from the Repricing Service via M2E Pro.
     Select appropriate action in Seller Central View Mode of your M2E Pro Listing.
     <br /><br />
-    In case you decide to stop using the Repricing Tool for M2E Pro Listings, you can click on
+    In case you decide to stop using the Repricing Tool for M2E Pro Listings, you can click on 
     <strong>Unlink</strong> button. The repricing process will be stopped for Products from this M2E Pro Amazon Account.
     The Product Prices will be updated via M2E Pro again.
     <br /><br />
@@ -250,23 +256,23 @@ HTML
             $this->getTooltipHtml(
                 $this->__('
     <strong>Regular Price</strong> is a common Price without any changes.
-    This value is used for Repricing Rules configuration and plays the role of the roll-back Price in case
-    the Rules cannot be applied or the Goals provided in the Repricing Rules cannot be achieved.
+    This value is used for Repricing Rules configuration and plays the role of the roll-back Price in case 
+    the Rules cannot be applied or the Goals provided in the Repricing Rules cannot be achieved. 
     <a href="%url1%" target="_blank">Learn more</a> about using the Regular Price in Repricing Service.
     <br /><br />
     Specify the settings for automatic update of the Regular Price:
     <br /><br />
     <strong>Manually</strong> - means that the Product Price value will be provided manually;<br />
-    <strong>According to Selling Format Policy settings</strong> - means that the Price value will be set based
+    <strong>According to Selling Format Policy settings</strong> - means that the Price value will be set based 
     on the Selling Format Policy settings;<br />
-    <strong>From Product Price</strong> - means that the Price value
+    <strong>From Product Price</strong> - means that the Price value 
     will be taken from Magento Product Price Attribute;<br />
-    <strong>From Special Price</strong> - means that the Price value
+    <strong>From Special Price</strong> - means that the Price value 
     will be taken from Magento Special Price Attribute;<br />
-    <strong>From Magento Attribute</strong> - means that the Price value
+    <strong>From Magento Attribute</strong> - means that the Price value 
     will be taken from the selected Magento Attribute.<br />
     <br />
-    Please note, only common (available in all Attribute sets in your Magento) Text or Price field Attributes
+    Please note, only common (available in all Attribute sets in your Magento) Text or Price field Attributes 
     are available for the selection.
     <br /><br />
     More detailed information on how to work with this option can be found
@@ -397,21 +403,21 @@ HTML
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
                 $this->__('
-<strong>Min Price</strong> is the lowest Price which you could sell your Item at.
+<strong>Min Price</strong> is the lowest Price which you could sell your Item at. 
 <a href="%url1%" target="_blank">Learn more</a> about using the Max Price in Repricing Service.
 <br /><br />
 Specify the settings for automatic update of the Min Price:
 <br /><br />
 <strong>Manually</strong> - means that the Product Price value will be provided manually;<br />
-<strong>Less than Regular Price by Value</strong> - means that the Min Price value
+<strong>Less than Regular Price by Value</strong> - means that the Min Price value 
 will be taken as a Regular Price decreased by the value you set.
 For example, you set the Value 5. Your Regular price is 17. So the Min Price will be 12.<br />
-<strong>Less than Regular Price by Percent</strong> - means that the Min Price value
+<strong>Less than Regular Price by Percent</strong> - means that the Min Price value 
 will be taken as a Regular Price decreased by the percent you set.
 For example, you set 50%. Your regular price is 10. So the Min Price will be 5.<br />
 <strong>From Magento Attribute</strong> - means that the Price value will be taken from the selected Magento Attribute.
 <br /><br />
-Please note, only common (available in all Attribute sets in your Magento)
+Please note, only common (available in all Attribute sets in your Magento) 
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
@@ -604,21 +610,21 @@ More detailed information on how to work with this option can be found
         $fieldTooltip = '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
             $this->getTooltipHtml(
                 $this->__('
-<strong>Max Price</strong> is the highest Price which you could sell your Item at.
+<strong>Max Price</strong> is the highest Price which you could sell your Item at. 
 <a href="%url%" target="_blank">Learn more</a> about using the Min Price in Repricing Service.
 <br /><br />
 Specify the settings for automatic update of the Max Price:
 <br /><br />
 <strong>Manually</strong> - means that the Product Price value will be provided manually;<br />
-<strong>More than Regular Price by Value</strong> - means that the Max Price value
+<strong>More than Regular Price by Value</strong> - means that the Max Price value 
 will be taken as a Regular Price increased by the value you set.
 For example, you set the Value 5. Your Regular price is 17. So the Max Price will be 22.<br />
-<strong>More than Regular Price by Percent</strong> - means that the Max Price value
+<strong>More than Regular Price by Percent</strong> - means that the Max Price value 
 will be taken as a Regular Price increased by the percent you set.
 For example, you set 50 Percent. Your regular price is 10. So the Max Price will be 15.<br />
 <strong>From Magento Attribute</strong> - means that the Max Price value will be taken from the selected Attribute.
 <br /><br />
-Please note, only common (available in all Attribute sets in your Magento)
+Please note, only common (available in all Attribute sets in your Magento) 
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
@@ -821,18 +827,18 @@ More detailed information on how to work with this option can be found
                 ],
                 'create_magento_attribute' => true,
                 'value' => $value,
-                'after_element_html' => '
-<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' . $this->getTooltipHtml($this->__('
-This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items.
+                'after_element_html' => '<div class="fix-magento-tooltip" style="margin-left: 20px; margin-right: 20px;">' .
+                    $this->getTooltipHtml($this->__('
+This option allows you to set when you would like to disable dynamic repricing for your M2E Pro Items. 
 <a href="%url1%" target="_blank">Learn more</a> about the Product Disabling feature.
 <br /><br />
 <strong>Manually</strong> - means that the dynamic repricing can be disabled only manually;<br />
-<strong>When Status is Disabled</strong> - means that the dynamic repricing
+<strong>When Status is Disabled</strong> - means that the dynamic repricing 
 will be automatically paused for the Product which has Disabled status in Magento;<br />
-<strong>From Magento Attribute</strong> - means that the dynamic repricing
+<strong>From Magento Attribute</strong> - means that the dynamic repricing 
 will be automatically paused for the Product if ‘Yes’ value is provided in specified Attribute.
 <br /><br />
-Please note, only common (available in all Attribute sets in your Magento)
+Please note, only common (available in all Attribute sets in your Magento) 
 Text or Price field Attributes are available for the selection.
 <br /><br />
 More detailed information on how to work with this option can be found
@@ -843,28 +849,7 @@ More detailed information on how to work with this option can be found
             ]
         )->addCustomAttribute('allowed_attribute_types', 'boolean');
 
-        if ($repricing) {
-            $this->js->addOnReadyJs(<<<JS
-    require([], function(){
-        $('regular_price_mode')
-            .observe('change', AmazonAccountObj.regular_price_mode_change)
-            .simulate('change');
-
-        $('min_price_mode')
-            .observe('change', AmazonAccountObj.min_price_mode_change)
-            .simulate('change');
-
-        $('max_price_mode')
-            .observe('change', AmazonAccountObj.max_price_mode_change)
-            .simulate('change');
-
-        $('disable_mode')
-            .observe('change', AmazonAccountObj.disable_mode_change)
-            .simulate('change');
-    });
-JS
-            );
-        } else {
+        if (!$repricing) {
             $this->js->addOnReadyJs(<<<JS
     require([
         'M2ePro/Plugin/AreaWrapper'

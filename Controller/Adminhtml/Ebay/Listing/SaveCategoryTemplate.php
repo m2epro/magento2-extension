@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,17 +10,18 @@ namespace Ess\M2ePro\Controller\Adminhtml\Ebay\Listing;
 
 class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
 {
-    protected $transaction;
+    /** @var \Magento\Framework\DB\TransactionFactory  */
+    protected $transactionFactory = NULL;
 
     //########################################
 
     public function __construct(
-        \Magento\Framework\DB\Transaction $transaction,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Controller\Adminhtml\Context $context
     )
     {
-        $this->transaction = $transaction;
+        $this->transactionFactory = $transactionFactory;
         parent::__construct($ebayFactory, $context);
     }
 
@@ -86,10 +87,12 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
             return;
         }
 
-        $snapshots = array();
+        $snapshots   = array();
+        $transaction = $this->transactionFactory->create();
 
         try {
             foreach ($collection->getItems() as $listingProduct) {
+                /** @var $listingProduct \Ess\M2ePro\Model\Listing\Product */
                 $dataSnapshot = array_merge(
                     $listingProduct->getDataSnapshot(),
                     $listingProduct->getChildObject()->getDataSnapshot()
@@ -101,13 +104,12 @@ class SaveCategoryTemplate extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
                 $listingProduct->getChildObject()->setData('template_category_id', $categoryTemplateId);
                 $listingProduct->getChildObject()->setData('template_other_category_id', $otherCategoryTemplateId);
 
-                $this->transaction->addObject($listingProduct);
+                $transaction->addObject($listingProduct);
             }
 
-            $this->transaction->save();
+            $transaction->save();
         } catch (\Exception $e) {
             $snapshots = false;
-            $this->transaction->rollback();
         }
 
         if (!$snapshots) {

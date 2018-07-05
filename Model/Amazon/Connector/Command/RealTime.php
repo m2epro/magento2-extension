@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -17,14 +17,21 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
 
     //########################################
 
+    /**
+     * Items constructor.
+     * @param \Ess\M2ePro\Helper\Factory $helperFactory
+     * @param \Ess\M2ePro\Model\Factory $modelFactory
+     * @param \Ess\M2ePro\Model\Account|NULL $account
+     * @param array $params
+     */
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
-        \Ess\M2ePro\Model\Account $account,
+        $account,
         array $params
     )
     {
-        $this->account = (!is_null($account->getId())) ? $account : NULL;
+        $this->account = $account;
         parent::__construct($helperFactory, $modelFactory, $params);
     }
 

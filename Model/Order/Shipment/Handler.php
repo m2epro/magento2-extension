@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -20,17 +20,22 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
     const HANDLE_RESULT_SKIPPED   = 0;
     const HANDLE_RESULT_SUCCEEDED = 1;
 
+    const CUSTOM_CARRIER_CODE = 'custom';
+
     protected $activeRecordFactory = NULL;
+    protected $carrierFactory = NULL;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        \Magento\Shipping\Model\CarrierFactoryInterface $carrierFactory,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
         array $data = []
     ) {
         $this->activeRecordFactory = $activeRecordFactory;
+        $this->carrierFactory = $carrierFactory;
 
         parent::__construct($helperFactory, $modelFactory, $data);
     }
@@ -59,7 +64,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
 
     public function handle(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
-        $trackingDetails = $this->getTrackingDetails($shipment);
+        $trackingDetails = $this->getTrackingDetails($order, $shipment);
 
         if (!$order->getChildObject()->canUpdateShippingStatus($trackingDetails)) {
             return self::HANDLE_RESULT_SKIPPED;
@@ -70,7 +75,7 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
             : self::HANDLE_RESULT_FAILED;
     }
 
-    protected function getTrackingDetails(\Magento\Sales\Model\Order\Shipment $shipment)
+    protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
         // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
         if ($shipment->hasData(ShipmentInterface::TRACKS) &&
@@ -85,11 +90,16 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         $number = trim($track->getData('track_number'));
 
         if (!empty($number)) {
-            $carrierCode = trim($track->getData('carrier_code'));
+
+            $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
+
+            $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
+            $carrier && $carrierTitle = $carrier->getConfigData('title');
 
             $trackingDetails = array(
-                'carrier_title'   => trim($track->getData('title')),
                 'carrier_code'    => $carrierCode,
+                'carrier_title'   => $carrierTitle,
+                'shipping_method' => trim($track->getData('title')),
                 'tracking_number' => (string)$number
             );
         }

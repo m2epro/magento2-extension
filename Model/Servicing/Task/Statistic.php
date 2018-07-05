@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -122,10 +122,12 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
      */
     public function getRequestData()
     {
-        return $requestData['statistics'] = array(
-            'server'    => $this->getServerRequestPart(),
-            'magento'   => $this->getMagentoRequestPart(),
-            'extension' => $this->getExtensionRequestPart(),
+        return array(
+            'statistics' => array(
+                'server'    => $this->getServerRequestPart(),
+                'magento'   => $this->getMagentoRequestPart(),
+                'extension' => $this->getExtensionRequestPart(),
+            ),
         );
     }
 
@@ -208,8 +210,9 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendMagentoSystemInfo(&$data)
     {
-        $data['info']['edition'] = $this->getHelper('Magento')->getEditionName();
-        $data['info']['version'] = $this->getHelper('Magento')->getVersion();
+        $data['info']['edition']  = $this->getHelper('Magento')->getEditionName();
+        $data['info']['version']  = $this->getHelper('Magento')->getVersion();
+        $data['info']['location'] = $this->getHelper('Magento')->getLocation();
 
         $data['settings']['compilation']   = defined('COMPILER_INCLUDE_PATH');
         //$data['settings']['cache_backend'] = $this->getHelper('Client\Cache')->getBackend();
@@ -259,7 +262,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Count of Products
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('catalog_product_entity'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity'),
                      array(
                          'count' => new \Zend_Db_Expr('COUNT(*)'),
                          'type'  => 'type_id'
@@ -279,16 +282,24 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // QTY / Stock Availability {simple}
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from(array('stock_item' => $this->resource->getTableName('cataloginventory_stock_item')),
-                     array(
-                         'min_qty'     => new \Zend_Db_Expr('MIN(stock_item.qty)'),
-                         'max_qty'     => new \Zend_Db_Expr('MAX(stock_item.qty)'),
-                         'avg_qty'     => new \Zend_Db_Expr('AVG(stock_item.qty)'),
-                         'count'       => new \Zend_Db_Expr('COUNT(*)'),
-                         'is_in_stock' => 'stock_item.is_in_stock'
-                     ))
+              ->from(
+                  array(
+                      'stock_item' => $this->getHelper('Module\Database\Structure')
+                          ->getTableNameWithPrefix('cataloginventory_stock_item')
+                  ),
+                  array(
+                     'min_qty'     => new \Zend_Db_Expr('MIN(stock_item.qty)'),
+                     'max_qty'     => new \Zend_Db_Expr('MAX(stock_item.qty)'),
+                     'avg_qty'     => new \Zend_Db_Expr('AVG(stock_item.qty)'),
+                     'count'       => new \Zend_Db_Expr('COUNT(*)'),
+                     'is_in_stock' => 'stock_item.is_in_stock'
+                 )
+              )
               ->joinLeft(
-                  array('catalog_product' => $this->resource->getTableName('catalog_product_entity')),
+                  array(
+                      'catalog_product' => $this->getHelper('Module\Database\Structure')
+                          ->getTableNameWithPrefix('catalog_product_entity')
+                  ),
                   'stock_item.product_id = catalog_product.entity_id',
                   array()
               )
@@ -316,12 +327,15 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Prices {simple}
         $result = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('catalog_product_index_price'),
-                     array(
-                         'min_price' => new \Zend_Db_Expr('MIN(price)'),
-                         'max_price' => new \Zend_Db_Expr('MAX(price)'),
-                         'avg_price' => new \Zend_Db_Expr('AVG(price)')
-                     ))
+              ->from(
+                  $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_index_price'
+                  ),
+                  array(
+                     'min_price' => new \Zend_Db_Expr('MIN(price)'),
+                     'max_price' => new \Zend_Db_Expr('MAX(price)'),
+                     'avg_price' => new \Zend_Db_Expr('AVG(price)')
+                  )
+              )
               ->where('website_id = ?', $this->storeManager->getWebsite(true)->getId())
               ->query()
               ->fetch();
@@ -337,7 +351,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Count of Orders
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('sales_order'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('sales_order'),
                      array(
                          'count'  => new \Zend_Db_Expr('COUNT(*)'),
                          'status' => 'status'
@@ -510,7 +524,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('m2epro_listing'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing'),
                      array(
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
@@ -572,24 +586,22 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
     private function appendExtensionListingsProductsInfo(&$data)
     {
-        $tableListingProduct       = $this->resource->getTableName('m2epro_listing_product');
-        $tableAmazonListingProduct = $this->resource->getTableName('m2epro_amazon_listing_product');
-        $tableProductEntity        = $this->resource->getTableName('catalog_product_entity');
+        $tableListingProduct       = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product');
+        $tableAmazonListingProduct = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_listing_product');
+        $tableProductEntity        = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_entity');
 
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('m2epro_listing'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing'),
                      array(
                          'component'      => 'component_mode',
                          'marketplace_id' => 'marketplace_id',
                          'account_id'     => 'account_id',
                          'products_count' => 'products_total_count'
                      ))
-              ->group(array(
-                          'component_mode',
-                          'marketplace_id',
-                          'account_id'
-                      ))
               ->query();
 
         $productTypes = array(
@@ -678,7 +690,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('m2epro_listing_other'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing_other'),
                      array(
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
@@ -746,7 +758,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('m2epro_order'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_order'),
                      array(
                          'count'          => new \Zend_Db_Expr('COUNT(*)'),
                          'component'      => 'component_mode',
@@ -801,7 +813,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Orders types eBay
         $result = $this->resource->getConnection()
                ->select()
-               ->from($this->resource->getTableName('m2epro_ebay_order'),
+               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
                       array('count' => new \Zend_Db_Expr('COUNT(*)')))
                ->where('checkout_status = ?', \Ess\M2ePro\Model\Ebay\Order::CHECKOUT_STATUS_COMPLETED)
                ->query()
@@ -811,7 +823,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $result = $this->resource->getConnection()
                ->select()
-               ->from($this->resource->getTableName('m2epro_ebay_order'),
+               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
                       array('count' => new \Zend_Db_Expr('COUNT(*)')))
                ->where('shipping_status = ?', \Ess\M2ePro\Model\Ebay\Order::SHIPPING_STATUS_COMPLETED)
                ->query()
@@ -821,7 +833,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
 
         $result = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName('m2epro_ebay_order'),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_ebay_order'),
                      array('count' => new \Zend_Db_Expr('COUNT(*)')))
               ->where('payment_status = ?', \Ess\M2ePro\Model\Ebay\Order::PAYMENT_STATUS_COMPLETED)
               ->query()
@@ -833,7 +845,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
         // Orders types Amazon
         $queryStmt = $this->resource->getConnection()
                ->select()
-               ->from($this->resource->getTableName('m2epro_amazon_order'),
+               ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_amazon_order'),
                       array(
                           'count'  => new \Zend_Db_Expr('COUNT(*)'),
                           'status' => 'status'
@@ -884,7 +896,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName($tableName),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
                      array(
                          'count'     => new \Zend_Db_Expr('COUNT(*)'),
                          'component' => 'component_mode'
@@ -919,7 +931,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName($tableName),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
                      array(
                          'count'     => new \Zend_Db_Expr('COUNT(*)'),
                          'component' => 'component_mode'
@@ -951,7 +963,7 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
     {
         $queryStmt = $this->resource->getConnection()
               ->select()
-              ->from($this->resource->getTableName($tableName),
+              ->from($this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName),
                      array(
                          'count'     => new \Zend_Db_Expr('COUNT(*)')
                      ))

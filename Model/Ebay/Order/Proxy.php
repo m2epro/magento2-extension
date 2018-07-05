@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -93,14 +93,6 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
 
     //########################################
 
-    public function getBuyerEmail()
-    {
-        $addressData = $this->order->getShippingAddress()->getRawData();
-        return $addressData['email'];
-    }
-
-    //########################################
-
     /**
      * @return \Magento\Customer\Api\Data\CustomerInterface
      * @throws \Ess\M2ePro\Model\Exception
@@ -142,6 +134,10 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
             $customerObject->loadByEmail($customerInfo['email']);
 
             if (!is_null($customerObject->getId())) {
+
+                $customerBuilder->setData($customerInfo);
+                $customerBuilder->updateAddress($customerObject);
+
                 $customerObject->setData(self::USER_ID_ATTRIBUTE_CODE, $this->order->getBuyerUserId());
                 $customerObject->save();
 
@@ -185,12 +181,14 @@ class Proxy extends \Ess\M2ePro\Model\Order\Proxy
         $addressData = array();
 
         $recipientNameParts = $this->getNameParts($rawAddressData['recipient_name']);
-        $addressData['firstname'] = $recipientNameParts['firstname'];
-        $addressData['lastname']  = $recipientNameParts['lastname'];
+        $addressData['firstname']   = $recipientNameParts['firstname'];
+        $addressData['middlename']  = $recipientNameParts['middlename'];
+        $addressData['lastname']    = $recipientNameParts['lastname'];
 
         $customerNameParts = $this->getNameParts($rawAddressData['buyer_name']);
-        $addressData['customer_firstname'] = $customerNameParts['firstname'];
-        $addressData['customer_lastname']  = $customerNameParts['lastname'];
+        $addressData['customer_firstname']   = $customerNameParts['firstname'];
+        $addressData['customer_lastname']    = $customerNameParts['lastname'];
+        $addressData['customer_middlename']  = $customerNameParts['middlename'];
 
         $addressData['email']      = $rawAddressData['email'];
         $addressData['country_id'] = $rawAddressData['country_id'];

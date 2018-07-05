@@ -9,7 +9,7 @@
 
                 <!-- ebay acl -->
 
-                <resource id="Ess_M2ePro::ebay" title="eBay Integration (Beta)" sortOrder="31">
+                <resource id="Ess_M2ePro::ebay" title="eBay Integration" sortOrder="31">
 
                     <!-- ebay listings acl -->
 
@@ -51,7 +51,7 @@
 
                 <!-- amazon acl -->
 
-                <resource id="Ess_M2ePro::amazon" title="Amazon Integration (Beta)" sortOrder="32">
+                <resource id="Ess_M2ePro::amazon" title="Amazon Integration" sortOrder="32">
 
                     <!-- amazon listings acl -->
 

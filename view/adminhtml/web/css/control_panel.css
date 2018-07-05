@@ -81,12 +81,20 @@ table.form-list tr{
 /* Reflection Blocks */
 /* ================================================ */
 .controlPanel-reflection-container tr {
-    display: inline-block;
-    height: 25px;
+    height: 15px;
+}
+.controlPanel-reflection-container tr td hr {
+    width: 400px;
+    margin-top: 8px;
 }
 .controlPanel-reflection-container tr td.group_number_td {
     width: 20px;
 }
 .controlPanel-reflection-container tr td.group_separator {
     width: 15px;
+}
+
+/* ================================================ */
+table td a {
+    text-decoration: none !important;
 }

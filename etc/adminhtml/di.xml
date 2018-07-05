@@ -110,4 +110,11 @@
                 sortOrder="999" />
     </type>
 
+    <!-- View Component Order Button -->
+
+    <type name="Magento\Sales\Block\Adminhtml\Order\View">
+        <plugin name="m2epro_plugin_order_magento_view"
+                type="Ess\M2ePro\Plugin\Order\Magento\View" />
+    </type>
+
 </config>

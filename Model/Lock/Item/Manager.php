@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -11,7 +11,9 @@ namespace Ess\M2ePro\Model\Lock\Item;
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     private $nick = 'undefined';
-    private $maxInactiveTime = 1800; // 30 min
+    private $realId = NULL;
+
+    private $maxInactiveTime = 3600; // 60 min
 
     private $activeRecordFactory = null;
 
@@ -37,6 +39,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     {
         $this->lockModel = $lock;
         $this->nick = $lock->getNick();
+        $this->realId = $lock->getId();
 
         return $this;
     }
@@ -44,9 +47,16 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getLockModel($reload = true)
     {
         if (is_null($this->lockModel) || $reload) {
-            $this->lockModel = $this->activeRecordFactory->getObjectLoaded(
-                'Lock\Item', $this->nick, 'nick', false
-            );
+
+            if ($this->realId) {
+                $this->lockModel = $this->activeRecordFactory->getObjectLoaded(
+                    'Lock\Item', $this->realId, NULL, false
+                );
+            } else {
+                $this->lockModel = $this->activeRecordFactory->getObjectLoaded(
+                    'Lock\Item', $this->nick, 'nick', false
+                );
+            }
         }
 
         return $this->lockModel;
@@ -62,6 +72,18 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     public function getNick()
     {
         return $this->nick;
+    }
+
+    // ---------------------------------------
+
+    public function setRealId($value)
+    {
+        $this->realId = $value;
+    }
+
+    public function getRealId()
+    {
+        return $this->realId;
     }
 
     // ---------------------------------------
@@ -118,10 +140,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     // ---------------------------------------
 
-    public function isExist($reload = true)
+    public function isExist()
     {
         /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/
-        $lockModel = $this->getLockModel($reload);
+        $lockModel = $this->activeRecordFactory->getObjectLoaded('Lock\Item', $this->nick, 'nick', false);
         if (is_null($lockModel) || !$lockModel->getId()) {
             return false;
         }
@@ -134,7 +156,10 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             $this->helperFactory->getObject('Module\Logger')->process(
                 $lockModel->getData(), 'Lock Item was removed by lifetime', false
             );
-            $this->remove($reload);
+
+            $this->setLockModel($lockModel);
+            $this->remove(false);
+
             return false;
         }
 
@@ -146,7 +171,13 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/
         $lockModel = $this->getLockModel($reload);
         if (is_null($lockModel) || !$lockModel->getId()) {
-            return false;
+
+            throw new \Ess\M2ePro\Model\Exception(sprintf(
+                'There was an attempt to activate the Lock Item which is not exists', array(
+                    'nick'    => $this->nick,
+                    'real_id' => $this->realId
+                )
+            ));
         }
 
         if (!is_null($lockModel->getParentId())) {
@@ -171,19 +202,20 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    public function getRealId($reload = true)
-    {
-        return $this->getLockModel($reload)->getId();
-    }
-
-    // ---------------------------------------
-
     public function addContentData($key, $value, $reload = true)
     {
         /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/
         $lockModel = $this->getLockModel($reload);
         if (is_null($lockModel) || !$lockModel->getId()) {
-            return false;
+
+            throw new \Ess\M2ePro\Model\Exception(sprintf(
+                'There was an attempt to write to the Lock Item which is not exists', array(
+                    'key'     => $key,
+                    'value'   => $value,
+                    'nick'    => $this->nick,
+                    'real_id' => $this->realId
+                )
+            ));
         }
 
         $data = $lockModel->getContentData();
@@ -206,7 +238,14 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/
         $lockModel = $this->getLockModel($reload);
         if (is_null($lockModel) || !$lockModel->getId()) {
-            return false;
+
+            throw new \Ess\M2ePro\Model\Exception(sprintf(
+                'There was an attempt to write to the Lock Item which is not exists', array(
+                    'data'    => $data,
+                    'nick'    => $this->nick,
+                    'real_id' => $this->realId
+                )
+            ));
         }
 
         $lockModel->setData('data', $this->getHelper('Data')->jsonEncode($data));
@@ -259,6 +298,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             /** @var Manager $object */
             $object = $this->modelFactory->getObject('Lock\Item\Manager');
             $object->setNick($this->nick);
+            $object->setRealId($this->realId);
             $object->remove();
         });
 

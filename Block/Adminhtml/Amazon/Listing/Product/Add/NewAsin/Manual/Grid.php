@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -65,7 +65,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
         $collection = $this->magentoProductCollectionFactory->create();
         $collection->setListingProductModeOn();
 
-        $collection->setStoreId($this->listing->getData('store_id'))
+        $collection
+            ->setListing($this->listing)
+            ->setStoreId($this->listing->getData('store_id'))
             ->addAttributeToSelect('name')
             ->addAttributeToSelect('sku');
         // ---------------------------------------
@@ -124,6 +126,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Product\Grid
             'type'      => 'text',
             'index'     => 'name',
             'filter_index' => 'name',
+            'escape'       => false,
             'frame_callback' => array($this, 'callbackColumnProductTitle'),
             'filter_condition_callback' => array($this, 'callbackFilterProductTitle')
         ));

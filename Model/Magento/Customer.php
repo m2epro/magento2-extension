@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -67,8 +67,15 @@ class Customer extends AbstractModel
     {
         $password = $this->mathRandom->getRandomString(6);
 
+        /**
+         * Magento can replace customer group to the default.
+         * vendor/magento/module-customer/Observer/AfterAddressSaveObserver.php:121
+         * Can be disabled here:
+         * Customers -> Customer Configuration -> Create new account options -> Automatic Assignment to Customer Group
+         */
         $customerData = $this->customerDataFactory->create()
             ->setFirstname($this->getData('customer_firstname'))
+            ->setMiddlename($this->getData('customer_middlename'))
             ->setLastname($this->getData('customer_lastname'))
             ->setWebsiteId($this->getData('website_id'))
             ->setGroupId($this->getData('group_id'))
@@ -80,32 +87,63 @@ class Customer extends AbstractModel
         $this->customer->setPassword($password);
         $this->customer->save();
 
-        $street = $this->getData('street');
-        if (!is_array($street)) {
-            $street = explode('; ', $street);
-        }
-
         // Add customer address
-        $customerAddress = $this->addressDataFactory->create()
-            ->setFirstname($this->getData('firstname'))
-            ->setLastname($this->getData('lastname'))
-            ->setCountryId($this->getData('country_id'))
-            ->setRegionId($this->getData('region_id'))
-            ->setCity($this->getData('city'))
-            ->setPostcode($this->getData('postcode'))
-            ->setTelephone($this->getData('telephone'))
-            ->setStreet($street)
-            ->setCompany($this->getData('company'))
+        // ---------------------------------------
+        $addressModel = $this->addressFactory->create();
+        $this->_updateAddress($addressModel);
+
+        $addressData = $this->addressDataFactory->create()
             ->setIsDefaultBilling(true)
             ->setIsDefaultShipping(true);
 
-        $addressModel = $this->addressFactory->create();
-        $addressModel->updateData($customerAddress);
+        $addressModel->updateData($addressData);
+
         $addressModel->setCustomer($this->customer);
         $addressModel->save();
 
         $this->customer->addAddress($addressModel);
         // ---------------------------------------
+    }
+
+    public function updateAddress(\Magento\Customer\Model\Customer $customerObject)
+    {
+        $this->customer = $customerObject;
+
+        foreach ($customerObject->getPrimaryAddresses() as $addressModel) {
+
+            $this->_updateAddress($addressModel);
+            $addressModel->save();
+        }
+    }
+
+    //########################################
+
+    private function _updateAddress(\Magento\Customer\Model\Address $addressModel)
+    {
+        $street = $this->getData('street');
+        if (!is_array($street)) {
+            $street = explode('; ', $street);
+        }
+
+        $addressData = $this->addressDataFactory->create()
+            ->setFirstname($this->getData('firstname'))
+            ->setMiddlename($this->getData('middlename'))
+            ->setLastname($this->getData('lastname'))
+            ->setCountryId($this->getData('country_id'))
+            ->setCity($this->getData('city'))
+            ->setPostcode($this->getData('postcode'))
+            ->setTelephone($this->getData('telephone'))
+            ->setStreet($street)
+            ->setCompany($this->getData('company'));
+
+        $addressModel->updateData($addressData);
+        /**
+         * Updating 'region_id' value to null will be skipped in
+         * vendor/magento/framework/Reflection/DataObjectProcessor.php::buildOutputDataArray()
+         *
+         * So, we are forced to use separate setter for 'region_id' to bypass this validation
+         */
+        $addressModel->setRegionId($this->getData('region_id'));
     }
 
     //########################################
@@ -154,7 +192,10 @@ class Customer extends AbstractModel
             'attribute_id'        => $attributeId,
         ];
 
-        $connWrite->insert($this->resourceConnection->getTableName('eav_entity_attribute'), $data);
+        $connWrite->insert(
+            $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_attribute'),
+            $data
+        );
     }
 
     private function getDefaultAttributeSetId()
@@ -162,7 +203,10 @@ class Customer extends AbstractModel
         $connRead = $this->resourceConnection->getConnection();
 
         $select = $connRead->select()
-            ->from($this->resourceConnection->getTableName('eav_entity_type'), 'default_attribute_set_id')
+            ->from(
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_entity_type'),
+                'default_attribute_set_id'
+            )
             ->where('entity_type_id = ?', $this->customerFactory->create()->getEntityType()->getId());
 
         return $connRead->fetchOne($select);
@@ -173,7 +217,10 @@ class Customer extends AbstractModel
         $connRead = $this->resourceConnection->getConnection('core_read');
 
         $select = $connRead->select()
-            ->from($this->resourceConnection->getTableName('eav_attribute_group'), 'attribute_group_id')
+            ->from(
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute_group'),
+                'attribute_group_id'
+            )
             ->where('attribute_set_id = ?', $attributeSetId)
             ->order(['default_id ' . \Magento\Framework\DB\Select::SQL_DESC, 'sort_order'])
             ->limit(1);

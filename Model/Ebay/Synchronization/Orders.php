@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -55,6 +55,7 @@ class Orders extends \Ess\M2ePro\Model\Ebay\Synchronization\AbstractModel
         $result = !$this->processTask('Orders\Cancellation') ? false : $result;
         $result = !$this->processTask('Orders\Reserve\Cancellation') ? false : $result;
         $result = !$this->processTask('Orders\Receive') ? false : $result;
+        $result = !$this->processTask('Orders\CreateFailed') ? false : $result;
         $result = !$this->processTask('Orders\Update') ? false : $result;
 
         return $result;

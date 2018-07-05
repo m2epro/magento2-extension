@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -76,11 +76,19 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                 )
             );
         } catch (\Exception $exception) {
-            $this->getHelper('Module\Exception')->process($exception);
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($exception->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
+            $this->getHelper('Module\Exception')->process($exception, false);
             return false;
         }
 
-        return $this->getHelper('Data')->jsonDecode($result['response']);
+        $this->processErrorMessages($result['response']);
+        return $result['response'];
     }
 
     //########################################
@@ -109,11 +117,19 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
                 )
             );
         } catch (\Exception $exception) {
+
+            $this->getSynchronizationLog()->addMessage(
+                $this->getHelper('Module\Translation')->__($exception->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
             $this->getHelper('Module\Exception')->process($exception);
             return false;
         }
 
-        $response = $this->getHelper('Data')->jsonDecode($result['response']);
+        $response = $result['response'];
+        $this->processErrorMessages($response);
 
         return !empty($response['request_token']) ? $response['request_token'] : false;
     }
@@ -132,7 +148,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         /** @var \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Collection\AbstractModel $listingProductCollection */
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->joinLeft(
-            array('l' => $this->resourceConnection->getTableName('m2epro_listing')),
+            array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
             'l.id = main_table.listing_id',
             array('store_id')
         );
@@ -142,7 +158,7 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
         $storeIdSelect = $this->resourceConnection->getConnection()
             ->select()
             ->from(
-                $this->resourceConnection->getTableName('catalog_product_entity_varchar'),
+                $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity_varchar'),
                 new \Zend_Db_Expr('MAX(`store_id`)')
             )
             ->where("`entity_id` = `main_table`.`product_id`")
@@ -150,12 +166,18 @@ class Product extends \Ess\M2ePro\Model\Amazon\Repricing\AbstractModel
             ->where("`store_id` = 0 OR `store_id` = `l`.`store_id`");
 
         $listingProductCollection->joinInner(
-            array('cpe' => $this->resourceConnection->getTableName('catalog_product_entity')),
+            array(
+                'cpe' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity')
+            ),
             '(cpe.entity_id = `main_table`.product_id)',
             array()
         );
         $listingProductCollection->joinInner(
-            array('cpev' => $this->resourceConnection->getTableName('catalog_product_entity_varchar')),
+            array(
+                'cpev' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity_varchar')
+            ),
             "cpev.entity_id = cpe.entity_id",
             array('product_title' => 'value')
         );

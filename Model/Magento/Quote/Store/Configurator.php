@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -24,6 +24,14 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     protected $mutableConfig;
 
+    protected $storeManager;
+
+    //----------------------------------------
+
+    /** @var \Magento\Store\Api\Data\StoreInterface */
+    protected $originalStore;
+
+    /** @var array  */
     protected $originalStoreConfig = [];
 
     //########################################
@@ -33,6 +41,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\ObjectManagerInterface $objectManager,
         \Ess\M2ePro\Model\Magento\Tax\Helper $taxHelper,
         \Magento\Framework\App\Config\ReinitableConfigInterface $storeConfig,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Quote\Model\Quote $quote,
         \Ess\M2ePro\Model\Order\Proxy $proxyOrder,
         \Magento\Tax\Model\Config $taxConfig,
@@ -47,6 +56,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         $this->quote         = $quote;
         $this->proxyOrder    = $proxyOrder;
         $this->taxConfig     = $taxConfig;
+        $this->storeManager  = $storeManager;
 
         // We need to use newly created instances, because magento caches tax rates in private properties
         $this->calculation = $objectManager->create('Magento\Tax\Model\Calculation', [
@@ -111,6 +121,12 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
             \Magento\Tax\Model\Config::CONFIG_XML_PATH_SHIPPING_TAX_CLASS, $this->getShippingTaxClassId()
         );
         // ---------------------------------------
+
+        /**
+         * vendor/magento/module-quote/Model/Quote/Address.php::requestShippingRates()
+         * Store is now not being taken from Quote
+         */
+        $this->storeManager->setCurrentStore($this->getStore()->getId());
     }
 
     public function restoreOriginalStoreConfigForOrder()
@@ -122,6 +138,8 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
                 $key, $value, \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $this->getStore()->getCode()
             );
         }
+
+        $this->storeManager->setCurrentStore($this->originalStore->getId());
     }
 
     //########################################
@@ -145,11 +163,13 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         foreach ($keys as $key) {
             $this->originalStoreConfig[$key] = $this->getStoreConfig($key);
         }
+
+        $this->originalStore = $this->storeManager->getStore();
     }
 
     //########################################
 
-    private function isPriceIncludesTax()
+    public function isPriceIncludesTax()
     {
         if (!is_null($this->proxyOrder->isProductPriceIncludeTax())) {
             return $this->proxyOrder->isProductPriceIncludeTax();
@@ -158,7 +178,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
         return (bool)$this->getStoreConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_PRICE_INCLUDES_TAX);
     }
 
-    private function isShippingPriceIncludesTax()
+    public function isShippingPriceIncludesTax()
     {
         if (!is_null($this->proxyOrder->isShippingPriceIncludeTax())) {
             return $this->proxyOrder->isShippingPriceIncludeTax();
@@ -169,7 +189,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getShippingTaxClassId()
+    public function getShippingTaxClassId()
     {
         $proxyOrder = $this->proxyOrder;
         $hasRatesForCountry = $this->taxHelper->hasRatesForCountry($this->quote->getShippingAddress()->getCountryId());
@@ -301,7 +321,7 @@ class Configurator extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    private function getTaxCalculationBasedOn()
+    public function getTaxCalculationBasedOn()
     {
         $basedOn = $this->getStoreConfig(\Magento\Tax\Model\Config::CONFIG_XML_PATH_BASED_ON);
 

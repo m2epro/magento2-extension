@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -46,7 +46,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Amazon\Listing\Search\AbstractGri
         $collection->getSelect()->distinct();
 
         $collection->getSelect()->joinLeft(
-            array('cpe' => $this->resourceConnection->getTableName('catalog_product_entity')),
+            array(
+                'cpe' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('catalog_product_entity')
+            ),
             '(cpe.entity_id = `main_table`.product_id)',
             array('sku' => 'sku')
         );

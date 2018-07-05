@@ -70,7 +70,14 @@
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['city'])): ?>
-                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', array($block->getShippingAddress()['city'], $block->getShippingAddress()['state'], $block->getShippingAddress()['postal_code']))) ?>
+                            <?php
+                                $addressData = array_filter([
+                                    $block->getShippingAddress()['city'],
+                                    $block->getShippingAddress()['state'],
+                                    $block->getShippingAddress()['postal_code'],
+                                ]);
+                            ?>
+                            <br/><?php echo $block->getHelper('Data')->escapeHtml(implode(', ', $addressData)) ?>
                         <?php endif; ?>
 
                         <?php if (!empty($block->getShippingAddress()['country_name'])): ?>

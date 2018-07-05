@@ -276,14 +276,14 @@ define([
                 return;
             }
 
-            if (typeof BLOCK_NOTICES_SHOW !== 'undefined' && !BLOCK_NOTICES_SHOW) {
-                blockNotices.hide();
-                return;
-            }
-
             var self = this;
 
             blockNotices.each(function(index, block){
+
+                if (self.shouldBeHidden(block)) {
+                    block.hide();
+                    return;
+                }
 
                 var id = block.id;
 
@@ -331,6 +331,17 @@ define([
             if (index > -1) {
                 this.initializedBlocks.splice(index, 1);
             }
+        },
+
+        // ---------------------------------------
+
+        shouldBeHidden: function(block)
+        {
+            if (typeof BLOCK_NOTICES_SHOW === 'undefined' || BLOCK_NOTICES_SHOW) {
+                return false;
+            }
+
+            return !jQuery(block).hasClass('always_show');
         }
 
         // ---------------------------------------

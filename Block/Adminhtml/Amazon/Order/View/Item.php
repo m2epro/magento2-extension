@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * @author     M2E Pro Developers Team
+ * @copyright  M2E LTD
+ * @license    Commercial use is forbidden
+ */
+
 namespace Ess\M2ePro\Block\Adminhtml\Amazon\Order\View;
 
 use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
@@ -58,9 +64,18 @@ class Item extends AbstractGrid
             ->getCollection()
             ->addFieldToFilter('order_id', $this->order->getId());
 
+        $where = [
+            'cisi.product_id = `main_table`.product_id',
+            'cisi.stock_id = '   . $this->getHelper('Magento\Stock')->getStockId($this->order->getStore()),
+            'cisi.website_id = ' . $this->getHelper('Magento\Stock')->getWebsiteId($this->order->getStore())
+        ];
+
         $collection->getSelect()->joinLeft(
-            array('cisi' => $this->resourceConnection->getTableName('cataloginventory_stock_item')),
-            '(cisi.product_id = `main_table`.product_id AND cisi.stock_id = 1)',
+            array(
+                'cisi' => $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('cataloginventory_stock_item')
+            ),
+            sprintf("(%s)", implode(' AND ', $where)),
             array('is_in_stock')
         );
 
@@ -321,7 +336,7 @@ HTML;
         }
 
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, (int)$discountDetails['promotion']['value']
+            $currency, $discountDetails['promotion']['value']
         );
     }
 
@@ -351,14 +366,20 @@ HTML;
 
     public function callbackColumnRowTotal($value, $row, $column, $isExport)
     {
-        $currency = $row->getChildObject()->getData('currency');
+        /** @var \Ess\M2ePro\Model\Order\Item $row */
+        /** @var \Ess\M2ePro\Model\Amazon\Order\Item $aOrderItem */
+        $aOrderItem = $row->getChildObject();
+
+        $currency = $row->getData('currency');
         if (empty($currency)) {
             $currency = $this->order->getMarketplace()->getChildObject()->getDefaultCurrency();
         }
 
-        $price = (float)$row->getChildObject()->getData('price') + (float)$row->getChildObject()->getData('gift_price');
+        $price = $aOrderItem->getPrice() + $aOrderItem->getGiftPrice() + $aOrderItem->getTaxAmount();
+        $price = $price - $aOrderItem->getDiscountAmount();
+
         return $this->modelFactory->getObject('Currency')->formatPrice(
-            $currency, $price * $row->getChildObject()->getData('qty_purchased')
+            $currency, $price * $aOrderItem->getQtyPurchased()
         );
     }
 

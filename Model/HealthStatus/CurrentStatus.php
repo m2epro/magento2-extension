@@ -2,16 +2,23 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
 namespace Ess\M2ePro\Model\HealthStatus;
 
+use Ess\M2ePro\Model\HealthStatus\Task\Result\Set;
+
 class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
 {
+    const DETAILS_REGISTRY_KEY = '/health_status/details/';
+
     /** @var \Ess\M2ePro\Model\Config\Manager\Cache */
     protected $cacheConfig;
+
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory  */
+    protected $activeRecordFactory;
 
     //########################################
 
@@ -19,10 +26,12 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Config\Manager\Cache $cacheConfig,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         array $data = []
     ){
         parent::__construct($helperFactory, $modelFactory, $data);
         $this->cacheConfig = $cacheConfig;
+        $this->activeRecordFactory = $activeRecordFactory;
     }
 
     //########################################
@@ -32,9 +41,30 @@ class CurrentStatus extends \Ess\M2ePro\Model\AbstractModel
         return (int)$this->cacheConfig->getGroupValue('/health_status/', 'current_status');
     }
 
-    public function set($result)
+    public function set(Set $resultSet)
     {
-        return $this->cacheConfig->setGroupValue('/health_status/', 'current_status', (int)$result);
+        $this->cacheConfig->setGroupValue(
+            '/health_status/', 'current_status', (int)$resultSet->getWorstState()
+        );
+
+        $details = [];
+        foreach ($resultSet->getByKeys() as $result) {
+            $details[$result->getTaskHash()] = [
+                'result' => $result->getTaskResult(),
+                'data'   => $result->getTaskData()
+            ];
+        }
+
+        $registry = $this->activeRecordFactory->getObjectLoaded(
+            'Registry', self::DETAILS_REGISTRY_KEY, 'key', false
+        );
+
+        !$registry && $registry = $this->activeRecordFactory->getObject('Registry');
+        $registry->setData('key', self::DETAILS_REGISTRY_KEY);
+        $registry->setData('value', $this->getHelper('Data')->jsonEncode($details));
+        $registry->save();
+
+        return true;
     }
 
     //########################################

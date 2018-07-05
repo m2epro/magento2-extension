@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,9 +10,13 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\ListingsProducts;
 
 class Update extends AbstractModel
 {
-    const EBAY_STATUS_ACTIVE = 'Active';
-    const EBAY_STATUS_ENDED = 'Ended';
+    const EBAY_STATUS_ACTIVE    = 'Active';
+    const EBAY_STATUS_ENDED     = 'Ended';
     const EBAY_STATUS_COMPLETED = 'Completed';
+
+    const INCREASE_SINCE_TIME_MAX_ATTEMPTS     = 10;
+    const INCREASE_SINCE_TIME_BY               = 2;
+    const INCREASE_SINCE_TIME_MIN_INTERVAL_SEC = 10;
 
     private $logsActionId = NULL;
 
@@ -129,8 +133,7 @@ class Update extends AbstractModel
 
     private function processAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $sinceTime = $this->prepareSinceTime($account->getData('defaults_last_synchronization'));
-        $changesByAccount = $this->getChangesByAccount($account, $sinceTime);
+        $changesByAccount = $this->getChangesByAccount($account);
 
         if (!isset($changesByAccount['items']) || !isset($changesByAccount['to_time'])) {
             return;
@@ -206,7 +209,7 @@ class Update extends AbstractModel
                 $listingProduct->save();
 
                 if ($oldListingProductStatus != $listingProduct->getStatus()) {
-                    $ebayListingProduct->updateVariationsStatus();
+                    $listingProduct->getChildObject()->updateVariationsStatus();
                 }
             }
         }
@@ -214,67 +217,100 @@ class Update extends AbstractModel
 
     //########################################
 
-    private function getChangesByAccount(\Ess\M2ePro\Model\Account $account, $sinceTime)
+    private function getChangesByAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $nextSinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
-        $toTime = NULL;
+        $sinceTime = $this->prepareSinceTime($account->getChildObject()->getData('defaults_last_synchronization'));
+        $toTime    = clone $now;
 
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
         if (!is_null($operationHistory)) {
-            $toTime = $operationHistory->getData('start_date');
 
-            if ($nextSinceTime->format('U') >= strtotime($toTime)) {
-                $nextSinceTime = new \DateTime($toTime, new \DateTimeZone('UTC'));
-                $nextSinceTime->modify('- 1 minute');
+            $toTime = $operationHistory->getData('start_date');
+            $toTime = new \DateTime($toTime, new \DateTimeZone('UTC'));
+
+            if ($sinceTime->getTimestamp() >= $toTime->getTimestamp()) {
+
+                $sinceTime = clone $toTime;
+                $sinceTime->modify('- 1 minute');
             }
         }
 
         $response = $this->receiveChangesFromEbay(
-            $account, array('since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
+            $account,
+            array(
+                'since_time' => $sinceTime->format('Y-m-d H:i:s'),
+                'to_time'    => $toTime->format('Y-m-d H:i:s')
+            )
         );
 
         if ($response) {
             return (array)$response;
         }
 
-        $previousSinceTime = $nextSinceTime;
+        // -- to many changes are received. try to receive changes for the latest day
+        $currentInterval = $toTime->diff($sinceTime);
+        if ($currentInterval->days >= 1) {
 
-        $nextSinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
-        $nextSinceTime->modify("-1 day");
+            $sinceTime = clone $toTime;
+            $sinceTime->modify('-1 day');
 
-        if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
-
-            // from day behind now
             $response = $this->receiveChangesFromEbay(
-                $account, array('since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
-            );
-
-            if ($response) {
-                return (array)$response;
-            }
-
-            $previousSinceTime = $nextSinceTime;
-        }
-
-        $nextSinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
-
-        if ($previousSinceTime->format('U') < $nextSinceTime->format('U')) {
-
-            // from now
-            $response = $this->receiveChangesFromEbay(
-                $account, array('since_time' => $nextSinceTime->format('Y-m-d H:i:s'), 'to_time' => $toTime)
+                $account,
+                array(
+                    'since_time' => $sinceTime->format('Y-m-d H:i:s'),
+                    'to_time'    => $toTime->format('Y-m-d H:i:s')
+                )
             );
 
             if ($response) {
                 return (array)$response;
             }
         }
+        // --
+
+        // -- to many changes are received. increase the sinceData step by step by 2
+        $iteration = 0;
+        do {
+
+            $iteration++;
+
+            $offset = ceil(($toTime->getTimestamp() - $sinceTime->getTimestamp()) / self::INCREASE_SINCE_TIME_BY);
+            $toTime->modify("-{$offset} seconds");
+
+            $currentInterval = $toTime->getTimestamp() - $sinceTime->getTimestamp();
+
+            if ($currentInterval < self::INCREASE_SINCE_TIME_MIN_INTERVAL_SEC ||
+                $iteration > self::INCREASE_SINCE_TIME_MAX_ATTEMPTS)
+            {
+                $sinceTime = clone $now;
+                $sinceTime->modify('-5 seconds');
+
+                $toTime = clone $now;
+            }
+
+            $response = $this->receiveChangesFromEbay(
+                $account,
+                array(
+                    'since_time' => $sinceTime->format('Y-m-d H:i:s'),
+                    'to_time'    => $toTime->format('Y-m-d H:i:s')
+                ),
+                $iteration
+            );
+
+            if ($response) {
+                return (array)$response;
+            }
+
+        } while ($iteration <= self::INCREASE_SINCE_TIME_MAX_ATTEMPTS);
+        // --
 
         return array();
     }
 
-    private function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account, array $paramsConnector = array())
+    private function receiveChangesFromEbay(\Ess\M2ePro\Model\Account $account,
+                                            array $paramsConnector = array(), $tryNumber = 0)
     {
         $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
         $connectorObj = $dispatcherObj->getVirtualConnector('item','get','changes',
@@ -287,11 +323,24 @@ class Update extends AbstractModel
         $responseData = $connectorObj->getResponseData();
 
         if (!isset($responseData['items']) || !isset($responseData['to_time'])) {
+
+            $logData = array(
+                'params'            => $paramsConnector,
+                'account_id'        => $account->getId(),
+                'response_data'     => $responseData,
+                'response_messages' => $connectorObj->getResponseMessages()
+            );
+            $this->helperFactory->getObject('Module\Logger')->process(
+                $logData, "ebay no changes received - #{$tryNumber} try"
+            );
+
             return NULL;
         }
 
         return $responseData;
     }
+
+    //########################################
 
     private function processResponseMessages(array $messages)
     {
@@ -649,15 +698,15 @@ class Update extends AbstractModel
             return false;
         }
 
-        $specificsReplacements = $listingProduct->getSetting(
-            'additional_data', 'variations_specifics_replacements', array()
-        );
+        /** @var \Ess\M2ePro\Model\Ebay\Listing\Product $ebayListingProduct */
+        $ebayListingProduct = $listingProduct->getChildObject();
+        $specificsReplacements = $ebayListingProduct->getVariationSpecificsReplacements();
 
         foreach ($variationSnapshot['options'] as $variationSnapshotOption) {
             /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $variationSnapshotOption */
 
-            $variationSnapshotOptionName  = $variationSnapshotOption->getData('attribute');
-            $variationSnapshotOptionValue = $variationSnapshotOption->getData('option');
+            $variationSnapshotOptionName  = trim($variationSnapshotOption->getData('attribute'));
+            $variationSnapshotOptionValue = trim($variationSnapshotOption->getData('option'));
 
             if (array_key_exists($variationSnapshotOptionName, $specificsReplacements)) {
                 $variationSnapshotOptionName = $specificsReplacements[$variationSnapshotOptionName];
@@ -667,8 +716,8 @@ class Update extends AbstractModel
 
             foreach ($changeVariation['specifics'] as $changeVariationOption=>$changeVariationValue) {
 
-                if ($variationSnapshotOptionName == $changeVariationOption &&
-                    $variationSnapshotOptionValue == $changeVariationValue)
+                if ($variationSnapshotOptionName == trim($changeVariationOption) &&
+                    $variationSnapshotOptionValue == trim($changeVariationValue))
                 {
                     $haveOption = true;
                     break;
@@ -687,12 +736,28 @@ class Update extends AbstractModel
 
     private function prepareSinceTime($sinceTime)
     {
-        $minTime = new \DateTime('now', new \DateTimeZone('UTC'));
-        $minTime->modify("-1 month");
+        if (empty($sinceTime)) {
 
-        if (empty($sinceTime) || strtotime($sinceTime) < (int)$minTime->format('U')) {
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
-            $sinceTime = $sinceTime->format('Y-m-d H:i:s');
+            $sinceTime->modify('-5 seconds');
+
+            return $sinceTime;
+        }
+
+        $minTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $minTime->modify('-5 days');
+
+        $sinceTime = new \DateTime($sinceTime, new \DateTimeZone('UTC'));
+
+        if ($sinceTime->getTimestamp() < $minTime->getTimestamp()) {
+            return $minTime;
+        }
+
+        $maxSinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
+        $maxSinceTime->modify('-1 minute');
+
+        if ($sinceTime->getTimestamp() > $maxSinceTime->getTimestamp()) {
+            return $maxSinceTime;
         }
 
         return $sinceTime;

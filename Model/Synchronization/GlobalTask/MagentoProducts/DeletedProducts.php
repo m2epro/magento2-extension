@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -93,7 +93,8 @@ class DeletedProducts extends AbstractModel
         $collection->getSelect()->columns('product_id');
         $collection->getSelect()->distinct(true);
 
-        $entityTableName = $this->resourceConnection->getTableName('catalog_product_entity');
+        $entityTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
             array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)',array('entity_id')
@@ -126,7 +127,8 @@ class DeletedProducts extends AbstractModel
         $collection->getSelect()->distinct(true);
         $collection->getSelect()->where('product_id IS NOT NULL');
 
-        $entityTableName = $this->resourceConnection->getTableName('catalog_product_entity');
+        $entityTableName = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('catalog_product_entity');
 
         $collection->getSelect()->joinLeft(
             array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)',array('entity_id')
@@ -168,7 +170,8 @@ class DeletedProducts extends AbstractModel
             $collection->getSelect()->distinct(true);
             $collection->getSelect()->where('product_id IS NOT NULL');
 
-            $entityTableName = $this->resourceConnection->getTableName('catalog_product_entity');
+            $entityTableName = $this->getHelper('Module\Database\Structure')
+                ->getTableNameWithPrefix('catalog_product_entity');
 
             $collection->getSelect()->joinLeft(
                 array('cpe'=>$entityTableName), '(cpe.entity_id = `main_table`.product_id)', array('entity_id')

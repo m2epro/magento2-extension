@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -11,6 +11,9 @@ namespace Ess\M2ePro\Helper\Module\Renderer;
 class Description extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const IMAGES_MODE_DEFAULT    = 0;
+    /**
+     * Is not supported more. Links to non eBay resources are not allowed due to eBay regulations.
+     */
     const IMAGES_MODE_NEW_WINDOW = 1;
     const IMAGES_MODE_GALLERY    = 2;
 
@@ -19,24 +22,21 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
     const LAYOUT_MODE_ROW    = 'row';
     const LAYOUT_MODE_COLUMN = 'column';
 
-    protected $storeManager;
-    protected $design;
+    protected $appEmulation;
     protected $filter;
     protected $layout;
 
     //########################################
 
     public function __construct(
-        \Magento\Store\Model\StoreManager $storeManager,
-        \Magento\Theme\Model\View\Design $design,
+        \Magento\Store\Model\App\Emulation $appEmulation,
         \Magento\Email\Model\Template\Filter $filter,
         \Magento\Framework\View\LayoutInterface $layout,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Magento\Framework\App\Helper\Context $context
     )
     {
-        $this->storeManager = $storeManager;
-        $this->design = $design;
+        $this->appEmulation = $appEmulation;
         $this->filter = $filter;
         $this->layout = $layout;
         parent::__construct($helperFactory, $context);
@@ -46,24 +46,23 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
 
     public function parseTemplate($text, \Ess\M2ePro\Model\Magento\Product $magentoProduct)
     {
-        $oldArea = $this->design->getArea();
-        $oldTheme = $this->design->getDesignTheme();
-        $oldStore = $this->storeManager->getStore()->getId();
-
-        $this->design->setArea(\Magento\Backend\App\Area\FrontNameResolver::AREA_CODE);
-        $this->design->setDefaultDesignTheme();
-        $this->storeManager->setCurrentStore($magentoProduct->getStoreId());
+        // Start store emulation process
+        $this->appEmulation->startEnvironmentEmulation(
+            $magentoProduct->getStoreId(), \Magento\Framework\App\Area::AREA_FRONTEND, true
+        );
+        //--
 
         $text = $this->insertAttributes($text, $magentoProduct);
         $text = $this->insertImages($text, $magentoProduct);
         $text = $this->insertMediaGalleries($text, $magentoProduct);
 
-        //  the CMS static block replacement i.e. {{media url=’image.jpg’}}
+        // the CMS static block replacement i.e. {{media url=’image.jpg’}}
         $this->filter->setVariables(array('product'=>$magentoProduct->getProduct()));
         $text = $this->filter->filter($text);
 
-        $this->design->setDesignTheme($oldTheme, $oldArea);
-        $this->storeManager->setCurrentStore($oldStore);
+        //-- Stop store emulation process
+        $this->appEmulation->stopEnvironmentEmulation();
+        //--
 
         return $text;
     }
@@ -137,6 +136,10 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 $tempImageLink = empty($tempImage) ? '' : $tempImage->getUrl();
             }
 
+            if (!in_array($realImageAttributes[3], [self::IMAGES_MODE_DEFAULT])) {
+                $realImageAttributes[3] = self::IMAGES_MODE_DEFAULT;
+            }
+
             $blockObj = $this->layout->createBlock(
                 'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Image'
             );
@@ -205,7 +208,11 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
                 break;
             }
 
-            if (!in_array($realMediaGalleryAttributes[4], array(self::LAYOUT_MODE_ROW, self::LAYOUT_MODE_COLUMN))) {
+            if (!in_array($realMediaGalleryAttributes[3], [self::IMAGES_MODE_DEFAULT, self::IMAGES_MODE_GALLERY])){
+                $realMediaGalleryAttributes[3] = self::IMAGES_MODE_GALLERY;
+            }
+
+            if (!in_array($realMediaGalleryAttributes[4], [self::LAYOUT_MODE_ROW, self::LAYOUT_MODE_COLUMN])) {
                 $realMediaGalleryAttributes[4] = self::LAYOUT_MODE_ROW;
             }
 
@@ -224,7 +231,7 @@ class Description extends \Ess\M2ePro\Helper\AbstractHelper
             $blockObj = $this->layout->createBlock(
                 'Ess\M2ePro\Block\Adminhtml\Renderer\Description\Gallery'
             );
-            $tempHtml = $blockObj->setData($data)->toHtml();
+            $tempHtml = $blockObj->addData($data)->toHtml();
 
             $search[] = $match;
             $replace[] = preg_replace('/\s{2,}/', '', $tempHtml);

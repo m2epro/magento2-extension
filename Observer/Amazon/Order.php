@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -10,18 +10,19 @@ namespace Ess\M2ePro\Observer\Amazon;
 
 class Order extends \Ess\M2ePro\Observer\AbstractModel
 {
-    protected $itemFactory;
+    /** @var \Magento\CatalogInventory\Api\StockRegistryInterface  */
+    protected $stockRegistry;
 
     //########################################
 
     public function __construct(
-        \Magento\CatalogInventory\Model\Stock\ItemFactory $itemFactory,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->itemFactory = $itemFactory;
+        $this->stockRegistry    = $stockRegistry;
         parent::__construct($helperFactory, $activeRecordFactory, $modelFactory);
     }
 
@@ -40,16 +41,12 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
                 continue;
             }
 
-            /** @var $stockItem \Magento\CatalogInventory\Model\Stock\Item */
-            $stockItem = $this->itemFactory->create();
-            $stockItem->getResource()->loadByProductId(
-                $stockItem, $orderItem->getProductId(), $stockItem->getStockId()
+            $stockItem = $this->stockRegistry->getStockItem(
+                $orderItem->getProductId(),
+                $orderItem->getStore()->getWebsiteId()
             );
 
-            if (!$stockItem->getId()) {
-                continue;
-            }
-
+            /** @var \Ess\M2ePro\Model\Magento\Product\StockItem $magentoStockItem */
             $magentoStockItem = $this->modelFactory->getObject('Magento\Product\StockItem', [
                 'stockItem' => $stockItem
             ]);

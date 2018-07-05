@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -79,6 +79,7 @@ class Form extends \Ess\M2ePro\Helper\AbstractHelper
         $phpInfo = $this->getHelper('Client')->getPhpSettings();
         $phpInfo['api'] = $this->getHelper('Client')->getPhpApiName();
         $phpInfo['version'] = $this->getHelper('Client')->getPhpVersion();
+        $phpInfo['ini_file_location'] = $this->getHelper('Client')->getPhpIniFileLoaded();
 
         $mysqlInfo = $this->getHelper('Client')->getMysqlSettings();
         $mysqlInfo['api'] = $this->getHelper('Client')->getMysqlApiName();
@@ -116,6 +117,7 @@ Version: {$phpInfo['version']}
 Api: {$phpInfo['api']}
 Memory Limit: {$phpInfo['memory_limit']}
 Max Execution Time: {$phpInfo['max_execution_time']}
+PHP ini file: {$phpInfo['ini_file_location']}
 
 -------------------------------- MYSQL INFO --------------------------------------
 Version: {$mysqlInfo['version']}

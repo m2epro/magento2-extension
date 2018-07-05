@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -89,8 +89,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             'header'    => $this->__('Creation Date'),
             'align'     => 'left',
             'type'      => 'datetime',
+            'filter'    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Datetime',
             'filter_time' => true,
-//            'format'    => Mage::app()->getLocale()->getDateTimeFormat(Mage_Core_Model_Locale::FORMAT_TYPE_MEDIUM),
+            'format'    => \IntlDateFormatter::MEDIUM,
             'index'     => 'create_date'
         ));
 
@@ -170,15 +171,28 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     {
         $amazonTitles = $ebayTitles = [];
 
+        $skipForAmazon = [];
+        $skipForEbay = [
+            \Ess\M2ePro\Model\Synchronization\Log::TASK_REPRICING
+        ];
+
         foreach ($this->actionsTitles as $value => $label) {
-            $amazonTitles[] = [
-                'label' => $label,
-                'value' => \Ess\M2ePro\Helper\View\Amazon::NICK . '_' . $value
-            ];
-            $ebayTitles[] = [
-                'label' => $label,
-                'value' => \Ess\M2ePro\Helper\View\Ebay::NICK . '_' . $value
-            ];
+
+            if (!in_array($value, $skipForEbay)) {
+
+                $ebayTitles[] = [
+                    'label' => $label,
+                    'value' => \Ess\M2ePro\Helper\View\Ebay::NICK . '_' . $value
+                ];
+            }
+
+            if (!in_array($value, $skipForAmazon)) {
+
+                $amazonTitles[] = [
+                    'label' => $label,
+                    'value' => \Ess\M2ePro\Helper\View\Amazon::NICK . '_' . $value
+                ];
+            }
         }
 
         return [

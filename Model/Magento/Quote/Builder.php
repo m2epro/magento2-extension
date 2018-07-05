@@ -100,7 +100,13 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         $this->quote->setCheckoutMethod($this->proxyOrder->getCheckoutMethod());
         $this->quote->setStore($this->proxyOrder->getStore());
         $this->quote->getStore()->setData('current_currency', $this->quote->getStore()->getBaseCurrency());
+
+        /**
+         * The quote is empty at this moment, so it is not need to collect totals
+         */
+        $this->quote->setTotalsCollectedFlag(true);
         $this->quote = $this->quoteManager->save($this->quote);
+        $this->quote->setTotalsCollectedFlag(false);
 
         $this->quote->setIsM2eProQuote(true);
         $this->quote->setNeedProcessChannelTaxes(

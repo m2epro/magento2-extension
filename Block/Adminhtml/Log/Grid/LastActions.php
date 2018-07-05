@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2016 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -149,7 +149,7 @@ abstract class LastActions extends AbstractBlock
             $row = reset($actionLogs);
         }
 
-        return $this->_localeDate->formatDate($row['create_date'], \IntlDateFormatter::MEDIUM, true);
+        return $row['create_date'];
     }
 
     //----------------------------------------

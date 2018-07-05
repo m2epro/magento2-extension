@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -50,7 +50,7 @@ abstract class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGri
     public function setCollection($collection)
     {
         if (is_null($collection->getStoreId())) {
-            $collection->setStoreId(0);
+            $collection->setStoreId(\Magento\Store\Model\Store::DEFAULT_STORE_ID);
         }
 
         /** @var $ruleModel \Ess\M2ePro\Model\Magento\Product\Rule */

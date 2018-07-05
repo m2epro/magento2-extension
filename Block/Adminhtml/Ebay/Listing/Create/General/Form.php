@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -270,6 +270,13 @@ HTML
             'Please wait while Synchronization is finished.',
             $this->__('Please wait while Synchronization is finished.')
         );
+        $this->jsTranslator->add(
+            'Another Synchronization Is Already Running.', $this->__('Another Synchronization Is Already Running.')
+        );
+        $this->jsTranslator->add(
+            'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
+        );
+
 
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
 

@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -249,6 +249,26 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
     public function getEbayMarketplace()
     {
         return $this->getMarketplace()->getChildObject();
+    }
+
+    //########################################
+
+    /**
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function getVariationSpecificsReplacements()
+    {
+        $specificsReplacements = $this->getSetting(
+            'additional_data', 'variations_specifics_replacements', array()
+        );
+
+        $replacements = array();
+        foreach ($specificsReplacements as $findIt => $replaceBy) {
+            $replacements[trim($findIt)] = trim($replaceBy);
+        }
+
+        return $replacements;
     }
 
     //########################################

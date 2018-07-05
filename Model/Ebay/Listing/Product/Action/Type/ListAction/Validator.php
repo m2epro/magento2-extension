@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -55,19 +55,11 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             return false;
         }
 
-        if (!$this->validateIsVariationProductWithoutVariations()) {
-            return false;
-        }
-
-        if (!$this->validateCategory()) {
-            return false;
-        }
-
         if (!$this->validateSameProductAlreadyListed()) {
             return false;
         }
 
-        if (!$this->validateQty()) {
+        if (!$this->validateIsVariationProductWithoutVariations()) {
             return false;
         }
 
@@ -76,34 +68,18 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
             if (!$this->validateVariationsOptions()) {
                 return false;
             }
-
-            if (!$this->validateVariationsFixedPrice()) {
-                return false;
-            }
-
-            if (!$this->validateSpacesAtTheEndOfVariationAttributesAndOptions()) {
-                return false;
-            }
-
-            return true;
         }
 
-        if ($this->getEbayListingProduct()->isListingTypeAuction()) {
-            if (!$this->validateStartPrice()) {
-                return false;
-            }
+        if (!$this->validateCategory()) {
+            return false;
+        }
 
-            if (!$this->validateReservePrice()) {
-                return false;
-            }
+        if (!$this->validatePrice()) {
+            return false;
+        }
 
-            if (!$this->validateBuyItNowPrice()) {
-                return false;
-            }
-        } else {
-            if (!$this->validateFixedPrice()) {
-                return false;
-            }
+        if (!$this->validateQty()) {
+            return false;
         }
 
         return true;
@@ -164,52 +140,6 @@ class Validator extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Valid
                 '!listing_id' => $theSameListingProduct->getListing()->getId()
             )
         ));
-
-        return false;
-    }
-
-    protected function validateSpacesAtTheEndOfVariationAttributesAndOptions()
-    {
-        $failedAttributes = array();
-        $failedOptions    = array();
-
-        foreach ($this->getEbayListingProduct()->getVariations(true) as $variation) {
-            /** @var \Ess\M2ePro\Model\Listing\Product\Variation $variation */
-
-            foreach ($variation->getOptions(true) as $option) {
-                /** @var \Ess\M2ePro\Model\Listing\Product\Variation\Option $option */
-
-                if ($option->getAttribute() != trim($option->getAttribute())) {
-                    $failedAttributes[] = $option->getAttribute();
-                }
-
-                if ($option->getOption() != trim($option->getOption())) {
-                    $failedOptions[] = $option->getOption();
-                }
-            }
-        }
-
-        if (empty($failedAttributes) && empty($failedOptions)) {
-            return true;
-        }
-
-        if (!empty($failedAttributes)) {
-            $this->addMessage($this->getHelper('Module\Log')->encodeDescription(
-                'The Item cannot be updated properly on eBay because its Variational Attribute %attributes% title
-                contains a space at the start or in the end of the value which will cause the further errors.
-                Please, adjust the Attribute title to solve this issue.',
-                array('attributes' => implode(', ', array_unique($failedAttributes)))
-            ));
-        }
-
-        if (!empty($failedOptions)) {
-            $this->addMessage(
-                'The Item cannot be updated properly on eBay because its Option label(s) contain(s) a space
-                at the start or in the end of the value which will cause the further errors.
-                Please, adjust the Option label(s) to solve this issue.',
-                array('options' => implode(', ', array_unique($failedOptions)))
-            );
-        }
 
         return false;
     }

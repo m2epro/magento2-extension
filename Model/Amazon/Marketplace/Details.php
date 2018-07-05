@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -90,7 +90,8 @@ class Details extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $connRead = $this->resourceConnection->getConnection();
-        $table    = $this->resourceConnection->getTableName('m2epro_amazon_dictionary_marketplace');
+        $table    = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_amazon_dictionary_marketplace');
 
         $data = $connRead->select()
             ->from($table)

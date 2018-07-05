@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -99,7 +99,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         if (!$this->isDeleted()) {
             $connection->update(
-                $this->resourceConnection->getTableName('m2epro_ebay_listing_product_pickup_store'),
+                $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_ebay_listing_product_pickup_store'),
                 array('is_process_required' => 0),
                 array('listing_product_id = ?' => $this->getListingProduct()->getId())
             );
@@ -227,7 +228,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
 
         if (!empty($calculatedValues['create'])) {
             $connection->insertMultiple(
-                $this->resourceConnection->getTableName('m2epro_ebay_account_pickup_store_state'),
+                $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_ebay_account_pickup_store_state'),
                 $calculatedValues['create']
             );
 
@@ -248,7 +250,8 @@ class Updater extends \Ess\M2ePro\Model\AbstractModel
             }
 
             $connection->update(
-                $this->resourceConnection->getTableName('m2epro_ebay_account_pickup_store_state'),
+                $this->getHelper('Module\Database\Structure')
+                    ->getTableNameWithPrefix('m2epro_ebay_account_pickup_store_state'),
                 array('target_qty' => $qty, 'update_date' => $this->getHelper('Data')->getCurrentGmtDate()),
                 $where
             );

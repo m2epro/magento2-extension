@@ -2,7 +2,7 @@
 
 /*
  * @author     M2E Pro Developers Team
- * @copyright  2011-2015 ESS-UA [M2E Pro]
+ * @copyright  M2E LTD
  * @license    Commercial use is forbidden
  */
 
@@ -33,7 +33,7 @@ namespace Ess\M2ePro\PublicServices\Product;
 
 class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 {
-    const VERSION = '1.0.1';
+    const VERSION = '1.0.2';
 
     protected $preventDuplicatesMode = true;
 
@@ -229,8 +229,10 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
         $connection = $this->resource->getConnection();
 
-        $listingProductTable  = $this->resource->getTableName('m2epro_listing_product');
-        $variationOptionTable = $this->resource->getTableName('m2epro_listing_product_variation_option');
+        $listingProductTable  = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product');
+        $variationOptionTable = $this->getHelper('Module\Database\Structure')
+            ->getTableNameWithPrefix('m2epro_listing_product_variation_option');
 
         $simpleProductsSelect = $connection
             ->select()
@@ -263,7 +265,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
     private function insertPreventDuplicates()
     {
         $connection = $this->resource->getConnection();
-        $tableName = $this->resource->getTableName('m2epro_product_change');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change');
 
         $queryStmt = $connection
             ->select()
@@ -293,7 +295,15 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
             $id = $existedChanges[$changeKey]['id'];
             $changesCounter = $existedChanges[$changeKey]['count_changes'] + $change['count_changes'];
 
-            $connection->update($tableName, array('count_changes' => $changesCounter), "id = {$id}");
+            $connection->update(
+                $tableName,
+                array(
+                    'count_changes' => $changesCounter,
+                    'value_new'     => $change['value_new'],
+                    'update_date'   => $change['update_date']
+                ),
+                "id = {$id}"
+            );
         }
 
         count($inserts) && $connection->insertMultiple($tableName, $inserts);
@@ -301,7 +311,7 @@ class SqlChange extends \Ess\M2ePro\Model\AbstractModel
 
     private function simpleInsert()
     {
-        $tableName = $this->resource->getTableName('m2epro_product_change');
+        $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_product_change');
 
         $this->resource->getConnection()->insertMultiple($tableName, $this->changes);
     }

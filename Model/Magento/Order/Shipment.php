@@ -10,29 +10,30 @@ namespace Ess\M2ePro\Model\Magento\Order;
 
 class Shipment extends \Ess\M2ePro\Model\AbstractModel
 {
-    /** @var \Magento\Framework\DB\Transaction  */
-    protected $transaction = NULL;
+    /** @var \Magento\Framework\DB\TransactionFactory  */
+    protected $transactionFactory = NULL;
 
     /** @var \Ess\M2ePro\Model\Magento\Order\Shipment\Factory|null  */
-    protected $shipmentFactory = NULL;
+    protected $shipmentFactory    = NULL;
 
     /** @var $magentoOrder \Magento\Sales\Model\Order */
-    private $magentoOrder = NULL;
+    private $magentoOrder         = NULL;
 
     /** @var $shipment \Magento\Sales\Model\Order\Shipment */
-    private $shipment = NULL;
+    private $shipment             = NULL;
 
     //########################################
 
     public function __construct(
         \Ess\M2ePro\Model\Magento\Order\Shipment\Factory $shipmentFactory,
-        \Magento\Framework\DB\Transaction $transaction,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Magento\Framework\DB\TransactionFactory $transactionFactory
     )
     {
-        $this->shipmentFactory  = $shipmentFactory;
-        $this->transaction      = $transaction;
+        $this->shipmentFactory    = $shipmentFactory;
+        $this->transactionFactory = $transactionFactory;
+
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -92,7 +93,8 @@ class Shipment extends \Ess\M2ePro\Model\AbstractModel
         // it is necessary for updating qty_shipped field in sales_flat_order_item table
         $this->shipment->getOrder()->setIsInProcess(true);
 
-        $this->transaction
+        $this->transactionFactory
+             ->create()
              ->addObject($this->shipment)
              ->addObject($this->shipment->getOrder())
              ->save();
