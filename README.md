@@ -1,5 +1,5 @@
-#  eBay / Amazon Integration for Magento v2.x.x
+# eBay / Amazon Integration for Magento v2.x.x
  
- M2E Pro is a Magento trusted (TM), award-winning extension, which allows merchants of all sizes to fully integrate Magento based system(s) into eBay/Amazon platforms.
+M2E Pro extension integrates Magento into eBay and Amazon platforms to deliver the multi-channel retail experience.
 
-This allows quick and simple creation as well as management of product listings (inc. automated synchronization of stock levels, pricing, and product details), import of eBay/Amazon orders, automated feedback posting for buyers and many other tasks which significantly reduce time required for listing maintenance. 
+The Module supports uninterrupted inventory synchronization with full order lifecycle management across 23 eBay and 9 Amazon marketplaces.
