@@ -12,6 +12,7 @@
             <module name="Magento_Customer" />
             <module name="Magento_Eav" />
             <module name="Magento_Payment" />
+            <module name="Magento_Paypal" />
             <module name="Magento_Quote" />
             <module name="Magento_RequireJs" />
             <module name="Magento_Sales" />
