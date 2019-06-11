@@ -66,10 +66,9 @@ class ListingOther extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p>This tab of the Account settings contains main configurations for the 3rd Party Listing management.
-You can set preferences whether you would like to import 3rd Party Listings
-(Items that were Listed on eBay either directly on the channel or with the help of other than M2E Pro tool),
-automatically map them to Magento Product, etc..</p><br>
+<p>Under this tab you can manage the 3rd Party Listings - Items that were listed directly via your Seller Central
+Account or via some other 3rd party software. Specify whether you would like to import the 3rd Party Listings,
+configure the automatic mapping and moving settings.</p><br>
 <p>More detailed information you can find <a href="%url%" target="_blank" class="external-link">here</a>.</p>
 HTML
                     ,
@@ -176,6 +175,7 @@ HTML
                 'name' => 'mapping_sku_mode',
                 'label' => $this->__('SKU'),
                 'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
@@ -242,6 +242,7 @@ HTML
                 'name' => 'mapping_general_id_mode',
                 'label' => $this->__('ASIN / ISBN'),
                 'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_GENERAL_ID_MODE_NONE => $this->__('None'),
                     [
@@ -304,6 +305,7 @@ HTML
                 'name' => 'mapping_title_mode',
                 'label' => $this->__('Listing Title'),
                 'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),

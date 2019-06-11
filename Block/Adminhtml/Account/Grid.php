@@ -12,8 +12,6 @@ use Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid;
 
 class Grid extends AbstractGrid
 {
-    protected $viewComponentHelper = NULL;
-
     //########################################
 
     public function _construct()
@@ -25,7 +23,6 @@ class Grid extends AbstractGrid
         // Initialize view
         // ---------------------------------------
         $view = $this->getHelper('View')->getCurrentView();
-        $this->viewComponentHelper = $this->getHelper('View')->getComponentHelper($view);
         // ---------------------------------------
 
         // Initialization block
@@ -110,4 +107,6 @@ class Grid extends AbstractGrid
         return $this->getHelper('View')
             ->getUrl($row, 'account', 'edit', array('id' => $row->getData('id')));
     }
+
+    //########################################
 }

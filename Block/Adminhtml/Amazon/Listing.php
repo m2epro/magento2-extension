@@ -30,6 +30,9 @@ class Listing extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         ));
         // ---------------------------------------
     }
+
+    //########################################
+
     protected function _prepareLayout()
     {
         $content = $this->__(

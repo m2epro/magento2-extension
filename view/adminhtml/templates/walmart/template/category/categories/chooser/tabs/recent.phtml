@@ -1,0 +1,28 @@
+<div id="chooser_recent">
+    <table id="chooser_recent_table">
+
+        <?php if (count($this->getCategories()) <= 0) : ?>
+            <tr>
+                <td colspan="2" style="text-align: center;">
+                    <strong><?php echo $this->__('No recently used Categories'); ?></strong>
+                </td>
+            </tr>
+        <?php endif; ?>
+
+        <?php foreach ($this->getCategories() as $category) : ?>
+
+            <?php $nodeId       = $this->escapeJs($this->escapeHtml($category['browsenode_id'])); ?>
+            <?php $categoryPath = $this->escapeJs($this->escapeHtml($category['path'])); ?>
+
+            <tr>
+                <td width="730px">
+                    <?php echo $category['path'] .' ('.$category['browsenode_id'].')'; ?>
+                </td>
+                <td width="68px">
+                    <a href="javascript:void(0)" onclick="WalmartTemplateCategoryCategoriesChooserObj.recentClickCategory('<?php echo $nodeId; ?>','<?php echo $categoryPath; ?>');"><?php echo $this->__('Select'); ?></a>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+
+    </table>
+</div>

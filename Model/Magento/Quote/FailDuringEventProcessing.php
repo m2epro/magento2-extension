@@ -13,7 +13,8 @@ use Ess\M2ePro\Model\Exception;
 /**
  * Class FailDuringEventProcessing
  *
- * On Magento Order creating some exceptions are thrown during e.g. "sales_order_save_after" event processing, which means that Magento Order was actually created
+ * On Magento Order creating some exceptions are thrown during e.g. "sales_order_save_after"
+ * event processing, which means that Magento Order was actually created
  * This exception should be thrown instead the original one with Magento Order instance inside
  */
 

@@ -1,0 +1,20 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Walmart\Listing\Product\Template\Category $block */
+?>
+
+<div id="template_category_pop_up_content">
+    <div>
+
+        <?php if(count($block->getMessages()) > 0) : ?>
+            <div id="template_category_error_block">
+                <?php echo $this->getWarnings(); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php echo $block->getChildHtml('help_block'); ?>
+
+        <div id="template_category_grid">
+        </div>
+
+    </div>
+</div>

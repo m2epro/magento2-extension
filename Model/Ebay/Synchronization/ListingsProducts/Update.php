@@ -139,8 +139,6 @@ class Update extends AbstractModel
             return;
         }
 
-        $account->getChildObject()->setData('defaults_last_synchronization', $changesByAccount['to_time'])->save();
-
         $this->getHelper('Data\Cache\Runtime')->setValue(
             'item_get_changes_data_' . $account->getId(), $changesByAccount
         );
@@ -213,6 +211,8 @@ class Update extends AbstractModel
                 }
             }
         }
+
+        $account->getChildObject()->setData('defaults_last_synchronization', $changesByAccount['to_time'])->save();
     }
 
     //########################################
@@ -374,8 +374,8 @@ class Update extends AbstractModel
     private function getProductDatesChanges(\Ess\M2ePro\Model\Listing\Product $listingProduct, array $change)
     {
         return array(
-            'start_date' =>\Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($change['startTime']),
-            'end_date' =>\Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($change['endTime'])
+            'start_date' => $this->getHelper('Component\Ebay')->timeToString($change['startTime']),
+            'end_date'   => $this->getHelper('Component\Ebay')->timeToString($change['endTime'])
         );
     }
 

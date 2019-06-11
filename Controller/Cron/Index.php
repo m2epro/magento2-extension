@@ -9,12 +9,11 @@
 namespace Ess\M2ePro\Controller\Cron;
 
 use Magento\Framework\App\Action\Context;
-use Ess\M2ePro\Model\Cron\Runner\Service;
 
 class Index extends \Magento\Framework\App\Action\Action
 {
-    /** @var Service $serviceCronRunner */
-    private $serviceCronRunner = NULL;
+    /** @var \Ess\M2ePro\Model\Cron\Runner\Service\Controller */
+    private $cronRunner;
 
     /** @var \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory */
     private $responseFactory;
@@ -23,12 +22,12 @@ class Index extends \Magento\Framework\App\Action\Action
 
     public function __construct(
         Context $context,
-        Service $serviceCronRunner,
+        \Ess\M2ePro\Model\Cron\Runner\Service\Controller $cronRunner,
         \Ess\M2ePro\Model\Magento\Framework\Http\NotCacheableResponseFactory $responseFactory
     )
     {
         parent::__construct($context);
-        $this->serviceCronRunner = $serviceCronRunner;
+        $this->cronRunner = $cronRunner;
         $this->responseFactory = $responseFactory;
     }
 
@@ -37,12 +36,12 @@ class Index extends \Magento\Framework\App\Action\Action
     public function execute()
     {
         $authKey = $this->getRequest()->getParam('auth_key', false);
-        $authKey && $this->serviceCronRunner->setRequestAuthKey($authKey);
+        $authKey && $this->cronRunner->setRequestAuthKey($authKey);
 
         $connectionId = $this->getRequest()->getParam('connection_id', false);
-        $connectionId && $this->serviceCronRunner->setRequestConnectionId($connectionId);
+        $connectionId && $this->cronRunner->setRequestConnectionId($connectionId);
 
-        $this->serviceCronRunner->process();
+        $this->cronRunner->process();
 
         /*
          * Magento is going to set a special cookie for Caching Systems to mark page content.

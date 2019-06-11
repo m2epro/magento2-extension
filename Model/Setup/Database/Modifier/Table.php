@@ -9,6 +9,7 @@
 namespace Ess\M2ePro\Model\Setup\Database\Modifier;
 
 use Ess\M2ePro\Model\Exception\Setup;
+use \Magento\Framework\DB\Ddl\Table as DdlTable;
 
 class Table extends AbstractModifier
 {
@@ -77,7 +78,8 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->changeColumn($this->tableName, $from, $to, $definition);
+            $this->connection->changeColumn($this->tableName, $from, $to,
+                $this->convertColumnDefinitionToArray($definition));
         } else {
             $this->addQueryToCommit(self::COMMIT_KEY_CHANGE_COLUMN,
                                     'CHANGE COLUMN %s %s %s', array($from, $to), $definition);
@@ -117,7 +119,7 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->addColumn($this->tableName, $name, $definition);
+            $this->connection->addColumn($this->tableName, $name, $this->convertColumnDefinitionToArray($definition));
         } else {
             $this->addQueryToCommit(self::COMMIT_KEY_ADD_COLUMN,
                                    'ADD COLUMN %s %s', array($name), $definition);
@@ -154,7 +156,8 @@ class Table extends AbstractModifier
         }
 
         if ($autoCommit) {
-            $this->connection->modifyColumn($this->tableName, $name, $definition);
+            $this->connection->modifyColumn($this->tableName, $name,
+                $this->convertColumnDefinitionToArray($definition));
         } else {
             $this->addQueryToCommit(self::COMMIT_KEY_CHANGE_COLUMN,
                                     'MODIFY COLUMN %s %s', array($name), $definition);
@@ -329,6 +332,93 @@ class Table extends AbstractModifier
             $default,
             $columnInfo['IDENTITY'] ? 'AUTO_INCREMENT' : ''
         );
+    }
+
+    private function convertColumnDefinitionToArray($definition)
+    {
+        $pattern = "#^(?P<type>[a-z]+(?:\(\d+\))?)";
+        $pattern .= "(?:";
+        $pattern .= "(?P<unsigned>\sUNSIGNED)?";
+        $pattern .= "(?P<nullable>\s(?:NOT\s)?NULL)?";
+        $pattern .= "(?P<default>\sDEFAULT\s[^\s]+)?";
+        $pattern .= "(?P<auto_increment>\sAUTO_INCREMENT)?";
+        $pattern .= "(?P<primary_key>\sPRIMARY\sKEY)?";
+        $pattern .= "(?P<after>\sAFTER\s[^\s]+)?";
+        $pattern .= ")?#i";
+
+        $matches = [];
+        if (preg_match($pattern, $definition, $matches) === false || !isset($matches['type'])) {
+            return $definition;
+        }
+
+        $typeMap = [
+            DdlTable::TYPE_SMALLINT => ['TINYINT', 'SMALLINT'],
+            DdlTable::TYPE_INTEGER => ['INT'],
+            DdlTable::TYPE_FLOAT => ['FLOAT'],
+            DdlTable::TYPE_DECIMAL => ['DECIMAL'],
+            DdlTable::TYPE_DATETIME => ['DATETIME'],
+            DdlTable::TYPE_TEXT => ['VARCHAR', 'TEXT', 'LONGTEXT'],
+            DdlTable::TYPE_BLOB => ['BLOB', 'LONGBLOB'],
+        ];
+
+        $size = null;
+        $type = $matches['type'];
+        if (strpos($type, '(') !== false) {
+            $size = str_replace(['(', ')'], '', substr($type, strpos($type, '(')));
+            $type = substr($type, 0, strpos($type, '('));
+        }
+
+        $definitionData = [];
+        foreach ($typeMap as $ddlType => $types) {
+            if (!in_array(strtoupper($type), $types)) {
+                continue;
+            }
+
+            if ($ddlType == DdlTable::TYPE_TEXT || $ddlType == DdlTable::TYPE_BLOB) {
+                $definitionData['length'] = $size;
+            }
+
+            if ($ddlType == DdlTable::TYPE_DECIMAL && strpos($size, ',') !== false) {
+                list($precision, $scale) = array_map('trim', explode(',', $size, 2));
+                $definitionData['precision'] = (int)$precision;
+                $definitionData['scale'] = (int)$scale;
+            }
+
+            $definitionData['type'] = $ddlType;
+            break;
+        }
+
+        if (!empty($matches['unsigned'])) {
+            $definitionData['unsigned'] = true;
+        }
+
+        if (!empty($matches['nullable'])) {
+            $definitionData['nullable'] = strpos(strtolower($matches['nullable']), 'not null') ==! false
+                ? false : true;
+        }
+
+        if (!empty($matches['default'])) {
+            list(,$defaultData) = explode(' ', trim($matches['default']), 2);
+            $defaultData = trim($defaultData);
+            $definitionData['default'] = strtolower($defaultData) == 'null' ? null : $defaultData;
+        }
+
+        if (!empty($matches['auto_increment'])) {
+            $definitionData['auto_increment'] = true;
+        }
+
+        if (!empty($matches['primary_key'])) {
+            $definitionData['primary'] = true;
+        }
+
+        if (!empty($matches['after'])) {
+            list(,$afterColumn) = explode(' ', trim($matches['after']), 2);
+            $definitionData['after'] = trim($afterColumn, " \t\n\r\0\x0B`");
+        }
+
+        $definitionData['comment'] = 'field';
+
+        return $definitionData;
     }
 
     //########################################

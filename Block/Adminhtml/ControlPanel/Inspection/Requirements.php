@@ -10,27 +10,13 @@ namespace Ess\M2ePro\Block\Adminhtml\ControlPanel\Inspection;
 
 class Requirements extends AbstractInspection
 {
-    //########################################
-
-    public function _construct()
-    {
-        parent::_construct();
-
-        // Initialization block
-        // ---------------------------------------
-        $this->setId('controlPanelInspectionRequirements');
-        // ---------------------------------------
-
-        $this->setTemplate('control_panel/inspection/requirements.phtml');
-    }
+    protected $_template = 'control_panel/inspection/requirements.phtml';
 
     //########################################
 
-    protected function _beforeToHtml()
+    public function getManager()
     {
-        $this->requirements = $this->getHelper('Module')->getRequirementsInfo();
-
-        return parent::_beforeToHtml();
+        return $this->modelFactory->getObject('Requirements\Manager');
     }
 
     //########################################

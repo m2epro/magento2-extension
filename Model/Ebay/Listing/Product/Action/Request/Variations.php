@@ -272,7 +272,7 @@ class Variations extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Request\A
             $this->addWarningMessage(
                 $this->getHelper('Module\Translation')->__(
                     'The Product was Listed as a Simple Product as it has limitation for Multi-Variation Items. '.
-                    'Reason: ignore Variation Option is enabled in Price, Quantity and Format Policy.'
+                    'Reason: ignore Variation Option is enabled in Selling Policy.'
                 )
             );
             return;

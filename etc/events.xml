@@ -50,6 +50,38 @@
                   shared="false" />
     </event>
 
+    <!-- MSI -->
+
+    <event name="ess_sourceitem_save_after">
+        <observer name="m2epro_observer_msi_sourceitem_save"
+                  instance="Ess\M2ePro\Observer\MSI\SourceItem\Save"
+                  shared="false" />
+    </event>
+
+    <event name="ess_sourceitem_delete_after">
+        <observer name="m2epro_observer_msi_sourceitem_delete"
+                  instance="Ess\M2ePro\Observer\MSI\SourceItem\Delete"
+                  shared="false" />
+    </event>
+
+    <event name="ess_stock_channel_added">
+        <observer name="m2epro_observer_msi_stock_channeladded"
+                  instance="Ess\M2ePro\Observer\MSI\Stock\ChannelAdded"
+                  shared="false" />
+    </event>
+
+    <event name="ess_stock_sources_changed">
+        <observer name="m2epro_observer_msi_stock_sourceschanged"
+                  instance="Ess\M2ePro\Observer\MSI\Stock\SourcesChanged"
+                  shared="false" />
+    </event>
+
+    <event name="ess_product_reservation_placed">
+        <observer name="m2epro_observer_msi_product_reservationplaced"
+                  instance="Ess\M2ePro\Observer\MSI\Product\ReservationPlaced"
+                  shared="false" />
+    </event>
+
     <!-- synchronization -->
 
     <event name="ess_synchronization_before_start">
@@ -75,6 +107,12 @@
                   instance="Ess\M2ePro\Observer\Shipment"
                   shared="false" />
     </event>
+    <event name="sales_shipment_item_save_after">
+        <observer name="m2epro_observer_shipment"
+                  instance="Ess\M2ePro\Observer\Shipment\Item"
+                  shared="false" />
+    </event>
+
     <event name="sales_order_shipment_track_save_after">
         <observer name="m2epro_observer_shipment_track"
                   instance="Ess\M2ePro\Observer\Shipment\Track"
@@ -108,6 +146,11 @@
                   instance="Ess\M2ePro\Observer\Amazon\Order\Item"
                   shared="false" />
     </event>
+    <event name="ess_associate_walmart_order_item_to_product">
+        <observer name="m2epro_observer_walmart_order_item"
+                  instance="Ess\M2ePro\Observer\Walmart\Order\Item"
+                  shared="false" />
+    </event>
 
     <!-- amazon orders -->
 
@@ -115,6 +158,10 @@
         <observer name="m2epro_observer_amazon_order"
                   instance="Ess\M2ePro\Observer\Amazon\Order"
                   shared="false" />
+    </event>
+
+    <event name="catalog_product_import_bunch_save_after">
+        <observer name="m2epro_observer_import_bunch" instance="Ess\M2ePro\Observer\Import\Bunch"/>
     </event>
 
 </config>

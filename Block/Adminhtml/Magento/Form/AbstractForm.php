@@ -39,6 +39,9 @@ abstract class AbstractForm extends Generic
     /** @var \Magento\Framework\Data\Form\Element\Factory */
     protected $elementFactory;
 
+    /** @var \Magento\Cms\Model\Wysiwyg\Config */
+    protected $wysiwygConfig;
+
     public function __construct(
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Framework\Registry $registry,
@@ -50,6 +53,7 @@ abstract class AbstractForm extends Generic
         $this->modelFactory = $context->getModelFactory();
         $this->activeRecordFactory = $context->getActiveRecordFactory();
         $this->parentFactory = $context->getParentFactory();
+        $this->wysiwygConfig = $context->getWysiwygConfig();
 
         $this->css = $context->getCss();
         $this->jsPhp = $context->getJsPhp();

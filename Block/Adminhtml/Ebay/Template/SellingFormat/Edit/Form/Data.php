@@ -478,8 +478,7 @@ class Data extends AbstractForm
                 'tooltip' => $this->__(
                     'If you have 2 pieces in Stock but set a Minimum Quantity to Be Listed of 5,
                     Item will not be Listed on eBay.<br/>
-                    Otherwise, the Item will be Listed with Quantity according to the Settings in the Price,
-                    Quantity and Format Policy'
+                    Otherwise, the Item will be Listed with Quantity according to the Settings in the Selling Policy'
                 )
             ]
         );

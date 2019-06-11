@@ -40,17 +40,16 @@ class License extends AbstractTab
                     To obtain a License Key, press <strong>Create New License</strong>
                     button and enter the required data.<br/><br/>
 
-                    The License Key is strictly connected to the particular
-                    <strong>Domain</strong> and <strong>IP</strong>. Their validation prevents problems,
-                    such as creation of Item duplicates in case of Magento relocation. For example,
-                    duplicated Items can be created after you change the server and synchronization
-                    continues working on both old and new server.
+                    The License Key is strictly connected to the particular Domain and IP.
+                    Their validation prevents problems, such as creation of Item duplicates in case of
+                    Magento relocation. For example, duplicated Items can be created after you change the
+                    server and synchronization continues working on both old and new server.
                     <br/><br/>
                     <b>Note:</b> If you have not received the License Key, please contact us %email%.</br></br>
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $email, $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                        'x/xAEtAQ'
+                        'x/ZQBhAQ'
                     ))
             ]
         );

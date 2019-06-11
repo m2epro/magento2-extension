@@ -339,12 +339,12 @@ HTML;
     {
         $html = "<div>";
 
-        $maintenanceMode = (bool)$this->getMagentoCoreConfigValue('m2epro/general/maintenance');
+        $maintenanceMode = (bool)$this->getMagentoCoreConfigValue('m2epro/maintenance');
         $className = $maintenanceMode ? 'feature-enabled feature-enabled-word'
                                       : 'feature-disabled feature-disabled-word';
         $url = $this->_url->getUrl('*/*/*', ['action' => 'setMagentoCoreConfigValue',
                                              '_query' => [
-                                                 'config_path'  => 'm2epro/general/maintenance',
+                                                 'config_path'  => 'm2epro/maintenance',
                                                  'config_value' => (int)!$maintenanceMode
                                              ]]);
         $html .= <<<HTML
@@ -774,7 +774,7 @@ HTML;
         $value = $this->getRequest()->getParam('config_value');
 
         if (!in_array($path, [
-            'm2epro/general/maintenance',
+            'm2epro/maintenance',
             'm2epro/setup/ignore_maintenace',
             'm2epro/setup/allow_rollback_from_backup',
 

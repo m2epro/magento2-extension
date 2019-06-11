@@ -259,7 +259,7 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstra
      */
     public function getVariationSpecificsReplacements()
     {
-        $specificsReplacements = $this->getSetting(
+        $specificsReplacements = $this->getParentObject()->getSetting(
             'additional_data', 'variations_specifics_replacements', array()
         );
 

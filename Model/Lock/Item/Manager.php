@@ -166,6 +166,24 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
         return true;
     }
 
+    public function isInactiveMoreThanSeconds($maxInactiveInterval)
+    {
+        /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/
+        $lockModel = $this->activeRecordFactory->getObjectLoaded('Lock\Item', $this->nick, 'nick', false);
+        if (is_null($lockModel)) {
+            return true;
+        }
+
+        $currentTimestamp = $this->getHelper('Data')->getCurrentGmtDate(true);
+        $updateTimestamp  = strtotime($lockModel->getUpdateDate());
+
+        if ($updateTimestamp < $currentTimestamp - $maxInactiveInterval) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function activate($reload = true)
     {
         /** @var $lockModel \Ess\M2ePro\Model\Lock\Item **/

@@ -28,12 +28,12 @@ class Cron extends AbstractInspection
 
     protected function _beforeToHtml()
     {
-        $moduleConfig = $this->getHelper('Module')->getConfig();
+        $modConfig = $this->getHelper('Module')->getConfig();
 
         $this->cronLastRunTime = 'N/A';
         $this->cronIsNotWorking = false;
-        $this->cronCurrentRunner = ucfirst($this->getHelper('Module\Cron')->getRunner());
-        $this->cronServiceAuthKey = $moduleConfig->getGroupValue('/cron/service/', 'auth_key');
+        $this->cronCurrentRunner = ucwords(str_replace('_', ' ', $this->getHelper('Module\Cron')->getRunner()));
+        $this->cronServiceAuthKey = $modConfig->getGroupValue('/cron/service/', 'auth_key');
 
         $baseDir = $this->getHelper('Client')->getBaseDirectory();
         $this->cronPhp = 'php -q '.$baseDir.DIRECTORY_SEPARATOR.'cron.php -mdefault 1';
@@ -50,7 +50,7 @@ class Cron extends AbstractInspection
         $cronServiceIps = array();
 
         for ($i = 1; $i < 100; $i++) {
-            $serviceHostName = $moduleConfig->getGroupValue('/cron/service/','hostname_'.$i);
+            $serviceHostName = $modConfig->getGroupValue('/cron/service/','hostname_'.$i);
 
             if (is_null($serviceHostName)) {
                 break;
@@ -61,8 +61,9 @@ class Cron extends AbstractInspection
 
         $this->cronServiceIps = implode(', ', $cronServiceIps);
 
-        $this->isMagentoCronDisabled = (bool)(int)$moduleConfig->getGroupValue('/cron/magento/','disabled');
-        $this->isServiceCronDisabled = (bool)(int)$moduleConfig->getGroupValue('/cron/service/','disabled');
+        $this->isMagentoCronDisabled    = (bool)(int)$modConfig->getGroupValue('/cron/magento/','disabled');
+        $this->isControllerCronDisabled = (bool)(int)$modConfig->getGroupValue('/cron/service_controller/','disabled');
+        $this->isPubCronDisabled        = (bool)(int)$modConfig->getGroupValue('/cron/service_pub/','disabled');
 
         return parent::_beforeToHtml();
     }

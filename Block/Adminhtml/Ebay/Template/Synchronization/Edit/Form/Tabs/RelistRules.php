@@ -230,9 +230,9 @@ HTML
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> Relist Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> Relist Items automatically if the Quantity is at least equal
-                    to the number you set, according to the Price, Quantity and Format Policy. (Recommended)</p>
+                    to the number you set, according to the Selling Policy. (Recommended)</p>
                     <p><strong>Between:</strong> Relist Items automatically if the Quantity is between the
-                    minimum and maximum numbers you set, according to the Price, Quantity and Format Policy.</p>'
+                    minimum and maximum numbers you set, according to the Selling Policy.</p>'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');

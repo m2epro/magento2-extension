@@ -54,7 +54,7 @@ class ReviseRules extends AbstractForm
                 'content' => $this->__(
                     <<<HTML
 <p>
-Revise Rules are specific conditions that trigger an automatic full or partial Product data revise if met.
+Revise Rules are specific conditions that trigger an automatic full or partial Product data revise once they are met.
 </p>
 
 <ul>
@@ -63,10 +63,9 @@ Revise Rules are specific conditions that trigger an automatic full or partial P
         certain Magento Product parameter you have enabled in Partial Revise settings.
     </p></li><br>
     <li><p>
-        <strong>Full Revise</strong> - Amazon Item will be fully updated after the changes made to at least
-        one parameter of M2E Pro settings you have specified for this Item and enabled in Full Revise
-        settings (Listing Settings, Selling Format Policy, Description Policy, Shipping Policy,
-        Product Tax Code Policy).
+        <strong>Full Revise</strong> - Amazon Item will be fully updated after the changes made to at least one
+        parameter of M2E Pro settings you have specified for this Item and enabled in Full Revise settings
+        (Listing Settings, Selling Policy, Description Policy, Shipping Policy, Product Tax Code Policy).
     </p></li>
 </ul>
 
@@ -81,7 +80,7 @@ HTML
         );
 
         $fieldset = $form->addFieldset(
-            'magento_block_ebay_template_synchronization_form_data_revise_products',
+            'magento_block_amazon_template_synchronization_form_data_revise_products',
             [
                 'legend' => $this->__('Partial Revise'),
                 'collapsable' => true
@@ -198,9 +197,9 @@ HTML
                 'values' => $preparedValues,
                 'tooltip' => $this->__('
                     It is a Percent Value of Maximum possible Deviation between Magento Price
-                    (Price, Quantity and Format Policy settings) and Amazon Item Price, that can be ignored.<br/><br/>
+                    (Selling Policy settings) and Amazon Item Price, that can be ignored.<br/><br/>
                     <strong>For example</strong>, your Magento Price is 23.25$. According to
-                    Price, Quantity and Format Policy Settings Item Price is equal to Magento Price.
+                    Selling Policy Settings Item Price is equal to Magento Price.
                     The "Revise When Deviation More or Equal than" Option is specified to 1%.<br/>
                     1) If Magento Price was changed to 23.26$, possible Deviation Value (0.23$) is
                     <strong>more</strong> than Price change (0.1$), so the Price <strong>will not be Revised</strong>
@@ -282,7 +281,7 @@ HTML
             self::SELECT,
             [
                 'name' => 'revise_change_selling_format_template',
-                'label' => $this->__('Price, Quantity and Format Policy'),
+                'label' => $this->__('Selling Policy'),
                 'value' => $formData['revise_change_selling_format_template'],
                 'values' => [
                     \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_SELLING_FORMAT_TEMPLATE_NONE
@@ -291,7 +290,7 @@ HTML
                                 => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically revises Amazon Listing(s) if its Price, Quantity and Format Policy was changed.'
+                    'Automatically revises Amazon Listing(s) if its Selling Policy was changed.'
                 )
             ]
         );

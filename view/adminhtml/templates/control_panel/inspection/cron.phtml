@@ -40,10 +40,21 @@
         </td>
     </tr>
 
-    <?php if (!$this->getData('is_support_mode') && $this->isServiceCronDisabled) : ?>
+    <?php if (!$this->getData('is_support_mode') && $this->isControllerCronDisabled) : ?>
         <tr>
             <td class="label">
-                <label><?php echo $this->__('Service Cron State'); ?>: </label>
+                <label><?php echo $this->__('Service Controller Cron State'); ?>: </label>
+            </td>
+            <td class="value" style="color: red;">
+                <?php echo $this->__('Disabled by Developer'); ?>
+            </td>
+        </tr>
+    <?php endif; ?>
+
+    <?php if (!$this->getData('is_support_mode') && $this->isPubCronDisabled) : ?>
+        <tr>
+            <td class="label">
+                <label><?php echo $this->__('Service Pub Cron State'); ?>: </label>
             </td>
             <td class="value" style="color: red;">
                 <?php echo $this->__('Disabled by Developer'); ?>

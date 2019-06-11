@@ -204,5 +204,16 @@ HTML;
         $collection->addFieldToFilter('main_table.status', $cond);
     }
 
+    protected function callbackFilterItemId($collection, $column)
+    {
+        $cond = $column->getFilter()->getCondition();
+
+        if (empty($cond)) {
+            return;
+        }
+
+        $collection->addFieldToFilter('second_table.item_id', $cond);
+    }
+
     //########################################
 }

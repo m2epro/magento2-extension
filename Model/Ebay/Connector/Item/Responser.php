@@ -472,7 +472,6 @@ abstract class Responser extends \Ess\M2ePro\Model\Ebay\Connector\Command\Pendin
 
     //########################################
 
-    //TODO: Improve this functionality so that is was able to fix some sort of variation product errors
     protected function tryToResolveVariationMpnErrors()
     {
         if (!$this->canPerformGetItemCall()) {

@@ -25,13 +25,13 @@ class StepTwoGetSuggestedCategory extends Settings
         // ---------------------------------------
 
         // ---------------------------------------
+        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $collection */
         $collection = $listing->getChildObject()->getResource()->getProductCollection($listingId);
         $collection->addAttributeToSelect('name');
         $collection->getSelect()->where('lp.id IN (?)', $listingProductIds);
-        $collection->load();
         // ---------------------------------------
 
-        if ($collection->count() == 0) {
+        if ($collection->getSize() == 0) {
             $this->setJsonContent([]);
             return $this->getResult();
         }
@@ -41,7 +41,7 @@ class StepTwoGetSuggestedCategory extends Settings
         $result = array('failed' => 0, 'succeeded' => 0);
 
         // ---------------------------------------
-        foreach ($collection as $product) {
+        foreach ($collection->getItems() as $product) {
             if (($query = $product->getData('name')) == '') {
                 $result['failed']++;
                 continue;

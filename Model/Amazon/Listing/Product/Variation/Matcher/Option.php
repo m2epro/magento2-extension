@@ -160,8 +160,13 @@ class Option extends \Ess\M2ePro\Model\AbstractModel
         $resultNames = array();
         foreach ($sourceOption as $attribute => $option) {
             $names = array();
-            if (isset($magentoOptionNames[$attribute])) {
-                $names = $magentoOptionNames[$attribute]['values'][$option];
+            if (isset($magentoOptionNames[$attribute]['values'])) {
+                $attributeValues = $magentoOptionNames[$attribute]['values'];
+                foreach ($attributeValues as $defaultValue => $optionValues) {
+                    if (in_array($option, $optionValues, true)) {
+                        $names = $magentoOptionNames[$attribute]['values'][$defaultValue];
+                    }
+                }
             }
 
             $resultNames[$attribute] = $this->prepareOptionNames($option, $names);

@@ -681,7 +681,7 @@ class Revise extends \Ess\M2ePro\Model\Amazon\Synchronization\Templates\Synchron
 
         $lastListingProduct = $collection->getLastItem()->getId();
 
-        if ($collection->count() < $itemsPerCycle) {
+        if ($collection->getSize() < $itemsPerCycle) {
 
             $this->setConfigValue(
                 $this->getFullSettingsPath().'total/', 'end_date',

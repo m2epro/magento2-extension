@@ -61,7 +61,7 @@ class PaymentTransaction extends AbstractModel
         $payment->setTransactionId($this->getData('transaction_id'));
         $this->transaction = $payment->addTransaction($transactionType);
 
-        if (@defined('Mage\Sales\Model\Order\Payment\Transaction::RAW_DETAILS')) {
+        if (@defined('\Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS')) {
             $this->unsetData('transaction_id');
             $this->transaction->setAdditionalInformation(
                 \Magento\Sales\Model\Order\Payment\Transaction::RAW_DETAILS, $this->getData()

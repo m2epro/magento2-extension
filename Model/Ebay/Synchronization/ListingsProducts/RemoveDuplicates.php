@@ -313,7 +313,8 @@ class RemoveDuplicates extends AbstractModel
         unset($additionalData['last_failed_action_data']);
 
         $listingProduct->addData(array(
-            'status' => $status,
+            'status'          => $status,
+            'status_changer'  => \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT,
             'additional_data' => $this->getHelper('Data')->jsonEncode($additionalData),
         ))->save();
 

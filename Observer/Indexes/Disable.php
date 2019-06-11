@@ -29,6 +29,16 @@ class Disable extends \Ess\M2ePro\Observer\AbstractModel
 
     public function process()
     {
+        if ($this->getHelper('Magento')->isMSISupportingVersion()) {
+            foreach ($this->productIndex->getIndexes() as $code) {
+                if ($this->productIndex->enableReindex($code)) {
+                    $this->productIndex->rememberEnabledIndex($code);
+                }
+            }
+
+            return;
+        }
+
         if (!$this->productIndex->isIndexManagementEnabled()) {
             return;
         }

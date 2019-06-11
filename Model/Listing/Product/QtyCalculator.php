@@ -37,7 +37,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
-        $this->moduleConfig = $moduleConfig;
+        $this->moduleConfig  = $moduleConfig;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -193,8 +193,15 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
         return $value;
     }
 
+    /**
+     * @param Variation $variation
+     * @return int|mixed
+     * @throws Logic
+     */
     protected function getClearVariationValue(\Ess\M2ePro\Model\Listing\Product\Variation $variation)
     {
+        $value = 0;
+
         if ($this->getMagentoProduct()->isConfigurableType() ||
             $this->getMagentoProduct()->isSimpleTypeWithCustomOptions() ||
             $this->getMagentoProduct()->isGroupedType() ||
@@ -222,7 +229,7 @@ abstract class QtyCalculator extends \Ess\M2ePro\Model\AbstractModel
                 $optionsQtyList[] = floor($optionQty[0]/count($optionQty));
             }
 
-            $value = min($optionsQtyList);
+            !empty($optionsQtyArray) && $value = min($optionsQtyList);
 
         } else {
             throw new Logic('Unknown Product type.',

@@ -87,7 +87,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $data = $this->getHelper('Data\GlobalData')->getValue('search_data');
 
         $collection = $this->customCollectionFactory->create();
-        $collection->setConnection($this->resourceConnection->getConnection());
 
         foreach ($data['data'] as $index => $item) {
             $temp = array(
@@ -119,12 +118,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
 
-        $collection->setCustomSize(count($data['data']));
         $this->setCollection($collection);
 
         parent::_prepareCollection();
-
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }
@@ -219,20 +215,6 @@ HTML;
 
         $id = $row->getId();
         $generalId = $row->getData('general_id');
-        $categoryLinkTitle = $this->getHelper('Data')->escapeHtml('Show Categories');
-        $notFoundText = $this->__('Categories Not Found');
-
-        $value .= <<<HTML
-<div style="margin-left: 3px; margin-bottom: 10px; font-size:10px; line-height: 1.1em">
-    <a href="javascript:void(0)"
-        onclick="ListingGridHandlerObj.productSearchHandler.showAsinCategories(
-            this, {$id}, '{$generalId}', {$this->productId})">
-        {$categoryLinkTitle}
-    </a>
-    <div id="asin_categories_{$id}"></div>
-    <div id="asin_categories_not_found_{$id}" style="display: none; font-style: italic">{$notFoundText}</div>
-</div>
-HTML;
 
         if (!$this->listingProduct->getChildObject()->getVariationManager()->isVariationProduct()
             || $this->listingProduct->getChildObject()->getVariationManager()->isIndividualType()) {

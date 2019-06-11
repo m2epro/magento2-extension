@@ -50,6 +50,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
     abstract protected function callbackFilterPrice($collection, $column);
     abstract protected function callbackFilterOnlineQty($collection, $column);
     abstract protected function callbackFilterStatus($collection, $column);
+    abstract protected function callbackFilterItemId($collection, $column);
 
     //########################################
 
@@ -84,7 +85,8 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\Abs
             'type'      => 'text',
             'index'     => 'item_id',
             'filter_index' => 'item_id',
-            'frame_callback' => array($this, 'callbackColumnEbayItemId')
+            'frame_callback' => array($this, 'callbackColumnEbayItemId'),
+            'filter_condition_callback' => array($this, 'callbackFilterItemId')
         ));
 
         $this->addColumn('online_qty', array(

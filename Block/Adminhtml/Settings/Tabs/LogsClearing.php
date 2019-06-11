@@ -37,7 +37,7 @@ class LogsClearing extends AbstractTab
                     More detailed information about ability to work with this Page you can find
                     <a href="%url%" target="_blank" class="external-link">here</a>.',
                     $this->getHelper('Module\Support')->getDocumentationArticleUrl(
-                        'x/xgEtAQ'
+                        'x/ZQBhAQ'
                     )
                 )
             ]

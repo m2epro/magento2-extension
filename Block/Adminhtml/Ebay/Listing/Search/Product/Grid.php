@@ -289,6 +289,17 @@ HTML;
         }
     }
 
+    protected function callbackFilterItemId($collection, $column)
+    {
+        $cond = $column->getFilter()->getCondition();
+
+        if (empty($cond)) {
+            return;
+        }
+
+        $collection->addFieldToFilter('item_id', $cond);
+    }
+
     //########################################
 
     protected function _setCollectionOrder($column)

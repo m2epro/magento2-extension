@@ -253,10 +253,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($qty <= 0) {
 
 // M2ePro\TRANSLATIONS
-// The Quantity must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Quantity must be greater than 0. Please, check the Price, Quantity and
-                Format Policy and Product Settings.'
+                'The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -305,10 +304,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($regularPrice <= 0) {
 
             // M2ePro\TRANSLATIONS
-            // The Price must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
+            // The Price must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Price must be greater than 0. Please, check the Price, Quantity and
-                Format Policy and Product Settings.'
+                'The Price must be greater than 0. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -342,10 +340,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($businessPrice <= 0) {
 
             // M2ePro_TRANSLATIONS
-            // The Price must be greater than 0. Please, check the Selling Format Policy and Product Settings.
+            // The Business Price must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Business Price must be greater than 0.
-                Please, check the Selling Format Policy and Product Settings.'
+                'The Business Price must be greater than 0. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;

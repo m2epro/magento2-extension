@@ -291,7 +291,6 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "Shipping","Versand"
 "Return","Rücknahme"
 "Selling Settings","Verkaufseinstellungen"
-"Price, Quantity and Format","Preis, Stückzahl und Format"
 "Edit Settings","Einstellungen bearbeiten"
 "Edit Payment and Shipping Settings","Zahlungs- und Versandeinstellungen bearbeiten"
 "Edit Selling Settings","Verkaufseinstellungen bearbeiten"
@@ -524,7 +523,7 @@ Click Start Configure to create a rule<br/> or Cancel if you do not want to do i
 "The product was listed as a simple product as it has limitation for multi-variation items. '.
                     'Reason: eBay primary category allows to list only simple items.","Das Produkt wurde als einfaches Produkt eingestellt, da Artikel mit Varianten für dieses Angebot nicht unterstützt werden. '. 'Grund: In eBay-Hauptkategorie können nur einfache Angebote eingestellt werden."
 "The product was listed as a simple product as it has limitation for multi-variation items. '.
-                    'Reason: ignore variation option is enabled in selling format policy.","Das Produkt wurde als einfaches Produkt eingestellt, da Artikel mit Varianten für dieses Angebot nicht unterstützt werden. '. 'Grund: In den Rahmenbedingungen für das Angebotsformat wurde festgelegt, dass die Varianten-Option ignoriert werden soll."
+                    'Reason: ignore variation option is enabled in selling policy.","Das Produkt wurde als einfaches Produkt eingestellt, da Artikel mit Varianten für dieses Angebot nicht unterstützt werden. '. 'Grund: In den Rahmenbedingungen für das Angebotsformat wurde festgelegt, dass die Varianten-Option ignoriert werden soll."
 "The product was listed as a simple product as it has limitation for multi-variation items. '.
                     'Reason: listing type ""auction"" does not support multi-variations.","Das Produkt wurde als einfaches Produkt eingestellt, da Artikel mit Varianten für dieses Angebot nicht unterstützt werden. '. 'Grund: Der Angebotstyp „Auktion“ unterstützt keine Artikel mit Varianten."
 "Change Images for Attribute","Bilder für Attribut ändern"
@@ -1507,7 +1506,7 @@ you can create them manually by using appropriate options in the Action dropdown
 "Maximum Quantity to Be Listed","Maximal einzustellende Stückzahl"
 "Set a maximum number to sell on eBay, e.g. if you have 10 items in stock but want to keep 2 items back, set a maximum quantity of 8.","Legen Sie fest, wie viele Artikel maximal auf eBay verkauft werden sollen. Wenn Sie beispielsweise 10 Artikel im Bestand haben, davon aber 2 zurückhalten möchten, legen Sie als maximal einzustellende Stückzahl 8 fest."
 "Out Of Stock Control","Nicht mehr vorrätig“-Steuerung"
-"This is useful if you are waiting for additional stock of an item with the same eBay item ID. Instead of ending the listing and then recreating it when the inventory arrives, you can use this flag to hide the listing. Then when you have the item available, automatic or manual Revise will update the inventory and the listing will appear again. 
+"This is useful if you are waiting for additional stock of an item with the same eBay item ID. Instead of ending the listing and then recreating it when the inventory arrives, you can use this flag to hide the listing. Then when you have the item available, automatic or manual Revise will update the inventory and the listing will appear again.
                                 <br/><b>Note:</b> Once you list a product with this option it cannot be changed. To cancel it you should end and list the item again.","Diese Option ist sinnvoll, wenn Sie auf zusätzliche Warenlieferungen für einen Artikel mit derselben eBay-Artikelnummer warten. Statt das Angebot zu beenden und es dann beim Eintreffen der Waren erneut zu erstellen, können Sie es mit dieser Option ausblenden. Wenn der Artikel dann wieder verfügbar ist, wird der Warenbestand durch eine automatische oder manuelle Überarbeitung aktualisiert und das Angebot wird erneut angezeigt.                                 <br/><b>Hinweis:</b> Ein mit dieser Option eingestelltes Produkt kann nicht mehr geändert werden. Wenn Sie Änderungen vornehmen möchten, müssen Sie das Angebot stornieren und den Artikel ganz neu einstellen."
 "Ignore Variations","Varianten ignorieren"
 "Select 'Yes' to list Configurable, Grouped, Bundle and Simple with Custom options products as Simple (without variations).","Wählen Sie „Ja“, wenn Produkte, für die „Konfigurierbar“, „Gruppiert“, „Bündel“ und „Einfach“ mit benutzerdefinierten Optionen festgelegt ist, als „Einfach“ (ohne Varianten) eingestellt werden sollen."
@@ -1709,8 +1708,8 @@ you can create them manually by using appropriate options in the Action dropdown
 "Images","Bilder"
 "Automatically revises the eBay item gallery if there is a change to the gallery (or attribute for gallery) in Magento.","Ändert automatisch die eBay-Artikelgalerie, wenn es bei der Artikelgalerie (oder beim Attribut für die Artikelgalerie) in Magento eine Änderung gibt."
 "Full Revise","Vollständig überarbeiten"
-"Automatically revises the eBay listing if there is a change to the Price, Quantity and Format policy.","Ändert automatisch das eBay-Angebot, wenn es bei den Preis-, Stückzahl- und Format-Rahmenbedingungen eine Änderung gibt."
-"Automatically revises the eBay listing if there is a change to the Description  policy.","Ändert automatisch das eBay-Angebot, wenn es bei den Rahmenbedingungen für die Beschreibung eine Änderung gibt."
+"Automatically revises the eBay listing if there is a change to the Selling policy.","Ändert automatisch das eBay-Angebot, wenn es bei den Verkaufen-Rahmenbedingungen eine Änderung gibt."
+"Automatically revises the eBay listing if there is a change to the Description policy.","Ändert automatisch das eBay-Angebot, wenn es bei den Rahmenbedingungen für die Beschreibung eine Änderung gibt."
 "Category/Specifics","Kategorie/Artikelmerkmale"
 "Automatically revises the eBay listing if there is a change to the category/specifics in its settings.","Ändert automatisch das eBay-Angebot, wenn die Kategorie/Artikelmerkmale in den Einstellungen geändert wird/werden."
 "Automatically revises the eBay listing if there is a change to the Payment policy.","Ändert automatisch das eBay-Angebot, wenn es bei den Rahmenbedingungen für die Zahlung eine Änderung gibt."
@@ -1884,7 +1883,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Are you sure?","Sind Sie sicher?"
 "View Log","Protokoll anzeigen"
 "Clear Log","Protokoll löschen"
-"Edit Selling Format Template","Angebotsformatvorlage bearbeiten"
+"Edit Selling Template","Angebotsformatvorlage bearbeiten"
 "Edit Synchronization Template","Synchronisierungsvorlage bearbeiten"
 "Clear Log(s)","Protokoll(e) löschen"
 "Delete Listing(s)","Angebot(e) löschen"
@@ -1945,7 +1944,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Search%s Listings Items","Artikel von %s-Angeboten suchen"
 "Listings","Angebote"
 "Templates","Vorlagen"
-"Selling Format Templates","Angebotsformatvorlagen"
+"Selling Templates","Angebotsformatvorlagen"
 "Synchronization Templates","Synchronisierungsvorlagen"
 "Continue","Weiter"
 "List Item(s)","Artikel einstellen"
@@ -2008,7 +2007,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "In order to use New ASIN functionality, please re-synchronize marketplace data.","Wenn Sie die Funktion „Neue ASIN“ verwenden möchten, synchronisieren Sie bitte die Marktplatzdaten erneut."
 "Press ""Save And Update"" button after redirect on marketplace page.","Klicken Sie nach der Weiterleitung auf die Marktplatzseite auf „Speichern und aktualisieren“."
 "All variations are already added.","Alle Varianten sind bereits hinzugefügt."
-"Selling Format Template","Angebotsformatvorlage"
+"Selling Template","Angebotsformatvorlage"
 "Synchronization Template","Synchronisierungsvorlage"
 "From Products List","Aus Produktliste"
 "From Categories","Aus Kategorien"
@@ -2080,8 +2079,8 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Select","Auswählen"
 "New ASIN Templates For ""%s"" Marketplace (Beta)","„Neue ASIN“-Vorlagen für Marktplatz „%s“ (Betaversion)"
 "Add New ASIN Template","Neue ASIN-Vorlage hinzufügen"
-"Edit%s Selling Format Template","%s-Angebotsformatvorlage bearbeiten"
-"Add%s Selling Format Template","%s-Angebotsformatvorlage hinzufügen"
+"Edit%s Selling Template","%s-Angebotsformatvorlage bearbeiten"
+"Add%s Selling Template","%s-Angebotsformatvorlage hinzufügen"
 "List Rules","Regeln für das Einstellen"
 "Revise Rules","Regeln für das Überarbeiten"
 "Relist Rules","Regeln für das Wiedereinstellen"
@@ -2222,7 +2221,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Synchronization","Synchronisierung"
 "Run Enabled Now","Aktivierte jetzt ausführen"
 "Save Settings","Einstellungen speichern"
-"Add Selling Format Template","Angebotsformatvorlage hinzufügen"
+"Add Selling Template","Angebotsformatvorlage hinzufügen"
 "Add Synchronization Template","Synchronisierungsvorlage hinzufügen"
 "Development","Entwicklung"
 "Enter","Eingeben"
@@ -2649,7 +2648,7 @@ If all options are enabled, then an item will be stopped if at least one of the 
 "Please try again later.","Bitte versuchen Sie es später noch einmal."
 "Component is not defined.","Die Komponente ist nicht definiert."
 "The item was successfully removed.","Der Artikel wurde entfernt."
-"You must create at least one selling format template first.","Sie müssen zunächst mindestens eine Angebotsformatvorlage erstellen."
+"You must create at least one selling template first.","Sie müssen zunächst mindestens eine Angebotsformatvorlage erstellen."
 "You must create at least one synchronization template first.","Sie müssen zunächst mindestens eine Synchronisierungsvorlage erstellen."
 "Component and Listing Product must be specified.","Komponente und Angebotsprodukt müssen angegeben werden."
 "Component, Listing Product and Variation Data must be specified.","Komponente, Angebotsprodukt und Variantendaten müssen angegeben werden."
@@ -3008,12 +3007,12 @@ You can map these Listings to existing products in Magento and move them to anot
 "Selected Categories","Ausgewählte Kategorien"
 "This section allows you to create a Listing. Listing is a group of items, which have the same
         Attribute Set and were combined to be listed on Amazon.<br/><br/>
-        Creating a Listing requires two types of templates (Selling Format and Synchronization) to be created in advance,
+        Creating a Listing requires two types of templates (Selling and Synchronization) to be created in advance,
         that allows reaching a high level of flexibility in listing and synchronization processes. <br/>
 
         It is also possible to create templates by clicking the <span style=""text-decoration: underline;"">Add New</span> button next to the appropriate template option. Do not forget to press
         the <span style=""text-decoration: underline;"">Refresh</span> button after the new template creation in order to see the newly added template in the dropdown list.<br/>
-        <br/>In the Listing Configuration block you are required to choose appropriate Selling Format Template,
+        <br/>In the Listing Configuration block you are required to choose appropriate Selling Template,
         which determines quantity and price related data of your Amazon Listings.<br/>
 
         <br/>In the Synchronization Settings block you are required to choose a Synchronization Template and its settings.
@@ -3040,7 +3039,7 @@ You can map these Listings to existing products in Magento and move them to anot
                                 Templates youâ€™ll need in order to list on Amazon:
                                 <br/><br/>
                                 <ul style=""margin-left: 15px; list-style: disc"">
-                                    <li><a href=""%s"">Selling Format Template</a> contains information about quantity and price-related data.</li>
+                                    <li><a href=""%s"">Selling Template</a> contains information about quantity and price-related data.</li>
                                     <li><a href=""%s"">Synchronization Template</a> controls how the information between Amazon and Magento is synchronized and in which cases Amazon listings are revised, relisted or stopped.  This template is not bound to a product group with a specific attribute set, so itâ€™s likely that youâ€™ll only need one template to begin with.</li>
                                 </ul>","Das Angebot vereint eine Gruppe von Artikeln, die über dasselbe Attributset verfügen und für das Einstellen bei Amazon zusammengefasst wurden.                                <br/><br/>                                Um ein Angebot erstellen zu können, müssen zuvor zwei Vorlagentypen erstellt werden.<br/>                                Sie können dieselbe Vorlage für ähnliche Produkte, die Sie bei Amazon einstellen möchten, wiederverwenden und müssen so nicht für jedes Produkt immer wieder dieselben Informationen eingeben.                                <br/><br/>                                Vorlagen, die Sie zum Einstellen auf Amazon benötigen:                                <br/><br/>                                <ul style=""margin-left: 15px; list-style: disc"">                                    <li><a href=""%s"">Vorlage für das Angebotsformat</a>: Enthält Informationen zu stückzahl- und preisbezogenen Daten.</li>                                    <li><a href=""%s"">Synchronisierungsvorlage</a>: Steuert, wie die Informationen zwischen Amazon und Magento synchronisiert werden und in welchen Fällen Amazon-Angebote bearbeitet, wiedereingestellt oder angehalten werden. Die Verwendung dieser Vorlage ist nicht auf eine bestimmte Produktgruppe oder ein Attributset beschränkt, sodass Sie fürs Erste mit hoher Wahrscheinlichkeit nur eine Vorlage benötigen werden.</li>                                </ul>"
 "This section contains information about product items of chosen listing and their statuses on Amazon.<br/>
@@ -3243,7 +3242,7 @@ The category either can be chosen by <u>Browsing</u> all categories from the lis
 "Type: Numeric floating point.","Typ: Numerischer Fließkommawert"
 "Decimal places (not more):","Max. Dezimalstellen:"
 "Specifics Configuration","Konfiguration von Merkmalen"
-"Selling Format Template contains price-related data and quantity for the items, which will be listed on Amazon.<br/><br/>
+"Selling Template contains price-related data and quantity for the items, which will be listed on Amazon.<br/><br/>
 Next to each price options dropdown there is a box for Price Change. Price Change is a value you want the Magento Price to be modified while listing on Amazon.<br/><br/>
 <b>Examples:</b><br/>
 If you want the price on Amazon to be greater by 15% than the price in Magento, you should set +15% in the Price Change field.<br/>
@@ -3265,7 +3264,7 @@ If you want the price on Amazon to be multiplied by coefficient 1.2, you should 
 "The price of products in Amazon listing(s).<br/><b>Note:</b> The Final Price is only used for Simple Products.","Der Preis der Produkte in Amazon-Bestellungen.<br/><b>Hinweis:</b> Der Endpreis wird nur für einfache Produkte verwendet."
 "The price, at which you want to sell your product(s)<br/>at specific time.","Der Preis, zu dem Sie Ihre Produkte zu einem<br/>bestimmten Zeitpunkt verkaufen möchten."
 "The price, at which you want to sell your product(s).<br/>at specific time.<br/><b>Note:</b> The Final Price is only used for Simple Products.","Der Preis, zu dem Sie Ihre Produkte zu einem<br/>bestimmten Zeitpunkt verkaufen möchten.<br/><b>Hinweis:</b> Der Endpreis wird nur für einfache Produkte verwendet."
-"Add Selling Format Template.","Angebotsformatvorlage hinzufügen."
+"Add Selling Template.","Angebotsformatvorlage hinzufügen."
 "The specified title is already used for other template. Template title must be unique.","Die eingegebene Bezeichnung wird bereits für eine andere Vorlage verwendet. Die Vorlagenbezeichnung muss einzigartig sein."
 "You should select Attribute Sets first and press Confirm button.","Sie müssen zuerst die Attributdatensätze wählen und dann auf „Bestätigen“ klicken."
 "Coefficient is not valid.","Koeffizient ist nicht gültig."
@@ -3339,7 +3338,7 @@ then Amazon Listings, which were listed using current Synchronization Template,
 will be automatically fully or partially updated.<br/>
     <ul class=""list"">
         <li><b>Partial Revise</b> - contains list of product details, which changes you want to be reflected on Amazon.</li>
-        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Format Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
+        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
     </ul>","Regeln für das Überarbeiten sind die Bedingungen, die erfüllt sein müssen, damit Angebote automatisch ganz oder teilweise bearbeitet werden.<br/>Wenn die jeweilige Bedingung aktiviert ist (also in der entsprechenden Zeile <i>Ja</i> ausgewählt wurde) und das Angebot die Bedingung erfüllt, werden Amazon-Angebote, die mit der aktuellen Synchronisierungsvorlage eingestellt wurden, automatisch vollständig oder teilweise aktualisiert.<br/>    <ul class=""list"">        <li><b>Teilweise überarbeiten</b>: Enthält eine Liste von Produktdetails, mit deren Hilfe Sie festlegen können, welche Änderungen in Amazon übernommen werden sollen.</li>        <li><b>Vollständig überarbeiten</b>: Enthält Gruppen von M2E-Einstellungen. Wenn Daten aus diesen Gruppen (Angebotsformatvorlage, Channel-Einstellungen für das Angebot) geändert werden, werden Angebote, die diese Vorlagen in ihren Einstellungen verwenden, vollständig überarbeitet.</li>    </ul>"
 "Partial Revise","Teilweise überarbeiten"
 "Automatically revises quantity on Amazon listing(s) when the quantity or attribute for quantity of its product is changed in Magento.","Die Stückzahlen von Amazon-Angeboten werden automatisch überarbeitet, wenn die Mengen oder Mengenattribute der verknüpften Produkte in Magento geändert werden."
@@ -3350,7 +3349,7 @@ will be automatically fully or partially updated.<br/>
 "The value should not be too high (i.e. 100). Recommended value is in range 10 - 20.","Der eingestellte Wert sollte nicht zu hoch sein (d. h. beispielsweise nicht 100). Empfohlen wird ein Wert zwischen 10 und 20."
 "Automatically revises price on Amazon listing(s) when the price(s) or attribute(s) for price(s) of its product is (are) changed in Magento.","Die Preise von Amazon-Angeboten werden automatisch überarbeitet, wenn die Preise oder Preisattribute der verknüpften Produkte in Magento geändert werden."
 "Full Revise","Vollständig überarbeiten"
-"Automatically revises Amazon listing(s) if its Selling Format Template was changed.","Amazon-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Angebotsformatvorlage geändert wird."
+"Automatically revises Amazon listing(s) if its Selling Template was changed.","Amazon-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Angebotsformatvorlage geändert wird."
 "Listing Channel Settings","Channel-Einstellungen für das Angebot"
 "Automatically revises Amazon listing(s) if its Listing Settings was changed.","Amazon-Angebote werden automatisch überarbeitet, wenn die zugrundeliegenden Angebotseinstellungen geändert werden."
 "Stop Rules define the conditions when Amazon items listing must be
@@ -3524,12 +3523,12 @@ This section contains parameters for action ""Assign Rakuten.com SKU Automatical
 "Comment Attribute","Kommentarattribut"
 "This section allows you to create a Listing. Listing is a group of items, which have the same
         Attribute Set and were combined to be listed on Rakuten.com.<br/><br/>
-        Creating a Listing requires two types of templates (Selling Format and Synchronization) to be created in advance,
+        Creating a Listing requires two types of templates (Selling and Synchronization) to be created in advance,
         that allows reaching a high level of flexibility in listing and synchronization processes. <br/>
 
         It is also possible to create templates by clicking the <span style=""text-decoration: underline;"">Add New</span> button next to the appropriate template option. Do not forget to press
         the <span style=""text-decoration: underline;"">Refresh</span> button after the new template creation in order to see the newly added template in the dropdown list.<br/>
-        <br/>In the Listing Configuration block you are required to choose appropriate Selling Format Template, which determines quantity and price related data of your Rakuten.com Listings.
+        <br/>In the Listing Configuration block you are required to choose appropriate Selling Template, which determines quantity and price related data of your Rakuten.com Listings.
         <br/>
 
         <br/>In the Synchronization Settings block you are required to choose a Synchronization Template and its settings.
@@ -3545,7 +3544,7 @@ This section contains parameters for action ""Assign Rakuten.com SKU Automatical
                             Templates youâ€™ll need in order to list on Rakuten.com:
                             <br/><br/>
                             <ul style=""margin-left: 15px; list-style: disc"">
-                                <li><a href=""%s"">Selling Format Template</a> contains information about quantity and price-related data.</li>
+                                <li><a href=""%s"">Selling Template</a> contains information about quantity and price-related data.</li>
                                 <li><a href=""%s"">Synchronization Template</a> controls how the information between Rakuten.com and Magento is synchronized and in which cases Rakuten.com listings are revised, relisted or stopped.  This template is not bound to a product group with a specific attribute set, so itâ€™s likely that youâ€™ll only need one template to begin with.</li>
                             </ul>
                             <br/>
@@ -3652,7 +3651,7 @@ The category either can be chosen by <u>Browsing</u> all categories from the lis
                                 <br/>By assigning all 4 T-shirts the same Product Set ID, all of them will be placed on the same<br/>Rakuten.com web page with pull down menu of selecting color.","Rakuten.com fasst anhand dieses Parameters Produkte in einer Familie zusammen.<br/>                                <b>Beispiel</b>: Ein Produkt „T-Shirt“ hat 4 verschiedene Farben. Da Rakuten.com keine<br/>Beziehungen zwischen übergeordneten und untergeordneten Produkten kennt, wird jedes dieser Produkte als vollkommen separates Produkt behandelt.                                <br/>Wenn Sie allen 4 T-Shirts dieselbe Produktset-ID zuweisen, werden diese alle auf derselben<br/>Rakuten.com-Webseite mit einem Pull-down-Menü platziert, in dem die Farbe auswählbar ist."
 "Enter the words, which describe the best your product and click on the Search button.<br/>
 Founded categories will be displayed for selection. ","Geben Sie eine passende Beschreibung für Ihr Produkt ein und klicken Sie auf „Suchen“.<br/>Die gefundenen Kategorien werden angezeigt und sind auswählbar. "
-"Selling Format Template contains price-related data and quantity for the items, which will be listed on Rakuten.com.<br/><br/>
+"Selling Template contains price-related data and quantity for the items, which will be listed on Rakuten.com.<br/><br/>
 Next to each price options dropdown there is a box for Price Change. Price Change is a value you want the Magento Price to be modified while listing on Rakuten.com.<br/><br/>
 <b>Examples:</b><br/>
 If you want the price on Rakuten.com to be greater by 15% than the price in Magento, you should set +15% in the Price Change field.<br/>
@@ -3690,13 +3689,13 @@ then Rakuten.com Listings, which were listed using current Synchronization Templ
 will be automatically fully or partially updated.<br/>
     <ul class=""list"">
         <li><b>Partial Revise</b> - contains list of product details, which changes you want to be reflected on Rakuten.com.</li>
-        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Format Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
+        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
     </ul>","Regeln für das Überarbeiten sind die Bedingungen, die erfüllt sein müssen, damit Angebote automatisch ganz oder teilweise bearbeitet werden.<br/>Wenn die jeweilige Bedingung aktiviert ist (also in der entsprechenden Zeile <i>Ja</i> ausgewählt wurde) und das Angebot die Bedingung erfüllt, werden Rakuten.com-Angebote, die mit der aktuellen Synchronisierungsvorlage eingestellt wurden, automatisch vollständig oder teilweise aktualisiert.<br/>    <ul class=""list"">        <li><b>Teilweise überarbeiten</b>: Enthält eine Liste von Produktdetails, mit deren Hilfe Sie festlegen können, welche Änderungen in Rakuten.com übernommen werden sollen.</li>        <li><b>Vollständig überarbeiten</b>: Enthält Gruppen von M2E-Einstellungen. Wenn Daten aus diesen Gruppen (Angebotsformatvorlage, Channel-Einstellungen für das Angebot) geändert werden, werden Angebote, die diese Vorlagen in ihren Einstellungen verwenden, vollständig überarbeitet.</li>    </ul>"
 "Automatically revises quantity on Rakuten.com listing(s) when the quantity or attribute for quantity of its product is changed in Magento.","Die Stückzahlen von Rakuten.com-Angeboten werden automatisch überarbeitet, wenn die Mengen oder Mengenattribute der verknüpften Produkte in Magento geändert werden."
 "Updates Rakuten.com qty only when the Condition you set below is met.
                             <br/><b>Note:</b> By using this option you can significantly increase Synchronization performance.","Aktualisiert die Stückzahl bei Rakuten.com, wenn die von Ihnen nachstehend festgelegte Bedingung erfüllt ist.                            <br/><b>Hinweis:</b> Wenn Sie diese Option verwenden, können Sie die Synchronisierungsleistung erheblich steigern."
 "Automatically revises price on Rakuten.com listing(s) when the price(s) or attribute(s) for price(s) of its product is (are) changed in Magento.","Die Preise von Rakuten.com-Angeboten werden automatisch überarbeitet, wenn die Preise oder Preisattribute der verknüpften Produkte in Magento geändert werden."
-"Automatically revises Rakuten.com listing(s) if its Selling Format Template was changed.","Rakuten.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Angebotsformatvorlage geändert wird."
+"Automatically revises Rakuten.com listing(s) if its Selling Template was changed.","Rakuten.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Angebotsformatvorlage geändert wird."
 "Automatically revises Rakuten.com listing(s) if its Listing Settings was changed.","Rakuten.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegenden Angebotseinstellungen geändert werden."
 "Stop Rules define the conditions when Rakuten.com items listing must be
     stopped, depending on Magento product state.<br/><br/>
@@ -3892,12 +3891,12 @@ This section contains parameters for action ""Assign Play ID Automatically","Der
 "Short description of item(s) condition.","Eine kurze Beschreibung des Artikelzustands."
 "This section allows you to create a Listing. Listing is a group of items, which have the same
         Attribute Set and were combined to be listed on Play.com.<br/><br/>
-        Creating a Listing requires two types of templates (Selling Format and Synchronization) to be created in advance,
+        Creating a Listing requires two types of templates (Selling and Synchronization) to be created in advance,
         that allows reaching a high level of flexibility in listing and synchronization processes. <br/>
 
         It is also possible to create templates by clicking the <span style=""text-decoration: underline;"">Add New</span> button next to the appropriate template option. Do not forget to press
         the <span style=""text-decoration: underline;"">Refresh</span> button after the new template creation in order to see the newly added template in the dropdown list.<br/>
-        <br/>In the Listing Configuration block you are required to choose appropriate Selling Format Template, which determines quantity and price related data of your Play.com Listings.
+        <br/>In the Listing Configuration block you are required to choose appropriate Selling Template, which determines quantity and price related data of your Play.com Listings.
         <br/>
 
         <br/>In the Synchronization Settings block you are required to choose a Synchronization Template and its settings.
@@ -3913,7 +3912,7 @@ This section contains parameters for action ""Assign Play ID Automatically","Der
                             Templates youâ€™ll need in order to list on Play.com:
                             <br/><br/>
                             <ul style=""margin-left: 15px; list-style: disc"">
-                                <li><a href=""%s"">Selling Format Template</a> contains information about quantity and price-related data.</li>
+                                <li><a href=""%s"">Selling Template</a> contains information about quantity and price-related data.</li>
                                 <li><a href=""%s"">Synchronization Template</a> controls how the information between Play.com and Magento is synchronized and in which cases Play.com listings are revised, relisted or stopped.  This template is not bound to a product group with a specific attribute set, so it's likely that you'll only need one template to begin with.</li>
                             </ul>
                             <br/>
@@ -3937,7 +3936,7 @@ you can create them manually by using appropriate options in the Action dropdown
         ","Wenn Ihre Play.com-Angebote aus irgendeinem Grund nicht mehr mit den Produkten in Magento synchron sind, <a href=""javascript:"" onclick=""%s"">aktivieren</a> Sie die Aktion „Alle überarbeiten“, um die Daten zu synchronisieren.        <br/>Die Überarbeitung erfolgt durch die Funktion „Warenbestand synchronisieren“, wobei jeweils 100 Artikel auf einmal überarbeitet werden.    <br/><br/>        "
 "Imports and synchronizes Play.com Orders for accounts,<br/>which have enabled Import Play.com Orders in their<br/>Accounts settings.","Importiert und synchronisiert Play.com-Bestellungen für Konten,<br/>für die in den Kontoeinstellungen „Play.com-Bestellungen importieren“<br/>aktiviert ist."
 "Imports and synchronizes 3rd Party Listings for Play.com<br/>accounts, which have enabled Import 3rd Party Listings<br/>in their Accounts settings.","Importiert und synchronisiert Angebote von Drittanbietern für Play.com-Konten,<br/>für die in den Kontoeinstellungen „Angebote von Drittanbietern importieren“<br/>aktiviert ist."
-"Selling Format Template contains price-related data and quantity for the items, which will be listed on Play.com.<br/><br/>
+"Selling Template contains price-related data and quantity for the items, which will be listed on Play.com.<br/><br/>
 Next to each price options dropdown there is a box for Price Change. Price Change is a value you want the Magento Price to be modified while listing on Play.com.<br/><br/>
 <b>Examples:</b><br/>
 If you want the price on Play.com to be greater by 15% than the price in Magento, you should set +15% in the Price Change field.<br/>
@@ -3982,13 +3981,13 @@ then Play.com Listings, which were listed using current Synchronization Template
 will be automatically fully or partially updated.<br/>
     <ul class=""list"">
         <li><b>Partial Revise</b> - contains list of product details, which changes you want to be reflected on Play.com.</li>
-        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Format Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
+        <li><b>Full Revise</b> - contains groups of M2E settings. If any data of these groups (Selling Template, Listing Channel Settings) is changed, then listings, which use these templates in their settings, will be automatically fully revised.</li>
     </ul>","Regeln für das Überarbeiten sind die Bedingungen, die erfüllt sein müssen, damit Angebote automatisch ganz oder teilweise bearbeitet werden.<br/>Wenn die jeweilige Bedingung aktiviert ist (also in der entsprechenden Zeile <i>Ja</i> ausgewählt wurde) und das Angebot die Bedingung erfüllt, werden Play.com-Angebote, die mit der aktuellen Synchronisierungsvorlage eingestellt wurden, automatisch vollständig oder teilweise aktualisiert.<br/>    <ul class=""list"">        <li><b>Teilweise überarbeiten</b>: Enthält eine Liste von Produktdetails, mit deren Hilfe Sie festlegen können, welche Änderungen in Play.com übernommen werden sollen.</li>        <li><b>Vollständig überarbeiten</b>: Enthält Gruppen von M2E-Einstellungen. Wenn Daten aus diesen Gruppen (Angebotsformatvorlage, Channel-Einstellungen für das Angebot) geändert werden, werden Angebote, die diese Vorlagen in ihren Einstellungen verwenden, vollständig überarbeitet.</li>    </ul>"
 "Automatically revises quantity on Play.com listing(s) when the quantity or attribute for quantity of its product is changed in Magento.","Die Stückzahlen von Play.com-Angeboten werden automatisch überarbeitet, wenn die Mengen oder Mengenattribute der verknüpften Produkte in Magento geändert werden."
 "Updates Play.com qty only when the Condition you set below is met.
                             <br/><b>Note:</b> By using this option you can significantly increase Synchronization performance.","Aktualisiert die Stückzahl bei Play.com, wenn die von Ihnen nachstehend festgelegte Bedingung erfüllt ist.                            <br/><b>Hinweis:</b> Wenn Sie diese Option verwenden, können Sie die Synchronisierungsleistung erheblich steigern."
 "Automatically revises price on Play.com listing(s) when the price(s) or attribute(s) for price(s) of its product is (are) changed in Magento.","Die Preise von Play.com-Angeboten werden automatisch überarbeitet, wenn die Preise oder Preisattribute der verknüpften Produkte in Magento geändert werden."
-"Automatically revises Play.com listing(s) if its Selling Format Template was changed.","Play.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Vorlage für das Angebotsformat geändert wird."
+"Automatically revises Play.com listing(s) if its Selling Template was changed.","Play.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegende Vorlage für das Angebotsformat geändert wird."
 "Automatically revises Play.com listing(s) if its Listing Settings was changed.","Play.com-Angebote werden automatisch überarbeitet, wenn die zugrundeliegenden Angebotseinstellungen geändert werden."
 "Stop Rules define the conditions when Play.com items listing must be
     stopped, depending on Magento product state.<br/><br/>
@@ -4327,8 +4326,8 @@ will be automatically fully or partially updated.<br/>
                 <td>Your returns window and who pays postage</td>
             </tr>
             <tr>
-                <td>Selling Format</td>
-                <td>Price, Quantity and Format</td>
+                <td>Selling</td>
+                <td>Selling</td>
                 <td>Detailed information including price, quantity and listing duration</td>
             </tr>
             <tr>
@@ -4342,7 +4341,7 @@ will be automatically fully or partially updated.<br/>
                 <td>Settings for autosynchronization between Magento and eBay</td>
             </tr>
             </table>
-                ","Alle Vorlagen sind jetzt Rahmenbedingungen. Diese können Sie verwenden, um beim Einstellen von Magento-Produkten bei eBay alle notwendigen Einstellungen festzulegen.            <br/><br/>Die Vorlagen wurden umbenannt:            <br/>             <table>            <thead>                    <td width=""200""><b>Bisheriger Name:</b></td>                    <td width=""200""><b>Neuer Name der Rahmenbedingung:</b></td>                    <td width=""250""><b>Wofür gilt diese Preisaktion:</b></td>            </thead>            <tr>                <td>Allgemeines</td>                <td>Zahlung</td>                <td>Hier können Sie angeben, wie Sie Ihr Geld von den Käufern erhalten möchten</td>            </tr>            <tr>                <td>Allgemeines</td>                <td>Versand</td>                <td>Ihre Versandkosten und -services</td>            </tr>             <tr>                <td>Allgemeines</td>                <td>Rücknahmen</td>                <td>Ihr Zeitfenster für Rücknahmen und Angaben dazu, wer die Versandkosten trägt</td>            </tr>            <tr>                <td>Angebotsformat</td>                <td>Preis, Stückzahl und Format</td>                <td>Ausführliche Informationen, darunter Preis, Stückzahl und Angebotsdauer</td>            </tr>            <tr>                <td>Beschreibung, Zusatzoptionen, Produktdetails und Artikelzustand</td>                <td>Beschreibung</td>                <td>Einstellungen zur Unterstützung bei der korrekten Beschreibung Ihrer Artikel</td>            </tr>            <tr>                <td>Synchronisierung</td>                <td>Synchronisierung</td>                <td>Einstellungen für die automatische Synchronisierung zwischen Magento und eBay</td>            </tr>            </table>                "
+                ","Alle Vorlagen sind jetzt Rahmenbedingungen. Diese können Sie verwenden, um beim Einstellen von Magento-Produkten bei eBay alle notwendigen Einstellungen festzulegen.            <br/><br/>Die Vorlagen wurden umbenannt:            <br/>             <table>            <thead>                    <td width=""200""><b>Bisheriger Name:</b></td>                    <td width=""200""><b>Neuer Name der Rahmenbedingung:</b></td>                    <td width=""250""><b>Wofür gilt diese Preisaktion:</b></td>            </thead>            <tr>                <td>Allgemeines</td>                <td>Zahlung</td>                <td>Hier können Sie angeben, wie Sie Ihr Geld von den Käufern erhalten möchten</td>            </tr>            <tr>                <td>Allgemeines</td>                <td>Versand</td>                <td>Ihre Versandkosten und -services</td>            </tr>             <tr>                <td>Allgemeines</td>                <td>Rücknahmen</td>                <td>Ihr Zeitfenster für Rücknahmen und Angaben dazu, wer die Versandkosten trägt</td>            </tr>            <tr>                <td>Angebotsformat</td>                <td>Verkaufen</td>                <td>Ausführliche Informationen, darunter Preis, Stückzahl und Angebotsdauer</td>            </tr>            <tr>                <td>Beschreibung, Zusatzoptionen, Produktdetails und Artikelzustand</td>                <td>Beschreibung</td>                <td>Einstellungen zur Unterstützung bei der korrekten Beschreibung Ihrer Artikel</td>            </tr>            <tr>                <td>Synchronisierung</td>                <td>Synchronisierung</td>                <td>Einstellungen für die automatische Synchronisierung zwischen Magento und eBay</td>            </tr>            </table>                "
 "2) Easier to create new listings","2) Das Erstellen neuer Angebote wurde vereinfacht"
 "Itâ€™s now quicker and easier to create eBay listings. You can set up a single listing from scratch using custom setting mode or use previously saved information. You can also edit listings individually or in bulk with details in your listing settings*, policies and custom settings.
             <br/>
@@ -4396,8 +4395,8 @@ will be automatically fully or partially updated.<br/>
 "You have no notifications of Migration!","Sie haben keine Migrations-Benachrichtigungen!"
 "eBay accounts have been renamed","eBay-Konten wurden umbenannt"
 "eBay Condition has been changed in the next Description Templates","„eBay-Zustand“ wurde in den nächsten Beschreibungsvorlagen geändert"
-"Ignore variation option has been moved from eBay General template to the Selling Format policy and set to default 'No'.
-    <br/>&nbsp;&nbsp;&nbsp;&nbsp;Below you can find the listings that used 'Yes' in this option. Please, check their the Selling Format settings to make sure the option has the value you need.
+"Ignore variation option has been moved from eBay General template to the Selling policy and set to default 'No'.
+    <br/>&nbsp;&nbsp;&nbsp;&nbsp;Below you can find the listings that used 'Yes' in this option. Please, check their the Selling settings to make sure the option has the value you need.
     ","Die Option „Varianten ignorieren“ wurde von der eBay-Vorlage „Allgemeines“ in die „Angebotsformat“-Rahmenbedingungen verschoben und standardmäßig auf „Nein“ festgelegt.    <br/>&nbsp;&nbsp;&nbsp;&nbsp;Im Folgenden sind die Angebote aufgeführt, bei denen die Einstellung für diese Option „Ja“ lautet. Bitte überprüfen Sie die „Angebotsformat“-Einstellungen und stellen Sie so sicher, dass die Option den erforderlichen Wert hat.    "
 "'Products Presented in Other listings' option has been removed from the listing settings.
     <br/>&nbsp;&nbsp;&nbsp;&nbsp;Instead of it you can use Advanced Filter on the Add products page.
@@ -4429,8 +4428,8 @@ will be automatically fully or partially updated.<br/>
 "Price Euro Coefficient","Koeffizient Preis Euro"
 "Price GBR Coefficient","Koeffizient Preis GBR"
 "Invalid coefficient format.","Koeffizient hat ungültiges Format."
-"Selling Format Currency Conversion","Währungsumrechnung Angebotsformat"
-"In the table below you can see Selling Format templates, which prices will be converted.
+"Selling Currency Conversion","Währungsumrechnung Angebotsformat"
+"In the table below you can see Selling templates, which prices will be converted.
         <br/>The currency rate you can check in <a href=""%s"" target=""_blank"">Manage currency rate</a> settings. If you need to correct the prices, use coefficients.
         ","In der Tabelle unten werden die Vorlagen für das Angebotsformat angezeigt und welche Preise umgerechnet werden.        <br/>Welcher Wechselkurs verwendet wird, können Sie in den Einstellungen unter <a href=""%s"" target=""_blank"">Wechselkurse verwalten</a> überprüfen. Wenn Sie die Preise korrigieren müssen, verwenden Sie Koeffizienten.        "
 "You have successfully upgraded to <strong>M2E Pro v. %s</strong>.<br/>

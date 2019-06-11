@@ -10,7 +10,11 @@ namespace Ess\M2ePro\Model\Ebay\Synchronization\Orders;
 
 class Receive extends AbstractModel
 {
+    /** @var \Ess\M2ePro\Model\Ebay\Order\BuilderFactory  */
     protected $orderBuilderFactory;
+
+    /** @var int|float */
+    protected $percentForOneAccount;
 
     //########################################
 
@@ -72,51 +76,13 @@ class Receive extends AbstractModel
         }
 
         $iteration = 1;
-        $percentsForOneAcc = $this->getPercentsInterval() / count($permittedAccounts);
+        $this->countPercentsForOneAccount($permittedAccounts);
 
         foreach ($permittedAccounts as $account) {
             /** @var $account \Ess\M2ePro\Model\Account **/
 
-            $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
-            $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$account->getId(),'Get Orders from eBay');
-
-            // M2ePro\TRANSLATIONS
-            // The "Receive" Action for eBay Account "%account_title%" is in data receiving state...
-            $status = 'The "Receive" Action for eBay Account "%account_title%" is in data receiving state...';
-            $this->getActualLockItem()->setStatus(
-                $this->getHelper('Module\Translation')->__($status, $account->getTitle())
-            );
-            // ---------------------------------------
-
             try {
-
-                $ebayOrders = $this->processEbayOrders($account);
-
-                $this->getActualLockItem()->setPercents(
-                    $this->getPercentsStart() + $iteration * $percentsForOneAcc * 0.3
-                );
-
-                $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
-                $this->getActualOperationHistory()->addTimePoint(
-                    __METHOD__.'create_magento_orders'.$account->getId(),
-                    'Create Magento Orders'
-                );
-
-                // M2ePro_TRANSLATIONS
-                // The "Receive" Action for eBay Account "%account_title%" is in Order Creation state...
-                $status = 'The "Receive" Action for eBay Account "%account_title%" is in Order Creation state...';
-                $this->getActualLockItem()->setStatus(
-                    $this->getHelper('Module\Translation')->__($status, $account->getTitle())
-                );
-                // ---------------------------------------
-
-                if (count($ebayOrders) > 0) {
-                    $percentsForOneOrder = (int)(($this->getPercentsStart() + $iteration * $percentsForOneAcc * 0.7)
-                        / count($ebayOrders));
-
-                    $this->createMagentoOrders($ebayOrders, $percentsForOneOrder);
-                }
-
+                $this->processAccount($account, $iteration);
             } catch (\Exception $exception) {
 
                 $message = $this->getHelper('Module\Translation')->__(
@@ -128,13 +94,7 @@ class Receive extends AbstractModel
                 $this->processTaskException($exception);
             }
 
-            // ---------------------------------------
-            $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'create_magento_orders'.$account->getId());
-
-            $this->getActualLockItem()->setPercents($this->getPercentsStart() + $iteration * $percentsForOneAcc);
-            $this->getActualLockItem()->activate();
-            // ---------------------------------------
-
+            $this->activateAfterAccountProcessed($account, $iteration);
             $iteration++;
         }
     }
@@ -147,54 +107,133 @@ class Receive extends AbstractModel
         return $accountsCollection->getItems();
     }
 
-    // ---------------------------------------
-
-    private function processEbayOrders($account)
+    private function countPercentsForOneAccount(array $permittedAccounts)
     {
-        /** @var \Ess\M2ePro\Model\Account $account */
+        $this->percentForOneAccount = $this->getPercentsInterval() / count($permittedAccounts);
+    }
 
-        $fromTime = $this->prepareFromTime($account);
-        $toTime   = $this->prepareToTime();
+    //########################################
 
-        if (strtotime($fromTime) >= strtotime($toTime)) {
-            $fromTime = new \DateTime($toTime);
-            $fromTime->modify('- 5 minutes');
+    private function processAccount(\Ess\M2ePro\Model\Account $account, $iteration)
+    {
+        $this->setDataReceivingState($account);
 
-            $fromTime = \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($fromTime);
+        $ebayData = $this->receiveEbayOrdersData($account);
+
+        if (empty($ebayData['items'])) {
+            return;
         }
 
-        $params = array(
-            'from_update_date' => $fromTime,
-            'to_update_date'=> $toTime
+        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
+        $ebayAccount = $account->getChildObject();
+        $this->getActualLockItem()->activate();
+        $this->updateJobToken($ebayAccount, $ebayData);
+
+        $processedEbayOrders = $this->processEbayOrders($account, $ebayData['items']);
+
+        $this->setOrderCreationState($account, $iteration);
+
+        if (count($processedEbayOrders) > 0) {
+            $percentsForOneOrder = (int)(($this->getPercentsStart() + $iteration * $this->percentForOneAccount * 0.7)
+                / count($processedEbayOrders));
+
+            $this->createMagentoOrders($processedEbayOrders, $percentsForOneOrder);
+        }
+
+        $ebayAccount->setData('orders_last_synchronization', $ebayData['to_update_date']);
+        $ebayAccount->save();
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return array
+     */
+    private function receiveEbayOrdersData(\Ess\M2ePro\Model\Account $account)
+    {
+        $params = $this->prepareConnectorParams($account);
+
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Dispatcher $dispatcherObj */
+        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
+        /** @var \Ess\M2ePro\Model\Ebay\Connector\Order\Receive\Items $connectorObj */
+        $connectorObj = $dispatcherObj->getCustomConnector(
+            'Ebay\Connector\Order\Receive\Items', $params, NULL, $account
         );
+
+        $dispatcherObj->process($connectorObj);
+        $responseData = $connectorObj->getResponseData();
+
+        $this->processResponseMessages($connectorObj->getResponseMessages());
+
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
+
+        if (!isset($responseData['items']) || !isset($responseData['to_update_date'])) {
+            $logData = array(
+                'params'            => $params,
+                'account_id'        => $account->getId(),
+                'response_data'     => $responseData,
+                'response_messages' => $connectorObj->getResponseMessages()
+            );
+            $this->getHelper('Module\Logger')->process($logData, 'eBay orders receive task - empty response');
+
+            return [];
+        }
+
+        return $responseData;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @return array
+     */
+    private function prepareConnectorParams(\Ess\M2ePro\Model\Account $account)
+    {
+        $toTime   = $this->prepareToTime();
+        $fromTime = $this->prepareFromTime($account, $toTime);
+
+        $params = [
+            'from_update_date' => $this->getHelper('Component\Ebay')->timeToString($fromTime),
+            'to_update_date'   => $this->getHelper('Component\Ebay')->timeToString($toTime)
+        ];
 
         $jobToken = $account->getChildObject()->getData('job_token');
         if (!empty($jobToken)) {
             $params['job_token'] = $jobToken;
         }
 
-        /** @var \Ess\M2ePro\Model\Connector\Command\RealTime $connectorObj */
-        $dispatcherObj = $this->modelFactory->getObject('Ebay\Connector\Dispatcher');
-        $connectorObj = $dispatcherObj->getCustomConnector(
-            'Ebay\Connector\Order\Receive\Items', $params, NULL, $account
-        );
+        return $params;
+    }
 
-        $dispatcherObj->process($connectorObj);
-        $response = $connectorObj->getResponseData();
-
-        $this->processResponseMessages($connectorObj->getResponseMessages());
-
-        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
-
-        if (!isset($response['items']) || !isset($response['to_update_date'])) {
-            return array();
+    /**
+     * @param \Ess\M2ePro\Model\Ebay\Account $ebayAccount
+     * @param array $ebayData
+     */
+    private function updateJobToken(\Ess\M2ePro\Model\Ebay\Account $ebayAccount, array $ebayData)
+    {
+        if (!empty($ebayData['job_token'])) {
+            $ebayAccount->setData('job_token', $ebayData['job_token']);
+        } else {
+            $ebayAccount->setData('job_token', NULL);
         }
 
+        $ebayAccount->save();
+    }
+
+    // ---------------------------------------
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param array $ordersData
+     * @return \Ess\M2ePro\Model\Order[]
+     */
+    private function processEbayOrders(\Ess\M2ePro\Model\Account $account, array $ordersData)
+    {
         $accountCreateDate = new \DateTime($account->getData('create_date'), new \DateTimeZone('UTC'));
 
         $orders = array();
 
-        foreach ($response['items'] as $ebayOrderData) {
+        foreach ($ordersData as $ebayOrderData) {
 
             $orderCreateDate = new \DateTime($ebayOrderData['purchase_create_date'], new \DateTimeZone('UTC'));
             if ($orderCreateDate < $accountCreateDate) {
@@ -211,18 +250,6 @@ class Receive extends AbstractModel
                 continue;
             }
         }
-
-        /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
-        $ebayAccount = $account->getChildObject();
-
-        if (!empty($response['job_token'])) {
-            $ebayAccount->setData('job_token', $response['job_token']);
-        } else {
-            $ebayAccount->setData('job_token', NULL);
-        }
-
-        $ebayAccount->setData('orders_last_synchronization', $response['to_update_date']);
-        $ebayAccount->save();
 
         return array_filter($orders);
     }
@@ -289,8 +316,8 @@ class Receive extends AbstractModel
             if ($order->getChildObject()->canCreateInvoice()) {
                 $order->createInvoice();
             }
-            if ($order->getChildObject()->canCreateShipment()) {
-                $order->createShipment();
+            if ($order->getChildObject()->canCreateShipments()) {
+                $order->createShipments();
             }
             if ($order->getChildObject()->canCreateTracks()) {
                 $order->getChildObject()->createTracks();
@@ -324,49 +351,111 @@ class Receive extends AbstractModel
 
     //########################################
 
-    private function prepareFromTime(\Ess\M2ePro\Model\Account $account)
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param \DateTime $toTime
+     * @return \DateTime
+     */
+    private function prepareFromTime(\Ess\M2ePro\Model\Account $account, \DateTime $toTime)
     {
         $lastSynchronizationDate = $account->getChildObject()->getData('orders_last_synchronization');
 
         if (is_null($lastSynchronizationDate)) {
             $sinceTime = new \DateTime('now', new \DateTimeZone('UTC'));
-            $sinceTime =\Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($sinceTime);
+        } else {
+            $sinceTime = new \DateTime($lastSynchronizationDate, new \DateTimeZone('UTC'));
 
-            /** @var \Ess\M2ePro\Model\Ebay\Account $ebayAccount */
-            $ebayAccount = $account->getChildObject();
-            $ebayAccount->setData('orders_last_synchronization', $sinceTime)->save();
+            // Get min date for synch
+            // ---------------------------------------
+            $minDate = new \DateTime('now', new \DateTimeZone('UTC'));
+            $minDate->modify('-90 days');
+            // ---------------------------------------
 
-            return $sinceTime;
-        }
-
-        $sinceTime = new \DateTime($lastSynchronizationDate, new \DateTimeZone('UTC'));
-
-        // Get min date for synch
-        // ---------------------------------------
-        $minDate = new \DateTime('now',new \DateTimeZone('UTC'));
-        $minDate->modify('-90 days');
-        // ---------------------------------------
-
-        // Prepare last date
-        // ---------------------------------------
-        if ((int)$sinceTime->format('U') < (int)$minDate->format('U')) {
-            $sinceTime = $minDate;
+            // Prepare last date
+            // ---------------------------------------
+            if ((int)$sinceTime->format('U') < (int)$minDate->format('U')) {
+                $sinceTime = $minDate;
+            }
         }
         // ---------------------------------------
 
-        return \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($sinceTime);
+        if ($sinceTime->getTimestamp() >= $toTime->getTimestamp()) {
+            $sinceTime = clone $toTime;
+            $sinceTime->modify('- 5 minutes');
+        }
+
+        return $sinceTime;
     }
 
+    /**
+     * @return \DateTime
+     */
     private function prepareToTime()
     {
         $operationHistory = $this->getActualOperationHistory()->getParentObject('synchronization');
+
         if (!is_null($operationHistory)) {
-            $toTime = $operationHistory->getData('start_date');
+            $synchStartDate = $operationHistory->getData('start_date');
+            $toTime         = new \DateTime($synchStartDate, new \DateTimeZone('UTC'));
         } else {
-            $toTime = new \DateTime('now', new \DateTimeZone('UTC'));
+            $toTime         = new \DateTime('now', new \DateTimeZone('UTC'));
         }
 
-        return \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString($toTime);
+        return $toTime;
+    }
+
+    //########################################
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param int $iteration
+     */
+    private function setOrderCreationState(\Ess\M2ePro\Model\Account $account, $iteration)
+    {
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'get'.$account->getId());
+        $this->getActualOperationHistory()->addTimePoint(
+            __METHOD__.'create_magento_orders'.$account->getId(),
+            'Create Magento Orders'
+        );
+
+        // M2ePro_TRANSLATIONS
+        // The "Receive" Action for eBay Account "%account_title%" is in Order Creation state...
+        $status = 'The "Receive" Action for eBay Account "%account_title%" is in Order Creation state...';
+        $this->getActualLockItem()->setStatus(
+            $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+        );
+
+        $this->getActualLockItem()->setPercents(
+            $this->getPercentsStart() + $iteration * $this->percentForOneAccount * 0.3
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     */
+    private function setDataReceivingState(\Ess\M2ePro\Model\Account $account)
+    {
+        $this->getActualOperationHistory()->addText('Starting Account "'.$account->getTitle().'"');
+        $this->getActualOperationHistory()->addTimePoint(__METHOD__.'get'.$account->getId(),'Get Orders from eBay');
+
+        // M2ePro\TRANSLATIONS
+        // The "Receive" Action for eBay Account "%account_title%" is in data receiving state...
+        $status = 'The "Receive" Action for eBay Account "%account_title%" is in data receiving state...';
+        $this->getActualLockItem()->setStatus(
+            $this->getHelper('Module\Translation')->__($status, $account->getTitle())
+        );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Account $account
+     * @param int $iteration
+     */
+    private function activateAfterAccountProcessed(\Ess\M2ePro\Model\Account $account, $iteration)
+    {
+        $this->getActualOperationHistory()->saveTimePoint(__METHOD__.'create_magento_orders'.$account->getId());
+
+        $this->getActualLockItem()->setPercents($this->getPercentsStart() + $iteration * $this->percentForOneAccount);
+        $this->getActualLockItem()->activate();
     }
 
     //########################################

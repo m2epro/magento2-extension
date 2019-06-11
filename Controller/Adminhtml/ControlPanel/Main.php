@@ -48,7 +48,6 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
             !$request->isXmlHttpRequest()) {
 
             $this->addDevelopmentNotification();
-            $this->addMaintenanceNotification();
         }
 
         return true;
@@ -71,17 +70,6 @@ abstract class Main extends \Ess\M2ePro\Controller\Adminhtml\Base
         $msg->setText(implode(', ', $enabledMods).' Development Mode is Enabled.');
 
         $this->getMessageManager()->addUniqueMessages([$msg]);
-
-        return true;
-    }
-
-    private function addMaintenanceNotification()
-    {
-        if (!$this->getHelper('Module\Maintenance\Debug')->isEnabled()) {
-            return false;
-        }
-
-        $this->getMessageManager()->addWarning('Maintenance is Active now.');
 
         return true;
     }

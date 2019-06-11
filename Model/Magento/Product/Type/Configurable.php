@@ -33,7 +33,8 @@ class Configurable extends \Magento\ConfigurableProduct\Model\Product\Type\Confi
 
     public function cleanProductCache($product)
     {
-        $cache = \Magento\Framework\App\ObjectManager::getInstance()->get(\Magento\Framework\App\Cache\Type\Collection::class);
+        $cache = \Magento\Framework\App\ObjectManager::getInstance()
+                                                     ->get(\Magento\Framework\App\Cache\Type\Collection::class);
         $cache->clean(\Zend_Cache::CLEANING_MODE_MATCHING_TAG, [self::TYPE_CODE . '_' . $product->getId()]);
     }
 

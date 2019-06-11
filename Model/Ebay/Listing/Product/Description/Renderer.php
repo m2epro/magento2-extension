@@ -20,15 +20,20 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     protected $resourceConnection;
 
+    /** @var \Magento\Framework\Pricing\Helper\Data $priceHelper */
+    protected $priceHelper;
+
     //########################################
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
+        \Magento\Framework\Pricing\Helper\Data $priceHelper,
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory
     )
     {
         $this->resourceConnection = $resourceConnection;
+        $this->priceHelper = $priceHelper;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -72,6 +77,10 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @param string $text
+     * @return string
+     */
     protected function insertValues($text)
     {
         preg_match_all("/#value\[(.+?)\]#/", $text, $matches);
@@ -90,7 +99,15 @@ class Renderer extends \Ess\M2ePro\Model\AbstractModel
                 $method = str_replace('['.$arg.']','',$method);
             }
 
-            method_exists($this,$method) && $replaces[$matches[0][$i]] = $this->$method($arg);
+            $value = '';
+            method_exists($this,$method) && $value = $this->$method($arg);
+
+            if (in_array($attributeCode, array('fixed_price', 'start_price', 'reserve_price', 'buyitnow_price'))) {
+                $value = round($value, 2);
+                $value = $this->priceHelper->currency($value, true, false);
+            }
+
+            ($value !== '') && $replaces[$matches[0][$i]] = $value;
         }
 
         $text = str_replace(array_keys($replaces), array_values($replaces), $text);

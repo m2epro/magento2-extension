@@ -54,7 +54,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
                 ->reset(\Zend_Db_Select::LIMIT_OFFSET);
         }
 
-        $groupedCollection = $this->customCollectionFactory->create();
+        $groupedCollection = $this->wrapperCollectionFactory->create();
         $groupedCollection->setConnection($this->resourceConnection->getConnection());
         $groupedCollection->getSelect()->reset()->from(
             ['main_table' => $logCollection->getSelect()],
@@ -80,7 +80,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
 
         $groupedCollection->getSelect()->group(['listing_product_id', 'action_id']);
 
-        $resultCollection = $this->customCollectionFactory->create();
+        $resultCollection = $this->wrapperCollectionFactory->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             ['main_table' => $groupedCollection->getSelect()]
@@ -93,7 +93,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\Listing\Prod
 
     protected function _afterLoadCollection()
     {
-        if (!$this->getCollection()->count()) {
+        if (!$this->getCollection()->getSize()) {
             return parent::_afterLoadCollection();
         }
 

@@ -227,6 +227,29 @@ class Module extends Command
     //########################################
 
     /**
+     * @title "Walmart Actions"
+     * @description "Process Walmart Actions Task"
+     * @new_line
+     */
+    public function walmartActionsAction()
+    {
+        $cronRunner = $this->modelFactory->getObject('Cron\Runner\Developer');
+        $cronRunner->setAllowedTasks(array(
+            \Ess\M2ePro\Model\Cron\Task\Walmart\Actions::NICK
+        ));
+
+        if ($cronRunner->process()) {
+            $this->getMessageManager()->addSuccess('Walmart Actions was successfully performed.');
+        } else {
+            $this->getMessageManager()->addError('Walmart Actions was performed with errors.');
+        }
+
+        $this->getResponse()->setBody('<pre>'.$cronRunner->getOperationHistory()->getFullDataInfo().'</pre>');
+    }
+
+    //########################################
+
+    /**
      * @title "Request Pending Single"
      * @description "Process Request Pending Single Task"
      */

@@ -47,7 +47,7 @@ class Main extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\AbstractTab
                 'tooltip' => $this->__(
                     'After you <strong>Enable</strong> this option, you can provide the settings for
                     <strong>Business Price</strong> and <strong >Quantity Discounts</strong>
-                    within M2E Pro Selling Format Policy.<br />
+                    within M2E Pro Selling Policy.<br />
                     <strong>Note:</strong> your Business Account must be approved by Amazon.'
                 )
             ]

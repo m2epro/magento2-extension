@@ -117,10 +117,10 @@ HTML
                     Synchronization::RELIST_SEND_DATA_YES => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    '<p><strong>No:</strong> Items are Relisted on eBay as per previously Listed Information and
-                    Settings, ignoring any changes that have been made in Magento. (Recommended)</p>
-                    <p><strong>Yes:</strong> Any changes made to Items in Magento will be Reflected on Amazon
-                    Listings after they are Relisted.</p>'
+                    '<p><strong>No:</strong> Items are Relisted on Amazon based on the previously listed Information
+                    and settings. Any changes made in Magento will be ignored (recommended).</p>
+                    <p><strong>Yes:</strong> all Product changes made in Magento will be reflected on Amazon after the
+                    Items are Relisted</p>'
                 )
             ]
         );
@@ -234,10 +234,10 @@ HTML
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> List Items automatically if the calculated Quantity is at
-                    least equal to the number you set, according to the Price, Quantity and Format Policy.
+                    least equal to the number you set, according to the Selling Policy.
                     (Recommended)</p>
                     <p><strong>Between:</strong> List Items automatically if the Quantity is between the minimum
-                    and maximum numbers you set, according to the Price, Quantity and Format Policy.</p>'
+                    and maximum numbers you set, according to the Selling Policy.</p>'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');

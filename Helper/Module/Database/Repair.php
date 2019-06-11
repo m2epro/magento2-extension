@@ -172,7 +172,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
      */
     public function repairCrashedTable($tableName)
     {
-        $connWrite = $this->resourceConnection->getConnection('core_write');
+        $connWrite = $this->resourceConnection->getConnection();
 
         $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
@@ -188,7 +188,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
             return;
         }
 
-        $writeConnection = $this->resourceConnection->getConnection('core_write');
+        $writeConnection = $this->resourceConnection->getConnection();
         $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         if (empty($columnInfo['key'])) {
@@ -216,7 +216,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
         $columnInfo['extra'] == 'auto_increment' && $definition .= 'AUTO_INCREMENT ';
         !empty($columnInfo['after']) && $definition .= "AFTER `{$columnInfo['after']}`";
 
-        $writeConnection = $this->resourceConnection->getConnection('core_write');
+        $writeConnection = $this->resourceConnection->getConnection();
         $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         if ($writeConnection->tableColumnExists($tableName, $columnInfo['name']) === false) {
@@ -233,7 +233,7 @@ class Repair extends \Ess\M2ePro\Helper\AbstractHelper
             return;
         }
 
-        $writeConnection = $this->resourceConnection->getConnection('core_write');
+        $writeConnection = $this->resourceConnection->getConnection();
         $tableName = $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix($tableName);
 
         $writeConnection->dropColumn($tableName, $columnInfo['name']);

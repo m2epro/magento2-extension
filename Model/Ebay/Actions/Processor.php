@@ -173,7 +173,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         $actionCollection->getSelect()->order('start_date ASC');
         $actionCollection->getSelect()->limit(self::MAX_SELECT_ACTIONS_COUNT);
 
-        $connRead = $this->resource->getConnection('core_read');
+        $connRead = $this->resource->getConnection();
         $statement = $connRead->query($actionCollection->getSelect());
 
         $actions = array();

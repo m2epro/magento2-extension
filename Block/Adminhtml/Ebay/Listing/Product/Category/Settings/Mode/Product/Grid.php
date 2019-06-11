@@ -703,7 +703,7 @@ JS
 
         $select->columns('elp.listing_product_id');
 
-        $connection = $this->getCollection()->getConnection('core_read');
+        $connection = $this->getCollection()->getConnection();
 
         return implode(',',$connection->fetchCol($select));
     }

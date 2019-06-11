@@ -552,7 +552,11 @@ HTML;
                     $discountsHtml .= 'QTY >= '.(int)$qty.', price '.$price.'<br />';
                 }
 
-                $businessPriceValue .= $this->getTooltipHtml($discountsHtml);
+                $businessPriceValue .= <<<HTML
+<div style="position: relative; left: -35px;">
+    {$this->getTooltipHtml($discountsHtml, false)}
+</div>
+HTML;
             }
 
             if (!empty($resultHtml)) {

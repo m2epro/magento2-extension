@@ -116,16 +116,13 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         });
 
         $collection = $this->customCollectionFactory->create();
-        $collection->setConnection($this->resourceConnection->getConnection());
+
         foreach ($filteredResult as $item) {
             $collection->addItem(new \Magento\Framework\DataObject($item));
         }
-        $collection->setCustomSize(count($filteredResult));
         $this->setCollection($collection);
 
         parent::_prepareCollection();
-
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }

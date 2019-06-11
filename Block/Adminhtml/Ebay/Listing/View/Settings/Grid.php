@@ -361,7 +361,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
         // ---------- Selling Settings -----------
 
         $this->getMassactionBlock()->addItem('editPriceQuantityFormatSettings', [
-            'label'    => $this->__('Price, Quantity and Format'),
+            'label'    => $this->__('Selling'),
             'url'      => '',
         ], 'edit_settings');
 
@@ -481,7 +481,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Grid
             Manager::TEMPLATE_PAYMENT => $this->__('Payment'),
             Manager::TEMPLATE_SHIPPING => $this->__('Shipping'),
             Manager::TEMPLATE_RETURN_POLICY => $this->__('Return'),
-            Manager::TEMPLATE_SELLING_FORMAT => $this->__('Price, Quantity and Format'),
+            Manager::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
             Manager::TEMPLATE_DESCRIPTION => $this->__('Description'),
             Manager::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization'),
         ];
@@ -913,7 +913,7 @@ HTML;
 
         // ---------- Selling Settings -----------
         $actions['priceQuantityFormat'] = [
-            'caption' => $this->__('Price, Quantity and Format'),
+            'caption' => $this->__('Selling'),
             'group'   => 'edit_general_settings',
             'field'   => 'id',
             'onclick_action' => 'EbayListingViewSettingsGridObj.actions[\'editPriceQuantityFormatSettingsAction\']'
@@ -1044,8 +1044,7 @@ JS
             'Edit Payment Policy Setting' => $this->__('Edit Payment Policy Setting'),
             'Edit Shipping Policy Setting' => $this->__('Edit Shipping Policy Setting'),
             'Edit Description Policy Setting' => $this->__('Edit Description Policy Setting'),
-            'Edit Price, Quantity and Format Policy Setting' =>
-                $this->__('Edit Price, Quantity and Format Policy Setting'),
+            'Edit Selling Policy Setting' => $this->__('Edit Selling Policy Setting'),
             'Edit Synchronization Policy Setting' => $this->__('Edit Synchronization Policy Setting'),
             'Edit Settings' => $this->__('Edit Settings'),
             'for' => $this->__('for'),

@@ -51,7 +51,7 @@ class Index extends HealthStatus
         if ($referrer == 'ebay') {
             $this->setPageHelpLink('x/sglPAQ');
         } else {
-            $this->setPageHelpLink('x/nxBPAQ');
+            $this->setPageHelpLink('x/qIFwAQ');
         }
 
         $this->getResult()->getConfig()->getTitle()->prepend($this->__('Help Center'));

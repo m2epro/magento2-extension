@@ -117,13 +117,10 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         foreach ($this->getCollectionItems() as $item) {
             $collection->addItem($item);
         }
-        $collection->setCustomSize($collection->count());
 
         $this->setCollection($collection);
 
         parent::_prepareCollection();
-
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }
@@ -220,11 +217,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
                 $filteredCollection->addItem($item);
             }
         }
-        $filteredCollection->setCustomSize($filteredCollection->count());
 
         $this->setCollection($filteredCollection);
-
-        $filteredCollection->setCustomIsLoaded(true);
     }
 
     // ####################################
@@ -262,11 +256,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         foreach ($collection as $item) {
             $sortedCollection->addItem(new \Magento\Framework\DataObject($item));
         }
-        $sortedCollection->setCustomSize($sortedCollection->count());
 
         $this->setCollection($sortedCollection);
-
-        $sortedCollection->setCustomIsLoaded(true);
     }
 
     // ####################################

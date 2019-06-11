@@ -199,5 +199,56 @@ class Product extends \Ess\M2ePro\Helper\AbstractHelper
         return (bool)$isInStock;
     }
 
+    /**
+     * @param array $associatedProducts
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function prepareAssociatedProducts(array $associatedProducts, \Ess\M2ePro\Model\Magento\Product $product)
+    {
+        $productType = $product->getTypeId();
+        $productId   = $product->getProductId();
+
+        if ($this->isSimpleType($productType) ||
+            $this->isDownloadableType($productType)) {
+            return array($productId);
+        }
+
+        if ($this->isBundleType($productType)) {
+            $bundleAssociatedProducts = array();
+
+            foreach ($associatedProducts as $key => $productIds) {
+                $bundleAssociatedProducts[$key] = reset($productIds);
+            }
+
+            return $bundleAssociatedProducts;
+        }
+
+        if ($this->isConfigurableType($productType)) {
+            $configurableAssociatedProducts = array();
+
+            foreach ($associatedProducts as $productIds) {
+                if (count($configurableAssociatedProducts) == 0) {
+                    $configurableAssociatedProducts = $productIds;
+                } else {
+                    $configurableAssociatedProducts = array_intersect($configurableAssociatedProducts, $productIds);
+                }
+            }
+
+            if (count($configurableAssociatedProducts) != 1) {
+                throw new \Ess\M2ePro\Model\Exception\Logic('There is no associated Product found for
+                    Configurable Product.');
+            }
+
+            return $configurableAssociatedProducts;
+        }
+
+        if ($this->isGroupedType($productType)) {
+            return array_values($associatedProducts);
+        }
+
+        return array();
+    }
+
     //########################################
 }

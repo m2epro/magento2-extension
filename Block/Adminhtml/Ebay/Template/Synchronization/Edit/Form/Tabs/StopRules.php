@@ -150,8 +150,8 @@ class StopRules extends AbstractTab
                     Synchronization::STOP_QTY_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically stops an Item on eBay if calculated Quantity according to the Price,
-                     Quantity and Format Policy is changed <b>and</b> it meets the selected Conditions.'
+                    'Automatically stops an Item on eBay if calculated Quantity according to the
+                     Selling Policy is changed <b>and</b> it meets the selected Conditions.'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');

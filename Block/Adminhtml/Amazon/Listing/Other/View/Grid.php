@@ -217,11 +217,12 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function callbackColumnProductId($value, $row, $column, $isExport)
     {
         if (empty($value)) {
-            $productTitle = $this->getHelper('Data')->escapeHtml($row->getChildObject()->getData('title'));
-            $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
+            $productTitle = $row->getChildObject()->getData('title');
             if (strlen($productTitle) > 60) {
                 $productTitle = substr($productTitle, 0, 60) . '...';
             }
+            $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
+            $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
             $htmlValue = '&nbsp;<a href="javascript:void(0);"
                                     onclick="AmazonListingOtherMappingObj.openPopUp(\''.
                                         $productTitle.

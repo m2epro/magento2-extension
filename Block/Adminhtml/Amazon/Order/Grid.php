@@ -250,7 +250,9 @@ class Grid extends AbstractGrid
 
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
-        return $row->getChildObject()->getData('purchase_create_date');
+        return $this->_localeDate->formatDate(
+            $row->getChildObject()->getData('purchase_create_date'), \IntlDateFormatter::MEDIUM, true
+        );
     }
 
     public function callbackColumnAmazonOrderId($value, $row, $column, $isExport)
@@ -261,18 +263,18 @@ class Grid extends AbstractGrid
         $primeImageHtml = '';
         if ($row->getChildObject()->getData('is_prime')) {
 
-            $url = $this->getViewFileUrl('Ess_M2ePro::images/prime.png');
+            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/prime.png');
             $primeImageHtml = <<<HTML
-<div style="margin-top: 2px;"><img src="{$url}" /></div>
+<div style="margin-top: 2px;"><img src="{$imageURL}" /></div>
 HTML;
         }
 
         $businessImageHtml = '';
         if ($row->getChildObject()->getData('is_business')) {
 
-            $url = $this->getViewFileUrl('Ess_M2ePro::images/amazon-business.png');
+            $imageURL = $this->getViewFileUrl('Ess_M2ePro::images/amazon-business.png');
             $businessImageHtml = <<<HTML
-<div style="margin-top: 2px;"><img src="{$url}" /></div>
+<div style="margin-top: 2px;"><img src="{$imageURL}" /></div>
 HTML;
         }
 
@@ -318,7 +320,7 @@ HTML;
         $orderLogsCollection->getSelect()
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
 
-        if (!$orderLogsCollection->count()) {
+        if (!$orderLogsCollection->getSize()) {
             return '';
         }
 
@@ -555,14 +557,10 @@ HTML;
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Model\Log\AbstractModel'));
 
         $this->jsUrl->addUrls([
-            'ebay_order/view' => $this->getUrl(
-                '*/ebay_order/view',
-                array('back'=>$this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index'))
-            ),
             'amazon_order/view' => $this->getUrl(
                 '*/amazon_order/view',
                 array('back'=>$this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index'))
-            ),
+            )
         ]);
 
         $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));

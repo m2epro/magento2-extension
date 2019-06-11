@@ -58,7 +58,7 @@ class StopRules extends AbstractForm
         );
 
         $fieldset = $form->addFieldset(
-            'magento_block_ebay_template_synchronization_form_data_stop_rules',
+            'magento_block_amazon_template_synchronization_form_data_stop_rules',
             [
                 'legend' => $this->__('Stop Conditions'),
                 'collapsable' => false,
@@ -153,7 +153,7 @@ class StopRules extends AbstractForm
                     Synchronization::STOP_QTY_BETWEEN => $this->__('Between'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically stops Item(s) if Calculated Quantity according to the Price, Quantity and Format
+                    'Automatically stops Item(s) if Calculated Quantity according to the Selling
                     Policy has been changed and meets the Conditions.'
                 )
             ]

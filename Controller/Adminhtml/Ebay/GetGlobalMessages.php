@@ -14,10 +14,7 @@ class GetGlobalMessages extends Main
 
     public function execute()
     {
-        $browserNotification = $this->addBrowserNotifications();
-        $maintenanceNotification = $this->addMaintenanceNotifications();
-
-        $muteMessages = $browserNotification || $maintenanceNotification;
+        $muteMessages = $this->addBrowserNotifications();
 
         if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
             $this->addLicenseNotifications();

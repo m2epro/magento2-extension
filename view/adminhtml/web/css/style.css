@@ -427,6 +427,66 @@ a.amazon-listing-view-switch-variation-mode:before {
 }
 /* ================================================ */
 
+/* Walmart Individual Variation */
+/* ================================================ */
+a.walmart-listing-view-edit-variation {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+a.walmart-listing-view-edit-variation:before {
+    color: #514943;
+    content: '\e631';
+    font-size: 1.5rem;
+}
+
+a.walmart-listing-view-add-variation {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+a.walmart-listing-view-add-variation:before {
+    color: #514943;
+    content: '\e61d';
+    font-size: 1.5rem;
+}
+
+a.walmart-listing-view-switch-variation-mode {
+    display: inline-block;
+    font-size: 1.6rem;
+    font-family: 'Admin Icons';
+    vertical-align: middle;
+    text-align: center;
+    overflow: hidden;
+    font-weight: normal;
+    line-height: 1;
+    speak: none;
+    text-decoration: none !important;
+}
+
+a.walmart-listing-view-switch-variation-mode:before {
+    color: #514943;
+    content: '\e610';
+    font-size: 1.5rem;
+}
+/* ================================================ */
+
 .categories-side-col a {
     text-decoration: none !important;
 }
@@ -474,7 +534,7 @@ a.amazon-listing-view-switch-variation-mode:before {
     -webkit-font-smoothing: antialiased;
     font-size: 1.2rem;
     color: #514943;
-    content: '\e903';
+    content: '\e910';
     font-family: 'M2ePro';
     vertical-align: middle;
     display: inline-block;

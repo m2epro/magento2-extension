@@ -28,7 +28,7 @@ class Index extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Account
         );
         $this->addContent($this->createBlock('Ebay\Account\PickupStore'));
         $this->getResultPage()->getConfig()->getTitle()->prepend(
-            $this->__('My Stores for "%s%"', $account->getTitle())
+            $this->__('My Stores for account "%s%"', $account->getTitle())
         );
 
         return $this->getResultPage();

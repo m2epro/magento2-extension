@@ -23,7 +23,6 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         $this->removeButton('delete');
         $this->removeButton('save');
         $this->removeButton('edit');
-
         // ---------------------------------------
 
         $this->_controller = 'adminhtml_amazon_account';
@@ -37,14 +36,15 @@ class Account extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
     {
         $this->appendHelpBlock([
             'content' => $this->__(<<<HTML
-<p>On this Page you can find information about Amazon Accounts which can be managed via M2E Pro.
-M2E Pro Amazon Account is a combination of Merchant ID and a particular Marketplace.
-In order to sell Items on Amazon.es, Amazon.it etc., you need to add separate M2E Pro Accounts for
-Spain and Italy Marketplaces, although you can still use the same Merchant ID. </p><br>
-<p>Settings for such configurations as eBay Orders along with Magento Order creation conditions,
-3rd Party Listings import including options of Mapping them to Magento Products and Moving them to M2E Pro Listings,
-etc. can be specified for each Account separately.</p><br>
-<p><strong>Note:</strong> Amazon Account can be deleted only if it is not being used
+<p>On this Page, you can find information about Amazon Accounts which are managed via M2E Pro.
+M2E Pro Amazon Account is a combination of Merchant ID and particular Marketplace.
+For example, to sell Items on Amazon.es, Amazon.it, you need to add two separate M2E Pro Amazon Accounts for
+Spain and Italy Marketplaces using your Merchant ID for Amazon Europe.</p><br>
+<p><strong>Note:</strong> prior to adding a new M2E Pro Amazon Account, enable an appropriate Marketplace under the
+Configuration > Marketplaces.</p>
+<p>Each Account is configured separately. Specify your preferences for the 3rd Party Listing import,
+Channel Order management, Magento Order creation rules, etc.</p><br>
+<p><strong>Note:</strong> M2E Pro Amazon Account can be deleted only if it is not being used
 for any of M2E Pro Listings.</p>
 HTML
 )

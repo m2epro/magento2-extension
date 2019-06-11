@@ -186,7 +186,32 @@ class Structure extends \Ess\M2ePro\Helper\AbstractHelper
             'm2epro_amazon_template_shipping_template',
             'm2epro_amazon_template_shipping_override',
             'm2epro_amazon_template_shipping_override_service',
-            'm2epro_amazon_template_product_tax_code'
+            'm2epro_amazon_template_product_tax_code',
+
+            'm2epro_walmart_account',
+            'm2epro_walmart_dictionary_category',
+            'm2epro_walmart_dictionary_marketplace',
+            'm2epro_walmart_dictionary_specific',
+            'm2epro_walmart_item',
+            'm2epro_walmart_listing',
+            'm2epro_walmart_listing_auto_category_group',
+            'm2epro_walmart_listing_other',
+            'm2epro_walmart_listing_product',
+            'm2epro_walmart_listing_product_variation',
+            'm2epro_walmart_listing_product_variation_option',
+            'm2epro_walmart_processing_action',
+            'm2epro_walmart_processing_action_list_sku',
+            'm2epro_walmart_indexer_listing_product_variation_parent',
+            'm2epro_walmart_marketplace',
+            'm2epro_walmart_order',
+            'm2epro_walmart_order_item',
+            'm2epro_walmart_template_category',
+            'm2epro_walmart_template_category_specific',
+            'm2epro_walmart_template_description',
+            'm2epro_walmart_template_selling_format',
+            'm2epro_walmart_template_selling_format_promotion',
+            'm2epro_walmart_template_selling_format_shipping_override',
+            'm2epro_walmart_template_synchronization'
         );
     }
 

@@ -72,7 +72,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $this->helperFactory->getObject('Data\GlobalData')->setValue('is_install_process', true);
 
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
             !$this->isMaintenanceCanBeIgnored()) {
             return;
         }
@@ -81,7 +81,7 @@ class InstallSchema implements InstallSchemaInterface
             return;
         }
 
-        $this->helperFactory->getObject('Module\Maintenance\General')->enable();
+        $this->helperFactory->getObject('Module\Maintenance')->enable();
         $this->installer->startSetup();
 
         try {
@@ -93,6 +93,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->installGeneral();
             $this->installEbay();
             $this->installAmazon();
+            $this->installWalmart();
         } catch (\Exception $exception) {
 
             $this->logger->error($exception, ['source' => 'InstallSchema']);
@@ -111,7 +112,7 @@ class InstallSchema implements InstallSchemaInterface
     private function dropTables()
     {
         $tables = $this->installer->getConnection()->getTables(
-            (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX).'m2epro_%'
+            (string)$this->deploymentConfig->get(ConfigOptionsListConstants::CONFIG_PATH_DB_PREFIX) . 'm2epro_%'
         );
 
         foreach ($tables as $table) {
@@ -123,24 +124,24 @@ class InstallSchema implements InstallSchemaInterface
     {
         $versionHistoryTable = $this->getConnection()->newTable($this->getFullTableName('versions_history'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'version_from', Table::TYPE_TEXT, 32,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'version_to', Table::TYPE_TEXT, 32,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -148,7 +149,7 @@ class InstallSchema implements InstallSchemaInterface
         $this->getConnection()->createTable($versionHistoryTable);
 
         $this->getConnection()->insert($this->getFullTableName('versions_history'), [
-            'version_from' => NULL,
+            'version_from' => null,
             'version_to'   => $this->helperFactory->getObject('Module')->getPublicVersion(),
             'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
             'create_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
@@ -159,36 +160,36 @@ class InstallSchema implements InstallSchemaInterface
     {
         $setupTable = $this->getConnection()->newTable($this->getFullTableName('setup'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'version_from', Table::TYPE_TEXT, 32,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'version_to', Table::TYPE_TEXT, 32,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_backuped', Table::TYPE_SMALLINT, NULL,
+                'is_backuped', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_completed', Table::TYPE_SMALLINT, NULL,
+                'is_completed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'profiler_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'profiler_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('version_from', 'version_from')
             ->addIndex('version_to', 'version_to')
@@ -200,7 +201,7 @@ class InstallSchema implements InstallSchemaInterface
         $this->getConnection()->createTable($setupTable);
 
         $this->getConnection()->insert($this->getFullTableName('setup'), [
-            'version_from' => NULL,
+            'version_from' => null,
             'version_to'   => $this->getConfigVersion(),
             'is_completed' => 0,
             'update_date'  => $this->helperFactory->getObject('Data')->getCurrentGmtDate(),
@@ -214,7 +215,7 @@ class InstallSchema implements InstallSchemaInterface
     {
         $accountTable = $this->getConnection()->newTable($this->getFullTableName('account'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -223,19 +224,19 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'additional_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'additional_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('title', 'title')
             ->addIndex('component_mode', 'component_mode')
@@ -246,12 +247,12 @@ class InstallSchema implements InstallSchemaInterface
 
         $cacheConfigTable = $this->getConnection()->newTable($this->getFullTableName('cache_config'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'group', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'key', Table::TYPE_TEXT, 255,
@@ -262,16 +263,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'notice', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'notice', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('group', 'group')
             ->addIndex('key', 'key')
@@ -283,12 +284,12 @@ class InstallSchema implements InstallSchemaInterface
 
         $moduleConfigTable = $this->getConnection()->newTable($this->getFullTableName('module_config'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'group', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'key', Table::TYPE_TEXT, 255,
@@ -299,16 +300,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'notice', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'notice', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('group', 'group')
             ->addIndex('key', 'key')
@@ -318,17 +319,17 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($moduleConfigTable);
 
-        $accountTable = $this->getConnection()->newTable($this->getFullTableName('listing'))
+        $listingTable = $this->getConnection()->newTable($this->getFullTableName('listing'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -336,68 +337,68 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'store_id', Table::TYPE_INTEGER, NULL,
+                'store_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'products_total_count', Table::TYPE_INTEGER, NULL,
+                'products_total_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'products_active_count', Table::TYPE_INTEGER, NULL,
+                'products_active_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'products_inactive_count', Table::TYPE_INTEGER, NULL,
+                'products_inactive_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'items_active_count', Table::TYPE_INTEGER, NULL,
+                'items_active_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'source_products', Table::TYPE_SMALLINT, NULL,
+                'source_products', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'auto_mode', Table::TYPE_SMALLINT, NULL,
+                'auto_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'auto_global_adding_mode', Table::TYPE_SMALLINT, NULL,
+                'auto_global_adding_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'auto_global_adding_add_not_visible', Table::TYPE_SMALLINT, NULL,
+                'auto_global_adding_add_not_visible', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'auto_website_adding_mode', Table::TYPE_SMALLINT, NULL,
+                'auto_website_adding_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'auto_website_adding_add_not_visible', Table::TYPE_SMALLINT, NULL,
+                'auto_website_adding_add_not_visible', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'auto_website_deleting_mode', Table::TYPE_SMALLINT, NULL,
+                'auto_website_deleting_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -411,30 +412,30 @@ class InstallSchema implements InstallSchemaInterface
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
-        $this->getConnection()->createTable($accountTable);
+        $this->getConnection()->createTable($listingTable);
 
         $listingAutoCategoryTable = $this->getConnection()->newTable(
             $this->getFullTableName('listing_auto_category')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'group_id', Table::TYPE_INTEGER, NULL,
+                'group_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_id', Table::TYPE_INTEGER, NULL,
+                'category_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('category_id', 'category_id')
             ->addIndex('group_id', 'group_id')
@@ -447,11 +448,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('listing_auto_category_group')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -459,28 +460,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'adding_mode', Table::TYPE_SMALLINT, NULL,
+                'adding_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'adding_add_not_visible', Table::TYPE_SMALLINT, NULL,
+                'adding_add_not_visible', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'deleting_mode', Table::TYPE_SMALLINT, NULL,
+                'deleting_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('listing_id', 'listing_id')
             ->addIndex('title', 'title')
@@ -492,80 +493,80 @@ class InstallSchema implements InstallSchemaInterface
 
         $listingLogTable = $this->getConnection()->newTable($this->getFullTableName('listing_log'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'listing_product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'parent_listing_product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_listing_product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'listing_title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'product_title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'action_id', Table::TYPE_INTEGER, NULL,
+                'action_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'action', Table::TYPE_SMALLINT, NULL,
+                'action', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'initiator', Table::TYPE_SMALLINT, NULL,
+                'initiator', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority', Table::TYPE_SMALLINT, NULL,
+                'priority', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 3]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'description', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -589,44 +590,44 @@ class InstallSchema implements InstallSchemaInterface
 
         $listingOtherTable = $this->getConnection()->newTable($this->getFullTableName('listing_other'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'status', Table::TYPE_SMALLINT, NULL,
+                'status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'status_changer', Table::TYPE_SMALLINT, NULL,
+                'status_changer', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('component_mode', 'component_mode')
@@ -641,68 +642,68 @@ class InstallSchema implements InstallSchemaInterface
 
         $listingOtherLogTable = $this->getConnection()->newTable($this->getFullTableName('listing_other_log'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'listing_other_id', Table::TYPE_INTEGER, NULL,
+                'listing_other_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'identifier', Table::TYPE_TEXT, 32,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'action_id', Table::TYPE_INTEGER, NULL,
+                'action_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'action', Table::TYPE_SMALLINT, NULL,
+                'action', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'initiator', Table::TYPE_SMALLINT, NULL,
+                'initiator', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority', Table::TYPE_SMALLINT, NULL,
+                'priority', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 3]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'description', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -723,56 +724,56 @@ class InstallSchema implements InstallSchemaInterface
 
         $listingProductTable = $this->getConnection()->newTable($this->getFullTableName('listing_product'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
+                'product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'status', Table::TYPE_SMALLINT, NULL,
+                'status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'status_changer', Table::TYPE_SMALLINT, NULL,
+                'status_changer', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'need_synch_rules_check', Table::TYPE_SMALLINT, NULL,
+                'need_synch_rules_check', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'tried_to_list', Table::TYPE_SMALLINT, NULL,
+                'tried_to_list', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'synch_status', Table::TYPE_SMALLINT, NULL,
+                'synch_status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'synch_reasons', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'synch_reasons', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('listing_id', 'listing_id')
@@ -791,28 +792,28 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('listing_product_variation')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('listing_product_id', 'listing_product_id')
@@ -825,16 +826,16 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('listing_product_variation_option')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'listing_product_variation_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_variation_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'product_type', Table::TYPE_TEXT, 255,
@@ -850,15 +851,15 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('attribute', 'attribute')
             ->addIndex('component_mode', 'component_mode')
@@ -873,7 +874,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $lockItemTable = $this->getConnection()->newTable($this->getFullTableName('lock_item'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -881,20 +882,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'parent_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('nick', 'nick')
             ->addIndex('parent_id', 'parent_id')
@@ -907,7 +908,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('lock_transactional')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -915,8 +916,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('nick', 'nick')
             ->setOption('type', 'INNODB')
@@ -926,11 +927,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $marketplaceTable = $this->getConnection()->newTable($this->getFullTableName('marketplace'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'native_id', Table::TYPE_INTEGER, NULL,
+                'native_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -946,11 +947,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'status', Table::TYPE_SMALLINT, NULL,
+                'status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'sorder', Table::TYPE_INTEGER, NULL,
+                'sorder', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -959,15 +960,15 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->setOption('type', 'INNODB')
@@ -977,60 +978,60 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderTable = $this->getConnection()->newTable($this->getFullTableName('order'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'magento_order_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'magento_order_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'magento_order_creation_failure', Table::TYPE_SMALLINT, NULL,
+                'magento_order_creation_failure', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'magento_order_creation_fails_count', Table::TYPE_SMALLINT, NULL,
+                'magento_order_creation_fails_count', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'magento_order_creation_latest_attempt_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'magento_order_creation_latest_attempt_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'store_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'store_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'reservation_state', Table::TYPE_SMALLINT, NULL,
+                'reservation_state', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
-                'reservation_start_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'reservation_start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'additional_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'additional_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('component_mode', 'component_mode')
@@ -1047,7 +1048,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderChangeTable = $this->getConnection()->newTable($this->getFullTableName('order_change'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1055,7 +1056,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -1067,28 +1068,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'creator_type', Table::TYPE_SMALLINT, NULL,
+                'creator_type', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'processing_attempt_count', Table::TYPE_SMALLINT, NULL,
+                'processing_attempt_count', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'processing_attempt_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'processing_attempt_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
                 'hash', Table::TYPE_TEXT, 50,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('action', 'action')
             ->addIndex('creator_type', 'creator_type')
@@ -1102,36 +1103,36 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderItemTable = $this->getConnection()->newTable($this->getFullTableName('order_item'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'product_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'product_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'qty_reserved', Table::TYPE_INTEGER, NULL,
+                'qty_reserved', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('order_id', 'order_id')
@@ -1143,48 +1144,48 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderLogTable = $this->getConnection()->newTable($this->getFullTableName('order_log'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 2]
             )
             ->addColumn(
-                'initiator', Table::TYPE_SMALLINT, NULL,
+                'initiator', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'description', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -1200,36 +1201,36 @@ class InstallSchema implements InstallSchemaInterface
 
         $orderMatchingTable = $this->getConnection()->newTable($this->getFullTableName('order_matching'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
+                'product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'input_variation_options', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'input_variation_options', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'output_variation_options', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'output_variation_options', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'hash', Table::TYPE_TEXT, 50,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'component', Table::TYPE_TEXT, 10,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component', 'component')
             ->addIndex('hash', 'hash')
@@ -1241,12 +1242,12 @@ class InstallSchema implements InstallSchemaInterface
 
         $primaryConfigTable = $this->getConnection()->newTable($this->getFullTableName('primary_config'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'group', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'key', Table::TYPE_TEXT, 255,
@@ -1257,16 +1258,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'notice', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'notice', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('group', 'group')
             ->addIndex('key', 'key')
@@ -1278,7 +1279,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $processingTable = $this->getConnection()->newTable($this->getFullTableName('processing'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1287,31 +1288,31 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'params', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'result_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'result_messages', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_completed', Table::TYPE_SMALLINT, NULL,
+                'is_completed', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'expiration_date', Table::TYPE_DATETIME, NULL,
+                'expiration_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('model', 'model')
             ->addIndex('is_completed', 'is_completed')
@@ -1323,11 +1324,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $processingLockTable = $this->getConnection()->newTable($this->getFullTableName('processing_lock'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'processing_id', Table::TYPE_INTEGER, NULL,
+                'processing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -1335,20 +1336,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'object_id', Table::TYPE_INTEGER, NULL,
+                'object_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'tag', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('processing_id', 'processing_id')
             ->addIndex('model_name', 'model_name')
@@ -1361,7 +1362,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $requestPendingSingleTable = $this->getConnection()->newTable($this->getFullTableName('request_pending_single'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1374,27 +1375,27 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'result_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'result_messages', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'expiration_date', Table::TYPE_DATETIME, NULL,
+                'expiration_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_completed', Table::TYPE_SMALLINT, NULL,
+                'is_completed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component', 'component')
             ->addIndex('server_hash', 'server_hash')
@@ -1408,7 +1409,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('request_pending_partial')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1420,28 +1421,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'next_part', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'next_part', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'result_messages', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'expiration_date', Table::TYPE_DATETIME, NULL,
+                'expiration_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_completed', Table::TYPE_SMALLINT, NULL,
+                'is_completed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component', 'component')
             ->addIndex('server_hash', 'server_hash')
@@ -1456,20 +1457,20 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('request_pending_partial_data')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'request_pending_partial_id', Table::TYPE_INTEGER, NULL,
+                'request_pending_partial_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'part_number', Table::TYPE_INTEGER, NULL,
+                'part_number', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('part_number', 'part_number')
             ->addIndex('request_pending_partial_id', 'request_pending_partial_id')
@@ -1482,24 +1483,24 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('connector_pending_requester_single')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'processing_id', Table::TYPE_INTEGER, NULL,
+                'processing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'request_pending_single_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'request_pending_single_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('processing_id', 'processing_id')
             ->addIndex('request_pending_single_id', 'request_pending_single_id')
@@ -1512,24 +1513,24 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('connector_pending_requester_partial')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'processing_id', Table::TYPE_INTEGER, NULL,
+                'processing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'request_pending_partial_id', Table::TYPE_INTEGER, NULL,
+                'request_pending_partial_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('request_pending_partial_id', 'request_pending_partial_id')
             ->setOption('type', 'INNODB')
@@ -1539,16 +1540,16 @@ class InstallSchema implements InstallSchemaInterface
 
         $productChangeTable = $this->getConnection()->newTable($this->getFullTableName('product_change'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
+                'product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'store_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'store_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'action', Table::TYPE_TEXT, 255,
@@ -1556,31 +1557,31 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'value_old', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'value_new', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'initiators', Table::TYPE_TEXT, 16,
                 ['nullable' => false]
             )
             ->addColumn(
-                'count_changes', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'count_changes', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('action', 'action')
             ->addIndex('attribute', 'attribute')
@@ -1594,11 +1595,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $stopQueueTable = $this->getConnection()->newTable($this->getFullTableName('stop_queue'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'item_data', Table::TYPE_TEXT, NULL,
+                'item_data', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -1606,24 +1607,24 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_processed', Table::TYPE_SMALLINT, NULL,
+                'is_processed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_hash', 'account_hash')
             ->addIndex('component_mode', 'component_mode')
@@ -1637,12 +1638,12 @@ class InstallSchema implements InstallSchemaInterface
         $synchronizationConfigTableName = $this->getFullTableName('synchronization_config');
         $synchronizationConfigTable = $this->getConnection()->newTable($synchronizationConfigTableName)
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'group', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'key', Table::TYPE_TEXT, 255,
@@ -1653,16 +1654,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['default' => null]
             )
             ->addColumn(
-                'notice', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'notice', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('group', 'group')
             ->addIndex('key', 'key')
@@ -1674,48 +1675,48 @@ class InstallSchema implements InstallSchemaInterface
 
         $synchronizationLogTable = $this->getConnection()->newTable($this->getFullTableName('synchronization_log'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'operation_history_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'operation_history_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'task', Table::TYPE_SMALLINT, NULL,
+                'task', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'initiator', Table::TYPE_SMALLINT, NULL,
+                'initiator', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority', Table::TYPE_SMALLINT, NULL,
+                'priority', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 3]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'description', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('initiator', 'initiator')
@@ -1731,28 +1732,28 @@ class InstallSchema implements InstallSchemaInterface
 
         $systemLogTable = $this->getConnection()->newTable($this->getFullTableName('system_log'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
                 'type', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'description', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('type', 'type')
             ->setOption('type', 'MYISAM')
@@ -1762,7 +1763,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $operationHistoryTable = $this->getConnection()->newTable($this->getFullTableName('operation_history'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1770,32 +1771,32 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'parent_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'initiator', Table::TYPE_SMALLINT, NULL,
+                'initiator', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'start_date', Table::TYPE_DATETIME, NULL,
+                'start_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'end_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'end_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('nick', 'nick')
             ->addIndex('parent_id', 'parent_id')
@@ -1810,7 +1811,7 @@ class InstallSchema implements InstallSchemaInterface
         $templateSellingFormatTableName = $this->getFullTableName('template_selling_format');
         $templateSellingFormatTable = $this->getConnection()->newTable($templateSellingFormatTableName)
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1819,15 +1820,15 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('title', 'title')
@@ -1840,7 +1841,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('template_synchronization')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1848,24 +1849,24 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'revise_change_listing', Table::TYPE_SMALLINT, NULL,
+                'revise_change_listing', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_selling_format_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_selling_format_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('revise_change_listing', 'revise_change_listing')
@@ -1878,7 +1879,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $templateDescriptionTable = $this->getConnection()->newTable($this->getFullTableName('template_description'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1887,15 +1888,15 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('component_mode', 'component_mode')
             ->addIndex('title', 'title')
@@ -1906,7 +1907,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $wizardTable = $this->getConnection()->newTable($this->getFullTableName('wizard'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1918,19 +1919,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'status', Table::TYPE_INTEGER, NULL,
+                'status', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'step', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'priority', Table::TYPE_INTEGER, NULL,
+                'priority', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addIndex('nick', 'nick')
@@ -1941,7 +1942,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $registryTable = $this->getConnection()->newTable($this->getFullTableName('registry'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -1950,15 +1951,15 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'value', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('key', 'key')
             ->setOption('type', 'INNODB')
@@ -1970,11 +1971,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('archived_entity')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'origin_id', Table::TYPE_INTEGER, NULL,
+                'origin_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -1986,8 +1987,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('origin_id__name', ['origin_id', 'name'])
             ->setOption('type', 'INNODB')
@@ -2000,11 +2001,11 @@ class InstallSchema implements InstallSchemaInterface
     {
         $ebayAccountTable = $this->getConnection()->newTable($this->getFullTableName('ebay_account'))
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'mode', Table::TYPE_SMALLINT, NULL,
+                'mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2017,58 +2018,58 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'translation_hash', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'translation_info', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'translation_info', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'token_session', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
             )
             ->addColumn(
-                'token_expired_date', Table::TYPE_DATETIME, NULL,
+                'token_expired_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'marketplaces_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'marketplaces_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'defaults_last_synchronization', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'defaults_last_synchronization', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'other_listings_synchronization', Table::TYPE_SMALLINT, NULL,
+                'other_listings_synchronization', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'other_listings_mapping_mode', Table::TYPE_SMALLINT, NULL,
+                'other_listings_mapping_mode', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'other_listings_mapping_settings', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'other_listings_last_synchronization', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'other_listings_last_synchronization', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'feedbacks_receive', Table::TYPE_SMALLINT, NULL,
+                'feedbacks_receive', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'feedbacks_auto_response', Table::TYPE_SMALLINT, NULL,
+                'feedbacks_auto_response', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'feedbacks_auto_response_only_positive', Table::TYPE_SMALLINT, NULL,
+                'feedbacks_auto_response_only_positive', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'feedbacks_last_used_id', Table::TYPE_INTEGER, NULL,
+                'feedbacks_last_used_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -2076,7 +2077,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'ebay_store_url', Table::TYPE_TEXT, NULL,
+                'ebay_store_url', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -2084,35 +2085,35 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'ebay_store_description', Table::TYPE_TEXT, NULL,
+                'ebay_store_description', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'info', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'info', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'user_preferences', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'user_preferences', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'ebay_shipping_discount_profiles', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'ebay_shipping_discount_profiles', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'job_token', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'orders_last_synchronization', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'orders_last_synchronization', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'magento_orders_settings', Table::TYPE_TEXT, NULL,
+                'magento_orders_settings', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'messages_receive', Table::TYPE_SMALLINT, NULL,
+                'messages_receive', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->setOption('type', 'INNODB')
@@ -2124,7 +2125,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_account_store_category')
         )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2140,11 +2141,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_leaf', Table::TYPE_SMALLINT, NULL,
+                'is_leaf', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'sorder', Table::TYPE_INTEGER, NULL,
+                'sorder', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addIndex('primary', ['account_id', 'category_id'], ['type' => AdapterInterface::INDEX_TYPE_PRIMARY])
@@ -2160,7 +2161,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_account_pickup_store')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -2169,14 +2170,14 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'location_id', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2216,31 +2217,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'latitude', Table::TYPE_FLOAT, NULL,
+                'latitude', Table::TYPE_FLOAT, null,
                 []
             )
             ->addColumn(
-                'longitude', Table::TYPE_FLOAT, NULL,
+                'longitude', Table::TYPE_FLOAT, null,
                 []
             )
             ->addColumn(
-                'business_hours', Table::TYPE_TEXT, NULL,
+                'business_hours', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'special_hours', Table::TYPE_TEXT, NULL,
+                'special_hours', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'pickup_instruction', Table::TYPE_TEXT, NULL,
+                'pickup_instruction', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'qty_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_custom_value', Table::TYPE_INTEGER, NULL,
+                'qty_custom_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2248,28 +2249,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'qty_percentage', Table::TYPE_INTEGER, NULL,
+                'qty_percentage', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 100]
             )
             ->addColumn(
-                'qty_modification_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_modification_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_min_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_min_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'qty_max_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_max_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('name', 'name')
             ->addIndex('location_id', 'location_id')
@@ -2284,15 +2285,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_account_pickup_store_state')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_pickup_store_id', Table::TYPE_INTEGER, NULL,
+                'account_pickup_store_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_in_processing', Table::TYPE_SMALLINT, NULL,
+                'is_in_processing', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
@@ -2300,28 +2301,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
+                'online_qty', Table::TYPE_INTEGER, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'target_qty', Table::TYPE_INTEGER, NULL,
+                'target_qty', Table::TYPE_INTEGER, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_added', Table::TYPE_SMALLINT, NULL,
+                'is_added', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_deleted', Table::TYPE_SMALLINT, NULL,
+                'is_deleted', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_pickup_store_id', 'account_pickup_store_id')
             ->addIndex('is_in_processing', 'is_in_processing')
@@ -2335,12 +2336,12 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_account_pickup_store_log')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_pickup_store_state_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'account_pickup_store_state_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'location_id', Table::TYPE_TEXT, 255,
@@ -2348,35 +2349,35 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'location_title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'action_id', Table::TYPE_INTEGER, NULL,
+                'action_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'action', Table::TYPE_SMALLINT, NULL,
+                'action', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'priority', Table::TYPE_SMALLINT, NULL,
+                'priority', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 3]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'description', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_pickup_store_state_id', 'account_pickup_store_state_id')
             ->addIndex('location_id', 'location_id')
@@ -2393,23 +2394,23 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayProcessingActionTable = $this->getConnection()->newTable($this->getFullTableName('ebay_processing_action'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'processing_id', Table::TYPE_INTEGER, NULL,
+                'processing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'related_id', Table::TYPE_INTEGER, NULL,
+                'related_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => true]
             )
             ->addColumn(
@@ -2417,28 +2418,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'priority', Table::TYPE_INTEGER, NULL,
+                'priority', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'request_timeout', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'request_timeout', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'request_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
                 ['nullable' => false]
             )
             ->addColumn(
-                'start_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -2453,39 +2454,39 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayDictionaryCategory = $this->getConnection()->newTable($this->getFullTableName('ebay_dictionary_category'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_id', Table::TYPE_INTEGER, NULL,
+                'category_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'parent_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'title', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
             )
             ->addColumn(
-                'path', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'path', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'features', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_specifics', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_leaf', Table::TYPE_SMALLINT, NULL,
+                'is_leaf', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -2503,20 +2504,20 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_dictionary_marketplace')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'client_details_last_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'client_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'server_details_last_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'server_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
                 'dispatch', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
@@ -2548,7 +2549,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'additional_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'tax_categories', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
@@ -2568,11 +2569,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_dictionary_shipping')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2588,15 +2589,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_flat', Table::TYPE_SMALLINT, NULL,
+                'is_flat', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_calculated', Table::TYPE_SMALLINT, NULL,
+                'is_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_international', Table::TYPE_SMALLINT, NULL,
+                'is_international', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -2617,11 +2618,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayFeedbackTable = $this->getConnection()->newTable($this->getFullTableName('ebay_feedback'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2649,7 +2650,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'buyer_feedback_date', Table::TYPE_DATETIME, NULL,
+                'buyer_feedback_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -2665,7 +2666,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'seller_feedback_date', Table::TYPE_DATETIME, NULL,
+                'seller_feedback_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -2673,16 +2674,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'last_response_attempt_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'last_response_attempt_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('buyer_feedback_id', 'buyer_feedback_id')
@@ -2696,24 +2697,24 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayFeedbackTemplateTable = $this->getConnection()->newTable($this->getFullTableName('ebay_feedback_template'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'body', Table::TYPE_TEXT, NULL,
+                'body', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->setOption('type', 'INNODB')
@@ -2723,7 +2724,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayItemTable = $this->getConnection()->newTable($this->getFullTableName('ebay_item'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -2731,32 +2732,32 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
+                'product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'store_id', Table::TYPE_INTEGER, NULL,
+                'store_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'variations', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variations', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('item_id', 'item_id')
             ->addIndex('account_id', 'account_id')
@@ -2770,112 +2771,112 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayListingTable = $this->getConnection()->newTable($this->getFullTableName('ebay_listing'))
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'products_sold_count', Table::TYPE_INTEGER, NULL,
+                'products_sold_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'items_sold_count', Table::TYPE_INTEGER, NULL,
+                'items_sold_count', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'auto_global_adding_template_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_global_adding_template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_global_adding_template_other_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_global_adding_template_other_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_website_adding_template_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_website_adding_template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_website_adding_template_other_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_website_adding_template_other_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_payment_mode', Table::TYPE_SMALLINT, NULL,
+                'template_payment_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_payment_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_payment_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_payment_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_payment_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_mode', Table::TYPE_SMALLINT, NULL,
+                'template_shipping_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_shipping_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_return_policy_mode', Table::TYPE_SMALLINT, NULL,
+                'template_return_policy_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_return_policy_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_return_policy_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_return_policy_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_return_policy_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_description_mode', Table::TYPE_SMALLINT, NULL,
+                'template_description_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_description_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_description_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_description_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_selling_format_mode', Table::TYPE_SMALLINT, NULL,
+                'template_selling_format_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_selling_format_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_selling_format_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_synchronization_mode', Table::TYPE_SMALLINT, NULL,
+                'template_synchronization_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'template_synchronization_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_synchronization_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_synchronization_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'product_add_ids', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'product_add_ids', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'parts_compatibility_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('auto_global_adding_template_category_id', 'auto_global_adding_template_category_id')
             ->addIndex('auto_global_adding_template_other_category_id', 'auto_global_adding_template_other_category_id')
@@ -2912,16 +2913,16 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_listing_auto_category_group')
         )
             ->addColumn(
-                'listing_auto_category_group_id', Table::TYPE_INTEGER, NULL,
+                'listing_auto_category_group_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'adding_template_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'adding_template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'adding_template_other_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'adding_template_other_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addIndex('adding_template_category_id', 'adding_template_category_id')
             ->addIndex('adding_template_other_category_id', 'adding_template_other_category_id')
@@ -2932,7 +2933,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayListingOtherTable = $this->getConnection()->newTable($this->getFullTableName('ebay_listing_other'))
             ->addColumn(
-                'listing_other_id', Table::TYPE_INTEGER, NULL,
+                'listing_other_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -2941,7 +2942,7 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'sku', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'title', Table::TYPE_TEXT, 255,
@@ -2949,35 +2950,35 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'currency', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'online_duration', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_duration', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_price', Table::TYPE_DECIMAL, [12, 4],
                 ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
+                'online_qty', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'online_qty_sold', Table::TYPE_INTEGER, NULL,
+                'online_qty_sold', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'online_bids', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_bids', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'start_date', Table::TYPE_DATETIME, NULL,
+                'start_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'end_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'end_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('currency', 'currency')
             ->addIndex('end_date', 'end_date')
@@ -2996,172 +2997,172 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayListingProductTable = $this->getConnection()->newTable($this->getFullTableName('ebay_listing_product'))
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'template_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_other_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_other_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'ebay_item_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'ebay_item_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'item_uuid', Table::TYPE_TEXT, 32,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_duplicate', Table::TYPE_SMALLINT, NULL,
+                'is_duplicate', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'online_is_variation', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_is_variation', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_is_auction_type', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_is_auction_type', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_sku', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'online_title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'online_duration', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_duration', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_current_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_start_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_reserve_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_buyitnow_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_qty_sold', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty_sold', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_bids', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_bids', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_category', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'translation_status', Table::TYPE_SMALLINT, NULL,
+                'translation_status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'translation_service', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'translated_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'translated_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'start_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'end_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'end_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'template_payment_mode', Table::TYPE_SMALLINT, NULL,
+                'template_payment_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_payment_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_payment_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_payment_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_payment_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_mode', Table::TYPE_SMALLINT, NULL,
+                'template_shipping_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_shipping_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_return_policy_mode', Table::TYPE_SMALLINT, NULL,
+                'template_return_policy_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_return_policy_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_return_policy_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_return_policy_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_return_policy_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_description_mode', Table::TYPE_SMALLINT, NULL,
+                'template_description_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_description_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_description_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_description_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_selling_format_mode', Table::TYPE_SMALLINT, NULL,
+                'template_selling_format_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_selling_format_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_selling_format_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_synchronization_mode', Table::TYPE_SMALLINT, NULL,
+                'template_synchronization_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'template_synchronization_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_synchronization_custom_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_synchronization_custom_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addIndex('ebay_item_id', 'ebay_item_id')
             ->addIndex('item_uuid', 'item_uuid')
@@ -3212,19 +3213,19 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_listing_product_pickup_store')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'listing_product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'account_pickup_store_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'account_pickup_store_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_process_required', Table::TYPE_SMALLINT, NULL,
+                'is_process_required', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('listing_product_id', 'listing_product_id')
@@ -3239,35 +3240,35 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_listing_product_variation')
         )
             ->addColumn(
-                'listing_product_variation_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_variation_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'add', Table::TYPE_SMALLINT, NULL,
+                'add', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'delete', Table::TYPE_SMALLINT, NULL,
+                'delete', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'online_sku', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'online_price', Table::TYPE_DECIMAL, [12, 4],
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_qty_sold', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty_sold', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'status', Table::TYPE_SMALLINT, NULL,
+                'status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('add', 'add')
@@ -3286,7 +3287,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_listing_product_variation_option')
         )
             ->addColumn(
-                'listing_product_variation_option_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_variation_option_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->setOption('type', 'INNODB')
@@ -3298,16 +3299,16 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_indexer_listing_product_variation_parent')
         )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'min_price', Table::TYPE_DECIMAL, [12, 4],
@@ -3318,7 +3319,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
+                'create_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addIndex('listing_id', 'listing_id')
@@ -3330,7 +3331,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('ebay_marketplace'))
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -3339,94 +3340,94 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'origin_country', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'language_code', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'translation_service_mode', Table::TYPE_SMALLINT, NULL,
+                'translation_service_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_multivariation', Table::TYPE_SMALLINT, NULL,
+                'is_multivariation', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_freight_shipping', Table::TYPE_SMALLINT, NULL,
+                'is_freight_shipping', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_calculated_shipping', Table::TYPE_SMALLINT, NULL,
+                'is_calculated_shipping', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_tax_table', Table::TYPE_SMALLINT, NULL,
+                'is_tax_table', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_vat', Table::TYPE_SMALLINT, NULL,
+                'is_vat', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_stp', Table::TYPE_SMALLINT, NULL,
+                'is_stp', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_stp_advanced', Table::TYPE_SMALLINT, NULL,
+                'is_stp_advanced', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_map', Table::TYPE_SMALLINT, NULL,
+                'is_map', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_local_shipping_rate_table', Table::TYPE_SMALLINT, NULL,
+                'is_local_shipping_rate_table', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_international_shipping_rate_table', Table::TYPE_SMALLINT, NULL,
+                'is_international_shipping_rate_table', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_english_measurement_system', Table::TYPE_SMALLINT, NULL,
+                'is_english_measurement_system', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_metric_measurement_system', Table::TYPE_SMALLINT, NULL,
+                'is_metric_measurement_system', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_cash_on_delivery', Table::TYPE_SMALLINT, NULL,
+                'is_cash_on_delivery', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_global_shipping_program', Table::TYPE_SMALLINT, NULL,
+                'is_global_shipping_program', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_charity', Table::TYPE_SMALLINT, NULL,
+                'is_charity', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_click_and_collect', Table::TYPE_SMALLINT, NULL,
+                'is_click_and_collect', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_in_store_pickup', Table::TYPE_SMALLINT, NULL,
+                'is_in_store_pickup', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_holiday_return', Table::TYPE_SMALLINT, NULL,
+                'is_holiday_return', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_epid', Table::TYPE_SMALLINT, NULL,
+                'is_epid', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_ktype', Table::TYPE_SMALLINT, NULL,
+                'is_ktype', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('is_calculated_shipping', 'is_calculated_shipping')
@@ -3456,7 +3457,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_dictionary_motor_epid')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -3464,7 +3465,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'product_type', Table::TYPE_SMALLINT, NULL,
+                'product_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -3476,27 +3477,27 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'year', Table::TYPE_SMALLINT, NULL,
+                'year', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'trim', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'engine', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'submodel', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_custom', Table::TYPE_SMALLINT, NULL,
+                'is_custom', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'scope', Table::TYPE_SMALLINT, NULL,
+                'scope', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => '0']
             )
             ->addIndex('epid', 'epid')
@@ -3518,47 +3519,47 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_dictionary_motor_ktype')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'ktype', Table::TYPE_INTEGER, NULL,
+                'ktype', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'make', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'model', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'variant', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'body_style', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'type', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'from_year', Table::TYPE_INTEGER, NULL,
-                ['default' => NULL]
+                'from_year', Table::TYPE_INTEGER, null,
+                ['default' => null]
             )
             ->addColumn(
-                'to_year', Table::TYPE_INTEGER, NULL,
-                ['default' => NULL]
+                'to_year', Table::TYPE_INTEGER, null,
+                ['default' => null]
             )
             ->addColumn(
                 'engine', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_custom', Table::TYPE_SMALLINT, NULL,
+                'is_custom', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addIndex('body_style', 'body_style')
@@ -3578,7 +3579,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayMotorFilterTable = $this->getConnection()->newTable($this->getFullTableName('ebay_motor_filter'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -3586,24 +3587,24 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'conditions', Table::TYPE_TEXT, NULL,
+                'conditions', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'note', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'note', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('type', 'type')
             ->setOption('type', 'MYISAM')
@@ -3613,7 +3614,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayMotorGroup = $this->getConnection()->newTable($this->getFullTableName('ebay_motor_group'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -3621,24 +3622,24 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'mode', Table::TYPE_SMALLINT, NULL,
+                'mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'items_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'items_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('mode', 'mode')
             ->addIndex('type', 'type')
@@ -3651,15 +3652,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_motor_filter_to_group')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'filter_id', Table::TYPE_INTEGER, NULL,
+                'filter_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'group_id', Table::TYPE_INTEGER, NULL,
+                'group_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addIndex('filter_id', 'filter_id')
@@ -3671,7 +3672,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayOrderTable = $this->getConnection()->newTable($this->getFullTableName('ebay_order'))
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -3679,8 +3680,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'selling_manager_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'selling_manager_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'buyer_name', Table::TYPE_TEXT, 255,
@@ -3695,12 +3696,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'buyer_message', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'buyer_message', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'buyer_tax_id', Table::TYPE_TEXT, 64,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'paid_amount', Table::TYPE_DECIMAL, [12, 4],
@@ -3715,36 +3716,36 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'checkout_status', Table::TYPE_SMALLINT, NULL,
+                'checkout_status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'shipping_status', Table::TYPE_SMALLINT, NULL,
+                'shipping_status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'payment_status', Table::TYPE_SMALLINT, NULL,
+                'payment_status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'shipping_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'shipping_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'payment_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'payment_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'tax_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'tax_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'purchase_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'purchase_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'purchase_create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'purchase_create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('ebay_order_id', 'ebay_order_id')
             ->addIndex('selling_manager_id', 'selling_manager_id')
@@ -3765,11 +3766,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_order_external_transaction')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -3785,20 +3786,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'is_refund', Table::TYPE_SMALLINT, NULL,
+                'is_refund', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'transaction_date', Table::TYPE_DATETIME, NULL,
+                'transaction_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('order_id', 'order_id')
             ->addIndex('transaction_id', 'transaction_id')
@@ -3809,7 +3810,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayOrderItemTable = $this->getConnection()->newTable($this->getFullTableName('ebay_order_item'))
             ->addColumn(
-                'order_item_id', Table::TYPE_INTEGER, NULL,
+                'order_item_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -3817,8 +3818,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'selling_manager_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'selling_manager_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'item_id', Table::TYPE_DECIMAL, [20, 0],
@@ -3830,19 +3831,19 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'sku', Table::TYPE_TEXT, 64,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'price', Table::TYPE_DECIMAL, [12, 4],
                 ['nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'qty_purchased', Table::TYPE_INTEGER, NULL,
+                'qty_purchased', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'tax_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'tax_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'final_fee', Table::TYPE_DECIMAL, [12, 4],
@@ -3853,15 +3854,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'variation_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variation_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'tracking_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'tracking_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'unpaid_item_process_state', Table::TYPE_SMALLINT, NULL,
+                'unpaid_item_process_state', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('transaction_id', 'transaction_id')
@@ -3877,23 +3878,23 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayTemplateCategoryTable = $this->getConnection()->newTable($this->getFullTableName('ebay_template_category'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_main_id', Table::TYPE_INTEGER, NULL,
+                'category_main_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'category_main_path', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'category_main_mode', Table::TYPE_SMALLINT, NULL,
+                'category_main_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 2]
             )
             ->addColumn(
@@ -3901,12 +3902,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->setOption('type', 'INNODB')
@@ -3918,15 +3919,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_category_specific')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_category_id', Table::TYPE_INTEGER, NULL,
+                'template_category_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'mode', Table::TYPE_SMALLINT, NULL,
+                'mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -3934,20 +3935,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'value_mode', Table::TYPE_SMALLINT, NULL,
+                'value_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'value_ebay_recommended', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'value_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'value_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('template_category_id', 'template_category_id')
             ->setOption('type', 'INNODB')
@@ -3959,15 +3960,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_description')
         )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
+                'template_description_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'title_mode', Table::TYPE_SMALLINT, NULL,
+                'title_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -3975,7 +3976,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'subtitle_mode', Table::TYPE_SMALLINT, NULL,
+                'subtitle_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -3983,7 +3984,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'description_mode', Table::TYPE_SMALLINT, NULL,
+                'description_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -3991,11 +3992,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'condition_mode', Table::TYPE_SMALLINT, NULL,
+                'condition_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'condition_value', Table::TYPE_INTEGER, NULL,
+                'condition_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4003,19 +4004,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'condition_note_mode', Table::TYPE_SMALLINT, NULL,
+                'condition_note_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'condition_note_template', Table::TYPE_TEXT, NULL,
+                'condition_note_template', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'product_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'product_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'cut_long_titles', Table::TYPE_SMALLINT, NULL,
+                'cut_long_titles', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4023,7 +4024,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'editor_type', Table::TYPE_SMALLINT, NULL,
+                'editor_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4031,11 +4032,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gallery_type', Table::TYPE_SMALLINT, NULL,
+                'gallery_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 4]
             )
             ->addColumn(
-                'image_main_mode', Table::TYPE_SMALLINT, NULL,
+                'image_main_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4043,11 +4044,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gallery_images_mode', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'gallery_images_limit', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_limit', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -4055,11 +4056,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'variation_images_mode', Table::TYPE_SMALLINT, NULL,
+                'variation_images_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'variation_images_limit', Table::TYPE_SMALLINT, NULL,
+                'variation_images_limit', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -4068,27 +4069,27 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'default_image_url', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'variation_configurable_images', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variation_configurable_images', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'use_supersize_images', Table::TYPE_SMALLINT, NULL,
+                'use_supersize_images', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'watermark_mode', Table::TYPE_SMALLINT, NULL,
+                'watermark_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'watermark_image', Table::TYPE_BLOB, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'watermark_settings', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'watermark_settings', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->setOption('type', 'INNODB')
@@ -4100,27 +4101,27 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_other_category')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_secondary_id', Table::TYPE_INTEGER, NULL,
+                'category_secondary_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'category_secondary_path', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'category_secondary_mode', Table::TYPE_SMALLINT, NULL,
+                'category_secondary_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 2]
             )
             ->addColumn(
@@ -4133,10 +4134,10 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'store_category_main_path', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'store_category_main_mode', Table::TYPE_SMALLINT, NULL,
+                'store_category_main_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4149,10 +4150,10 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'store_category_secondary_path', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'store_category_secondary_mode', Table::TYPE_SMALLINT, NULL,
+                'store_category_secondary_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4160,12 +4161,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -4176,11 +4177,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayTemplatePaymentTable = $this->getConnection()->newTable($this->getFullTableName('ebay_template_payment'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4188,11 +4189,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'pay_pal_mode', Table::TYPE_SMALLINT, NULL,
+                'pay_pal_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4200,16 +4201,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'pay_pal_immediate_payment', Table::TYPE_SMALLINT, NULL,
+                'pay_pal_immediate_payment', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -4223,11 +4224,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_payment_service')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_payment_id', Table::TYPE_INTEGER, NULL,
+                'template_payment_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4244,11 +4245,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_return_policy')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4256,7 +4257,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -4272,7 +4273,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'holiday_mode', Table::TYPE_SMALLINT, NULL,
+                'holiday_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4284,16 +4285,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'description', Table::TYPE_TEXT, NULL,
+                'description', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -4307,15 +4308,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_selling_format')
         )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'listing_type', Table::TYPE_SMALLINT, NULL,
+                'listing_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4323,15 +4324,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'listing_is_private', Table::TYPE_SMALLINT, NULL,
+                'listing_is_private', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'restricted_to_business', Table::TYPE_SMALLINT, NULL,
+                'restricted_to_business', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
-                'duration_mode', Table::TYPE_SMALLINT, NULL,
+                'duration_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4339,15 +4340,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'out_of_stock_control', Table::TYPE_SMALLINT, NULL,
+                'out_of_stock_control', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'qty_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_custom_value', Table::TYPE_INTEGER, NULL,
+                'qty_custom_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4355,31 +4356,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'qty_percentage', Table::TYPE_INTEGER, NULL,
+                'qty_percentage', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 100]
             )
             ->addColumn(
-                'qty_modification_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_modification_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_min_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_min_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'qty_max_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_max_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'vat_percent', Table::TYPE_FLOAT, NULL,
+                'vat_percent', Table::TYPE_FLOAT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'tax_table_mode', Table::TYPE_SMALLINT, NULL,
+                'tax_table_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'tax_category_mode', Table::TYPE_SMALLINT, NULL,
+                'tax_category_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4391,15 +4392,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'price_increase_vat_percent', Table::TYPE_SMALLINT, NULL,
+                'price_increase_vat_percent', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'fixed_price_mode', Table::TYPE_SMALLINT, NULL,
+                'fixed_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4411,7 +4412,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'start_price_mode', Table::TYPE_SMALLINT, NULL,
+                'start_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4423,7 +4424,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'reserve_price_mode', Table::TYPE_SMALLINT, NULL,
+                'reserve_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4435,7 +4436,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'buyitnow_price_mode', Table::TYPE_SMALLINT, NULL,
+                'buyitnow_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4447,7 +4448,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'price_discount_stp_mode', Table::TYPE_SMALLINT, NULL,
+                'price_discount_stp_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4455,11 +4456,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'price_discount_stp_type', Table::TYPE_SMALLINT, NULL,
+                'price_discount_stp_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'price_discount_map_mode', Table::TYPE_SMALLINT, NULL,
+                'price_discount_map_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4467,15 +4468,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'price_discount_map_exposure_type', Table::TYPE_SMALLINT, NULL,
+                'price_discount_map_exposure_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'best_offer_mode', Table::TYPE_SMALLINT, NULL,
+                'best_offer_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'best_offer_accept_mode', Table::TYPE_SMALLINT, NULL,
+                'best_offer_accept_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4487,7 +4488,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'best_offer_reject_mode', Table::TYPE_SMALLINT, NULL,
+                'best_offer_reject_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4499,11 +4500,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'charity', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'charity', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'ignore_variations', Table::TYPE_SMALLINT, NULL,
+                'ignore_variations', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
@@ -4514,11 +4515,11 @@ class InstallSchema implements InstallSchemaInterface
 
         $ebayTemplateShippingTable = $this->getConnection()->newTable($this->getFullTableName('ebay_template_shipping'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -4526,11 +4527,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'country_mode', Table::TYPE_SMALLINT, NULL,
+                'country_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -4542,7 +4543,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'postal_code_mode', Table::TYPE_SMALLINT, NULL,
+                'postal_code_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4554,7 +4555,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'address_mode', Table::TYPE_SMALLINT, NULL,
+                'address_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4566,68 +4567,68 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'dispatch_time', Table::TYPE_INTEGER, NULL,
+                'dispatch_time', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'local_shipping_rate_table_mode', Table::TYPE_SMALLINT, NULL,
+                'local_shipping_rate_table_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'international_shipping_rate_table_mode', Table::TYPE_SMALLINT, NULL,
+                'international_shipping_rate_table_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'local_shipping_mode', Table::TYPE_SMALLINT, NULL,
+                'local_shipping_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'local_shipping_discount_mode', Table::TYPE_SMALLINT, NULL,
+                'local_shipping_discount_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'local_shipping_discount_profile_id', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'local_shipping_discount_profile_id', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'click_and_collect_mode', Table::TYPE_SMALLINT, NULL,
+                'click_and_collect_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
                 'cash_on_delivery_cost', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'international_shipping_mode', Table::TYPE_SMALLINT, NULL,
+                'international_shipping_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'international_shipping_discount_mode', Table::TYPE_SMALLINT, NULL,
+                'international_shipping_discount_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'international_shipping_discount_profile_id', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'international_shipping_discount_profile_id', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'excluded_locations', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'excluded_locations', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'cross_border_trade', Table::TYPE_SMALLINT, NULL,
+                'cross_border_trade', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'global_shipping_program', Table::TYPE_SMALLINT, NULL,
+                'global_shipping_program', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -4641,19 +4642,19 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_shipping_calculated')
         )
             ->addColumn(
-                'template_shipping_id', Table::TYPE_INTEGER, NULL,
+                'template_shipping_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'measurement_system', Table::TYPE_SMALLINT, NULL,
+                'measurement_system', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'package_size_mode', Table::TYPE_SMALLINT, NULL,
+                'package_size_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'package_size_value', Table::TYPE_TEXT, NULL,
+                'package_size_value', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -4661,11 +4662,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'dimension_mode', Table::TYPE_SMALLINT, NULL,
+                'dimension_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'dimension_width_value', Table::TYPE_TEXT, NULL,
+                'dimension_width_value', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -4673,7 +4674,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'dimension_length_value', Table::TYPE_TEXT, NULL,
+                'dimension_length_value', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -4681,7 +4682,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'dimension_depth_value', Table::TYPE_TEXT, NULL,
+                'dimension_depth_value', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -4689,15 +4690,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'weight_mode', Table::TYPE_SMALLINT, NULL,
+                'weight_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'weight_minor', Table::TYPE_TEXT, NULL,
+                'weight_minor', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'weight_major', Table::TYPE_TEXT, NULL,
+                'weight_major', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -4706,11 +4707,11 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'local_handling_cost', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'international_handling_cost', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -4721,15 +4722,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_shipping_service')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_shipping_id', Table::TYPE_INTEGER, NULL,
+                'template_shipping_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'shipping_type', Table::TYPE_SMALLINT, NULL,
+                'shipping_type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4737,7 +4738,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'cost_mode', Table::TYPE_SMALLINT, NULL,
+                'cost_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -4753,11 +4754,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'locations', Table::TYPE_TEXT, NULL,
+                'locations', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'priority', Table::TYPE_SMALLINT, NULL,
+                'priority', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('priority', 'priority')
@@ -4771,215 +4772,215 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('ebay_template_synchronization')
         )
             ->addColumn(
-                'template_synchronization_id', Table::TYPE_INTEGER, NULL,
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_custom_template', Table::TYPE_SMALLINT, NULL,
+                'is_custom_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'list_mode', Table::TYPE_SMALLINT, NULL,
+                'list_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_status_enabled', Table::TYPE_SMALLINT, NULL,
+                'list_status_enabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_is_in_stock', Table::TYPE_SMALLINT, NULL,
+                'list_is_in_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'list_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'list_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'list_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'list_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'list_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'list_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'list_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'list_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->addColumn(
-                'revise_update_qty', Table::TYPE_SMALLINT, NULL,
+                'revise_update_qty', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_qty_max_applied_value_mode', Table::TYPE_SMALLINT, NULL,
+                'revise_update_qty_max_applied_value_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_qty_max_applied_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'revise_update_qty_max_applied_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'revise_update_price', Table::TYPE_SMALLINT, NULL,
+                'revise_update_price', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation_mode', Table::TYPE_SMALLINT, NULL,
+                'revise_update_price_max_allowed_deviation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'revise_update_price_max_allowed_deviation', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'revise_update_title', Table::TYPE_SMALLINT, NULL,
+                'revise_update_title', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_sub_title', Table::TYPE_SMALLINT, NULL,
+                'revise_update_sub_title', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_description', Table::TYPE_SMALLINT, NULL,
+                'revise_update_description', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_images', Table::TYPE_SMALLINT, NULL,
+                'revise_update_images', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_specifics', Table::TYPE_SMALLINT, NULL,
+                'revise_update_specifics', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_shipping_services', Table::TYPE_SMALLINT, NULL,
+                'revise_update_shipping_services', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_category_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_category_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_payment_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_payment_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_return_policy_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_return_policy_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_shipping_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_shipping_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_description_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_description_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_mode', Table::TYPE_SMALLINT, NULL,
+                'relist_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_filter_user_lock', Table::TYPE_SMALLINT, NULL,
+                'relist_filter_user_lock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_send_data', Table::TYPE_SMALLINT, NULL,
+                'relist_send_data', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_status_enabled', Table::TYPE_SMALLINT, NULL,
+                'relist_status_enabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_is_in_stock', Table::TYPE_SMALLINT, NULL,
+                'relist_is_in_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'relist_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'relist_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'relist_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'relist_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'relist_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'relist_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'relist_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->addColumn(
-                'stop_status_disabled', Table::TYPE_SMALLINT, NULL,
+                'stop_status_disabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_out_off_stock', Table::TYPE_SMALLINT, NULL,
+                'stop_out_off_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'stop_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'stop_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'stop_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'stop_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'stop_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'stop_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'stop_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->addIndex('is_custom_template', 'is_custom_template')
@@ -4993,7 +4994,7 @@ class InstallSchema implements InstallSchemaInterface
     {
         $amazonAccountTable = $this->getConnection()->newTable($this->getFullTableName('amazon_account'))
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5001,7 +5002,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5010,51 +5011,51 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'token', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'related_store_id', Table::TYPE_INTEGER, NULL,
+                'related_store_id', Table::TYPE_INTEGER, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'shipping_mode', Table::TYPE_INTEGER, NULL,
+                'shipping_mode', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'default' => 1]
             )
             ->addColumn(
-                'other_listings_synchronization', Table::TYPE_SMALLINT, NULL,
+                'other_listings_synchronization', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'other_listings_mapping_mode', Table::TYPE_SMALLINT, NULL,
+                'other_listings_mapping_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'other_listings_mapping_settings', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'other_listings_move_mode', Table::TYPE_SMALLINT, NULL,
+                'other_listings_move_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'other_listings_move_settings', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'magento_orders_settings', Table::TYPE_TEXT, NULL,
+                'magento_orders_settings', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_vat_calculation_service_enabled', Table::TYPE_SMALLINT, NULL,
+                'is_vat_calculation_service_enabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_magento_invoice_creation_disabled', Table::TYPE_SMALLINT, NULL,
+                'is_magento_invoice_creation_disabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'info', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'info', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -5065,23 +5066,23 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_account_repricing')
         )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
                 'email', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'token', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'total_products', Table::TYPE_INTEGER, NULL,
+                'total_products', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'regular_price_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5093,20 +5094,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'min_price_mode', Table::TYPE_SMALLINT, NULL,
+                'min_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'min_price_value', Table::TYPE_DECIMAL, [14, 2],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'min_price_percent', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'min_price_percent', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'min_price_attribute', Table::TYPE_TEXT, 255,
@@ -5117,20 +5118,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'min_price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'min_price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'max_price_mode', Table::TYPE_SMALLINT, NULL,
+                'max_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'max_price_value', Table::TYPE_DECIMAL, [14, 2],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'max_price_percent', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'max_price_percent', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'max_price_attribute', Table::TYPE_TEXT, 255,
@@ -5141,11 +5142,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'max_price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'max_price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'disable_mode', Table::TYPE_SMALLINT, NULL,
+                'disable_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5153,16 +5154,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'last_checked_listing_product_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'last_checked_listing_product_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -5173,53 +5174,53 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_dictionary_category')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'category_id', Table::TYPE_INTEGER, NULL,
+                'category_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'parent_category_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'browsenode_id', Table::TYPE_DECIMAL, [20, 0],
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'product_data_nicks', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'product_data_nicks', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'title', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
             )
             ->addColumn(
-                'path', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'path', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'keywords', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'keywords', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'is_leaf', Table::TYPE_SMALLINT, NULL,
+                'is_leaf', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
-            ->addIndex('browsenode_id', 'browsenode_id')
-            ->addIndex('category_id', 'category_id')
-            ->addIndex('is_leaf', 'is_leaf')
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->addIndex('path', [['name' => 'path', 'size' => 500]])
+            ->addIndex('category_id', 'category_id')
             ->addIndex('parent_category_id', 'parent_category_id')
-            ->addIndex('title', 'title')
+            ->addIndex('browsenode_id', 'browsenode_id')
             ->addIndex('product_data_nicks', [['name' => 'product_data_nicks', 'size' => 500]])
+            ->addIndex('title', 'title')
+            ->addIndex('path', [['name' => 'path', 'size' => 500]])
+            ->addIndex('is_leaf', 'is_leaf')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -5229,15 +5230,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_dictionary_category_product_data')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'browsenode_id', Table::TYPE_INTEGER, NULL,
+                'browsenode_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5245,12 +5246,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_applicable', Table::TYPE_SMALLINT, NULL,
+                'is_applicable', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'required_attributes', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'required_attributes', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('browsenode_id', 'browsenode_id')
@@ -5265,24 +5266,24 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_dictionary_marketplace')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'client_details_last_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'client_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'server_details_last_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'server_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
                 'product_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->setOption('type', 'MYISAM')
@@ -5294,20 +5295,20 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_dictionary_specific')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'specific_id', Table::TYPE_INTEGER, NULL,
+                'specific_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'parent_specific_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'parent_specific_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'product_data_nick', Table::TYPE_TEXT, 255,
@@ -5326,43 +5327,43 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'values', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'values', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'recommended_values', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'recommended_values', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'params', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'params', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'data_definition', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'data_definition', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'min_occurs', Table::TYPE_SMALLINT, NULL,
+                'min_occurs', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'max_occurs', Table::TYPE_SMALLINT, NULL,
+                'max_occurs', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
-            ->addIndex('max_occurs', 'max_occurs')
-            ->addIndex('min_occurs', 'min_occurs')
-            ->addIndex('parent_specific_id', 'parent_specific_id')
-            ->addIndex('title', 'title')
-            ->addIndex('type', 'type')
             ->addIndex('specific_id', 'specific_id')
+            ->addIndex('parent_specific_id', 'parent_specific_id')
+            ->addIndex('product_data_nick', 'product_data_nick')
+            ->addIndex('title', 'title')
             ->addIndex('xml_tag', 'xml_tag')
             ->addIndex('xpath', 'xpath')
-            ->addIndex('product_data_nick', 'product_data_nick')
+            ->addIndex('type', 'type')
+            ->addIndex('max_occurs', 'max_occurs')
+            ->addIndex('min_occurs', 'min_occurs')
             ->setOption('type', 'MYISAM')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -5372,11 +5373,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_dictionary_shipping_override')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5399,15 +5400,15 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_item'))
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5415,28 +5416,28 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'product_id', Table::TYPE_INTEGER, NULL,
+                'product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'store_id', Table::TYPE_INTEGER, NULL,
+                'store_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'variation_product_options', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variation_product_options', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'variation_channel_options', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variation_channel_options', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -5450,27 +5451,27 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonListingTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing'))
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'auto_global_adding_description_template_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_global_adding_description_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'auto_website_adding_description_template_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'auto_website_adding_description_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'template_synchronization_id', Table::TYPE_INTEGER, NULL,
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'sku_mode', Table::TYPE_SMALLINT, NULL,
+                'sku_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5478,7 +5479,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'sku_modification_mode', Table::TYPE_SMALLINT, NULL,
+                'sku_modification_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5486,11 +5487,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'generate_sku_mode', Table::TYPE_SMALLINT, NULL,
+                'generate_sku_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'general_id_mode', Table::TYPE_SMALLINT, NULL,
+                'general_id_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5498,7 +5499,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'worldwide_id_mode', Table::TYPE_SMALLINT, NULL,
+                'worldwide_id_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5506,11 +5507,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'search_by_magento_title_mode', Table::TYPE_SMALLINT, NULL,
+                'search_by_magento_title_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'condition_mode', Table::TYPE_SMALLINT, NULL,
+                'condition_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5522,7 +5523,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'condition_note_mode', Table::TYPE_SMALLINT, NULL,
+                'condition_note_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5530,7 +5531,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'image_main_mode', Table::TYPE_SMALLINT, NULL,
+                'image_main_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5538,11 +5539,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gallery_images_mode', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'gallery_images_limit', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_limit', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -5550,7 +5551,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gift_wrap_mode', Table::TYPE_SMALLINT, NULL,
+                'gift_wrap_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -5558,7 +5559,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gift_message_mode', Table::TYPE_SMALLINT, NULL,
+                'gift_message_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5566,11 +5567,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'handling_time_mode', Table::TYPE_SMALLINT, NULL,
+                'handling_time_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'handling_time_value', Table::TYPE_INTEGER, NULL,
+                'handling_time_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -5578,11 +5579,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'restock_date_mode', Table::TYPE_SMALLINT, NULL,
+                'restock_date_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'restock_date_value', Table::TYPE_DATETIME, NULL,
+                'restock_date_value', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -5603,12 +5604,12 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_listing_auto_category_group')
         )
             ->addColumn(
-                'listing_auto_category_group_id', Table::TYPE_INTEGER, NULL,
+                'listing_auto_category_group_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'adding_description_template_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'adding_description_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addIndex('adding_description_template_id', 'adding_description_template_id')
             ->setOption('type', 'INNODB')
@@ -5618,7 +5619,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonListingOtherTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing_other'))
             ->addColumn(
-                'listing_other_id', Table::TYPE_INTEGER, NULL,
+                'listing_other_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5631,41 +5632,41 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'title', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'online_price', Table::TYPE_DECIMAL, [12, 4],
                 ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_afn_channel', Table::TYPE_SMALLINT, NULL,
+                'is_afn_channel', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_isbn_general_id', Table::TYPE_SMALLINT, NULL,
+                'is_isbn_general_id', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_repricing', Table::TYPE_SMALLINT, NULL,
+                'is_repricing', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_repricing_disabled', Table::TYPE_SMALLINT, NULL,
+                'is_repricing_disabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('general_id', 'general_id')
+            ->addIndex('sku', 'sku')
+            ->addIndex('title', 'title')
+            ->addIndex('online_price', 'online_price')
+            ->addIndex('online_qty', 'online_qty')
             ->addIndex('is_afn_channel', 'is_afn_channel')
             ->addIndex('is_isbn_general_id', 'is_isbn_general_id')
             ->addIndex('is_repricing', 'is_repricing')
             ->addIndex('is_repricing_disabled', 'is_repricing_disabled')
-            ->addIndex('online_price', 'online_price')
-            ->addIndex('online_qty', 'online_qty')
-            ->addIndex('sku', 'sku')
-            ->addIndex('title', 'title')
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
@@ -5673,128 +5674,128 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonListingProductTable = $this->getConnection()->newTable($this->getFullTableName('amazon_listing_product'))
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_description_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_template_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_shipping_override_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_shipping_override_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'template_product_tax_code_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'template_product_tax_code_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_variation_product', Table::TYPE_SMALLINT, NULL,
+                'is_variation_product', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_variation_product_matched', Table::TYPE_SMALLINT, NULL,
+                'is_variation_product_matched', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_variation_channel_matched', Table::TYPE_SMALLINT, NULL,
+                'is_variation_channel_matched', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_variation_parent', Table::TYPE_SMALLINT, NULL,
+                'is_variation_parent', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'variation_parent_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'variation_parent_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'variation_parent_need_processor', Table::TYPE_SMALLINT, NULL,
+                'variation_parent_need_processor', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'variation_child_statuses', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'variation_child_statuses', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'general_id', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'general_id_search_info', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'general_id_search_info', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'search_settings_status', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'search_settings_status', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'search_settings_data', Table::TYPE_TEXT, Table::MAX_TEXT_SIZE,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'sku', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'online_regular_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_regular_sale_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_regular_sale_price_start_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'online_regular_sale_price_start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'online_regular_sale_price_end_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'online_regular_sale_price_end_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
                 'online_business_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'online_business_discounts', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'online_business_discounts', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'online_qty', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_repricing', Table::TYPE_SMALLINT, NULL,
+                'is_repricing', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_afn_channel', Table::TYPE_SMALLINT, NULL,
+                'is_afn_channel', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_isbn_general_id', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'is_isbn_general_id', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_general_id_owner', Table::TYPE_SMALLINT, NULL,
+                'is_general_id_owner', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'variation_parent_afn_state', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'variation_parent_afn_state', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'variation_parent_repricing_state', Table::TYPE_SMALLINT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'variation_parent_repricing_state', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'defected_messages', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'defected_messages', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addIndex('general_id', 'general_id')
             ->addIndex('search_settings_status', 'search_settings_status')
@@ -5828,40 +5829,40 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_listing_product_repricing')
         )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_online_disabled', Table::TYPE_SMALLINT, NULL,
+                'is_online_disabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'online_regular_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_min_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'online_max_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_process_required', Table::TYPE_SMALLINT, NULL,
+                'is_process_required', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'last_synchronization_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'last_synchronization_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('is_online_disabled', 'is_online_disabled')
             ->addIndex('is_process_required', 'is_process_required')
@@ -5874,7 +5875,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_listing_product_variation')
         )
             ->addColumn(
-                'listing_product_variation_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_variation_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->setOption('type', 'INNODB')
@@ -5886,7 +5887,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_listing_product_variation_option')
         )
             ->addColumn(
-                'listing_product_variation_option_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_variation_option_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->setOption('type', 'INNODB')
@@ -5898,35 +5899,35 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_indexer_listing_product_variation_parent')
         )
             ->addColumn(
-                'listing_product_id', Table::TYPE_INTEGER, NULL,
+                'listing_product_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'listing_id', Table::TYPE_INTEGER, NULL,
+                'listing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'component_mode', Table::TYPE_TEXT, 10,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'min_regular_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'max_regular_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'min_business_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'max_business_price', Table::TYPE_DECIMAL, [12, 4],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
+                'create_date', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addIndex('listing_id', 'listing_id')
@@ -5938,39 +5939,39 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonMarketplaceTable = $this->getConnection()->newTable($this->getFullTableName('amazon_marketplace'))
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
                 'developer_key', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'default_currency', Table::TYPE_TEXT, 255,
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_new_asin_available', Table::TYPE_SMALLINT, NULL,
+                'is_new_asin_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'is_merchant_fulfillment_available', Table::TYPE_SMALLINT, NULL,
+                'is_merchant_fulfillment_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_business_available', Table::TYPE_SMALLINT, NULL,
+                'is_business_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_vat_calculation_service_available', Table::TYPE_SMALLINT, NULL,
+                'is_vat_calculation_service_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_product_tax_code_policy_available', Table::TYPE_SMALLINT, NULL,
+                'is_product_tax_code_policy_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_automatic_token_retrieving_available', Table::TYPE_SMALLINT, NULL,
+                'is_automatic_token_retrieving_available', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('is_new_asin_available', 'is_new_asin_available')
@@ -5986,7 +5987,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonOrderTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order'))
             ->addColumn(
-                'order_id', Table::TYPE_INTEGER, NULL,
+                'order_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -5994,19 +5995,19 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_afn_channel', Table::TYPE_SMALLINT, NULL,
+                'is_afn_channel', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_prime', Table::TYPE_SMALLINT, NULL,
+                'is_prime', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'is_business', Table::TYPE_SMALLINT, NULL,
+                'is_business', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'status', Table::TYPE_SMALLINT, NULL,
+                'status', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6015,14 +6016,14 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'buyer_email', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'shipping_service', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'shipping_address', Table::TYPE_TEXT, NULL,
+                'shipping_address', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -6030,27 +6031,27 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'shipping_dates', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'shipping_dates', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'paid_amount', Table::TYPE_DECIMAL, [12, 4],
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'tax_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'tax_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'discount_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'discount_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'qty_shipped', Table::TYPE_INTEGER, NULL,
+                'qty_shipped', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'qty_unshipped', Table::TYPE_INTEGER, NULL,
+                'qty_unshipped', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6058,20 +6059,20 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'purchase_update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'purchase_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'purchase_create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'purchase_create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'merchant_fulfillment_data', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'merchant_fulfillment_data', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'merchant_fulfillment_label', Table::TYPE_BLOB, NULL,
-                ['default' => NULL]
+                'merchant_fulfillment_label', Table::TYPE_BLOB, null,
+                ['default' => null]
             )
             ->addIndex('amazon_order_id', 'amazon_order_id')
             ->addIndex('is_prime', 'is_prime')
@@ -6087,7 +6088,7 @@ class InstallSchema implements InstallSchemaInterface
 
         $amazonOrderItemTable = $this->getConnection()->newTable($this->getFullTableName('amazon_order_item'))
             ->addColumn(
-                'order_item_id', Table::TYPE_INTEGER, NULL,
+                'order_item_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6100,14 +6101,14 @@ class InstallSchema implements InstallSchemaInterface
             )
             ->addColumn(
                 'sku', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'general_id', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'is_isbn_general_id', Table::TYPE_SMALLINT, NULL,
+                'is_isbn_general_id', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6119,27 +6120,27 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
             )
             ->addColumn(
-                'gift_message', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'gift_message', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'gift_type', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'tax_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'tax_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'discount_details', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'discount_details', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
                 'currency', Table::TYPE_TEXT, 10,
                 ['nullable' => false]
             )
             ->addColumn(
-                'qty_purchased', Table::TYPE_INTEGER, NULL,
+                'qty_purchased', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addIndex('general_id', 'general_id')
@@ -6154,23 +6155,23 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_processing_action')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'processing_id', Table::TYPE_INTEGER, NULL,
+                'processing_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'request_pending_single_id', Table::TYPE_INTEGER, NULL,
+                'request_pending_single_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => true]
             )
             ->addColumn(
-                'related_id', Table::TYPE_INTEGER, NULL,
+                'related_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => true]
             )
             ->addColumn(
@@ -6182,16 +6183,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'start_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('account_id', 'account_id')
             ->addIndex('processing_id', 'processing_id')
@@ -6208,11 +6209,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_processing_action_list_sku')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'account_id', Table::TYPE_INTEGER, NULL,
+                'account_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6220,8 +6221,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex(
                 'account_id__sku', ['account_id', 'sku'],
@@ -6236,7 +6237,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_shipping_template')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -6244,7 +6245,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'template_name_mode', Table::TYPE_SMALLINT, NULL,
+                'template_name_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6256,12 +6257,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('title', 'title')
             ->setOption('type', 'INNODB')
@@ -6273,7 +6274,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_shipping_override')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -6281,16 +6282,16 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('title', 'title')
             ->addIndex('marketplace_id', 'marketplace_id')
@@ -6303,11 +6304,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_shipping_override_service')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_shipping_override_id', Table::TYPE_INTEGER, NULL,
+                'template_shipping_override_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6323,11 +6324,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'type', Table::TYPE_SMALLINT, NULL,
+                'type', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'cost_mode', Table::TYPE_SMALLINT, NULL,
+                'cost_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6344,7 +6345,7 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_product_tax_code')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
@@ -6352,24 +6353,24 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'product_tax_code_mode', Table::TYPE_SMALLINT, NULL,
+                'product_tax_code_mode', Table::TYPE_SMALLINT, null,
                 ['nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'product_tax_code_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'product_tax_code_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('title', 'title')
             ->setOption('type', 'INNODB')
@@ -6381,40 +6382,40 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_description')
         )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
+                'template_description_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'marketplace_id', Table::TYPE_INTEGER, NULL,
+                'marketplace_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'is_new_asin_accepted', Table::TYPE_SMALLINT, NULL,
+                'is_new_asin_accepted', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'product_data_nick', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'category_path', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'browsenode_id', Table::TYPE_DECIMAL, [20, 0],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'registered_parameter', Table::TYPE_TEXT, 25,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'worldwide_id_mode', Table::TYPE_SMALLINT, NULL,
+                'worldwide_id_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'worldwide_id_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('marketplace_id', 'marketplace_id')
             ->addIndex('is_new_asin_accepted', 'is_new_asin_accepted')
@@ -6429,11 +6430,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_description_definition')
         )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
+                'template_description_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'title_mode', Table::TYPE_SMALLINT, NULL,
+                'title_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6441,31 +6442,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'brand_mode', Table::TYPE_SMALLINT, NULL,
+                'brand_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'brand_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'brand_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'manufacturer_mode', Table::TYPE_SMALLINT, NULL,
+                'manufacturer_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'manufacturer_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'manufacturer_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'manufacturer_part_number_mode', Table::TYPE_SMALLINT, NULL,
+                'manufacturer_part_number_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6477,215 +6478,215 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'msrp_rrp_mode', Table::TYPE_SMALLINT, NULL,
+                'msrp_rrp_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
                 'msrp_rrp_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['nullable' => false]
             )
             ->addColumn(
-                'item_package_quantity_mode', Table::TYPE_SMALLINT, NULL,
+                'item_package_quantity_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'item_package_quantity_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_package_quantity_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'number_of_items_mode', Table::TYPE_SMALLINT, NULL,
+                'number_of_items_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'number_of_items_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'number_of_items_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'item_dimensions_volume_mode', Table::TYPE_SMALLINT, NULL,
+                'item_dimensions_volume_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'item_dimensions_volume_length_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_width_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_height_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_length_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_width_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_height_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'item_dimensions_volume_unit_of_measure_mode', Table::TYPE_SMALLINT, NULL,
+                'item_dimensions_volume_unit_of_measure_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'item_dimensions_volume_unit_of_measure_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_volume_unit_of_measure_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'item_dimensions_weight_mode', Table::TYPE_SMALLINT, NULL,
+                'item_dimensions_weight_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'item_dimensions_weight_custom_value', Table::TYPE_DECIMAL, [10, 2],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'item_dimensions_weight_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'item_dimensions_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, NULL,
+                'item_dimensions_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'item_dimensions_weight_unit_of_measure_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'item_dimensions_weight_unit_of_measure_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'package_dimensions_volume_mode', Table::TYPE_SMALLINT, NULL,
+                'package_dimensions_volume_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'package_dimensions_volume_length_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_width_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_height_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_length_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_width_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_height_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'package_dimensions_volume_unit_of_measure_mode', Table::TYPE_SMALLINT, NULL,
+                'package_dimensions_volume_unit_of_measure_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'package_dimensions_volume_unit_of_measure_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_dimensions_volume_unit_of_measure_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'shipping_weight_mode', Table::TYPE_SMALLINT, NULL,
+                'shipping_weight_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'shipping_weight_custom_value', Table::TYPE_DECIMAL, [10, 2],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'shipping_weight_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'shipping_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, NULL,
+                'shipping_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 1]
             )
             ->addColumn(
                 'shipping_weight_unit_of_measure_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'shipping_weight_unit_of_measure_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'package_weight_mode', Table::TYPE_SMALLINT, NULL,
+                'package_weight_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'package_weight_custom_value', Table::TYPE_DECIMAL, [10, 2],
-                ['unsigned' => true, 'default' => NULL]
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
                 'package_weight_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'package_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, NULL,
+                'package_weight_unit_of_measure_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 1]
             )
             ->addColumn(
                 'package_weight_unit_of_measure_custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'package_weight_unit_of_measure_custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'target_audience_mode', Table::TYPE_SMALLINT, NULL,
+                'target_audience_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'target_audience', Table::TYPE_TEXT, NULL,
+                'target_audience', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'search_terms_mode', Table::TYPE_SMALLINT, NULL,
+                'search_terms_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'search_terms', Table::TYPE_TEXT, NULL,
+                'search_terms', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'bullet_points_mode', Table::TYPE_SMALLINT, NULL,
+                'bullet_points_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'bullet_points', Table::TYPE_TEXT, NULL,
+                'bullet_points', Table::TYPE_TEXT, null,
                 ['nullable' => false]
             )
             ->addColumn(
-                'description_mode', Table::TYPE_SMALLINT, NULL,
+                'description_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6693,7 +6694,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'image_main_mode', Table::TYPE_SMALLINT, NULL,
+                'image_main_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6701,7 +6702,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'image_variation_difference_mode', Table::TYPE_SMALLINT, NULL,
+                'image_variation_difference_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
@@ -6709,11 +6710,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'gallery_images_mode', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'gallery_images_limit', Table::TYPE_SMALLINT, NULL,
+                'gallery_images_limit', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
@@ -6721,12 +6722,12 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -6737,11 +6738,11 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_description_specific')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_description_id', Table::TYPE_INTEGER, NULL,
+                'template_description_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6753,36 +6754,36 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'is_required', Table::TYPE_SMALLINT, NULL,
+                'is_required', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'default' => 0]
             )
             ->addColumn(
                 'recommended_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'custom_value', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'custom_attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'type', Table::TYPE_TEXT, 25,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
-                'attributes', Table::TYPE_TEXT, NULL,
-                ['default' => NULL]
+                'attributes', Table::TYPE_TEXT, null,
+                ['default' => null]
             )
             ->addColumn(
-                'update_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addColumn(
-                'create_date', Table::TYPE_DATETIME, NULL,
-                ['default' => NULL]
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
             )
             ->addIndex('template_description_id', 'template_description_id')
             ->setOption('type', 'INNODB')
@@ -6794,15 +6795,15 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_selling_format')
         )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_custom_value', Table::TYPE_INTEGER, NULL,
+                'qty_custom_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6810,31 +6811,31 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'qty_percentage', Table::TYPE_INTEGER, NULL,
+                'qty_percentage', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 100]
             )
             ->addColumn(
-                'qty_modification_mode', Table::TYPE_SMALLINT, NULL,
+                'qty_modification_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty_min_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_min_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'qty_max_posted_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'qty_max_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'is_regular_customer_allowed', Table::TYPE_SMALLINT, NULL,
+                'is_regular_customer_allowed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 1]
             )
             ->addColumn(
-                'is_business_customer_allowed', Table::TYPE_SMALLINT, NULL,
+                'is_business_customer_allowed', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false, 'default' => 0]
             )
             ->addColumn(
-                'regular_price_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6846,7 +6847,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_map_price_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_map_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6854,7 +6855,7 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_sale_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6866,15 +6867,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_start_date_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_sale_price_start_date_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_start_date_value', Table::TYPE_DATETIME, NULL,
+                'regular_sale_price_start_date_value', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -6882,11 +6883,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_end_date_mode', Table::TYPE_SMALLINT, NULL,
+                'regular_sale_price_end_date_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'regular_sale_price_end_date_value', Table::TYPE_DATETIME, NULL,
+                'regular_sale_price_end_date_value', Table::TYPE_DATETIME, null,
                 ['nullable' => false]
             )
             ->addColumn(
@@ -6894,11 +6895,11 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'regular_price_vat_percent', Table::TYPE_FLOAT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'regular_price_vat_percent', Table::TYPE_FLOAT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'business_price_mode', Table::TYPE_SMALLINT, NULL,
+                'business_price_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6910,15 +6911,15 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'business_price_variation_mode', Table::TYPE_SMALLINT, NULL,
+                'business_price_variation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'business_price_vat_percent', Table::TYPE_FLOAT, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'business_price_vat_percent', Table::TYPE_FLOAT, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'business_discounts_mode', Table::TYPE_SMALLINT, NULL,
+                'business_discounts_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
@@ -6926,8 +6927,8 @@ class InstallSchema implements InstallSchemaInterface
                 ['nullable' => false]
             )
             ->addColumn(
-                'business_discounts_tier_customer_group_id', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'business_discounts_tier_customer_group_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
@@ -6938,28 +6939,28 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_selling_format_business_discount')
         )
             ->addColumn(
-                'id', Table::TYPE_INTEGER, NULL,
+                'id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
             )
             ->addColumn(
-                'template_selling_format_id', Table::TYPE_INTEGER, NULL,
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'qty', Table::TYPE_INTEGER, NULL,
+                'qty', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'mode', Table::TYPE_SMALLINT, NULL,
+                'mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
                 'attribute', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addColumn(
                 'coefficient', Table::TYPE_TEXT, 255,
-                ['default' => NULL]
+                ['default' => null]
             )
             ->addIndex('template_selling_format_id', 'template_selling_format_id')
             ->setOption('type', 'INNODB')
@@ -6971,193 +6972,1794 @@ class InstallSchema implements InstallSchemaInterface
             $this->getFullTableName('amazon_template_synchronization')
         )
             ->addColumn(
-                'template_synchronization_id', Table::TYPE_INTEGER, NULL,
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'primary' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_mode', Table::TYPE_SMALLINT, NULL,
+                'list_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_status_enabled', Table::TYPE_SMALLINT, NULL,
+                'list_status_enabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_is_in_stock', Table::TYPE_SMALLINT, NULL,
+                'list_is_in_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'list_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'list_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'list_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'list_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'list_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'list_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'list_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'list_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'list_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->addColumn(
-                'revise_update_qty', Table::TYPE_SMALLINT, NULL,
+                'revise_update_qty', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_qty_max_applied_value_mode', Table::TYPE_SMALLINT, NULL,
+                'revise_update_qty_max_applied_value_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_qty_max_applied_value', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'revise_update_qty_max_applied_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'revise_update_price', Table::TYPE_SMALLINT, NULL,
+                'revise_update_price', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation_mode', Table::TYPE_SMALLINT, NULL,
+                'revise_update_price_max_allowed_deviation_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_price_max_allowed_deviation', Table::TYPE_INTEGER, NULL,
-                ['unsigned' => true, 'default' => NULL]
+                'revise_update_price_max_allowed_deviation', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
             )
             ->addColumn(
-                'revise_update_details', Table::TYPE_SMALLINT, NULL,
+                'revise_update_details', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_update_images', Table::TYPE_SMALLINT, NULL,
+                'revise_update_images', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_description_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_description_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_shipping_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_shipping_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'revise_change_product_tax_code_template', Table::TYPE_SMALLINT, NULL,
+                'revise_change_product_tax_code_template', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_mode', Table::TYPE_SMALLINT, NULL,
+                'relist_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_filter_user_lock', Table::TYPE_SMALLINT, NULL,
+                'relist_filter_user_lock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_send_data', Table::TYPE_SMALLINT, NULL,
+                'relist_send_data', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_status_enabled', Table::TYPE_SMALLINT, NULL,
+                'relist_status_enabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_is_in_stock', Table::TYPE_SMALLINT, NULL,
+                'relist_is_in_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'relist_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'relist_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'relist_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'relist_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'relist_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'relist_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'relist_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'relist_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'relist_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->addColumn(
-                'stop_status_disabled', Table::TYPE_SMALLINT, NULL,
+                'stop_status_disabled', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_out_off_stock', Table::TYPE_SMALLINT, NULL,
+                'stop_out_off_stock', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento', Table::TYPE_SMALLINT, NULL,
+                'stop_qty_magento', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento_value', Table::TYPE_INTEGER, NULL,
+                'stop_qty_magento_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_magento_value_max', Table::TYPE_INTEGER, NULL,
+                'stop_qty_magento_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated', Table::TYPE_SMALLINT, NULL,
+                'stop_qty_calculated', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated_value', Table::TYPE_INTEGER, NULL,
+                'stop_qty_calculated_value', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_qty_calculated_value_max', Table::TYPE_INTEGER, NULL,
+                'stop_qty_calculated_value_max', Table::TYPE_INTEGER, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, NULL,
+                'stop_advanced_rules_mode', Table::TYPE_SMALLINT, null,
                 ['unsigned' => true, 'nullable' => false]
             )
             ->addColumn(
-                'stop_advanced_rules_filters', Table::TYPE_TEXT, NULL,
+                'stop_advanced_rules_filters', Table::TYPE_TEXT, null,
                 ['nullable' => true]
             )
             ->setOption('type', 'INNODB')
             ->setOption('charset', 'utf8')
             ->setOption('collate', 'utf8_general_ci');
         $this->getConnection()->createTable($amazonTemplateSynchronizationTable);
+    }
+
+    //########################################
+
+    private function installWalmart()
+    {
+        /**
+         * Create table 'm2epro_walmart_account'
+         */
+        $walmartAccountTable = $this->getConnection()->newTable($this->getFullTableName('walmart_account'))
+            ->addColumn(
+                'account_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'server_hash', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'consumer_id', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'old_private_key', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'client_id', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'client_secret', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'related_store_id', Table::TYPE_INTEGER, null,
+                ['nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'other_listings_synchronization', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'other_listings_mapping_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0],
+                'null'
+            )
+            ->addColumn(
+                'other_listings_mapping_settings', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'magento_orders_settings', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'orders_last_synchronization', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'info', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartAccountTable);
+
+        /**
+         * Create table 'm2epro_walmart_dictionary_category'
+         */
+        $walmartDictionaryCategoryTable = $this->getConnection()->newTable(
+            $this->getFullTableName('walmart_dictionary_category')
+        )
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['nullable' => false, 'unsigned' => true]
+            )
+            ->addColumn(
+                'category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'parent_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => true]
+            )
+            ->addColumn(
+                'browsenode_id', Table::TYPE_DECIMAL, [20, 0],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'product_data_nicks', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'path', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'keywords', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_leaf', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addIndex('marketplace_id', 'marketplace_id')
+            ->addIndex('category_id', 'category_id')
+            ->addIndex('browsenode_id', 'browsenode_id')
+            ->addIndex('parent_category_id', 'parent_category_id')
+            ->addIndex('product_data_nicks', [['name' => 'product_data_nicks', 'size' => 500]])
+            ->addIndex('title', 'title')
+            ->addIndex('path', [['name' => 'path', 'size' => 500]])
+            ->addIndex('is_leaf', 'is_leaf')
+            ->setOption('type', 'MYISAM')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartDictionaryCategoryTable);
+
+        /**
+         * Create table 'm2epro_walmart_dictionary_marketplace'
+         */
+        $walmartDictionaryMarketplaceTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_dictionary_marketplace'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'client_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'server_details_last_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'product_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
+                ['default' => null]
+            )
+            ->addColumn(
+                'tax_codes', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
+                ['nullable' => true]
+            )
+            ->addIndex('marketplace_id', 'marketplace_id')
+            ->setOption('type', 'MYISAM')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartDictionaryMarketplaceTable);
+
+        /**
+         * Create table 'm2epro_walmart_dictionary_specific'
+         */
+        $walmartDictionarySpecificTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_dictionary_specific'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'specific_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'parent_specific_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'product_data_nick', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'xml_tag', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'xpath', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'type', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'values', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'recommended_values', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'params', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'data_definition', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'min_occurs', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addColumn(
+                'max_occurs', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 1]
+            )
+            ->addIndex('marketplace_id', 'marketplace_id')
+            ->addIndex('specific_id', 'specific_id')
+            ->addIndex('parent_specific_id', 'parent_specific_id')
+            ->addIndex('product_data_nick', 'product_data_nick')
+            ->addIndex('title', 'title')
+            ->addIndex('xml_tag', 'xml_tag')
+            ->addIndex('xpath', 'xpath')
+            ->addIndex('type', 'type')
+            ->addIndex('min_occurs', 'min_occurs')
+            ->addIndex('max_occurs', 'max_occurs')
+            ->setOption('type', 'MYISAM')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartDictionarySpecificTable);
+
+        /**
+         * Create table 'm2epro_walmart_indexer_listing_product_variation_parent'
+         */
+        $walmartIndexerListingProductParent = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_indexer_listing_product_variation_parent'))
+            ->addColumn(
+                'listing_product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'listing_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'component_mode', Table::TYPE_TEXT, 10,
+                ['default' => null]
+            )
+            ->addColumn(
+                'min_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'max_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addIndex('listing_id', 'listing_id')
+            ->addIndex('component_mode', 'component_mode')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartIndexerListingProductParent);
+
+        /**
+         * Create table 'm2epro_walmart_item'
+         */
+        $walmartItem = $this->getConnection()->newTable($this->getFullTableName('walmart_item'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'account_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'sku', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'store_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'variation_product_options', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'variation_channel_options', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addIndex('account_id', 'account_id')
+            ->addIndex('marketplace_id', 'marketplace_id')
+            ->addIndex('sku', 'sku')
+            ->addIndex('product_id', 'product_id')
+            ->addIndex('store_id', 'store_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartItem);
+
+        /**
+         * Create table 'm2epro_walmart_listing'
+         */
+        $walmartListingTable = $this->getConnection()->newTable($this->getFullTableName('walmart_listing'))
+            ->addColumn(
+                'listing_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'auto_global_adding_category_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'auto_website_adding_category_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'template_description_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addIndex('auto_global_adding_category_template_id', 'auto_global_adding_category_template_id')
+            ->addIndex('auto_website_adding_category_template_id', 'auto_website_adding_category_template_id')
+            ->addIndex('template_description_id', 'template_description_id')
+            ->addIndex('template_selling_format_id', 'template_selling_format_id')
+            ->addIndex('template_synchronization_id', 'template_synchronization_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingTable);
+
+        /**
+         * Create table 'm2epro_walmart_listing_auto_category_group'
+         */
+        $walmartListingAutoCategoryGroupTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_listing_auto_category_group'))
+            ->addColumn(
+                'listing_auto_category_group_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'adding_category_template_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addIndex('adding_category_template_id', 'adding_category_template_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingAutoCategoryGroupTable);
+
+        /**
+         * Create table 'm2epro_walmart_listing_other'
+         */
+        $walmartListingOtherTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_listing_other'))
+            ->addColumn(
+                'listing_other_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'sku', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'gtin', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'upc', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'ean', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'wpid', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'item_id', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'channel_url', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'publish_status', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'lifecycle_status', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'status_change_reasons', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'is_online_price_invalid', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'online_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false, 'default' => '0.0000']
+            )
+            ->addColumn(
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addIndex('sku', 'sku')
+            ->addIndex('gtin', 'gtin')
+            ->addIndex('upc', 'upc')
+            ->addIndex('ean', 'ean')
+            ->addIndex('wpid', 'wpid')
+            ->addIndex('item_id', 'item_id')
+            ->addIndex('title', 'title')
+            ->addIndex('online_price', 'online_price')
+            ->addIndex('online_qty', 'online_qty')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingOtherTable);
+
+        /**
+         * Create table 'm2epro_walmart_listing_product'
+         */
+        $walmartListingProductTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_listing_product'))
+            ->addColumn(
+                'listing_product_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'is_variation_product', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_variation_product_matched', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_variation_channel_matched', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'is_variation_parent', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'variation_parent_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'variation_parent_need_processor', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'variation_child_statuses', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'sku', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'gtin', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'upc', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'ean', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'isbn', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'wpid', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'item_id', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'channel_url', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'publish_status', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'lifecycle_status', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'status_change_reasons', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'online_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'is_online_price_invalid', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'online_promotions', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'online_qty', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'online_lag_time', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => true]
+            )
+            ->addColumn(
+                'online_details_data', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'is_details_data_changed', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'online_start_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'online_end_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'is_missed_on_channel', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'list_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addIndex('template_category_id', 'template_category_id')
+            ->addIndex('is_variation_product', 'is_variation_product')
+            ->addIndex('is_variation_product_matched', 'is_variation_product_matched')
+            ->addIndex('is_variation_channel_matched', 'is_variation_channel_matched')
+            ->addIndex('is_variation_parent', 'is_variation_parent')
+            ->addIndex('variation_parent_id', 'variation_parent_id')
+            ->addIndex('variation_parent_need_processor', 'variation_parent_need_processor')
+            ->addIndex('sku', 'sku')
+            ->addIndex('gtin', 'gtin')
+            ->addIndex('upc', 'upc')
+            ->addIndex('ean', 'ean')
+            ->addIndex('isbn', 'isbn')
+            ->addIndex('wpid', 'wpid')
+            ->addIndex('item_id', 'item_id')
+            ->addIndex('online_price', 'online_price')
+            ->addIndex('online_qty', 'online_qty')
+            ->addIndex('online_start_date', 'online_start_date')
+            ->addIndex('online_end_date', 'online_end_date')
+            ->addIndex('list_date', 'list_date')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingProductTable);
+
+        $walmartProcessingActionTable = $this->getConnection()->newTable(
+            $this->getFullTableName('walmart_processing_action')
+        )
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'account_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'processing_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'request_pending_single_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => true]
+            )
+            ->addColumn(
+                'related_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => true]
+            )
+            ->addColumn(
+                'type', Table::TYPE_TEXT, 12,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'request_data', Table::TYPE_TEXT, self::LONG_COLUMN_SIZE,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'start_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addIndex('account_id', 'account_id')
+            ->addIndex('processing_id', 'processing_id')
+            ->addIndex('request_pending_single_id', 'request_pending_single_id')
+            ->addIndex('related_id', 'related_id')
+            ->addIndex('type', 'type')
+            ->addIndex('start_date', 'start_date')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartProcessingActionTable);
+
+        $walmartProcessingActionListSku = $this->getConnection()->newTable(
+            $this->getFullTableName('walmart_processing_action_list_sku')
+        )
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'account_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'sku', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addIndex(
+                'account_id__sku', ['account_id', 'sku'],
+                ['type' => \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartProcessingActionListSku);
+
+        /**
+         * Create table 'm2epro_walmart_listing_product_variation'
+         */
+        $walmartListingProductVariationTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_listing_product_variation'))
+            ->addColumn(
+                'listing_product_variation_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingProductVariationTable);
+
+        /**
+         * Create table 'm2epro_walmart_listing_product_variation_option'
+         */
+        $walmartListingProductVariationOptionTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_listing_product_variation_option')
+            )
+            ->addColumn(
+                'listing_product_variation_option_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartListingProductVariationOptionTable);
+
+        /**
+         * Create table 'm2epro_walmart_marketplace'
+         */
+        $walmartMarketplaceTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_marketplace'))
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'developer_key', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'default_currency', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartMarketplaceTable);
+
+        /**
+         * Create table 'm2epro_walmart_order'
+         */
+        $walmartOrderTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_order'))
+            ->addColumn(
+                'order_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'walmart_order_id', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'status', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'buyer_name', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'buyer_email', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_service', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'shipping_address', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'shipping_price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'paid_amount', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'tax_details', Table::TYPE_TEXT, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'currency', Table::TYPE_TEXT, 10,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'is_tried_to_acknowledge', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 0]
+            )
+            ->addColumn(
+                'purchase_update_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addColumn(
+                'purchase_create_date', Table::TYPE_DATETIME, null,
+                ['default' => null]
+            )
+            ->addIndex('walmart_order_id', 'walmart_order_id')
+            ->addIndex('buyer_name', 'buyer_name')
+            ->addIndex('buyer_email', 'buyer_email')
+            ->addIndex('paid_amount', 'paid_amount')
+            ->addIndex('is_tried_to_acknowledge', 'is_tried_to_acknowledge')
+            ->addIndex('purchase_create_date', 'purchase_create_date')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartOrderTable);
+
+        /**
+         * Create table 'm2epro_walmart_order_item'
+         */
+        $walmartOrderItemTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_order_item'))
+            ->addColumn(
+                'order_item_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'walmart_order_item_id', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'merged_walmart_order_item_ids', Table::TYPE_TEXT, 500,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'status', Table::TYPE_TEXT, 30,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'sku', Table::TYPE_TEXT, 255,
+                ['default' => null]
+            )
+            ->addColumn(
+                'price', Table::TYPE_DECIMAL, [12, 4],
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'qty', Table::TYPE_INTEGER, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addIndex('title', 'title')
+            ->addIndex('sku', 'sku')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartOrderItemTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_category'
+         */
+        $walmartTemplateCategoryTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_category'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'title', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'product_data_nick', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'category_path', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'browsenode_id', Table::TYPE_DECIMAL, [20, 0],
+                ['unsigned'  => true, 'nullable'  => true]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addIndex('title', 'title')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateCategoryTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_category_specific'
+         */
+        $walmartTemplateCategorySpecificTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_category_specific'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'template_category_id', Table::TYPE_INTEGER, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'xpath', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'mode', Table::TYPE_TEXT, 25,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'is_required', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'type', Table::TYPE_TEXT, 25,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'attributes', Table::TYPE_TEXT, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'update_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'create_date', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addIndex('template_category_id', 'template_category_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateCategorySpecificTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_description'
+         */
+        $walmartTemplateDescriptionTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_description'))
+            ->addColumn(
+                'template_description_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'title_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'title_template', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'brand_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'brand_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'brand_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'manufacturer_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'manufacturer_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'manufacturer_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'manufacturer_part_number_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'manufacturer_part_number_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'manufacturer_part_number_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false,]
+            )
+            ->addColumn(
+                'model_number_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'model_number_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'model_number_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'msrp_rrp_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'msrp_rrp_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'image_main_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'image_main_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'image_variation_difference_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'image_variation_difference_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'gallery_images_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'gallery_images_limit', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 1]
+            )
+            ->addColumn(
+                'gallery_images_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'description_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'description_template', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'multipack_quantity_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'multipack_quantity_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'multipack_quantity_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'count_per_pack_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'count_per_pack_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'count_per_pack_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'total_count_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'total_count_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'total_count_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'key_features_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'key_features', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'other_features_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'other_features', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'keywords_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'keywords_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'keywords_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'attributes_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'attributes', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateDescriptionTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_selling_format'
+         */
+        $walmartTemplateSellingFormatTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_selling_format'))
+            ->addColumn(
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'marketplace_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'qty_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'qty_custom_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'qty_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'qty_percentage', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false, 'default' => 100]
+            )
+            ->addColumn(
+                'qty_modification_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'qty_min_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'qty_max_posted_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'price_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'price_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'map_price_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'map_price_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'price_coefficient', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'price_variation_mode', Table::TYPE_SMALLINT, 2,
+                ['unsigned'  => true, 'nullable'  => false,]
+            )
+            ->addColumn(
+                'price_vat_percent', Table::TYPE_FLOAT, null,
+                ['unsigned'  => true, 'nullable'  => true]
+            )
+            ->addColumn(
+                'promotions_mode', Table::TYPE_SMALLINT, null,
+                ['nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'lag_time_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'lag_time_value', Table::TYPE_INTEGER, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'lag_time_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'product_tax_code_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'product_tax_code_custom_value', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'product_tax_code_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'item_weight_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => true, 'default'   => 0]
+            )
+            ->addColumn(
+                'item_weight_custom_value', Table::TYPE_DECIMAL, [10, 2],
+                ['unsigned'  => true, 'nullable'  => true, 'scale'     => '2']
+            )
+            ->addColumn(
+                'item_weight_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'must_ship_alone_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'must_ship_alone_value', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'must_ship_alone_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'ships_in_original_packaging_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'ships_in_original_packaging_value', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'ships_in_original_packaging_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'shipping_override_rule_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'sale_time_start_date_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'sale_time_start_date_value', Table::TYPE_DATETIME, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'sale_time_start_date_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'sale_time_end_date_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'sale_time_end_date_value', Table::TYPE_DATETIME, null,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'sale_time_end_date_custom_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'attributes_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'attributes', Table::TYPE_TEXT, null,
+                ['nullable' => false]
+            )
+            ->addIndex('marketplace_id', 'marketplace_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateSellingFormatTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_selling_format_promotion'
+         */
+        $walmartTemplateSellingFormatPromotionTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_selling_format_promotion'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'template_selling_format_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'start_date_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'start_date_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'start_date_value', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'end_date_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'end_date_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'end_date_value', Table::TYPE_DATETIME, null,
+                ['nullable' => true]
+            )
+            ->addColumn(
+                'price_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'price_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'price_coefficient', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'comparison_price_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'comparison_price_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'comparison_price_coefficient', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'type', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addIndex('template_selling_format_id', 'template_selling_format_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateSellingFormatPromotionTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_selling_format_shipping_override'
+         */
+        $walmartTemplateSellingFormatShippingOverrideTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_selling_format_shipping_override'))
+            ->addColumn(
+                'id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false, 'auto_increment' => true]
+            )
+            ->addColumn(
+                'template_selling_format_id', Table::TYPE_INTEGER, 11,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'method', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'is_shipping_allowed', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'region', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'cost_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false, 'default'   => 0]
+            )
+            ->addColumn(
+                'cost_value', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addColumn(
+                'cost_attribute', Table::TYPE_TEXT, 255,
+                ['nullable' => false]
+            )
+            ->addIndex('template_selling_format_id', 'template_selling_format_id')
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateSellingFormatShippingOverrideTable);
+
+        /**
+         * Create table 'm2epro_walmart_template_synchronization'
+         */
+        $walmartTemplateSynchronizationTable = $this->getConnection()
+            ->newTable($this->getFullTableName('walmart_template_synchronization'))
+            ->addColumn(
+                'template_synchronization_id', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'primary' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_status_enabled', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_is_in_stock', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_magento', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_magento_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_magento_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_calculated', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_calculated_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'list_qty_calculated_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_qty', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_qty_max_applied_value_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_qty_max_applied_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'revise_update_price', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_price_max_allowed_deviation_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'revise_update_price_max_allowed_deviation', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'default' => null]
+            )
+            ->addColumn(
+                'revise_update_promotions', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'relist_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_filter_user_lock', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_status_enabled', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_is_in_stock', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_magento', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_magento_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_magento_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_calculated', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_calculated_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'relist_qty_calculated_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_mode', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'stop_status_disabled', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'stop_out_off_stock', Table::TYPE_SMALLINT, null,
+                ['unsigned'  => true, 'nullable'  => false]
+            )
+            ->addColumn(
+                'stop_qty_magento', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_qty_magento_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_qty_magento_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_qty_calculated', Table::TYPE_SMALLINT, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_qty_calculated_value', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->addColumn(
+                'stop_qty_calculated_value_max', Table::TYPE_INTEGER, null,
+                ['unsigned' => true, 'nullable' => false]
+            )
+            ->setOption('type', 'INNODB')
+            ->setOption('charset', 'utf8')
+            ->setOption('collate', 'utf8_general_ci');
+        $this->getConnection()->createTable($walmartTemplateSynchronizationTable);
     }
 
     //########################################

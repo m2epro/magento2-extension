@@ -136,7 +136,6 @@ HTML;
     //########################################
 
     /**
-     * TODO
      * Method is overwritten due to Magento issue (it is impossible to select all items in grid)
      * Magento feature which allows to getGridIds() by custom massAction column (getMassactionIdField) is not supported
      * @return string

@@ -130,7 +130,6 @@ class ChangedSources extends \Ess\M2ePro\Model\Servicing\Task
 
     //########################################
 
-    //todo Ruslan is going to change this list
     private function getImportantFiles()
     {
         return array(

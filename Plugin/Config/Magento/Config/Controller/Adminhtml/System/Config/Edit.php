@@ -14,13 +14,7 @@ class Edit extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function canExecute()
     {
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
-            return false;
-        }
-
-        if ($this->helperFactory->getObject('Module\Maintenance\Debug')->isEnabled() &&
-            !$this->helperFactory->getObject('Module\Maintenance\Debug')->isOwner()) {
-
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             return false;
         }
 

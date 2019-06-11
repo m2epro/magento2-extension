@@ -67,7 +67,9 @@ class ActualPrice extends AbstractModel
 
     private function updateListingsProductsPrices(array $offersProductPrices)
     {
-        $keys = array_map(function($el){ return (string)$el; }, array_keys($offersProductPrices));
+        $keys = array_map(function ($el) {
+            return (string)$el;
+        }, array_keys($offersProductPrices));
 
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -121,7 +123,9 @@ class ActualPrice extends AbstractModel
 
     private function updateListingsOthersPrices(array $offersProductPrices)
     {
-        $keys = array_map(function($el){ return (string)$el; }, array_keys($offersProductPrices));
+        $keys = array_map(function ($el) {
+            return (string)$el;
+        }, array_keys($offersProductPrices));
 
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('account_id', $this->getAccount()->getId());

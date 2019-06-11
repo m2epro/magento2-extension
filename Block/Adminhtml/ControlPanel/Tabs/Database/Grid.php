@@ -45,14 +45,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $this->setDefaultDir('ASC');
         $this->setSaveParametersInSession(true);
         $this->setUseAjax(true);
+        $this->setDefaultLimit(50);
         // ---------------------------------------
-    }
-
-    protected function _prepareLayout()
-    {
-        $this->setPagerVisibility(false);
-
-        return parent::_prepareLayout();
     }
 
    //########################################
@@ -100,10 +94,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->addItem(new \Magento\Framework\DataObject($tableRow));
         }
 
-        $collection->setCustomSize($collection->count());
         $this->setCollection($collection);
         parent::_prepareCollection();
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }
@@ -116,7 +108,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'index'     => 'table_name',
             'filter_index' => 'table_name',
             'frame_callback' => array($this, 'callbackColumnTableName'),
-            'filter_condition_callback' => array($this, '_customColumnFilter'),
+            'filter_condition_callback' => array($this, 'callbackFilterTitle'),
         ));
 
         // ---------------------------------------
@@ -131,7 +123,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'options',
             'options'   => $options,
             'filter_index' => 'component',
-            'filter_condition_callback' => array($this, '_customColumnFilter'),
+            'filter_condition_callback' => array($this, 'callbackFilterMatch'),
         ));
         // ---------------------------------------
 
@@ -140,7 +132,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_CONFIGS           => 'Configs',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_ACCOUNTS          => 'Accounts',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_MARKETPLACES      => 'Marketplaces',
-            \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_LISTINGS          => 'Listings',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_LISTINGS          => 'Listings',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_LISTINGS_PRODUCTS => 'Listings Products',
             \Ess\M2ePro\Helper\Module\Database\Structure::TABLE_GROUP_LISTINGS_OTHER    => 'Listings Other',
@@ -162,7 +153,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'options',
             'options'   => $options,
             'filter_index' => 'group',
-            'filter_condition_callback' => array($this, '_customColumnFilter'),
+            'filter_condition_callback' => array($this, 'callbackFilterMatch'),
         ));
         // ---------------------------------------
 
@@ -288,87 +279,31 @@ JS
 
     //########################################
 
-    protected function _customColumnFilter($collection, $column)
+    protected function callbackFilterTitle($collection, $column)
     {
-        $field = ($column->getFilterIndex()) ? $column->getFilterIndex() : $column->getIndex();
-        $condition = $column->getFilter()->getCondition();
-        $value = array_pop($condition);
-
-        if ($field && isset($condition)) {
-            $field == 'table_name' && $this->_filterByTableNameField($field, $value);
-            ($field == 'component' || $field == 'group') && $this->_filterByField($field, $value);
+        $value = $column->getFilter()->getValue();
+        if ($value == null) {
+            return;
         }
 
-        return $this;
+        $this->getCollection()->addFilter(
+            'table_name', $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_LIKE
+        );
     }
 
-    // ---------------------------------------
-
-    protected function _filterByTableNameField($field, $value)
+    protected function callbackFilterMatch($collection, $column)
     {
-        /** @var Custom $filteredCollection */
-        $filteredCollection = $this->customCollectionFactory->create();
-        $value = str_replace(array(' ','%','\\','\''),'',$value);
+        $field = $column->getFilterIndex() ? $column->getFilterIndex()
+            : $column->getIndex();
 
-        foreach ($this->getCollection()->getItems() as $item) {
-            if (strpos($item->getData($field),$value) !== false) {
-                $filteredCollection->addItem($item);
-            }
-        }
-        $this->setCollection($filteredCollection);
-        $filteredCollection->setCustomSize($filteredCollection->count());
-    }
-
-    protected function _filterByField($field, $value)
-    {
-        /** @var Custom $filteredCollection */
-        $filteredCollection = $this->customCollectionFactory->create();
-        $filteredItems = $this->getCollection()->getItemsByColumnValue($field,$value);
-
-        foreach ($filteredItems as $item) {
-            $filteredCollection->addItem($item);
-        }
-        $this->setCollection($filteredCollection);
-        $filteredCollection->setCustomSize($filteredCollection->count());
-    }
-
-    //########################################
-
-    protected function _setCollectionOrder($column)
-    {
-        $field = $column->getFilterIndex() ? $column->getFilterIndex() : $column->getIndex();
-        $direction = $column->getDir();
-
-        if ($field && isset($direction)) {
-            $this->_orderByColumn($field, $direction);
+        $value = $column->getFilter()->getValue();
+        if ($value == null || empty($field)) {
+            return;
         }
 
-        return $this;
-    }
-
-    // ---------------------------------------
-
-    protected function _orderByColumn($column, $direction)
-    {
-        /** @var Custom $sortedCollection */
-        $sortedCollection = $this->customCollectionFactory->create();
-
-        $collection = $this->getCollection()->toArray();
-        $collection = $collection['items'];
-
-        $sortByColumn = array();
-        foreach ($collection as $item) {
-            $sortByColumn[] = $item[$column];
-        }
-
-        strtolower($direction) == 'asc' && array_multisort($sortByColumn, SORT_ASC, $collection);
-        strtolower($direction) == 'desc' && array_multisort($sortByColumn, SORT_DESC, $collection);
-
-        foreach ($collection as $item) {
-            $sortedCollection->addItem(new \Magento\Framework\DataObject($item));
-        }
-        $this->setCollection($sortedCollection);
-        $sortedCollection->setCustomSize($sortedCollection->count());
+        $this->getCollection()->addFilter(
+            $field, $value, \Ess\M2ePro\Model\ResourceModel\Collection\Custom::CONDITION_MATCH
+        );
     }
 
     //########################################

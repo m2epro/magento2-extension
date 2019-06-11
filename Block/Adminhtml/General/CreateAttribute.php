@@ -24,6 +24,15 @@ class CreateAttribute extends AbstractContainer
         // ---------------------------------------
         $this->setId('generalCreateAttribute');
         // ---------------------------------------
+
+        // Set buttons actions
+        // ---------------------------------------
+        $this->removeButton('back');
+        $this->removeButton('reset');
+        $this->removeButton('delete');
+        $this->removeButton('save');
+        $this->removeButton('edit');
+        // ---------------------------------------
     }
 
     //########################################

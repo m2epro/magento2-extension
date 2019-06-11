@@ -902,14 +902,12 @@ HTML
                 'class' => ' admin__control-textarea left M2ePro-validate-description-template',
                 'wysiwyg' => true,
                 'force_load' => true,
-                'config' => new \Magento\Framework\DataObject([
+                'config' => $this->wysiwygConfig->getConfig([
                     'hidden' => true,
                     'enabled' => true,
-                    'settings' => [
-                        'force_br_newlines' => false,
-                        'force_p_newlines'  => false,
-                        'forced_root_block' => false
-                    ]
+                    'no_display' => false,
+                    'add_variables' => false,
+                    'force_load' => true
                 ]),
                 'after_element_html' => <<<HTML
 <div id="description_template_buttons">
@@ -1410,25 +1408,15 @@ HTML
             'Please enter Description Value.' => $this->__('Please enter Description Value.')
         ]);
 
-        $initWYSIWYG = '';
-        if ($this->getRequest()->isXmlHttpRequest()) {
-            $initWYSIWYG = 'EbayTemplateDescriptionObj.initWYSIWYG();';
-        }
-
         $this->js->add(<<<JS
     require([
-        'M2ePro/Attribute',
         'M2ePro/Ebay/Template/Description',
         'M2ePro/Plugin/Magento/Attribute/Button'
     ], function(){
-        if (typeof AttributeObj === 'undefined') {
-            window.AttributeObj = new Attribute();
-        }
         window.EbayTemplateDescriptionObj = new EbayTemplateDescription();
         setTimeout(function() {
-        	EbayTemplateDescriptionObj.initObservers();
-    	}, 50);
-        {$initWYSIWYG}
+            EbayTemplateDescriptionObj.initObservers();
+        }, 50);
 
         window.MagentoAttributeButtonObj = new MagentoAttributeButton();
     });

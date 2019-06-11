@@ -37,7 +37,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
 
     public function getIdentity()
     {
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             return 'm2epro-health-status-notification';
         }
 
@@ -46,7 +46,7 @@ class Message extends \Ess\M2ePro\Model\AbstractModel implements MessageInterfac
 
     public function isDisplayed()
     {
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             return false;
         }
 

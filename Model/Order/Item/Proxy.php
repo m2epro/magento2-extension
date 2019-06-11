@@ -11,7 +11,7 @@ namespace Ess\M2ePro\Model\Order\Item;
 abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Ess\M2ePro\Model\Ebay\Order\Item|\Ess\M2ePro\Model\Amazon\Order\Item|
-     * Ess\M2ePro\Model\Buy\Order\Item */
+     * Ess\M2ePro\Model\Walmart\Order\Item */
     protected $item = NULL;
 
     protected $qty = NULL;

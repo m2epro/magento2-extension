@@ -172,6 +172,7 @@ class Amazon extends \Ess\M2ePro\Helper\AbstractHelper
     public function getMarketplacesAvailableForApiCreation()
     {
         return $this->amazonFactory->getObject('Marketplace')->getCollection()
+                    ->addFieldToFilter('component_mode', self::NICK)
                     ->addFieldToFilter('status', \Ess\M2ePro\Model\Marketplace::STATUS_ENABLE)
                     ->addFieldToFilter('developer_key', array('notnull' => true))
                     ->setOrder('sorder', 'ASC');

@@ -200,8 +200,8 @@ class DataLoader extends \Ess\M2ePro\Helper\AbstractHelper
             $templateMode = NULL;
             $forceParent = false;
 
-            if ($source->count() <= 200) {
-                foreach ($source as $listingProduct) {
+            if ($source->getSize() <= 200) {
+                foreach ($source->getItems() as $listingProduct) {
                     $manager = $this->templateManagerFactory->create()
                         ->setTemplate($nick)
                         ->setOwnerObject($listingProduct->getChildObject());

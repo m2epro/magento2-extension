@@ -410,9 +410,9 @@ class Definition extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
                 'class' => 'select',
                 'create_magento_attribute' => true,
                 'tooltip' => $this->__(
-                    'Manufacturer\'s recommended selling price for a product. 
+                    'Manufacturer\'s recommended selling price for a product.
                      MSRP term is used in the US, while in the UK it is known as RRP.<br/><br/>
-                     <b>Note:</b> Title value is required for creation of all 
+                     <b>Note:</b> Title value is required for creation of all
                      Description Policies because of technical reasons.'
                 )
             ]
@@ -1395,7 +1395,7 @@ HTML
             $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 'text_select',
-                function($attribute) use($attributeName) {
+                function($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
             ));
@@ -1444,7 +1444,7 @@ HTML
             $this->getAttributesByInputTypesOptions(
                 $attributeMode,
                 'text_select',
-                function($attribute) use($attributeName) {
+                function($attribute) use ($attributeName) {
                     return $attribute['code'] == $this->formData[$attributeName];
                 }
             ));

@@ -42,7 +42,6 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
             return;
         }
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Indexer\Listing\Product\VariationParent $resourceModel */
         $resourceModel = $this->activeRecordFactory->getObject(
             ucfirst($this->listing->getComponentMode()) . '\Indexer\Listing\Product\VariationParent'
         )->getResource();

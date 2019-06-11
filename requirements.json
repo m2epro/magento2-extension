@@ -1,0 +1,16 @@
+{
+  "memory_limit": {
+    "min": 768,
+    "recommended": 2048,
+    "measure": "Mb"
+  },
+  "execution_time": {
+    "min": 360,
+    "recommended": 1000,
+    "measure": "sec."
+  },
+  "magento_version": {
+    "community": "~2.1.0|~2.2.0|~2.3.0",
+    "enterprise": "~2.1.0|~2.2.0|~2.3.0"
+  }
+}

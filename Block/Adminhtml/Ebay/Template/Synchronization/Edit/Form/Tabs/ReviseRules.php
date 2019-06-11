@@ -153,9 +153,9 @@ class ReviseRules extends AbstractTab
                 'values' => $preparedValues,
                 'tooltip' => $this->__('
                     It is a Percent Value of maximum possible Deviation between Magento Price
-                    (Price, Quantity and Format Policy Settings) and eBay Item Price, that can be ignored.<br/><br/>
+                    (Selling Policy Settings) and eBay Item Price, that can be ignored.<br/><br/>
                     <strong>For example</strong>, your Magento Price is 23.25$. According to
-                    Price, Quantity and Format Policy Settings Item Price is equal to Magento Price.
+                    Selling Policy Settings Item Price is equal to Magento Price.
                     The "Revise When Deviation More or Equal than" Option is specified to 1%.<br/>
                     1) If Magento Price was changed to 23.26$, possible Deviation Value (0.23$) is
                     <strong>more</strong> than Price change (0.1$), so the Price
@@ -287,7 +287,7 @@ class ReviseRules extends AbstractTab
             self::SELECT,
             [
                 'name' => 'synchronization[revise_change_selling_format_template]',
-                'label' => $this->__('Price, Quantity and Format'),
+                'label' => $this->__('Selling'),
                 'value' => $formData['revise_change_selling_format_template'],
                 'values' => [
                     \Ess\M2ePro\Model\Template\Synchronization::REVISE_CHANGE_SELLING_FORMAT_TEMPLATE_NONE
@@ -296,8 +296,8 @@ class ReviseRules extends AbstractTab
                         => $this->__('Yes'),
                 ],
                 'tooltip' => $this->__(
-                    'Automatically Revise the eBay Item if there is a change to the Price,
-                    Quantity and Format Policy in this M2E Pro Listing.'
+                    'Automatically Revise the eBay Item if there is a change to the Selling
+                     Policy in this M2E Pro Listing.'
                 )
             ]
         );

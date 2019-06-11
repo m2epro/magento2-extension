@@ -27,7 +27,8 @@ class GetAccounts extends General
                 'title' => $this->getHelper('Data')->escapeHtml($account->getTitle())
             );
 
-            if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
+            if ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK ||
+                $component == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
                 $marketplace = $account->getChildObject()->getMarketplace();
                 $data['marketplace_id'] = $marketplace->getId();
                 $data['marketplace_title'] = $marketplace->getTitle();

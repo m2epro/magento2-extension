@@ -17,7 +17,8 @@ class CheckMessages extends Base
     protected function _isAllowed()
     {
         return $this->_authorization->isAllowed('Ess_M2ePro::ebay_configuration_templates') ||
-               $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates');
+               $this->_authorization->isAllowed('Ess_M2ePro::amazon_configuration_templates')||
+               $this->_authorization->isAllowed('Ess_M2ePro::walmart_configuration_templates');
     }
 
     //########################################

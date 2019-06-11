@@ -44,11 +44,11 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     protected function _prepareLayout()
     {
         $content = $this->__('
-            In this Section you can Create, Edit and Delete the Price, Quantity and Format Policy,
+            In this Section you can Create, Edit and Delete the Selling Policy,
             Synchronization Policy, Description Policy, Shipping Template Policy,
             Shipping Override Policy, Product Tax Code Policy.<br/><br/>
 
-            <strong>Price, Quantity and Format Policy</strong> is used to work with values related
+            <strong>Selling Policy</strong> is used to work with values related
             to the formation of your Channel Offers such as Price, Quantity, etc.<br/><br/>
 
             In the <strong>Synchronization Policy</strong>, you can set the Rules under which the dynamic data
@@ -95,7 +95,7 @@ class Template extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContaine
     {
         $data = [
             Grid::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Price, Quantity and Format'),
+                'label' => $this->__('Selling'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Grid::TEMPLATE_SELLING_FORMAT) . "')",
             ],
             Grid::TEMPLATE_DESCRIPTION => [

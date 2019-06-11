@@ -11,11 +11,14 @@ namespace Ess\M2ePro\Helper;
 class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 {
     const CLOUD_COMPOSER_KEY        = 'magento/magento-cloud-metapackage';
+    const CLOUD_SERVER_KEY          = 'MAGENTO_CLOUD_APPLICATION';
     const APPLICATION_CLOUD_NICK    = 'cloud';
     const APPLICATION_PERSONAL_NICK = 'personal';
 
     const ENTERPRISE_EDITION_NICK   = 'enterprise';
     const COMMUNITY_EDITION_NICK    = 'community';
+
+    const MAGENTO_INVENTORY_MODULE_NICK = 'Magento_Inventory';
 
     protected $deploymentVersionStorageFile;
     protected $filesystem;
@@ -99,6 +102,15 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
         return $asArray ? explode('.',$versionString) : $versionString;
     }
 
+    /**
+     * @return bool
+     */
+    public function isMSISupportingVersion()
+    {
+        return version_compare($this->getVersion(), '2.3.0', '>=') &&
+               !is_null($this->moduleList->getOne(self::MAGENTO_INVENTORY_MODULE_NICK));
+    }
+
     public function getRevision()
     {
         return 'undefined';
@@ -125,16 +137,42 @@ class Magento extends \Ess\M2ePro\Helper\AbstractHelper
 
     // ---------------------------------------
 
+    /**
+     * @return string
+     */
     public function getLocation()
     {
-        return $this->isCloudApplication() ?
+        return $this->isApplicationCloud() ?
             self::APPLICATION_CLOUD_NICK :
             self::APPLICATION_PERSONAL_NICK;
     }
 
-    public function isCloudApplication()
+    /**
+     * @return bool
+     */
+    public function isApplicationCloud()
+    {
+        return $this->hasComposerCloudSign() || $this->hasServerCloudSign();
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasComposerCloudSign()
     {
         return $this->composerInformation->isPackageInComposerJson(self::CLOUD_COMPOSER_KEY);
+    }
+
+    /**
+     * @return bool
+     */
+    private function hasServerCloudSign()
+    {
+        if ($this->_request instanceof \Magento\Framework\App\Request\Http) {
+            return !is_null($this->_request->getServer(self::CLOUD_SERVER_KEY));
+        }
+
+        return false;
     }
 
     //########################################

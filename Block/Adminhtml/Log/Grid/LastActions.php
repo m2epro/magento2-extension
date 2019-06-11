@@ -136,7 +136,7 @@ abstract class LastActions extends AbstractBlock
     {
         $types = array_column($actionLogs, 'type');
 
-        return max($types);
+        return empty($types) ? 0 : max($types);
     }
 
     protected function getMainDate(array $actionLogs)

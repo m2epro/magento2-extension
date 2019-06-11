@@ -227,7 +227,7 @@ CSS
             'align'     => 'left',
             'type'      => 'text',
             'index'     => 'online_title',
-            'escape'    => а,
+            'escape'    => false,
             'frame_callback' => [$this, 'callbackColumnTitle'],
             'filter_condition_callback' => [$this, 'callbackFilterTitle']
         ]);

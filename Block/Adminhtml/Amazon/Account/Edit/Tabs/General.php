@@ -71,15 +71,19 @@ class General extends AbstractForm
             self::HELP_BLOCK,
             [
                 'content' => $this->__(<<<HTML
-<p><strong>Important note:</strong> to be eligible to sell on Amazon, seller must have at least one of the following Amazon accounts: <br>
-Non-individual Amazon seller, Amazon Payments, Amazon Fresh, Amazon Business, Amazon Prime Now, Amazon Webstore, Amazon Product Ads, Amazon Supply.</p>
+<p><strong>Important note:</strong> to be eligible to sell on Amazon, seller must have at
+least one of the following Amazon accounts: <br>
+Non-individual Amazon seller, Amazon Payments, Amazon Fresh, Amazon Business, Amazon Prime Now,
+Amazon Webstore, Amazon Product Ads, Amazon Supply.</p>
 <p>Individual sellers may upgrade to a Pro Merchant seller account.</p> <br>
-<p>Specify an Account Title, select an Amazon Marketplace, click <strong>Get Access Data</strong> and proceed with the following steps to grant M2E Pro access to your Amazon data:</p>
+<p>Specify an Account Title, select an Amazon Marketplace, click <strong>Get Access Data</strong>
+and proceed with the following steps to grant M2E Pro access to your Amazon data:</p>
 <ul>
 <li>sign in to your Seller Central account;</li>
 <li>confirm you allow M2E Pro to access your Amazon selling account;</li>
 </ul>
-<p>Amazon Authorization Token will be generated automatically. After you get back to M2E Pro Amazon Account Configuration page, click <strong>Save</strong> to apply the changes.</p><br>
+<p>Amazon Authorization Token will be generated automatically. After you get back to M2E Pro Amazon Account
+Configuration page, click <strong>Save</strong> to apply the changes.</p><br>
 <p>More detailed information on how to work with this page can be found <a href="%url%" target="_blank">here</a>.</p>
 HTML
                 , $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/MgItAQ'))

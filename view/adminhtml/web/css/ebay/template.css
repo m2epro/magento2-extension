@@ -110,7 +110,7 @@
 
 /* Payment Policy Styles */
 
-/* Selling Format Policy Styles */
+/* Selling Policy Styles */
 
 #price_table_container {
     padding-top: 0.5em !important;
@@ -198,6 +198,16 @@ label.mage-error[for="description_template"] {
     display: none;
 }
 #description_template_tr .admin__field-control {
+    width: 64% !important;
+}
+
+#description_template_tr #description_template {
+    width: 100% !important;
+}
+
+.admin__field-control .admin__field .admin__control-wysiwig {
+    display: inline-block !important;
+    float: left !important;
     width: 64% !important;
 }
 

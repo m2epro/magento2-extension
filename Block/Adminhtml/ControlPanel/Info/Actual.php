@@ -57,7 +57,7 @@ class Actual extends AbstractBlock
         // ---------------------------------------
         $this->cronLastRunTime = 'N/A';
         $this->cronIsNotWorking = false;
-        $this->cronCurrentRunner = ucfirst($this->getHelper('Module\Cron')->getRunner());
+        $this->cronCurrentRunner = ucwords(str_replace('_', ' ', $this->getHelper('Module\Cron')->getRunner()));
 
         $cronLastRunTime = $this->getHelper('Module\Cron')->getLastRun();
 

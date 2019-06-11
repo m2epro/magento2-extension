@@ -20,10 +20,24 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $typeModel */
     private $typeModel = null;
 
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory|null  */
+    private $activeRecordFactory = null;
+
     /** @var \Ess\M2ePro\Model\Template\Description $descriptionTemplate */
     private $descriptionTemplate = null;
 
     private $possibleThemes = null;
+
+    public function __construct(
+        \Ess\M2ePro\Helper\Factory $helperFactory,
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory,
+        array $data = []
+    )
+    {
+        $this->activeRecordFactory = $activeRecordFactory;
+        parent::__construct($helperFactory, $modelFactory, $data);
+    }
 
     //########################################
 
@@ -55,6 +69,9 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    /**
+     * @throws \Ess\M2ePro\Model\Exception
+     */
     public function process()
     {
         if (is_null($this->listingProduct)) {
@@ -163,7 +180,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
         }
 
         if ($childListingProduct->isStoppable()) {
-            $this->modelFactory->getObject('StopQueue')->add($childListingProduct);
+            $this->activeRecordFactory->getObject('StopQueue')->add($childListingProduct);
         }
 
         $this->getTypeModel()->removeChildListingProduct($childListingProduct->getId());

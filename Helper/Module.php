@@ -91,7 +91,7 @@ class Module extends AbstractHelper
 
     public function getPublicVersion()
     {
-        return '1.3.5';
+        return '1.4.0';
     }
 
     public function getSetupVersion()
@@ -126,7 +126,7 @@ class Module extends AbstractHelper
 
     public function getRevision()
     {
-        return '2678';
+        return '2890';
     }
 
     //########################################
@@ -199,7 +199,8 @@ class Module extends AbstractHelper
     {
         return $this->getHelper('Component')->getEnabledComponents() &&
                 ($this->getHelper('View\Ebay')->isInstallationWizardFinished() ||
-                 $this->getHelper('View\Amazon')->isInstallationWizardFinished());
+                 $this->getHelper('View\Amazon')->isInstallationWizardFinished() ||
+                 $this->getHelper('View\Walmart')->isInstallationWizardFinished());
     }
 
     // ---------------------------------------
@@ -273,76 +274,6 @@ class Module extends AbstractHelper
 
         $this->getHelper('Data\Cache\Runtime')->setValue(__METHOD__, $result);
         return $result;
-    }
-
-    //########################################
-
-    public function getRequirementsInfo()
-    {
-        $clientPhpData = $this->getHelper('Client')->getPhpSettings();
-
-        $requirements = [
-
-            'memory_limit' => [
-                'title' => $this->getHelper('Module\Translation')->__('Memory Limit'),
-                'condition' => [
-                    'sign' => '>=',
-                    'value' => '768 MB'
-                ],
-                'current' => [
-                    'value' => (float)$clientPhpData['memory_limit'] <= 0
-                            ? 'unlimited' : $clientPhpData['memory_limit'] . ' MB',
-                    'status' => true
-                ]
-            ],
-
-            'max_execution_time' => [
-                'title' => $this->getHelper('Module\Translation')->__('Max Execution Time'),
-                'condition' => [
-                    'sign' => '>=',
-                    'value' => '360 sec'
-                ],
-                'current' => [
-                    'value' => is_null($clientPhpData['max_execution_time'])
-                        ? 'unknown' : $clientPhpData['max_execution_time'] . ' sec',
-                    'status' => true
-                ]
-            ],
-
-            'magento_version' => [
-                'title' => $this->getHelper('Module\Translation')->__('Magento Version'),
-                'condition' => [
-                    'sign' => '>=',
-                    'value' => '2.1.0'
-                ],
-                'current' => [
-                    'value' => $this->getHelper('Magento')->getVersion(),
-                    'status' => true
-                ]
-            ]
-        ];
-
-        foreach ($requirements as $key => &$requirement) {
-
-            // max_execution_time is unlimited or fcgi handler
-            if ($key == 'max_execution_time' &&
-                ($clientPhpData['max_execution_time'] == 0 || is_null($clientPhpData['max_execution_time']))) {
-                continue;
-            }
-
-            // memory_limit is unlimited
-            if ($key == 'memory_limit' && $clientPhpData['memory_limit'] <= 0) {
-                continue;
-            }
-
-            $requirement['current']['status'] = version_compare(
-                $requirement['current']['value'],
-                $requirement['condition']['value'],
-                $requirement['condition']['sign']
-            );
-        }
-
-        return $requirements;
     }
 
     //########################################

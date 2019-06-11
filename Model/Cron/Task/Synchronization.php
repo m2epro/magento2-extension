@@ -36,7 +36,8 @@ class Synchronization extends AbstractModel
 
         $dispatcher->setAllowedComponents(array(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            \Ess\M2ePro\Helper\Component\Walmart::NICK,
         ));
 
         $dispatcher->setAllowedTasksTypes(array(

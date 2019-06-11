@@ -30,19 +30,19 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Component\Switcher
             $collection->addFieldToFilter('component_mode', $this->getData('component_mode'));
         }
 
-        if (!$collection->count()) {
+        if (!$collection->getSize()) {
             $this->items = array();
             return;
         }
 
-        if ($collection->count() < 2) {
+        if ($collection->getSize() < 2) {
             $this->hasDefaultOption = false;
             $this->setIsDisabled(true);
         }
 
         $items = array();
 
-        foreach ($collection as $marketplace) {
+        foreach ($collection->getItems() as $marketplace) {
             /** @var $marketplace \Ess\M2ePro\Model\Marketplace */
             $items[$marketplace->getComponentMode()]['value'][] = array(
                 'value' => $marketplace->getId(),

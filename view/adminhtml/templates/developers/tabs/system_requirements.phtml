@@ -1,32 +1,30 @@
+<?php
+    /** @var \Ess\M2ePro\Block\Adminhtml\Developers\Tabs\SystemRequirements $this */
+?>
+
 <div id="system-requirements">
     <table class="admin__table-primary">
         <thead>
         <tr>
             <th><span><?php echo $block->__('Properties'); ?></span></th>
-            <th><span><?php echo $block->__('Recommended Value'); ?></span></th>
+            <th><span><?php echo $block->__('Minimum / Recommended Value'); ?></span></th>
             <th><span><?php echo $block->__('Current Value'); ?></span></th>
         </tr>
         </thead>
         <tbody>
-        <?php foreach($this->requirements as $key => $requirement) { ?>
-            <tr>
-                <td class="label">
-                    <label><?php echo $requirement['title']; ?></label>
-                </td>
-                <td class="value column_condition">
-                    <?php echo $requirement['condition']['sign'] ?>
-                    <?php echo $requirement['condition']['value'] ?>
-                </td>
-                <td class="value">
-                    <span class="<?php echo $requirement['current']['status'] ? 'column_value_success' : 'column_value_fail'; ?>"><?php echo $requirement['current']['value']; ?></span>
-                    <?php if ($key == 'max_execution_time' && $block->getHelper('Client')->isPhpApiFastCgi()) { ?>
-                        <?php echo $block->getTooltipHtml($block->__('PHP is running using <b>fast CGI</b> Module on your web Server.<br/>
-                                                                 It has its own Settings that override max_execution_time in php.ini or .htaccess.')); ?>
-                    <?php } ?>
-                </td>
-            </tr>
-
-        <?php } ?>
+            <?php foreach($this->getManager()->getChecks() as $check) { ?>
+                <tr>
+                    <td class="label">
+                        <label><?php echo $check->getRenderer()->getTitle(); ?></label>
+                    </td>
+                    <td class="value">
+                        <?php echo $check->getRenderer()->getMin(); ?>
+                    </td>
+                    <td class="value">
+                        <?php echo $check->getRenderer()->getReal(); ?>
+                    </td>
+                </tr>
+            <?php } ?>
         </tbody>
     </table>
 </div>

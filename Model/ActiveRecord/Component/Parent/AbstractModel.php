@@ -142,6 +142,11 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
         return $this->getComponentMode() == \Ess\M2ePro\Helper\Component\Amazon::NICK;
     }
 
+    public function isComponentModeWalmart()
+    {
+        return $this->getComponentMode() == \Ess\M2ePro\Helper\Component\Walmart::NICK;
+    }
+
     // ---------------------------------------
 
     public function getComponentTitle()
@@ -152,6 +157,10 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\ActiveRecord\Component\Ab
 
         if ($this->isComponentModeAmazon()) {
             return $this->getHelper('Component')->getAmazonComponentHelper()->getTitle();
+        }
+
+        if ($this->isComponentModeWalmart()) {
+            return $this->getHelper('Component')->getWalmartComponentHelper()->getTitle();
         }
 
         return '';

@@ -1127,7 +1127,6 @@ class Inspector extends \Ess\M2ePro\Model\Synchronization\Templates\Synchronizat
         );
     }
 
-    //todo
     /**
      * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
      * @param string $ruleModelPrefix

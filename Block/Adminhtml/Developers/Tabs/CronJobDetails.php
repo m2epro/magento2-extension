@@ -8,6 +8,8 @@
 
 namespace Ess\M2ePro\Block\Adminhtml\Developers\Tabs;
 
+use \Ess\M2ePro\Helper\Module\Cron as CronHelper;
+
 class CronJobDetails extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractForm
 {
     public $cronIsNotWorking = false;
@@ -77,7 +79,7 @@ HTML
             'note',
             [
                 'label' => $this->__('Type'),
-                'text' => ucfirst($this->getHelper('Module\Cron')->getRunner())
+                'text' => ucwords(str_replace('_', ' ', $this->getHelper('Module\Cron')->getRunner()))
             ]
         );
 
@@ -108,21 +110,40 @@ HTML
             ]
         );
 
-        if (!$this->getData('is_support_mode')
-            && (bool)(int)$moduleConfig->getGroupValue('/cron/service/','disabled')) {
+        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+            '/cron/'.CronHelper::RUNNER_SERVICE_CONTROLLER.'/','disabled'
+        );
+        if (!$this->getData('is_support_mode') && $isDisabled) {
 
-            $fieldSet->addField('current_status_service_cron_state',
+            $fieldSet->addField('current_status_frontend_controller_cron_state',
                 'note',
                 [
-                    'label' => $this->__('Service Cron State'),
+                    'label' => $this->__('Service Controller Cron State'),
                     'text' => $this->__('Disabled by Developer'),
                     'style' => 'color: red'
                 ]
             );
         }
 
-        if (!$this->getData('is_support_mode') &&
-            (bool)(int)$moduleConfig->getGroupValue('/cron/magento/','disabled')) {
+        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+            '/cron/'.CronHelper::RUNNER_SERVICE_PUB.'/','disabled'
+        );
+        if (!$this->getData('is_support_mode') && $isDisabled) {
+
+            $fieldSet->addField('current_status_external_controller_cron_state',
+                'note',
+                [
+                    'label' => $this->__('Service Pub Cron State'),
+                    'text' => $this->__('Disabled by Developer'),
+                    'style' => 'color: red'
+                ]
+            );
+        }
+
+        $isDisabled = (bool)(int)$moduleConfig->getGroupValue(
+            '/cron/'.CronHelper::RUNNER_MAGENTO.'/','disabled'
+        );
+        if (!$this->getData('is_support_mode') && $isDisabled) {
 
             $fieldSet->addField('current_status_magento_cron_state',
                 'note',

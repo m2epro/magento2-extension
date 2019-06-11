@@ -33,7 +33,6 @@ class Shipment extends AbstractModel
     public function process()
     {
         if ($this->getHelper('Data\GlobalData')->getValue('skip_shipment_observer')) {
-            $this->getHelper('Data\GlobalData')->unsetValue('skip_shipment_observer');
             return;
         }
 

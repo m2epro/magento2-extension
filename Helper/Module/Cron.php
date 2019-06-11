@@ -10,8 +10,10 @@ namespace Ess\M2ePro\Helper\Module;
 
 class Cron extends \Ess\M2ePro\Helper\AbstractHelper
 {
-    const RUNNER_MAGENTO = 'magento';
-    const RUNNER_SERVICE = 'service';
+    const RUNNER_MAGENTO             = 'magento';
+    const RUNNER_DEVELOPER           = 'developer';
+    const RUNNER_SERVICE_CONTROLLER = 'service_controller';
+    const RUNNER_SERVICE_PUB        = 'service_pub';
 
     const STRATEGY_SERIAL   = 'serial';
     const STRATEGY_PARALLEL = 'parallel';
@@ -67,9 +69,19 @@ class Cron extends \Ess\M2ePro\Helper\AbstractHelper
         return $this->getRunner() == self::RUNNER_MAGENTO;
     }
 
+    public function isRunnerServiceController()
+    {
+        return $this->getRunner() == self::RUNNER_SERVICE_CONTROLLER;
+    }
+
+    public function isRunnerServicePub()
+    {
+        return $this->getRunner() == self::RUNNER_SERVICE_PUB;
+    }
+
     public function isRunnerService()
     {
-        return $this->getRunner() == self::RUNNER_SERVICE;
+        return $this->isRunnerServiceController() || $this->isRunnerServicePub();
     }
 
     //########################################

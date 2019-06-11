@@ -263,7 +263,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function exists($categoryId, $marketplaceId)
     {
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
-        $connRead = $this->resourceConnection->getConnection('core_read');
+        $connRead = $this->resourceConnection->getConnection();
         $tableDictCategories = $this->getHelper('Module\Database\Structure')
             ->getTableNameWithPrefix('m2epro_ebay_dictionary_category');
 
@@ -278,7 +278,7 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
     public function isExistDeletedCategories()
     {
         /** @var $connRead \Magento\Framework\DB\Adapter\AdapterInterface */
-        $connRead = $this->resourceConnection->getConnection('core_read');
+        $connRead = $this->resourceConnection->getConnection();
 
         $etcTable = $this->activeRecordFactory->getObject('Ebay\Template\Category')->getResource()->getMainTable();
         $etocTable = $this->activeRecordFactory->getObject('Ebay\Template\OtherCategory')

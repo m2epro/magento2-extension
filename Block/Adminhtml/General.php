@@ -77,6 +77,7 @@ class General extends Magento\AbstractBlock
             'Cancel'        => $this->__('Cancel'),
             'Reset'         => $this->__('Reset'),
             'Confirm'       => $this->__('Confirm'),
+            'Submit'        => $this->__('Submit'),
             'In Progress'   => $this->__('In Progress'),
             'Product(s)'    => $this->__('Product(s)'),
             'Continue'      => $this->__('Continue'),

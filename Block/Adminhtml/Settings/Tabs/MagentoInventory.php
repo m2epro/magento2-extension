@@ -21,6 +21,23 @@ class MagentoInventory extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstrac
             ]
         ]);
 
+        $form->addField(
+            'settings_interface_help',
+            self::HELP_BLOCK,
+            [
+                'content' => $this->__(
+                    <<<HTML
+                    <p>In this section, you can provide the global settings for
+                    Inventory and Product Price management.</p><br>
+                    <p>More detailed information about ability to work with this Page you can find
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+HTML
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZQBhAQ')
+                )
+            ]
+        );
+
         $fieldset = $form->addFieldset('configuration_settings_magento_inventory_quantity',
             [
                 'legend'      => $this->__('Quantity'),

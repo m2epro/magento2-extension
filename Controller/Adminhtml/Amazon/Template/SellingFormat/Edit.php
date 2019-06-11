@@ -26,8 +26,8 @@ class Edit extends Template
 
         $this->getHelper('Data\GlobalData')->setValue('tmp_template', $template);
 
-        $headerTextEdit = $this->__("Edit Price, Quantity and Format Policy");
-        $headerTextAdd = $this->__("Add Price, Quantity and Format Policy");
+        $headerTextEdit = $this->__('Edit Selling Policy');
+        $headerTextAdd = $this->__('Add Selling Policy');
 
         if (!is_null($template)
             && $template->getId()
@@ -39,7 +39,7 @@ class Edit extends Template
         }
 
         $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Policies'));
-        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Price, Quantity and Format Policies'));
+        $this->getResultPage()->getConfig()->getTitle()->prepend($this->__('Selling Policies'));
         $this->getResultPage()->getConfig()->getTitle()->prepend($headerText);
 
         $this->addContent($this->createBlock('Amazon\Template\SellingFormat\Edit'));

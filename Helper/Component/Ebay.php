@@ -293,5 +293,51 @@ class Ebay extends \Ess\M2ePro\Helper\AbstractHelper
         $this->getHelper('Data\Cache\Permanent')->removeTagsValues(self::NICK);
     }
 
+    // ########################################
+
+    /**
+     * @param $time
+     * @return string
+     */
+    public function timeToString($time)
+    {
+        return (string)$this->getEbayDateTimeObject($time)->format('Y-m-d H:i:s');
+    }
+
+    /**
+     * @param $time
+     * @return int
+     */
+    public function timeToTimeStamp($time)
+    {
+        return (int)$this->getEbayDateTimeObject($time)->format('U');
+    }
+
+    // -----------------------------------------
+
+    /**
+     * @param $time
+     * @return \DateTime|null
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    private function getEbayDateTimeObject($time)
+    {
+        $dateTime = NULL;
+
+        if ($time instanceof \DateTime) {
+            $dateTime = clone $time;
+            $dateTime->setTimezone(new \DateTimeZone('UTC'));
+        } else {
+            is_int($time) && $time = '@'.$time;
+            $dateTime = new \DateTime($time, new \DateTimeZone('UTC'));
+        }
+
+        if (is_null($dateTime)) {
+            throw new \Ess\M2ePro\Model\Exception('eBay DateTime object is null');
+        }
+
+        return $dateTime;
+    }
+
     //########################################
 }

@@ -9,7 +9,7 @@
 namespace Ess\M2ePro\Model\Order;
 
 /**
- * @method \Ess\M2ePro\Model\Amazon\Order\Item|\Ess\M2ePro\Model\Ebay\Order\Item getChildObject()
+ * @method \Ess\M2ePro\Model\Amazon\Order\Item|\Ess\M2ePro\Model\Ebay\Order\Item|\Ess\M2ePro\Model\Walmart\Order\Item getChildObject()
  */
 class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {
@@ -152,7 +152,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
         }
 
         if (is_null($this->magentoProduct)) {
-            $this->magentoProduct = $this->helperFactory->getObject('Magento\Product');
+            $this->magentoProduct = $this->modelFactory->getObject('Magento\Product');
         }
         $this->magentoProduct->setProduct($product);
 
@@ -322,18 +322,7 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             }
         }
 
-        $magentoOptions = $this->prepareMagentoOptions($magentoProduct->getVariationInstance()->getVariationsTypeRaw());
-
-        $variationProductOptions = $this->getChildObject()->getVariationProductOptions();
-
-        /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
-        $optionsFinder = $this->modelFactory->getObject('Order\Item\OptionsFinder');
-        $optionsFinder->setProductId($magentoProduct->getProductId());
-        $optionsFinder->setProductType($magentoProduct->getTypeId());
-        $optionsFinder->setChannelOptions($variationProductOptions);
-        $optionsFinder->setMagentoOptions($magentoOptions);
-
-        $productDetails = $optionsFinder->getProductDetails();
+        $productDetails = $this->getAssociatedProductDetails($magentoProduct);
 
         if (!isset($productDetails['associated_options'])) {
             return;
@@ -350,12 +339,6 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
                 $this->setAssociatedProducts($productDetails['associated_products']);
             }
 
-            if ($optionsFinder->hasFailedOptions()) {
-                throw new \Ess\M2ePro\Model\Exception\Logic(
-                    sprintf('Product Option(s) "%s" not found.', implode(', ', $optionsFinder->getFailedOptions()))
-                );
-            }
-
             $this->save();
 
             return;
@@ -365,6 +348,41 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             // options were already mapped, but not all of them
             throw new \Ess\M2ePro\Model\Exception\Logic('Selected Options do not match the Product Options.');
         }
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product $magentoProduct
+     * @return array
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    private function getAssociatedProductDetails(\Ess\M2ePro\Model\Magento\Product $magentoProduct)
+    {
+        if (!$magentoProduct->getTypeId()) {
+            return [];
+        }
+
+        $magentoOptions = $this->prepareMagentoOptions($magentoProduct->getVariationInstance()->getVariationsTypeRaw());
+
+        $storedItemOptions = (array)$this->getChildObject()->getVariationProductOptions();
+        $orderItemOptions  = (array)$this->getChildObject()->getVariationOptions();
+
+        /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
+        $optionsFinder = $this->modelFactory->getObject('Order\Item\OptionsFinder');
+        $optionsFinder->setProduct($magentoProduct)
+                      ->setMagentoOptions($magentoOptions)
+                      ->addChannelOptions($storedItemOptions);
+
+        if ($orderItemOptions !== $storedItemOptions) {
+            $optionsFinder->addChannelOptions($orderItemOptions);
+        }
+
+        $optionsFinder->find();
+
+        if (!$optionsFinder->hasFailedOptions()) {
+            return $optionsFinder->getOptionsData();
+        }
+
+        throw new \Ess\M2ePro\Model\Exception($optionsFinder->getOptionsNotFoundMessage());
     }
 
     public function prepareMagentoOptions($options)
@@ -421,15 +439,10 @@ class Item extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
             $associatedProducts = reset($associatedProducts);
         }
 
-        $magentoOptions = $this->prepareMagentoOptions($magentoProduct->getVariationInstance()->getVariationsTypeRaw());
-
-        /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
-        $optionsFinder = $this->modelFactory->getObject('Order\Item\OptionsFinder');
-        $optionsFinder->setProductId($magentoProduct->getProductId());
-        $optionsFinder->setProductType($magentoProduct->getTypeId());
-        $optionsFinder->setMagentoOptions($magentoOptions);
-
-        $associatedProducts = $optionsFinder->prepareAssociatedProducts($associatedProducts);
+        $associatedProducts = $this->getHelper('Magento\Product')->prepareAssociatedProducts(
+            $associatedProducts,
+            $magentoProduct
+        );
 
         $this->setAssociatedProducts($associatedProducts);
         $this->setAssociatedOptions($associatedOptions);

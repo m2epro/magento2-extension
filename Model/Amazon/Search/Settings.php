@@ -243,7 +243,11 @@ class Settings extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->save();
 
-        $typeModel->getProcessor()->process();
+        try {
+            $typeModel->getProcessor()->process();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception, false);
+        }
     }
 
     //########################################

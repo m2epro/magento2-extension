@@ -193,6 +193,11 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
                     ->getChildObject()->getData('amazon_order_id');
                 $url = $this->getUrl('*/amazon_order/view', array('id' => $row->getData('order_id')));
                 break;
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                $channelOrderId = $order
+                    ->getChildObject()->getData('walmart_order_id');
+                $url = $this->getUrl('*/walmart_order/view', array('id' => $row->getData('order_id')));
+                break;
             default:
                 $channelOrderId = $this->__('N/A');
                 $url = '#';

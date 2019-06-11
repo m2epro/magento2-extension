@@ -17,26 +17,17 @@ class Magento extends AbstractModel
 
     //########################################
 
-    protected function getNick()
+    public function getNick()
     {
         return \Ess\M2ePro\Helper\Module\Cron::RUNNER_MAGENTO;
     }
 
-    protected function getInitiator()
+    public function getInitiator()
     {
         return \Ess\M2ePro\Helper\Data::INITIATOR_UNKNOWN;
     }
 
     //########################################
-
-    public function process()
-    {
-        if ($this->getHelper('Module')->getConfig()->getGroupValue('/cron/magento/','disabled')) {
-            return false;
-        }
-
-        return parent::process();
-    }
 
     /**
      * @return \Ess\M2ePro\Model\Cron\Strategy\AbstractModel
@@ -47,23 +38,6 @@ class Magento extends AbstractModel
     }
 
     //########################################
-
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $helper = $this->getHelper('Module\Cron');
-
-        if ($helper->isRunnerMagento()) {
-            return;
-        }
-
-        if ($helper->isLastRunMoreThan(CronService::MAX_INACTIVE_TIME)) {
-
-            $helper->setRunner(\Ess\M2ePro\Helper\Module\Cron::RUNNER_MAGENTO);
-            $helper->setLastRunnerChange($this->getHelper('Data')->getCurrentGmtDate());
-        }
-    }
 
     protected function isPossibleToRun()
     {
@@ -101,7 +75,7 @@ class Magento extends AbstractModel
             return;
         }
 
-        sleep(rand(0,self::MAX_DISTRIBUTION_WAIT_INTERVAL));
+        sleep(rand(0, self::MAX_DISTRIBUTION_WAIT_INTERVAL));
     }
 
     //########################################

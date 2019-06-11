@@ -1424,10 +1424,11 @@ JS
         // ---------------------------------------
         $lpId = $row->getData('id');
 
-        $productTitle = $this->getHelper('Data')->escapeHtml($row->getData('name'));
+        $productTitle = $row->getData('name');
         if (strlen($productTitle) > 60) {
             $productTitle = substr($productTitle, 0, 60) . '...';
         }
+        $productTitle = $this->getHelper('Data')->escapeHtml($productTitle);
         $productTitle = $this->__('Assign ASIN/ISBN For &quot;%product_title%&quot;', $productTitle);
         $productTitle = $this->getHelper('Data')->escapeJs($productTitle);
         // ---------------------------------------

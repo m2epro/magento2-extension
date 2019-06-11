@@ -313,7 +313,9 @@ class General extends AbstractModel
 
     private function updateListingsProductsRepricing(array $updatedOffersData)
     {
-        $keys = array_map(function($el){ return (string)$el; }, array_keys($updatedOffersData));
+        $keys = array_map(function ($el) {
+            return (string)$el;
+        }, array_keys($updatedOffersData));
 
         $listingProductCollection = $this->amazonFactory->getObject('Listing\Product')->getCollection();
         $listingProductCollection->addFieldToFilter('is_variation_parent', 0);
@@ -451,7 +453,9 @@ class General extends AbstractModel
 
     private function updateListingsOthersRepricing(array $updatedOffersData)
     {
-        $keys = array_map(function($el){ return (string)$el; }, array_keys($updatedOffersData));
+        $keys = array_map(function ($el) {
+            return (string)$el;
+        }, array_keys($updatedOffersData));
 
         $listingOtherCollection = $this->amazonFactory->getObject('Listing\Other')->getCollection();
         $listingOtherCollection->addFieldToFilter('account_id', $this->getAccount()->getId());

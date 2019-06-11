@@ -35,8 +35,6 @@ class SystemRequirements extends AbstractBlock
 
     protected function _beforeToHtml()
     {
-        $this->requirements = $this->getHelper('Module')->getRequirementsInfo();
-
         $form = $this->formFactory->create();
 
         $fieldSet = $form->addFieldset('field_system',
@@ -160,6 +158,13 @@ class SystemRequirements extends AbstractBlock
 
         $this->additionalInfo = $form;
         return parent::_beforeToHtml();
+    }
+
+    //########################################
+
+    public function getManager()
+    {
+        return $this->modelFactory->getObject('Requirements\Manager');
     }
 
     //########################################

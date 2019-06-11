@@ -131,6 +131,7 @@ HTML
         $collection->getSelect()->limit(20000);
 
         $intervals = [];
+        $maxInterval = 0;
         $previousItemDate = null;
 
         foreach ($collection->getItems() as $item){
@@ -149,7 +150,7 @@ HTML
             $previousItemDate = $currentItemDate;
         }
 
-        $maxInterval = max($intervals);
+        !empty($intervals) && $maxInterval = max($intervals);
         $maxInterval < self::MINIMUM_VALUE_OF_INTERVAL && $maxInterval = self::MINIMUM_VALUE_OF_INTERVAL;
 
         return $maxInterval;

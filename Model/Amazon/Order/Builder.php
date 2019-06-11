@@ -483,6 +483,9 @@ class Builder extends AbstractModel
                         );
                     }
 
+                    $listingProduct->setData(
+                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                    );
                     $listingProduct->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }
 
@@ -493,7 +496,7 @@ class Builder extends AbstractModel
                         $listingProduct->getId(),
                         \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
                         $logsActionId,
-                       \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
+                        \Ess\M2ePro\Model\Listing\Log::ACTION_CHANNEL_CHANGE,
                         $tempLogMessage,
                         \Ess\M2ePro\Model\Log\AbstractModel::TYPE_SUCCESS,
                         \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
@@ -604,6 +607,9 @@ class Builder extends AbstractModel
                         );
                     }
 
+                    $otherListing->setData(
+                        'status_changer', \Ess\M2ePro\Model\Listing\Product::STATUS_CHANGER_COMPONENT
+                    );
                     $otherListing->setData('status', \Ess\M2ePro\Model\Listing\Product::STATUS_STOPPED);
                 }
 

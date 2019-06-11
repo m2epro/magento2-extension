@@ -101,9 +101,9 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
         if ($outOfStockControlCurrentState && !$outOfStockControlTemplateState) {
 
             // M2ePro_TRANSLATIONS
-            // Although the Out of Stock Control option is disabled in Price, Quantity and Format Policy settings, for this eBay Item it is remain enabled. Disabling of the Out of Stock Control during the Revise action is not supported by eBay. That is why the Out of Stock Control option will still be enabled for this Item on eBay.
+            // Although the Out of Stock Control option is disabled in Selling Policy settings, for this eBay Item it is remain enabled. Disabling of the Out of Stock Control during the Revise action is not supported by eBay. That is why the Out of Stock Control option will still be enabled for this Item on eBay.
             $this->addWarningMessage(
-                'Although the Out of Stock Control option is disabled in Price, Quantity and Format Policy settings,
+                'Although the Out of Stock Control option is disabled in Selling Policy settings,
                 for this eBay Item it is remain enabled. Disabling of the Out of Stock Control during the Revise action
                 is not supported by eBay. That is why the Out of Stock Control option will still be enabled for
                 this Item on eBay.'
@@ -138,7 +138,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
                 $this->addWarningMessage(
                     'Revise was executed instead of Relist because \'Out Of Stock Control\' Option is enabled '.
-                    'in the \'Price, Quantity and Format\' Policy'
+                    'in the \'Selling\' Policy'
                 );
 
             break;
@@ -147,7 +147,7 @@ class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Type\Request
 
                 $this->addWarningMessage(
                     'Revise was executed instead of Stop because \'Out Of Stock Control\' Option is enabled '.
-                    'in the \'Price, Quantity and Format\' Policy'
+                    'in the \'Selling\' Policy'
                 );
 
             break;

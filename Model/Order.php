@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model;
 use Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing;
 
 /**
- * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Ebay\Order getChildObject()
+ * @method \Ess\M2ePro\Model\Amazon\Order|\Ess\M2ePro\Model\Ebay\Order|\Ess\M2ePro\Model\Walmart\Order getChildObject()
  */
 class Order extends ActiveRecord\Component\Parent\AbstractModel
 {
@@ -325,7 +325,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function isSingle()
     {
-        return $this->getItemsCollection()->count() == 1;
+        return $this->getItemsCollection()->getSize() == 1;
     }
 
     /**
@@ -335,7 +335,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
      */
     public function isCombined()
     {
-        return $this->getItemsCollection()->count() > 1;
+        return $this->getItemsCollection()->getSize() > 1;
     }
 
     // ---------------------------------------
@@ -385,7 +385,7 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
     {
         $channelItems = $this->getChannelItems();
 
-        return count($channelItems) != $this->getItemsCollection()->count();
+        return count($channelItems) != $this->getItemsCollection()->getSize();
     }
 
     //########################################
@@ -479,6 +479,32 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
         }
 
         return in_array($magentoShipment->getId(), $additionalData['created_shipments_ids']);
+    }
+
+    /**
+     * @param array $data
+     * @return $this
+     */
+    public function setMagentoReservationIds(array $data)
+    {
+        $additionalData = $this->getAdditionalData();
+        $additionalData['magento_reservation_ids'] = $data;
+        $this->setSettings('additional_data', $additionalData)->save();
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMagentoReservationIds()
+    {
+        $additionalData = $this->getAdditionalData();
+        if (isset($additionalData['magento_reservation_ids'])) {
+            return $additionalData['magento_reservation_ids'];
+        }
+
+        return [];
     }
 
     //########################################
@@ -661,10 +687,10 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
             } catch (FailDuringEventProcessing $e) {
 
                 $this->addWarningLog(
-                    'Magento Order was created successfully. 
-                     However one or more post-processing actions on Magento Order failed. 
-                     This may lead to some issues in the future. 
-                     Please check the configuration of the ancillary services of your Magento. 
+                    'Magento Order was created successfully.
+                     However one or more post-processing actions on Magento Order failed.
+                     This may lead to some issues in the future.
+                     Please check the configuration of the ancillary services of your Magento.
                      For more details, read the original Magento warning: %msg%.',
                     array(
                         'msg' => $e->getMessage()
@@ -835,26 +861,28 @@ class Order extends ActiveRecord\Component\Parent\AbstractModel
 
     //########################################
 
-    public function createShipment()
+    public function createShipments()
     {
-        $shipment = null;
+        $shipments = null;
 
         try {
-            $shipment = $this->getChildObject()->createShipment();
+            $shipments = $this->getChildObject()->createShipments();
         } catch (\Exception $e) {
             $this->helperFactory->getObject('Module\Exception')->process($e, false);
             $this->addErrorLog('Shipment was not created. Reason: %msg%', array('msg' => $e->getMessage()));
         }
 
-        if (!is_null($shipment)) {
-            $this->addSuccessLog('Shipment #%shipment_id% was created.', array(
-                '!shipment_id' => $shipment->getIncrementId()
-            ));
+        if (!is_null($shipments)) {
+            foreach ($shipments as $shipment) {
+                $this->addSuccessLog('Shipment #%shipment_id% was created.', array(
+                    '!shipment_id' => $shipment->getIncrementId()
+                ));
 
-            $this->addCreatedMagentoShipment($shipment);
+                $this->addCreatedMagentoShipment($shipment);
+            }
         }
 
-        return $shipment;
+        return $shipments;
     }
 
     //########################################

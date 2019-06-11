@@ -3,7 +3,7 @@ define([
     'Magento_Ui/js/modal/alert',
     'Magento_Ui/js/modal/modal',
     'M2ePro/Action'
-], function (MessageObj, alert) {
+], function (MessageObj, alert, modal) {
 
     window.AmazonListingProductRepricing = Class.create(Action, {
 
@@ -65,12 +65,12 @@ define([
                         popupEl.remove();
                     }
 
-                    $('html-body').insert({bottom: response});
+                    $('html-body').insert({bottom: response.html});
 
                     self.regularPricePopup = jQuery('#regular_price_popup');
 
                     modal({
-                        title: title,
+                        title: response.title,
                         type: 'slide',
                         buttons: [{
                             text: M2ePro.translator.translate('Cancel'),

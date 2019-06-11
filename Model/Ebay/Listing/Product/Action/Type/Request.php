@@ -283,7 +283,6 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
      * @param array $data
      * @return array
      */
-    // todo PHPdoc should be changed
     protected function resolveVariationMpnIssue(array $data)
     {
         if (!$this->getIsVariationItem()) {
@@ -360,7 +359,7 @@ abstract class Request extends \Ess\M2ePro\Model\Ebay\Listing\Product\Action\Req
                 // The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute Label instead of "%replaced_it%". This replacement cannot be edit in future by Relist/Revise Actions.
                 $this->addWarningMessage(
                     $this->getHelper('Module\Translation')->__(
-                        'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific
+                    'The Variational Attribute Label "%replaced_it%" was changed to "%replaced_by%". For Item Specific
                     "%replaced_by%" you select an Attribute by which your Variational Item varies. As it is impossible
                     to send a correct Value for this Item Specific, it’s Label will be used as Variational Attribute
                     Label instead of "%replaced_it%". This replacement cannot be edit in future by

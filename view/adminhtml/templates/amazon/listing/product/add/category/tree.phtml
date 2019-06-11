@@ -32,55 +32,6 @@
         var tree,
             treeInfo = <?php echo $block->getInfoJson() ?>;
 
-        Ext.EventManager.onDocumentReady(function () {
-
-            var categoryLoader = new Ext.tree.TreeLoader({
-                dataUrl: '<?php echo $block->getLoadTreeUrl(); ?>',
-                createNode: createNodeByConfig,
-                requestMethod: 'GET'
-            });
-
-            categoryLoader.on("beforeload", function (treeLoader, node) {
-                treeLoader.baseParams.category = node.attributes.id;
-            });
-
-            categoryLoader.on("load", function (treeLoader, node, config) {
-                updateInfo();
-                varienWindowOnload();
-            });
-
-            tree = new Ext.tree.TreePanel('tree-div', {
-                animate: true,
-                loader: categoryLoader,
-                enableDD: false,
-                containerScroll: true,
-                rootVisible: false
-            });
-
-            tree.on('click', categoryClick.bind(tree));
-
-            // set the root node
-            var root = new Ext.tree.TreeNode({
-                text: 'root',
-                draggable: false,
-                id: <?php echo $block->getRoot()->getId() ?>
-            });
-
-            tree.setRootNode(root);
-
-            buildCategoryTree(root, <?php echo $block->getTreeJson() ?>);
-
-            // render the tree
-            tree.render();
-            root.expand();
-
-            var currentNode = tree.getNodeById('<?php echo $block->getCurrentNodeId(); ?>') || root.firstChild;
-
-            tree.selectPath(currentNode.getPath());
-
-            updateInfo();
-        });
-
         createNodeByConfig = function (config)
         {
             var node = Object.clone(config);
@@ -228,6 +179,54 @@
             }
             return categoriesIds;
         };
-    });
 
+        Ext.EventManager.onDocumentReady(function () {
+
+            var categoryLoader = new Ext.tree.TreeLoader({
+                dataUrl: '<?php echo $block->getLoadTreeUrl(); ?>',
+                createNode: createNodeByConfig,
+                requestMethod: 'GET'
+            });
+
+            categoryLoader.on("beforeload", function (treeLoader, node) {
+                treeLoader.baseParams.category = node.attributes.id;
+            });
+
+            categoryLoader.on("load", function (treeLoader, node, config) {
+                updateInfo();
+                varienWindowOnload();
+            });
+
+            tree = new Ext.tree.TreePanel('tree-div', {
+                animate: true,
+                loader: categoryLoader,
+                enableDD: false,
+                containerScroll: true,
+                rootVisible: false
+            });
+
+            tree.on('click', categoryClick.bind(tree));
+
+            // set the root node
+            var root = new Ext.tree.TreeNode({
+                text: 'root',
+                draggable: false,
+                id: <?php echo $block->getRoot()->getId() ?>
+            });
+
+            tree.setRootNode(root);
+
+            buildCategoryTree(root, <?php echo $block->getTreeJson() ?>);
+
+            // render the tree
+            tree.render();
+            root.expand();
+
+            var currentNode = tree.getNodeById('<?php echo $block->getCurrentNodeId(); ?>') || root.firstChild;
+
+            tree.selectPath(currentNode.getPath());
+
+            updateInfo();
+        });
+    });
 </script>

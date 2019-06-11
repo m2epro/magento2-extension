@@ -83,7 +83,7 @@ class Template extends AbstractContainer
                 'default' => false,
             ],
             Manager::TEMPLATE_SELLING_FORMAT => [
-                'label' => $this->__('Price, Quantity and Format'),
+                'label' => $this->__('Selling'),
                 'onclick' => "setLocation('" . $this->getTemplateUrl(Manager::TEMPLATE_SELLING_FORMAT) . "')",
                 'default' => false,
             ],

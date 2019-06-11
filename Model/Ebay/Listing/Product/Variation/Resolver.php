@@ -251,7 +251,8 @@ class Resolver extends \Ess\M2ePro\Model\AbstractModel
 
             if ($tempType == 'mpn' && !empty($additionalData['online_product_details']['mpn'])) {
 
-                if ($variation->getListingProduct()->getSetting('additional_data', 'is_variation_mpn_filled') === false) {
+                if ($variation->getListingProduct()->getSetting('additional_data', 'is_variation_mpn_filled') === false
+                ) {
                     continue;
                 }
 

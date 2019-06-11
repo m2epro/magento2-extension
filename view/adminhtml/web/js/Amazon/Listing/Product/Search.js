@@ -893,59 +893,6 @@ define([
 
         // ---------------------------------------
 
-        showAsinCategories: function (link, rowId, asin, productId) {
-            var self = this;
-
-            new Ajax.Request(M2ePro.url.get('amazon_listing_product_search/getCategoriesByAsin'), {
-                method: 'post',
-                parameters: {
-                    asin: asin,
-                    product_id: productId
-                },
-                onSuccess: function (transport) {
-
-                    link.hide();
-
-                    if (!transport.responseText.isJSON()) {
-                        self.alert(transport.responseText);
-                        return;
-                    }
-
-                    var response = transport.responseText.evalJSON();
-
-                    var categoriesRow = $('asin_categories_' + rowId);
-
-                    if (response.data == '') {
-                        $('asin_categories_not_found_' + rowId).show();
-                    } else {
-                        var i = 3;
-                        response.data.each(function (item) {
-                            var str = item.title;
-                            if (item.path) {
-                                str = item.path + ' > ' + str;
-                            }
-
-                            str = str + ' (' + item.id + ')';
-
-                            var row = new Element('p');
-                            row.setStyle({
-                                'color': 'grey'
-                            });
-
-                            categoriesRow.appendChild(row).insert(str);
-
-                            i--;
-                            if (i <= 0) {
-                                throw $break;
-                            }
-                        });
-                    }
-                }
-            });
-        },
-
-        // ---------------------------------------
-
         renderMatchedAttributesVirtualView: function (id) {
             if (this.searchData[id].matchingType === this.MATCHING_TYPE_VIRTUAL_AMAZON) {
                 this.renderMatchedAttributesVirtualAmazonView(id);

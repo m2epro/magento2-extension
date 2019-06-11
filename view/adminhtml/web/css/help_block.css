@@ -148,6 +148,7 @@
     font-size: 14px;
     letter-spacing: normal;
     width: 500px;
+    right: -7rem;
 }
 .data-grid .m2epro-field-tooltip {
     position: relative;

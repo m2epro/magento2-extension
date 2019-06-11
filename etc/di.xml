@@ -22,9 +22,41 @@
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\Item\ToOrderItem" />
     </type>
 
+    <type name="Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList">
+        <plugin name="m2epro_plugin_stockitem_magento_cataloginventory_model_quote_item_quantityvalidator_quoteitemqtylist"
+                type="Ess\M2ePro\Plugin\StockItem\Magento\CatalogInventory\Model\Quote\Item\QuantityValidator\QuoteItemQtyList" />
+    </type>
+
     <type name="Magento\Quote\Model\Quote\TotalsCollectorList">
         <plugin name="m2epro_plugin_order_magento_quote_model_quote_totalscollectorlist"
                 type="Ess\M2ePro\Plugin\Order\Magento\Quote\Model\Quote\TotalsCollectorList" />
+    </type>
+
+    <!-- MSI -->
+
+    <type name="Magento\Inventory\Model\SourceItem\Command\Handler\SourceItemsSaveHandler">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_handler_sourceitemsavehandler"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\Handler\SourceItemsSaveHandler" />
+    </type>
+
+    <type name="Magento\Inventory\Model\SourceItem\Command\SourceItemsDelete">
+        <plugin name="m2epro_plugin_msi_magento_inventory_model_sourceitem_command_sourceitemdelete"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\SourceItemsDelete" />
+    </type>
+
+    <type name="Magento\InventorySales\Model\PlaceReservationsForSalesEvent">
+        <plugin name="m2epro_plugin_msi_magento_inventorysales_model_placereservationforsalesevent"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\PlaceReservationsForSalesEvent" />
+    </type>
+
+    <type name="Magento\Inventory\Model\StockSourceLink\Command\StockSourceLinksSave">
+        <plugin name="m2epro_plugin_msi_magento_inventoryapi_api_stocksourcelinkssave"
+                type="Ess\M2ePro\Plugin\MSI\Magento\Inventory\Model\SourceItem\Command\StockSourceLinksSave" />
+    </type>
+
+    <type name="Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock">
+        <plugin name="m2epro_plugin_msi_magento_inventorysales_model_resourcemodel_replacesaleschannelsdataforstock"
+                type="Ess\M2ePro\Plugin\MSI\Magento\InventorySales\Model\ResourceModel\ReplaceSalesChannelsDataForStock" />
     </type>
 
     <!-- func_get_args() fix - see detailed explanation into the Plugin -->

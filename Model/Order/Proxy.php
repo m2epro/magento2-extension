@@ -203,7 +203,7 @@ abstract class Proxy extends \Ess\M2ePro\Model\AbstractModel
             $this->addressData['city'] = $rawAddressData['city'];
             $this->addressData['postcode'] = $rawAddressData['postcode'];
             $this->addressData['telephone'] = $rawAddressData['telephone'];
-            $this->addressData['street'] = !empty($rawAddressData['street']) ? $rawAddressData['street'] : [];
+            $this->addressData['street'] = !empty($rawAddressData['street']) ? $rawAddressData['street'] : '';
             $this->addressData['company'] = !empty($rawAddressData['company']) ? $rawAddressData['company'] : '';
             $this->addressData['save_in_address_book'] = 0;
         }

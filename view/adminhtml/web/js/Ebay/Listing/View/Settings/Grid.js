@@ -238,7 +238,7 @@ define([
             ] = M2ePro.translator.translate('Edit Description Policy Setting');
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SELLING_FORMAT')
-            ] = M2ePro.translator.translate('Edit Price, Quantity and Format Policy Setting');
+            ] = M2ePro.translator.translate('Edit Selling Policy Setting');
             templatesNames[
                 M2ePro.php.constant('\\Ess\\M2ePro\\Model\\Ebay\\Template\\Manager::TEMPLATE_SYNCHRONIZATION')
             ] = M2ePro.translator.translate('Edit Synchronization Policy Setting');

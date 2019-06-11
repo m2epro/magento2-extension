@@ -267,7 +267,7 @@ class Synchronization extends \Ess\M2ePro\Block\Adminhtml\Settings\Tabs\Abstract
         return '<div id="synchronization_progress_bar"></div>
             <div id="synchronization_content_container">'.parent::_toHtml().'
             </div>
-            <div id="ebay_revise_all_confirm_popup" style="display: none;">
+            <div id="amazon_revise_all_confirm_popup" style="display: none;">
                 <div style="margin: 17px 0">'.
         $this->__(
             'Click \'Confirm\' and Revise will be performed by the Inventory Synchronization, 100

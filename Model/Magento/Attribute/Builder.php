@@ -206,6 +206,10 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
     private function prepareDefault(&$data)
     {
+        if (!isset($this->params['default_value'])) {
+            $this->params['default_value'] = null;
+        }
+
         if ($this->isDateType() || $this->isTextAreaType() || $this->isTextType()) {
 
             $data['default_value'] = (string)$this->params['default_value'];

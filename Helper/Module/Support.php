@@ -100,6 +100,8 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
                 return $this->getKnowledgebaseUrl() . 'ebay/';
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 return $this->getKnowledgebaseUrl() . 'amazon/';
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                return $this->getKnowledgebaseUrl() . 'category/1561695-walmart-integration/';
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }
@@ -124,6 +126,8 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
                 return $this->getIdeasUrl() . 'ebay/';
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 return $this->getIdeasUrl() . 'amazon/';
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                return $this->getIdeasUrl() . 'category/1563595-walmart-integration/';
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }
@@ -148,6 +152,8 @@ class Support extends \Ess\M2ePro\Helper\AbstractHelper
                 return $this->getForumUrl() . 'ebay/';
             case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 return $this->getForumUrl() . 'amazon/';
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                return $this->getForumUrl() . 'forum/21-walmart-integration/';
             default:
                 throw new \Ess\M2ePro\Model\Exception\Logic('Invalid Channel.');
         }

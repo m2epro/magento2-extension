@@ -63,9 +63,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
             ]
         );
 
-        $ebayComponent = $this->getHelper('View\Ebay\Component')->getEnabledComponents();
-        $amazonComponent = $this->getHelper('View\Amazon\Component')->getEnabledComponents();
-        $components = array_merge($ebayComponent, $amazonComponent);
+        $components = $this->getHelper('Component')->getEnabledComponents();
         $collection->getSelect()->where(
             'component_mode IN(\'' . implode('\',\'', $components) . '\') OR component_mode IS NULL'
         );

@@ -14,12 +14,12 @@ class Developer extends AbstractModel
 
     //########################################
 
-    protected function getNick()
+    public function getNick()
     {
         return NULL;
     }
 
-    protected function getInitiator()
+    public function getInitiator()
     {
         return \Ess\M2ePro\Helper\Data::INITIATOR_DEVELOPER;
     }

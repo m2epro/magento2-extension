@@ -51,6 +51,10 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
 
         $statuses = $this->getVariationsStatuses($variationsProductsIds, $storeId);
 
+        if (empty($statuses)) {
+            return NULL;
+        }
+
         return (int)max($statuses) == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED;
     }
 
@@ -63,6 +67,10 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         }
 
         $statuses = $this->getVariationsStatuses($variationsProductsIds, $storeId);
+
+        if (empty($statuses)) {
+            return NULL;
+        }
 
         return (int)min($statuses) == \Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_DISABLED;
     }
@@ -79,6 +87,10 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
 
         $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
 
+        if (empty($stocks)) {
+            return NULL;
+        }
+
         return (int)min($stocks);
     }
 
@@ -91,6 +103,10 @@ class Variation extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\P
         }
 
         $stocks = $this->getVariationsStockAvailabilities($variationsProductsIds, $storeId);
+
+        if (empty($stocks)) {
+            return NULL;
+        }
 
         return !(int)max($stocks);
     }

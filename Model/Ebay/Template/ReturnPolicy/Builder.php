@@ -86,7 +86,7 @@ class Builder extends \Ess\M2ePro\Model\Ebay\Template\Builder\AbstractModel
             $prepared['description'] = $data['description'];
         }
 
-        if ($prepared['accepted'] != 'ReturnsAccepted') {
+        if (isset($data['accepted']) && $prepared['accepted'] != 'ReturnsAccepted') {
             $prepared['holiday_mode'] = 0;
         }
 

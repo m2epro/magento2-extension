@@ -9,7 +9,8 @@
 namespace Ess\M2ePro\Model;
 
 /**
- * @method \Ess\M2ePro\Model\Ebay\Marketplace|\Ess\M2ePro\Model\Amazon\Marketplace getChildObject()
+ * @method \Ess\M2ePro\Model\Ebay\Marketplace|\Ess\M2ePro\Model\Amazon\Marketplace|
+ * \Ess\M2ePro\Model\Walmart\Marketplace getChildObject()
  */
 class Marketplace extends \Ess\M2ePro\Model\ActiveRecord\Component\Parent\AbstractModel
 {

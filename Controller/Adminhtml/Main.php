@@ -10,7 +10,6 @@ namespace Ess\M2ePro\Controller\Adminhtml;
 
 use Ess\M2ePro\Helper\Module;
 use Ess\M2ePro\Helper\Module\License;
-use Ess\M2ePro\Helper\Module\Maintenance;
 use Ess\M2ePro\Model\Servicing\Dispatcher;
 use Ess\M2ePro\Model\HealthStatus\Task\Result;
 
@@ -26,7 +25,9 @@ abstract class Main extends Base
             return $preDispatchResult;
         }
 
-        if ($this->getCustomViewNick() && empty($this->getCustomViewComponentHelper()->getEnabledComponents())) {
+        $enabledComponents = $this->getHelper('Component')->getEnabledComponentByView($this->getCustomViewNick());
+
+        if ($this->getCustomViewNick() && empty($enabledComponents)) {
             return $this->_redirect('admin/dashboard');
         }
 
@@ -50,18 +51,6 @@ abstract class Main extends Base
                 $dispatcher->process(Dispatcher::DEFAULT_INTERVAL, $dispatcher->getFastTasks());
 
             } catch (\Exception $exception) {}
-        }
-
-        /** @var Maintenance\Debug $maintenanceHelper */
-        $maintenanceHelper = $this->getHelper('Module\Maintenance\Debug');
-
-        if ($maintenanceHelper->isEnabled()) {
-
-            if ($maintenanceHelper->isOwner()) {
-                $maintenanceHelper->prolongRestoreDate();
-            } elseif ($maintenanceHelper->isExpired()) {
-                $maintenanceHelper->disable();
-            }
         }
 
         return true;
@@ -128,24 +117,8 @@ abstract class Main extends Base
             return;
         };
 
-        $isMeetRequirements = $this->getHelper('Data\Cache\Permanent')->getValue('is_meet_requirements');
-
-        if (is_null($isMeetRequirements)) {
-
-            $isMeetRequirements = true;
-            foreach ($this->getHelper('Module')->getRequirementsInfo() as $requirement) {
-                if (!$requirement['current']['status']) {
-                    $isMeetRequirements = false;
-                    break;
-                }
-            }
-
-            $this->getHelper('Data\Cache\Permanent')->setValue(
-                'is_meet_requirements', (int)$isMeetRequirements, array(), 60*60
-            );
-        }
-
-        if ($isMeetRequirements) {
+        $manager = $this->modelFactory->getObject('Requirements\Manager');
+        if ($manager->isMeet()) {
             return;
         }
 
@@ -160,11 +133,6 @@ abstract class Main extends Base
     protected function getCustomViewHelper()
     {
         return $this->getHelper('View')->getViewHelper($this->getCustomViewNick());
-    }
-
-    protected function getCustomViewComponentHelper()
-    {
-        return $this->getHelper('View')->getComponentHelper($this->getCustomViewNick());
     }
 
     protected function getCustomViewControllerHelper()
@@ -182,11 +150,9 @@ abstract class Main extends Base
 
             $staticNotification = $this->addStaticContentNotification();
             $browserNotification = $this->addBrowserNotifications();
-            $maintenanceNotification = $this->addMaintenanceNotifications();
             $healthStatusNotifications = $this->addHealthStatusNotifications();
 
-            $muteMessages = $staticNotification || $browserNotification ||
-                            $maintenanceNotification || $healthStatusNotifications;
+            $muteMessages = $staticNotification || $browserNotification || $healthStatusNotifications;
 
             if (!$muteMessages && $this->getCustomViewHelper()->isInstallationWizardFinished()) {
                 $this->addLicenseNotifications();
@@ -219,31 +185,6 @@ abstract class Main extends Base
             return true;
         }
         return false;
-    }
-
-    protected function addMaintenanceNotifications()
-    {
-        if (!$this->getHelper('Module\Maintenance\Debug')->isEnabled()) {
-            return false;
-        }
-
-        if ($this->getHelper('Module\Maintenance\Debug')->isOwner()) {
-
-            $this->getMessageManager()->addNotice($this->__(
-                'Maintenance is Active.'
-            ), self::GLOBAL_MESSAGES_GROUP);
-
-            return false;
-        }
-
-        $this->getMessageManager()->addError($this->__(
-                'M2E Pro is working in Maintenance Mode at the moment. Developers are investigating your issue.'
-            ).'<br/>'.$this->__(
-                'You will be able to see a content of this Page soon.
-                 Please wait and then refresh a browser Page later.'
-            ), self::GLOBAL_MESSAGES_GROUP);
-
-        return true;
     }
 
     protected function addStaticContentNotification()
@@ -535,10 +476,6 @@ abstract class Main extends Base
                 || (
                        $this->getHelper('Magento')->isProduction() &&
                        !$this->getHelper('Module')->isStaticContentDeployed()
-                   )
-                || (
-                       $this->getHelper('Module\Maintenance\Debug')->isEnabled() &&
-                       !$this->getHelper('Module\Maintenance\Debug')->isOwner()
                    );
     }
 

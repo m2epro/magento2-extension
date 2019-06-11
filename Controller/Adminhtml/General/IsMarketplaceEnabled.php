@@ -39,6 +39,8 @@ class IsMarketplaceEnabled extends Base
             $tableName = 'm2epro_ebay_dictionary_marketplace';
         } elseif ($component == \Ess\M2ePro\Helper\Component\Amazon::NICK) {
             $tableName = 'm2epro_amazon_dictionary_marketplace';
+        } elseif ($component == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
+            $tableName = 'm2epro_walmart_dictionary_marketplace';
         }
 
         $select = $connection

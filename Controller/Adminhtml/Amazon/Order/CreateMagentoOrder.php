@@ -63,8 +63,8 @@ class CreateMagentoOrder extends Order
 
         // Create shipment
         // ---------------------------------------
-        if ($order->getChildObject()->canCreateShipment()) {
-            $result = $order->createShipment();
+        if ($order->getChildObject()->canCreateShipments()) {
+            $result = $order->createShipments();
             $result && $this->messageManager->addSuccess($this->__('Shipment was created.'));
         }
         // ---------------------------------------

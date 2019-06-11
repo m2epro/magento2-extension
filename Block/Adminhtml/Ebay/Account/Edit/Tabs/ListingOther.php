@@ -200,6 +200,7 @@ HTML
                 'name' => 'mapping_sku_mode',
                 'label' => $this->__('Custom Label (SKU)'),
                 'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_SKU_MODE_DEFAULT => $this->__('Product SKU'),
@@ -263,6 +264,7 @@ HTML
                 'name' => 'mapping_title_mode',
                 'label' => $this->__('Listing Title'),
                 'class' => 'attribute-mode-select',
+                'style' => 'float:left; margin-right: 15px;',
                 'values' => [
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_NONE => $this->__('None'),
                     Account::OTHER_LISTINGS_MAPPING_TITLE_MODE_DEFAULT => $this->__('Product Name'),

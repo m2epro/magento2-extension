@@ -323,6 +323,30 @@ class Data extends AbstractHelper
         return $string;
     }
 
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function toLowerCaseRecursive(array $data = array())
+    {
+        if (count($data) == 0) {
+            return $data;
+        }
+
+        $lowerCasedData = array();
+
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $value = $this->toLowerCaseRecursive($value);
+            } else {
+                $value = trim(strtolower($value));
+            }
+            $lowerCasedData[trim(strtolower($key))] = $value;
+        }
+
+        return $lowerCasedData;
+    }
+
     //########################################
 
     /**
@@ -643,6 +667,11 @@ class Data extends AbstractHelper
 
     //########################################
 
+    public function isGTIN($gtin)
+    {
+        return $this->isWorldWideId($gtin, 'GTIN');
+    }
+
     public function isUPC($upc)
     {
         return $this->isWorldWideId($upc,'UPC');
@@ -663,6 +692,11 @@ class Data extends AbstractHelper
             ),
             'EAN' => array(
                 '13' => 'Ean13'
+            ),
+            'GTIN' => array(
+                '12' => 'Gtin12',
+                '13' => 'Gtin13',
+                '14' => 'Gtin14'
             )
         );
 

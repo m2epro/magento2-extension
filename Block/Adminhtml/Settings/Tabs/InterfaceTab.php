@@ -21,10 +21,21 @@ class InterfaceTab extends AbstractTab
             ]
         ]);
 
-        $urlComponents = $this->getHelper('Component')->getEnabledComponents();
-        $componentForUrl = count($urlComponents) == 1
-                           ? array_shift($urlComponents)
-                           : \Ess\M2ePro\Helper\Component\Ebay::NICK;
+        $form->addField(
+            'settings_interface_help',
+            self::HELP_BLOCK,
+            [
+                'content' => $this->__(
+                    <<<HTML
+                    <p>Set M2E Pro interface preferences, then click <strong>Save Config</strong>.
+                    More detailed information on
+                    <a href="%url%" target="_blank" class="external-link">here</a>.</p>
+HTML
+                    ,
+                    $this->getHelper('Module\Support')->getDocumentationArticleUrl('x/ZQBhAQ')
+                )
+            ]
+        );
 
         $fieldset = $form->addFieldset('configuration_settings_interface',
             [

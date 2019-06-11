@@ -17,7 +17,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected $resourceConnection;
 
-    protected $customCollection;
+    protected $wrapperCollection;
 
     protected $ebayFactory;
 
@@ -38,17 +38,17 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     public function __construct(
         \Magento\Framework\Locale\CurrencyInterface $localeCurrency,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollection,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollection,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->localeCurrency = $localeCurrency;
+        $this->localeCurrency     = $localeCurrency;
         $this->resourceConnection = $resourceConnection;
-        $this->customCollection = $customCollection;
-        $this->ebayFactory = $ebayFactory;
+        $this->wrapperCollection  = $wrapperCollection;
+        $this->ebayFactory        = $ebayFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -134,7 +134,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             )
         );
 
-        $resultCollection = $this->customCollection->create();
+        $resultCollection = $this->wrapperCollection->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             array('main_table' => $collection->getSelect()),

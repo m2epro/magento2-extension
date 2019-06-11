@@ -59,7 +59,7 @@ class Manager extends AbstractModel
 
         foreach ($this->configObject->getFeaturesList() as $featureName) {
             $featureObject = $this->upgradeFactory->getFeatureObject(
-                $this->versionFrom, $this->versionTo, $featureName, $this->installer
+                $featureName, $this->versionFrom, $this->versionTo
             );
 
             $backupTables = array_merge($backupTables, $featureObject->getBackupTables());

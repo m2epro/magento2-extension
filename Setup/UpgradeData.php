@@ -63,6 +63,7 @@ class UpgradeData implements UpgradeDataInterface
         '1.3.1' => ['1.3.2'],
         '1.3.2' => ['1.3.3'],
         '1.3.3' => ['1.3.4'],
+        '1.3.4' => ['1.4.0'],
     ];
 
     //########################################
@@ -108,7 +109,7 @@ class UpgradeData implements UpgradeDataInterface
             return;
         }
 
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
             !$this->isMaintenanceCanBeIgnored()) {
             return;
         }
@@ -120,7 +121,7 @@ class UpgradeData implements UpgradeDataInterface
         $this->checkPreconditions();
 
         $this->installer->startSetup();
-        $this->helperFactory->getObject('Module\Maintenance\General')->enable();
+        $this->helperFactory->getObject('Module\Maintenance')->enable();
 
         try {
 
@@ -163,7 +164,7 @@ class UpgradeData implements UpgradeDataInterface
             return;
         }
 
-        $this->helperFactory->getObject('Module\Maintenance\General')->disable();
+        $this->helperFactory->getObject('Module\Maintenance')->disable();
         $this->installer->endSetup();
     }
 

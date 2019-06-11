@@ -818,6 +818,12 @@ class Product extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abst
             $this->getVariationManager()->getTypeModel()->isVariationProductMatched()) {
 
             $variations = $this->getVariations(true);
+            if (count($variations) <= 0) {
+                throw new \Ess\M2ePro\Model\Exception\Logic('There are no variations for a variation product.',
+                    array(
+                        'listing_product_id' => $this->getId()
+                    ));
+            }
             /* @var $variation \Ess\M2ePro\Model\Listing\Product\Variation */
             $variation = reset($variations);
 

@@ -48,8 +48,8 @@ class StockSettings extends AbstractForm
                 You should select the Quantity source for the Products in this Store. There are 2 Options to
                 choose from:<br/>
                 <ul class="list">
-                    <li><strong>Price, Quantity and Format Policy</strong> — uses the quantity settings provided in
-                    the Price, Quantity and Format Policy for the Product;</li>
+                    <li><strong>Selling Policy</strong> — uses the quantity settings provided in
+                    the Selling Policy for the Product;</li>
                     <li><strong>Custom Settings</strong> —
                     allows you to select the Quantity source as well as specify
                     the Percentage and the Conditional Quantity Options.</li>
@@ -72,7 +72,7 @@ class StockSettings extends AbstractForm
                 'name' => 'default_mode',
                 'label' => $this->__('Use From'),
                 'values' => [
-                    ['label' => $this->__('Price, Quantity and Format Policy'), 'value' => 0],
+                    ['label' => $this->__('Selling Policy'), 'value' => 0],
                     ['label' => $this->__('Custom Settings'), 'value' => 1],
                 ],
                 'value' => (int)$formData['qty_mode'] != PickupStore::QTY_MODE_SELLING_FORMAT_TEMPLATE,
@@ -243,8 +243,7 @@ class StockSettings extends AbstractForm
                 'tooltip' => $this->__(
                     'If you have 2 pieces in Stock but set a Minimum Quantity to Be Listed of 5,
                     Item will not be Listed on eBay.<br/>
-                    Otherwise, the Item will be Listed with Quantity according to the Settings in the Price,
-                    Quantity and Format Policy'
+                    Otherwise, the Item will be Listed with Quantity according to the Settings in the Selling Policy'
                 )
             ]
         );

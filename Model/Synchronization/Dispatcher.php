@@ -72,7 +72,7 @@ class Dispatcher extends \Ess\M2ePro\Model\AbstractModel
             // components tasks
             $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Ebay::NICK) ? false : $result;
             $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Amazon::NICK) ? false : $result;
-            //$result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Buy::NICK) ? false : $result;
+            $result = !$this->processComponent(\Ess\M2ePro\Helper\Component\Walmart::NICK) ? false : $result;
 
         } catch (\Exception $exception) {
 

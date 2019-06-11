@@ -11,7 +11,8 @@ namespace Ess\M2ePro\Plugin\Menu\Magento\Backend\Model\Menu;
 use Ess\M2ePro\Helper\Module;
 use Ess\M2ePro\Helper\View\Amazon;
 use Ess\M2ePro\Helper\View\Ebay;
-use Ess\M2ePro\Helper\Module\Maintenance\General as Maintenance;
+use Ess\M2ePro\Helper\View\Walmart;
+use Ess\M2ePro\Helper\Module\Maintenance as Maintenance;
 
 class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 {
@@ -75,7 +76,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             self::MAINTENANCE_MENU_STATE_CACHE_KEY
         );
 
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             if (is_null($maintenanceMenuState)) {
                 $this->helperFactory->getObject('Data\Cache\Permanent')->setValue(
                     self::MAINTENANCE_MENU_STATE_CACHE_KEY, true
@@ -135,6 +136,12 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
         }
 
+        if ($this->helperFactory->getObject('Component\Walmart')->isEnabled()) {
+            $this->processWizard($menuModel->get(Walmart::MENU_ROOT_NODE_NICK), Walmart::NICK);
+        } else {
+            $menuModel->remove(Walmart::MENU_ROOT_NODE_NICK);
+        }
+
         return $menuModel;
     }
 
@@ -142,27 +149,45 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     private function processMaintenance(\Magento\Backend\Model\Menu $menuModel)
     {
-        $maintenanceMenuItemResource = $menuModel->get(Ebay::MENU_ROOT_NODE_NICK)->isAllowed()
-            ? Ebay::MENU_ROOT_NODE_NICK : Amazon::MENU_ROOT_NODE_NICK;
+        if ($menuModel->get(Ebay::MENU_ROOT_NODE_NICK)->isAllowed()) {
+
+            $maintenanceMenuItemResource = Ebay::MENU_ROOT_NODE_NICK;
+
+        } elseif ($menuModel->get(Amazon::MENU_ROOT_NODE_NICK)->isAllowed()) {
+
+            $maintenanceMenuItemResource = Amazon::MENU_ROOT_NODE_NICK;
+
+        } else {
+
+            $maintenanceMenuItemResource = Walmart::MENU_ROOT_NODE_NICK;
+        }
+
+        foreach ($menuModel as $menuIndex => $menuItem) {
+            if ($menuItem->getId() == $maintenanceMenuItemResource) {
+                $maintenanceMenuItem = $this->itemFactory->create([
+                    'id'       => Maintenance::MENU_ROOT_NODE_NICK,
+                    'module'   => Module::IDENTIFIER,
+                    'title'    => 'M2E Pro',
+                    'resource' => $maintenanceMenuItemResource,
+                    'action'   => 'm2epro/maintenance',
+                ]);
+
+                $menuModel->remove($maintenanceMenuItemResource);
+                $menuModel->add($maintenanceMenuItem, null, $menuIndex);
+                break;
+            }
+        }
 
         $menuModel->remove(Ebay::MENU_ROOT_NODE_NICK);
         $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
-
-        $maintenanceMenuItem = $this->itemFactory->create([
-            'id'       => Maintenance::MENU_ROOT_NODE_NICK,
-            'module'   => Module::IDENTIFIER,
-            'title'    => 'M2E Pro',
-            'resource' => $maintenanceMenuItemResource,
-            'action'   => 'm2epro/maintenance',
-        ]);
-
-        $menuModel->add($maintenanceMenuItem, null, Maintenance::MENU_POSITION);
+        $menuModel->remove(Walmart::MENU_ROOT_NODE_NICK);
     }
 
     private function processModuleDisable(\Magento\Backend\Model\Menu $menuModel)
     {
         $menuModel->remove(Ebay::MENU_ROOT_NODE_NICK);
         $menuModel->remove(Amazon::MENU_ROOT_NODE_NICK);
+        $menuModel->remove(Walmart::MENU_ROOT_NODE_NICK);
     }
 
     private function processWizard(\Magento\Backend\Model\Menu\Item $menu, $viewNick)
@@ -194,6 +219,10 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             Amazon::MENU_ROOT_NODE_NICK => [
                 $this->helperFactory->getObject('Component\Amazon')->isEnabled(),
                 is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Amazon::NICK))
+            ],
+            Walmart::MENU_ROOT_NODE_NICK => [
+                $this->helperFactory->getObject('Component\Walmart')->isEnabled(),
+                is_null($this->helperFactory->getObject('Module\Wizard')->getActiveBlockerWizard(Walmart::NICK))
             ]
         ];
     }

@@ -32,30 +32,9 @@ class Debug extends AbstractBlock
     {
         $this->isMagentoDevelopmentModeEnabled = $this->getHelper('Magento')->isDeveloper();
         $this->isDevelopmentModeEnabled        = $this->getHelper('Module')->isDevelopmentMode();
-        $this->isMaintenanceEnabled            = $this->getHelper('Module\Maintenance\Debug')->isEnabled();
 
         $this->commands = $this->getHelper('View\ControlPanel\Command')
             ->parseDebugCommandsData(\Ess\M2ePro\Helper\View\ControlPanel\Command::CONTROLLER_DEBUG);
-
-        // ---------------------------------------
-        $url = $this->getUrl('*/controlPanel_debug/enableMaintenance/');
-        $data = array(
-            'label'   => $this->__('Enable'),
-            'onclick' => 'setLocation(\'' . $url . '\');',
-            'class'   => 'enable_maintenance'
-        );
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('enable_maintenance',$buttonBlock);
-
-        $url = $this->getUrl('*/controlPanel_debug/disableMaintenance/');
-        $data = array(
-            'label'   => $this->__('Disable'),
-            'onclick' => 'setLocation(\'' . $url . '\');',
-            'class'   => 'disable_maintenance'
-        );
-        $buttonBlock = $this->createBlock('Magento\Button')->setData($data);
-        $this->setChild('disable_maintenance',$buttonBlock);
-        // ---------------------------------------
 
         // ---------------------------------------
         $url = $this->getUrl('*/controlPanel_debug/enableDevelopmentMode/');

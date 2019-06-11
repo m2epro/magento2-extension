@@ -193,10 +193,10 @@ HTML
                 'tooltip' => $this->__(
                     '<p><strong>Any:</strong> List Items automatically with any Quantity available.</p>
                     <p><strong>More or Equal:</strong> List Items automatically if the calculated Quantity is at
-                    least equal to the number you set, according to the Price, Quantity and Format Policy.
+                    least equal to the number you set, according to the Selling Policy.
                     (Recommended)</p>
                     <p><strong>Between:</strong> List Items automatically if the Quantity is between the minimum
-                    and maximum numbers you set, according to the Price, Quantity and Format Policy.</p>'
+                    and maximum numbers you set, according to the Selling Policy.</p>'
                 )
             ]
         )->addCustomAttribute('qty_type', 'calculated');

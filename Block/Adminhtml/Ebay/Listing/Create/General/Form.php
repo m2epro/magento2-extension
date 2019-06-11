@@ -277,7 +277,6 @@ HTML
             'Getting information. Please wait ...', $this->__('Getting information. Please wait ...')
         );
 
-
         $this->jsPhp->addConstants($this->getHelper('Data')->getClassConstants('\Ess\M2ePro\Helper\Component\Ebay'));
 
         $marketplaces = $this->getHelper('Data')->jsonEncode($marketplaces);

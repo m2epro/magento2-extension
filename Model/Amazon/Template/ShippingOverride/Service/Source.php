@@ -72,13 +72,13 @@ class Source extends \Ess\M2ePro\Model\AbstractModel
         $result = 0;
 
         switch ($this->getShippingOverrideServiceTemplate()->getCostMode()) {
-            case\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_FREE:
+            case \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_FREE:
                 $result = 0;
                 break;
-            case\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_CUSTOM_VALUE:
+            case \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_CUSTOM_VALUE:
                 $result = $this->getShippingOverrideServiceTemplate()->getCostValue();
                 break;
-            case\Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_CUSTOM_ATTRIBUTE:
+            case \Ess\M2ePro\Model\Amazon\Template\ShippingOverride\Service::COST_MODE_CUSTOM_ATTRIBUTE:
                 $result = $this->getMagentoProductAttributeValue(
                     $this->getShippingOverrideServiceTemplate()->getCostValue(),
                     $storeForConvertingAttributeTypePrice

@@ -143,7 +143,24 @@ class Feedback extends \Ess\M2ePro\Model\ActiveRecord\AbstractModel
             $dispatcherObj->process($connectorObj);
             $response = $connectorObj->getResponseData();
 
+            if ($connectorObj->getResponse()->getMessages()->hasErrorEntities()) {
+                throw new \Ess\M2ePro\Model\Exception(
+                    $connectorObj->getResponse()->getMessages()->getCombinedErrorsString()
+                );
+            }
+
         } catch (\Exception $e) {
+
+            $synchronizationLog = $this->activeRecordFactory->getObject('Synchronization\Log');
+            $synchronizationLog->setComponentMode(\Ess\M2ePro\Helper\Component\Ebay::NICK);
+            $synchronizationLog->setSynchronizationTask(\Ess\M2ePro\Model\Synchronization\Log::TASK_GENERAL);
+
+            $synchronizationLog->addMessage(
+                $this->getHelper('Module\Translation')->__($e->getMessage()),
+                \Ess\M2ePro\Model\Log\AbstractModel::TYPE_ERROR,
+                \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_HIGH
+            );
+
             $this->getHelper('Module\Exception')->process($e);
             return false;
         }

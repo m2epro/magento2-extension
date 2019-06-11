@@ -47,28 +47,16 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             $viewNick = $this->getCurrentView();
         }
 
-        if ($viewNick == \Ess\M2ePro\Helper\View\Ebay::NICK) {
-            return $this->getHelper('View\Ebay');
+        switch ($viewNick) {
+            case \Ess\M2ePro\Helper\View\Ebay::NICK:
+                return $this->getHelper('View\Ebay');
+            case \Ess\M2ePro\Helper\View\Amazon::NICK:
+                return $this->getHelper('View\Amazon');
+            case \Ess\M2ePro\Helper\View\Walmart::NICK:
+                return $this->getHelper('View\Walmart');
         }
 
         return $this->getHelper('View\Amazon');
-    }
-
-    /**
-     * @param string $viewNick
-     * @return \Ess\M2ePro\Helper\View\Amazon\Component|\Ess\M2ePro\Helper\View\Ebay\Component
-     */
-    public function getComponentHelper($viewNick = null)
-    {
-        if (is_null($viewNick)) {
-            $viewNick = $this->getCurrentView();
-        }
-
-        if ($viewNick == \Ess\M2ePro\Helper\View\Ebay::NICK) {
-            return $this->getHelper('View\Ebay\Component');
-        }
-
-        return $this->getHelper('View\Amazon\Component');
     }
 
     /**
@@ -81,8 +69,13 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             $viewNick = $this->getCurrentView();
         }
 
-        if ($viewNick == \Ess\M2ePro\Helper\View\Ebay::NICK) {
-            return $this->getHelper('View\Ebay\Controller');
+        switch ($viewNick) {
+            case \Ess\M2ePro\Helper\View\Ebay::NICK:
+                return $this->getHelper('View\Ebay\Controller');
+            case \Ess\M2ePro\Helper\View\Amazon::NICK:
+                return $this->getHelper('View\Amazon\Controller');
+            case \Ess\M2ePro\Helper\View\Walmart::NICK:
+                return $this->getHelper('View\Walmart\Controller');
         }
 
         return $this->getHelper('View\Amazon\Controller');
@@ -106,6 +99,10 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
             return \Ess\M2ePro\Helper\View\Amazon::NICK;
         }
 
+        if (stripos($controllerName, \Ess\M2ePro\Helper\View\Walmart::NICK) !== false) {
+            return \Ess\M2ePro\Helper\View\Walmart::NICK;
+        }
+
         if (stripos($controllerName, \Ess\M2ePro\Helper\View\ControlPanel::NICK) !== false) {
             return \Ess\M2ePro\Helper\View\ControlPanel::NICK;
         }
@@ -127,6 +124,11 @@ class View extends \Ess\M2ePro\Helper\AbstractHelper
     public function isCurrentViewAmazon()
     {
         return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Amazon::NICK;
+    }
+
+    public function isCurrentViewWalmart()
+    {
+        return $this->getCurrentView() == \Ess\M2ePro\Helper\View\Walmart::NICK;
     }
 
     public function isCurrentViewControlPanel()

@@ -330,8 +330,7 @@ class Processor extends \Ess\M2ePro\Model\AbstractModel
             foreach ($actions as $action) {
 
                 $messages = $this->getResponseMessages($responseData, $responseMessages, $action->getRelatedId());
-                $this->completeAction($action, array('messages' => $messages)
-                );
+                $this->completeAction($action, array('messages' => $messages));
             }
 
             return;

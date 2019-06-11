@@ -52,6 +52,11 @@ class CreditMemo extends AbstractModel
                 return;
             }
 
+            if ($order->getComponentMode() == \Ess\M2ePro\Helper\Component\Walmart::NICK) {
+                $this->modelFactory->getObject('Walmart\Order\CreditMemo\Handler')->handle($order, $creditmemo);
+                return;
+            }
+
             if ($order->getComponentMode() != \Ess\M2ePro\Helper\Component\Amazon::NICK) {
                 return;
             }

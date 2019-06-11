@@ -34,7 +34,7 @@ class Stock extends AbstractModel
      */
     public function getValueByProductInstance(\Magento\Catalog\Model\Product $product)
     {
-        return $this->getStockItemByProductInstance($product)->getIsInStock();
+        return (int)$this->getStockItemByProductInstance($product)->getIsInStock();
     }
 
     //########################################

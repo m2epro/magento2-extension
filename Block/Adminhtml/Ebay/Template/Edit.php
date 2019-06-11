@@ -161,7 +161,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Magento\Form\AbstractContainer
                 $title = $this->__('Return');
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT:
-                $title = $this->__('Price, Quantity and Format');
+                $title = $this->__('Selling');
                 break;
             case \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION:
                 $title = $this->__('Description');

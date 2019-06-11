@@ -27,6 +27,9 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     /** @var \Magento\CatalogInventory\Api\StockItemRepositoryInterface|null  */
     private $stockItemRepository = null;
 
+    /** @var \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage */
+    private $stockRegistryStorage;
+
     //########################################
 
     public function __construct(
@@ -36,13 +39,15 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
         \Magento\CatalogInventory\Model\Indexer\Stock\Processor $indexStockProcessor,
         \Magento\CatalogInventory\Model\Spi\StockStateProviderInterface $stockStateProvider,
         \Magento\CatalogInventory\Api\Data\StockItemInterface $stockItem,
-        \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository
+        \Magento\CatalogInventory\Api\StockItemRepositoryInterface $stockItemRepository,
+        \Magento\CatalogInventory\Model\StockRegistryStorage $stockRegistryStorage
     ){
         $this->stockConfiguration  = $stockConfiguration;
         $this->indexStockProcessor = $indexStockProcessor;
         $this->stockStateProvider  = $stockStateProvider;
         $this->stockItem           = $stockItem;
         $this->stockItemRepository = $stockItemRepository;
+        $this->stockRegistryStorage = $stockRegistryStorage;
 
         parent::__construct($helperFactory, $modelFactory);
     }
@@ -128,8 +133,11 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
     public function afterSave()
     {
         if ($this->indexStockProcessor->isIndexerScheduled()) {
-
             $this->indexStockProcessor->reindexRow($this->getStockItem()->getProductId(), true);
+        }
+
+        if ($this->stockStatusChanged) {
+            $this->stockRegistryStorage->removeStockStatus($this->getStockItem()->getProductId());
         }
     }
 
@@ -144,6 +152,7 @@ class StockItem extends \Ess\M2ePro\Model\AbstractModel
 
     /**
      * @return bool
+     * @throws \Ess\M2ePro\Model\Exception\Logic
      */
     public function canChangeQty()
     {

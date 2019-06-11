@@ -59,8 +59,8 @@ class ValidateProductsForAssign extends Description
             $messages[] = [
                 'type' => 'warning',
                 'text' => $this->__(
-                    'Description Policy was not assigned because the Items are Simple
-                    With Custom Options or Bundle Magento Products.'
+                    'Selected action was not completed for one or more Items. Description Policy cannot be assigned
+                    to Simple with Custom Options, Bundle and Downloadable with Separated Links Magento Products.'
                 )
             ];
         }

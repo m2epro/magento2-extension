@@ -85,14 +85,14 @@ class Client extends AbstractHelper
         $directory = $this->cacheConfig->getGroupValue('/location_info/', 'directory');
 
         if (!empty($directory)) {
-            return strtolower(trim($directory));
+            return trim($directory);
         }
 
         $directory = $this->filesystem->getDirectoryRead(\Magento\Framework\App\Filesystem\DirectoryList::ROOT)
                                       ->getAbsolutePath();
 
         if (!empty($directory)) {
-            return strtolower(trim($directory));
+            return trim($directory);
         }
 
         throw new \Ess\M2ePro\Model\Exception('Server Directory is not defined');
@@ -134,14 +134,18 @@ class Client extends AbstractHelper
 
      //########################################
 
-    public function getPhpVersion()
+    public function getPhpVersion($asArray = false)
     {
-        return phpversion();
+        $version = array(
+            PHP_MAJOR_VERSION, PHP_MINOR_VERSION, PHP_RELEASE_VERSION
+        );
+
+        return $asArray ? $version : implode('.', $version);
     }
 
     public function getPhpApiName()
     {
-        return php_sapi_name();
+        return PHP_SAPI;
     }
 
     public function getPhpIniFileLoaded()
@@ -166,9 +170,9 @@ class Client extends AbstractHelper
     public function getPhpSettings()
     {
         return array(
-            'memory_limit' => $this->getMemoryLimit(),
-            'max_execution_time' => $this->isPhpApiApacheHandler() ? ini_get('max_execution_time') : NULL,
-            'phpinfo' => $this->getPhpInfoArray()
+            'memory_limit'       => $this->getMemoryLimit(),
+            'max_execution_time' => $this->getExecutionTime(),
+            'phpinfo'            => $this->getPhpInfoArray()
         );
     }
 
@@ -222,6 +226,7 @@ class Client extends AbstractHelper
             }
 
         } catch (\Exception $exception) {
+            ob_get_clean();
             return [];
         }
 
@@ -312,7 +317,7 @@ class Client extends AbstractHelper
 
     public function getSystem()
     {
-        return php_uname();
+        return PHP_OS;
     }
 
     public function isBrowserIE()
@@ -336,10 +341,15 @@ class Client extends AbstractHelper
         switch($lastMemoryLimitLetter) {
             case 'g':
                 $memoryLimit *= 1024;
+                break;
+
             case 'm':
                 $memoryLimit *= 1024;
+                break;
+
             case 'k':
                 $memoryLimit *= 1024;
+                break;
         }
 
         if ($memoryLimit > 0 && $inMegabytes) {
@@ -370,6 +380,17 @@ class Client extends AbstractHelper
         }
 
         return true;
+    }
+
+    // ---------------------------------------
+
+    public function getExecutionTime()
+    {
+        if (!$this->isPhpApiApacheHandler()) {
+            return NULL;
+        }
+
+        return @ini_get('max_execution_time');
     }
 
     //########################################

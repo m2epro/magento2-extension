@@ -13,6 +13,10 @@ namespace Ess\M2ePro\Model\Magento\Quote;
  */
 class Builder extends \Ess\M2ePro\Model\AbstractModel
 {
+    const PROCESS_QUOTE_ID = 'PROCESS_QUOTE_ID';
+
+    //########################################
+
     protected $proxyOrder;
     /** @var  \Magento\Quote\Model\Quote $quote */
     protected $quote;
@@ -116,6 +120,12 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
         );
 
         $this->quoteManager->replaceCheckoutQuote($this->quote);
+
+        /** @var \Ess\M2ePro\Helper\Data\GlobalData $globalDataHelper */
+        $globalDataHelper = $this->getHelper('Data\GlobalData');
+
+        $globalDataHelper->unsetValue(self::PROCESS_QUOTE_ID);
+        $globalDataHelper->setValue(self::PROCESS_QUOTE_ID, $this->quote->getId());
     }
 
     //########################################
@@ -248,6 +258,7 @@ class Builder extends \Ess\M2ePro\Model\AbstractModel
 
                 $giftMessageId = $quoteItemBuilder->getGiftMessageId();
                 if (!empty($giftMessageId)) {
+                    $this->quote->setGiftMessageId($giftMessageId);
                     $quoteItem->setGiftMessageId($giftMessageId);
                 }
 

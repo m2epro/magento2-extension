@@ -27,7 +27,6 @@ class Search extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractContainer
         } else {
             $this->_controller = 'adminhtml_amazon_listing_search_product';
         }
-
         // ---------------------------------------
 
         // Set buttons actions

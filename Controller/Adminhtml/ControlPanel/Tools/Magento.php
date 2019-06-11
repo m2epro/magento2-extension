@@ -198,7 +198,7 @@ HTML;
 
                     $html .= <<<HTML
 <tr>
-    
+
     <td>{$plugin['class']}</td>
     <td>{$status}</td>
     <td>{$methods}</td>
@@ -227,7 +227,7 @@ HTML;
             )
         );
 
-        $files = array();
+        $loggers = array();
         foreach ($recursiveIteratorIterator as $splFileInfo) {
             /**@var \SplFileInfo $splFileInfo */
 
@@ -242,7 +242,7 @@ HTML;
                 continue;
             }
 
-            $splFileObject = new \SplFileObject($splFileInfo->getRealPath());
+            $splFileObject = $splFileInfo->openFile();
             if (!$splFileObject->getSize()) {
                 continue;
             }
@@ -252,45 +252,48 @@ HTML;
                 continue;
             }
 
-            foreach ($splFileObject as $line => $code) {
+            $content = explode("\n", $content);
+            foreach ($content as $line => $contentRow) {
 
-                if (strpos($code, 'Module\Logger') === false) {
+                if (strpos($contentRow, 'Module\Logger') === false) {
                     continue;
                 }
 
-                $files[] = array(
+                $loggers[] = array(
                     'path' => $splFileObject->getRealPath(),
-                    'line' => $line + 1
+                    'line' => $line + 1,
+                    'code' => implode("\n", array_slice($content, $line - 2, 7)),
                 );
             }
         }
 
-        if (count($files) <= 0) {
+        if (count($loggers) <= 0) {
             return $this->getEmptyResultsHtml('No M2ePro Loggers');
         }
 
-        $html = $this->getStyleHtml() . <<<HTML
-<h2 style="margin: 20px 0 0 10px">M2ePro Loggers in Magento files
-    <span style="color: #808080; font-size: 15px;">(%count% entries)</span>
+        $cdnURL = '//cdnjs.cloudflare.com/ajax/libs/prism/1.6.0';
+        $html = <<<HTML
+<link type="text/css" href="{$cdnURL}/themes/prism-tomorrow.min.css" rel="stylesheet"/>
+<script type="text/javascript" src="{$cdnURL}/prism.min.js"></script>
+<script type="text/javascript" src="{$cdnURL}/components/prism-php.min.js"></script>
+<script type="text/javascript" src="{$cdnURL}/components/prism-php-extras.min.js"></script>
+
+<div style="max-width: 1280px; margin: 0 auto;">
+    <h2 style="text-align: center; margin-bottom: 0; padding-top: 25px">M2ePro Loggers in Magento files
+        <span style="color: #808080; font-size: 15px">(%count% entries)</span>
 </h2>
 <br/>
-
-<table class="grid" cellpadding="0" cellspacing="0">
-    <tr>
-        <th style="width: 800px">Path</th>
-    </tr>
 HTML;
-        foreach ($files as $file) {
-
+        foreach ($loggers as $logger) {
             $html .= <<<HTML
-<tr>
-    <td>{$file['path']}:{$file['line']}</td>
-</tr>
+<figure>
+    <figcaption>{$logger['path']}:{$logger['line']}</figcaption>
+    <pre><code class="language-php">{$logger['code']}</code></pre>
+</figure>
 HTML;
         }
 
-        $html .= '</table>';
-        return str_replace('%count%', count($files), $html);
+        return str_replace('%count%', count($loggers), $html. '</div>');
     }
 
     /**

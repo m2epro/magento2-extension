@@ -31,6 +31,9 @@ class Template extends Context
     /** @var \Magento\Framework\Data\Form\Element\Factory */
     protected $elementFactory;
 
+    /** @var \Magento\Cms\Model\Wysiwyg\Config */
+    protected $wysiwygConfig;
+
     public function __construct(
         \Ess\M2ePro\Helper\Factory $helperFactory,
         \Ess\M2ePro\Model\Factory $modelFactory,
@@ -71,13 +74,15 @@ class Template extends Context
         \Magento\Backend\Model\Session $backendSession,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Framework\Data\Form\FormKey $formKey,
-        \Magento\Framework\Code\NameBuilder $nameBuilder
+        \Magento\Framework\Code\NameBuilder $nameBuilder,
+        \Magento\Cms\Model\Wysiwyg\Config $wysiwygConfig
     )
     {
         $this->helperFactory = $helperFactory;
         $this->modelFactory = $modelFactory;
         $this->activeRecordFactory = $activeRecordFactory;
         $this->parentFactory = $parentFactory;
+        $this->wysiwygConfig = $wysiwygConfig;
 
         $this->css = $css;
         $this->jsPhp = $jsPhp;
@@ -199,5 +204,13 @@ class Template extends Context
     public function getElementFactory()
     {
         return $this->elementFactory;
+    }
+
+    /**
+     * @return \Magento\Cms\Model\Wysiwyg\Config
+     */
+    public function getWysiwygConfig()
+    {
+        return $this->wysiwygConfig;
     }
 }

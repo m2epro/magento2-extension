@@ -29,7 +29,7 @@ define([
 
                     cmdPressedKeys = [];
 
-                    window.location = self.controlPanelUrl;
+                    window.open(self.controlPanelUrl);
                 }
             });
         },

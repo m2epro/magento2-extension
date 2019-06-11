@@ -25,21 +25,19 @@ class Switcher extends \Ess\M2ePro\Block\Adminhtml\Listing\View\Switcher
     public function getTooltip()
     {
         return $this->__(<<<HTML
-            <p>There are several <strong>View Modes</strong> available to you:</p>
+<p>There are several <strong>View Modes</strong> available for you:</p>
             <ul>
-            <li><p><strong>Amazon</strong> - displays Product details with respect to Amazon Item
-            information. Using this Mode, you can easily filter down the list of Products based on
-            Amazon Item details as well as perform Actions to Amazon Products in bulk
-            (i.e. List, Revise, Relist, Stop, etc);</p></li>
-            <li><p><strong>Settings</strong> - displays information about the Settings set for the Products
-            (i.e. Selling Settings, eBay Categories, etc). Using this Mode, you can easily find Products by
-            reference to the Settings they use as well as edit already defined Settings in bulk.</p></li>
-            <li><p><strong>Seller Central</strong> - displays Products the way they are shown in Amazon Seller Central
-            (each Product is shown individually). Using this Mode, you can also run actions to update products on
-            the channel (i.e. List, Revise, etc.) or switch them to AFN/MFN.</p></li>
-            <li><p><strong>Magento</strong> - displays Products information with regard to Magento Catalog.
-            Using this Mode, you can easily find Products based on Magento Product information
-            (i.e. Magento QTY, Stock Status, etc);</p></li>
+        <li><p><strong>Amazon</strong> - displays the Product details based on Amazon Item information.
+            Using this Mode, you can filter the Product list by Amazon Item parameters, apply the mass Actions
+            (i.e. List, Revise, Relist, Stop, etc.) to the Channel Items, manage ASIN/ISBN assigning.</p></li>
+        <li><p><strong>Settings</strong> - allows you to assign/unassign Description and Shipping Policies to
+            the Listing Items, duplicate the Items or move them to another M2E Pro Listing.</p></li>
+        <li><p><strong>Seller Central</strong> - displays Simple and Child Products listed on Amazon in a way
+            they are shown in your Seller Central. Using this Mode, you can run the mass Actions to update
+            the Channel Items (i.e. List, Revise, etc.) or switch them to AFN/MFN.</p></li>
+        <li><p><strong>Magento</strong> - displays the Product details based on Magento Catalog data.
+            Using this Mode, you can filter the Product list by Magento Product parameters
+            (i.e. Magento QTY, Stock Status, etc).</p></li>
             </ul>
             <p>More detailed information you can find
             <a href="%url%" target="_blank" class="external-link">here</a>.</p>

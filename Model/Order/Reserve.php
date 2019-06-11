@@ -8,6 +8,19 @@
 
 namespace Ess\M2ePro\Model\Order;
 
+use Magento\Framework\ObjectManagerInterface;
+use Magento\Inventory\Model\StockRepository;
+use Magento\InventoryConfigurationApi\Model\IsSourceItemManagementAllowedForProductTypeInterface;
+use Magento\InventorySales\Model\SalesEventToArrayConverter;
+use Magento\InventorySalesApi\Api\Data\ItemToSellInterfaceFactory;
+use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
+use Magento\InventorySalesApi\Api\Data\SalesChannelInterfaceFactory;
+use Magento\InventorySalesApi\Api\Data\SalesEventInterface;
+use Magento\InventorySalesApi\Api\Data\SalesEventInterfaceFactory;
+use Magento\InventorySalesApi\Api\PlaceReservationsForSalesEventInterface;
+use Magento\InventorySalesApi\Model\GetAssignedSalesChannelsForStockInterface;
+use Magento\Store\Api\WebsiteRepositoryInterface;
+
 class Reserve extends \Ess\M2ePro\Model\AbstractModel
 {
     const STATE_UNKNOWN  = 0;
@@ -15,14 +28,28 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
     const STATE_RELEASED = 2;
     const STATE_CANCELED = 3;
 
+    const MAGENTO_RESERVATION_EVENT_TYPE  = 'm2epro_reservation';
+    const MAGENTO_RESERVATION_OBJECT_TYPE = 'm2epro_order';
+
     const ACTION_ADD = 'add';
     const ACTION_SUB = 'sub';
 
     /** @var \Magento\Framework\DB\TransactionFactory  */
     private $transactionFactory = NULL;
-
+    /** @var ObjectManagerInterface */
+    private $objectManager;
     /** @var \Ess\M2ePro\Model\Order */
     private $order = null;
+    /** @var \Ess\M2ePro\Model\ActiveRecord\Factory */
+    private $activeRecordFactory;
+    /** @var GetAssignedSalesChannelsForStockInterface */
+    private $getAssignedChannels;
+    /** @var \Magento\Catalog\Model\ResourceModel\Product */
+    private $productResource;
+    /** @var WebsiteRepositoryInterface */
+    private $websiteRepository;
+    /** @var StockRepository */
+    private $stockRepository;
 
     private $flags = array();
 
@@ -32,11 +59,15 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         \Magento\Framework\DB\TransactionFactory $transactionFactory,
         \Ess\M2ePro\Model\Order $order,
         \Ess\M2ePro\Helper\Factory $helperFactory,
-        \Ess\M2ePro\Model\Factory $modelFactory
+        \Ess\M2ePro\Model\Factory $modelFactory,
+        ObjectManagerInterface $objectManager,
+        \Ess\M2ePro\Model\ActiveRecord\Factory $activeRecordFactory
     )
     {
-        $this->transactionFactory = $transactionFactory;
-        $this->order              = $order;
+        $this->transactionFactory  = $transactionFactory;
+        $this->order               = $order;
+        $this->objectManager       = $objectManager;
+        $this->activeRecordFactory = $activeRecordFactory;
         parent::__construct($helperFactory, $modelFactory);
     }
 
@@ -101,7 +132,11 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             $this->order->associateWithStore();
             $this->order->associateItemsWithProducts();
 
-            $this->performAction(self::ACTION_SUB, self::STATE_PLACED);
+            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
+                $this->placeMagentoReservation();
+            } else {
+                $this->performAction(self::ACTION_SUB, self::STATE_PLACED);
+            }
 
             if (!$this->isPlaced()) {
                 return false;
@@ -115,7 +150,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $this->order->addSuccessLog('QTY has been reserved.');
+        $this->order->addSuccessLog('QTY was reserved.');
         return true;
     }
 
@@ -134,7 +169,11 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         }
 
         try {
-            $this->performAction(self::ACTION_ADD, self::STATE_RELEASED);
+            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
+                $this->releaseMagentoReservation(self::STATE_RELEASED);
+            } else {
+                $this->performAction(self::ACTION_ADD, self::STATE_RELEASED);
+            }
 
             if (!$this->isReleased()) {
                 return false;
@@ -148,7 +187,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $this->order->addSuccessLog('QTY has been released.');
+        $this->order->addSuccessLog('QTY was released.');
         return true;
     }
 
@@ -167,7 +206,11 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         }
 
         try {
-            $this->performAction(self::ACTION_ADD, self::STATE_CANCELED);
+            if ($this->getHelper('Magento')->isMSISupportingVersion()) {
+                $this->releaseMagentoReservation(self::STATE_CANCELED);
+            } else {
+                $this->performAction(self::ACTION_ADD, self::STATE_CANCELED);
+            }
 
             if (!$this->isCanceled()) {
                 return false;
@@ -181,7 +224,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
             return false;
         }
 
-        $this->order->addSuccessLog('QTY reserve has been canceled.');
+        $this->order->addSuccessLog('QTY reserve was canceled.');
         return true;
     }
 
@@ -320,6 +363,179 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
         foreach ($magentoStockItems as $magentoStockItem) {
             $magentoStockItem->afterSave();
         }
+    }
+
+    private function placeMagentoReservation()
+    {
+        /** @var SalesEventInterfaceFactory $salesEventFactory */
+        /** @var \Magento\Framework\App\ResourceConnection $resource */
+        /** @var SalesChannelInterfaceFactory $salesChannelFactory */
+        /** @var PlaceReservationsForSalesEventInterface $placeReserve */
+        /** @var ItemToSellInterfaceFactory $itemsToSellFactory */
+        /** @var SalesEventToArrayConverter $salesEventToArray */
+
+        $salesEventFactory   = $this->objectManager->get(SalesEventInterfaceFactory::class);
+        $salesChannelFactory = $this->objectManager->get(SalesChannelInterfaceFactory::class);
+        $placeReserve        = $this->objectManager->get(PlaceReservationsForSalesEventInterface::class);
+        $itemsToSellFactory  = $this->objectManager->get(ItemToSellInterfaceFactory::class);
+        $salesEventToArray   = $this->objectManager->get(SalesEventToArrayConverter::class);
+        $resource            = $this->objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+
+        $itemsToSell = [];
+
+        foreach ($this->order->getItemsCollection() as $orderItem) {
+            /**@var \Ess\M2ePro\Model\Order\Item $orderItem */
+            if ($this->isPhysicalProductType($orderItem->getMagentoProduct())) {
+                $sku = $orderItem->getChildObject()->getSku();
+            } else {
+                $sku = $orderItem->getChildObject()->getVariationSku();
+            }
+            $itemsToSell[] = $itemsToSellFactory->create([
+                'sku' => $sku,
+                'qty' => -(float)$orderItem->getChildObject()->getQtyPurchased()
+            ]);
+        }
+
+        /** @var SalesEventInterface $salesEvent */
+        $salesEvent = $salesEventFactory->create([
+            'type'       => self::MAGENTO_RESERVATION_EVENT_TYPE,
+            'objectType' => self::MAGENTO_RESERVATION_OBJECT_TYPE,
+            'objectId'   => (string)$this->order->getId()
+        ]);
+        $salesChannel = $salesChannelFactory->create([
+            'data' => [
+                'type' => SalesChannelInterface::TYPE_WEBSITE,
+                'code' => $this->getHelper('Magento\Store')->getWebsite($this->order->getStoreId())->getCode()
+            ]
+        ]);
+
+        $placeReserve->execute($itemsToSell, $salesChannel, $salesEvent);
+        $encodedMetadata = $this->getHelper('Data')->jsonEncode($salesEventToArray->execute($salesEvent));
+
+        $select = $resource->getConnection()
+                           ->select()
+                           ->from($resource->getConnection()->getTableName('inventory_reservation'))
+                           ->reset(\Zend_Db_Select::COLUMNS)
+                           ->columns('reservation_id')
+                           ->where('metadata = ?', $encodedMetadata);
+
+        $reservationIds = $resource->getConnection()->fetchAll($select);
+
+        $this->order->setData('reservation_state', self::STATE_PLACED);
+        $this->order->setData('reservation_start_date', $this->getHelper('Data')->getCurrentGmtDate());
+        $this->order->setMagentoReservationIds($reservationIds);
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Magento\Product $product
+     * @return bool
+     */
+    private function isPhysicalProductType(\Ess\M2ePro\Model\Magento\Product $product)
+    {
+        $validator = $this->objectManager->get(IsSourceItemManagementAllowedForProductTypeInterface::class);
+        return $validator->execute($product->getTypeId());
+    }
+
+    /**
+     * @param $releaseType
+     * @throws \Ess\M2ePro\Model\Exception
+     */
+    private function releaseMagentoReservation($releaseType)
+    {
+        $reservationIds = $this->order->getMagentoReservationIds();
+        if (empty($reservationIds)) {
+            return $this->performAction(self::ACTION_ADD, $releaseType);
+        }
+
+        $this->getAssignedChannels = $this->objectManager->get(GetAssignedSalesChannelsForStockInterface::class);
+        $this->websiteRepository   = $this->objectManager->get(WebsiteRepositoryInterface::class);
+        $this->productResource     = $this->objectManager->get(\Magento\Catalog\Model\ResourceModel\Product::class);
+        $this->stockRepository     = $this->objectManager->get(StockRepository::class);
+
+        /** @var \Magento\Framework\App\ResourceConnection $resource */
+        $resource = $this->objectManager->get(\Magento\Framework\App\ResourceConnection::class);
+
+        $connection  = $resource->getConnection();
+        $reservationTable = $resource->getTableName('inventory_reservation');
+
+        $reservations = $connection->select()
+                                   ->from($reservationTable, array('sku', 'stock_id', 'quantity'))
+                                   ->where('`reservation_id` IN(?)',$reservationIds)
+                                   ->query()
+                                   ->fetchAll();
+
+        foreach ($reservations as $reservation) {
+            $stockName = $this->stockRepository->get($reservation['stock_id'])->getName();
+            $listingProducts = $this->getAffectedListingsProducts($reservation['sku'], $reservation['stock_id']);
+            foreach ($listingProducts as $listingProduct) {
+                $this->logListingProductMessage($listingProduct, abs($reservation['quantity']), $stockName);
+            }
+        }
+
+        $connection->delete($reservationTable, array('reservation_id IN(?)' => $reservationIds));
+        $this->order->setData('reservation_state', $releaseType);
+        $this->order->setMagentoReservationIds([])->save();
+    }
+
+    /**
+     * @param string $sku
+     * @param int $stockId
+     * @return array
+     */
+    private function getAffectedListingsProducts(string $sku, int $stockId)
+    {
+        $mergedStoreIds = [];
+
+        $channels = $this->getAssignedChannels->execute($stockId);
+        foreach ($channels as $channel) {
+            $website = $this->websiteRepository->get($channel->getCode());
+            $mergedStoreIds = array_merge($mergedStoreIds, $website->getStoreIds());
+
+            if ($website->getIsDefault()) {
+                $mergedStoreIds[] = 0;
+            }
+        }
+
+        if (empty($mergedStoreIds)) {
+            return [];
+        }
+
+        return $this->activeRecordFactory
+                    ->getObject('Listing\Product')
+                    ->getResource()
+                    ->getItemsByProductId(
+                        $this->productResource->getIdBySku($sku),
+                        array('store_id' => $mergedStoreIds)
+                    );
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Listing\Product $listingProduct
+     * @param $qty
+     * @param $stockName
+     */
+    private function logListingProductMessage(\Ess\M2ePro\Model\Listing\Product $listingProduct, $qty, $stockName)
+    {
+        $log = $this->activeRecordFactory->getObject('Listing\Log');
+        $log->setComponentMode($listingProduct->getComponentMode());
+
+        $message = sprintf(
+            'M2E Pro released Product Quantity reservation from the "%s" Stock in the amount of %s.',
+            $stockName,
+            $qty
+        );
+
+        $log->addProductMessage(
+            $listingProduct->getListingId(),
+            $listingProduct->getProductId(),
+            $listingProduct->getId(),
+            \Ess\M2ePro\Helper\Data::INITIATOR_EXTENSION,
+            NULL,
+            \Ess\M2ePro\Model\Listing\Log::ACTION_CHANGE_PRODUCT_QTY,
+            $this->getHelper('Module\Log')->encodeDescription($message),
+            \Ess\M2ePro\Model\Log\AbstractModel::TYPE_NOTICE,
+            \Ess\M2ePro\Model\Log\AbstractModel::PRIORITY_LOW
+        );
     }
 
     /**

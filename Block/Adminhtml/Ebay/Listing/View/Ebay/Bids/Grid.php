@@ -100,7 +100,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     protected function _prepareCollection()
     {
         $collection = $this->customCollectionFactory->create();
-        $collection->setConnection($this->resourceConnection->getConnection());
+
         foreach ($this->getBidsData() as $index => $item) {
             $temp = array(
                 'user_id' => $item['user']['user_id'],
@@ -111,12 +111,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
-        $collection->setCustomSize(count($this->getBidsData()));
         $this->setCollection($collection);
 
         parent::_prepareCollection();
-
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }

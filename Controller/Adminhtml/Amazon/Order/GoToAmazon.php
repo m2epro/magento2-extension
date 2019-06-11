@@ -17,7 +17,7 @@ class GoToAmazon extends Order
         $magentoOrderId = $this->getRequest()->getParam('magento_order_id');
 
         /** @var $order \Ess\M2ePro\Model\Order */
-        $order = $this->amazonFactory->getObject('Order')->load($magentoOrderId, 'magento_order_id');
+        $order = $this->amazonFactory->getObjectLoaded('Order', $magentoOrderId, 'magento_order_id');
 
         if (is_null($order->getId())) {
             $this->messageManager->addError($this->__('Order does not exist.'));

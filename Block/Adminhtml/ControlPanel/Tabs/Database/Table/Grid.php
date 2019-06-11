@@ -78,7 +78,16 @@ class Grid extends AbstractGrid
 
     protected function _prepareCollection()
     {
-        $this->setCollection($this->tableModel->getModel()->getCollection());
+        /** @var  $collection */
+        $collection = $this->tableModel->getModel()->getCollection();
+
+        if ($this->tableModel->getTableName() == 'm2epro_operation_history'){
+            $collection->getSelect()->columns(array(
+                'total_run_time' => new \Zend_Db_Expr("TIME_TO_SEC(TIMEDIFF(`end_date`, `start_date`))")
+            ));
+        }
+
+        $this->setCollection($collection);
         return parent::_prepareCollection();
     }
 
@@ -129,6 +138,22 @@ class Grid extends AbstractGrid
 
             if($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'nick') {
                 $params['filter'] = '\Ess\M2ePro\Block\Adminhtml\ControlPanel\Tabs\Database\Table\Column\Filter\Select';
+            }
+
+            if ($this->tableModel->getTableName() == 'm2epro_operation_history' && $column['name'] == 'data') {
+                $columnData = array(
+                    'header'                    => $this->__('Total Run Time'),
+                    'align'                     => 'right',
+                    'width'                     => '70px',
+                    'type'                      => 'text',
+                    'index'                     => 'total_run_time',
+                    'filter'                    => '\Ess\M2ePro\Block\Adminhtml\Magento\Grid\Column\Filter\Range',
+                    'sortable'                  => true,
+                    'frame_callback'            => array($this, 'callbackColumnTotalRunTime'),
+                    'filter_condition_callback' => array($this, 'callbackTotalRunTimeFilter')
+                );
+
+                $this->addColumn('total_time', $columnData);
             }
 
             $this->addColumn($column['name'], $params);
@@ -317,6 +342,65 @@ HTML;
 
     //########################################
 
+    public function callbackColumnTotalRunTime($value, $row, $column, $isExport)
+    {
+        if (is_null($value)) {
+            return '<span style="color:silver;"><small>NULL</small></span>';
+        }
+        $color = $value > 1800 ? 'red' : 'green';
+        $value = $this->escapeHtml($this->getTotalRunTimeForDisplay($value));
+
+        return "<span style='color:$color;'>{$value}</span>";
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\ResourceModel\OperationHistory\Collection $collection
+     * @param \Magento\Backend\Block\Widget\Grid\Column $column
+     * @return $this
+     */
+    public function callbackTotalRunTimeFilter($collection, $column)
+    {
+        $value = $column->getFilter()->getValue();
+
+        if ($value === null || !$value = preg_grep('/^\d+:\d{2}$/', $value)) {
+            return $this;
+        }
+
+        $value = array_map(function($item) {
+            list($minutes, $seconds) = explode(':', $item);
+            return (int) $minutes * 60 + $seconds;
+        }, $value);
+
+        if (isset($value['from'])) {
+            $collection->getSelect()
+                ->where("TIME_TO_SEC(TIMEDIFF(`end_date`, `start_date`)) >= {$value['from']}");
+        }
+
+        if (isset($value['to'])) {
+            $collection->getSelect()
+                ->where("TIME_TO_SEC(TIMEDIFF(`end_date`, `start_date`)) <= {$value['to']}");
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $totalRunTime
+     * @return null|string
+     */
+    protected function getTotalRunTimeForDisplay($totalRunTime)
+    {
+        $minutes = (int)($totalRunTime / 60);
+        $minutes < 10 && $minutes = '0'.$minutes;
+
+        $seconds = $totalRunTime - $minutes * 60;
+        $seconds < 10 && $seconds = '0'.$seconds;
+
+        return "{$minutes}:{$seconds}";
+    }
+
+    //########################################
+
     protected function isColumnValueShouldBeCut($originalValue)
     {
         if (is_null($originalValue)) {
@@ -343,24 +427,25 @@ HTML;
             return $this;
         }
 
-        $value = $column->getFilter()->getValue();
-        $field = ( $column->getFilterIndex() ) ? $column->getFilterIndex()
-                                               : $column->getIndex();
+        if (!$column->getFilterConditionCallback()) {
+            $value = $column->getFilter()->getValue();
+            $field = ( $column->getFilterIndex() ) ? $column->getFilterIndex()
+                : $column->getIndex();
 
-        if ($this->isNullFilter($value)) {
-            $this->getCollection()->addFieldToFilter($field, array('null' => true));
-            return $this;
-        }
+            if ($this->isNullFilter($value)) {
+                $this->getCollection()->addFieldToFilter($field, array('null' => true));
+                return $this;
+            }
 
-        if ($this->isNotIsNullFilter($value)) {
-            $this->getCollection()->addFieldToFilter($field, array('notnull' => true));
-            return $this;
-        }
+            if ($this->isNotIsNullFilter($value)) {
+                $this->getCollection()->addFieldToFilter($field, array('notnull' => true));
+                return $this;
+            }
 
-        if ($this->isUnEqualFilter($value)) {
-            $this->getCollection()->addFieldToFilter($field, array('neq' => preg_replace('/^!=/', '', $value)));
-            return $this;
-
+            if ($this->isUnEqualFilter($value)) {
+                $this->getCollection()->addFieldToFilter($field, array('neq' => preg_replace('/^!=/', '', $value)));
+                return $this;
+            }
         }
 
         return parent::_addColumnFilterToCollection($column);

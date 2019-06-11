@@ -17,6 +17,7 @@ class Edit extends AbstractContainer
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Order'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Ebay\Log\Order'));
         $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Amazon\Log\Order'));
+        $this->jsUrl->addUrls($this->getHelper('Data')->getControllerActions('Walmart\Log\Order'));
 
         $this->jsTranslator->addTranslations([
             'Please enter correct Product ID or SKU.' => $this->__('Please enter correct Product ID or SKU.'),

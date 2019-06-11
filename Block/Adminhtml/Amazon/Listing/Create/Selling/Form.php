@@ -244,7 +244,7 @@ class Form extends AbstractForm
             'template_selling_format_container',
             self::CUSTOM_CONTAINER,
             [
-                'label' => $this->__('Price, Quantity and Format Policy'),
+                'label' => $this->__('Selling Policy'),
                 'style' => 'line-height: 34px; display: initial;',
                 'required' => true,
                 'text' => <<<HTML

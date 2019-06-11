@@ -10,7 +10,7 @@ namespace Ess\M2ePro\Model\Listing;
 
 /**
  * @method \Ess\M2ePro\Model\ResourceModel\Listing\Product getResource()
- * @method \Ess\M2ePro\Model\Ebay\Listing\Product|\Ess\M2ePro\Model\Amazon\Listing\Product getChildObject()
+ * @method \Ess\M2ePro\Model\Ebay\Listing\Product|\Ess\M2ePro\Model\Amazon\Listing\Product|\Ess\M2ePro\Model\Walmart\Listing\Product getChildObject()
  * @method \Ess\M2ePro\Model\Listing\Product\Action\Configurator|NULL getActionConfigurator()
  *
  * @method setActionConfigurator(\Ess\M2ePro\Model\Listing\Product\Action\Configurator $configurator)

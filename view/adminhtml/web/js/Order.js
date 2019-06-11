@@ -193,8 +193,10 @@ define([
             var url = '';
             if (gridId.match(/ebay/i)) {
                 url = M2ePro.url.get('ebay_log_order/index', {id: rowId});
-            } else {
+            } else if (gridId.match(/amazon/i)) {
                 url = M2ePro.url.get('amazon_log_order/index', {id: rowId});
+            } else {
+                url = M2ePro.url.get('walmart_log_order/index', {id: rowId});
             }
 
             return '<div class="hl_footer"><a target="_blank" href="'+url+'">'+ M2ePro.translator.translate('View Full Order Log')+'</a></div>';

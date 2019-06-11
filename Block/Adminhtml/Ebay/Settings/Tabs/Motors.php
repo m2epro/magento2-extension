@@ -378,7 +378,7 @@ JS
 
     private function getMotorsDictionaryRecordCount($type)
     {
-        $selectStmt = $this->resourceConnection->getConnection('core_read')
+        $selectStmt = $this->resourceConnection->getConnection()
             ->select()
             ->from(
                 $type == \Ess\M2ePro\Helper\Component\Ebay\Motors::TYPE_KTYPE

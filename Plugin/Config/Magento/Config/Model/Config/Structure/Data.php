@@ -43,16 +43,11 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
     {
         $result = $callback(...$arguments);
 
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() ||
-            (
-                $this->helperFactory->getObject('Module\Maintenance\Debug')->isEnabled() &&
-                !$this->helperFactory->getObject('Module\Maintenance\Debug')->isOwner()
-            )
-        )
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled())
         {
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT]);
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::AMAZON_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::BUY_SECTION_COMPONENT]);
+            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::WALMART_SECTION_COMPONENT]);
 
             unset($result['sections']['payment']['children']['m2epropayment']);
             unset($result['sections']['carriers']['children']['m2eproshipping']);
@@ -61,7 +56,7 @@ class Data extends \Ess\M2ePro\Plugin\AbstractPlugin
 
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT]);
             unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::AMAZON_SECTION_COMPONENT]);
-            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::BUY_SECTION_COMPONENT]);
+            unset($result['sections'][\Ess\M2ePro\Helper\View\Configuration::WALMART_SECTION_COMPONENT]);
 
             unset($result['sections']['payment']['children']['m2epropayment']);
             unset($result['sections']['carriers']['children']['m2eproshipping']);

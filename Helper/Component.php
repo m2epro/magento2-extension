@@ -28,13 +28,22 @@ class Component extends AbstractHelper
         return $this->getHelper('Component\Amazon');
     }
 
+    /**
+     * @return Component\Walmart
+     */
+    public function getWalmartComponentHelper()
+    {
+        return $this->getHelper('Component\Walmart');
+    }
+
     //########################################
 
     public function getComponents()
     {
         return [
             Component\Ebay::NICK,
-            Component\Amazon::NICK
+            Component\Amazon::NICK,
+            Component\Walmart::NICK,
         ];
     }
 
@@ -43,8 +52,9 @@ class Component extends AbstractHelper
     public function getComponentsTitles()
     {
         return [
-            Component\Ebay::NICK   => $this->getHelper('Component\Ebay')->getTitle(),
-            Component\Amazon::NICK => $this->getHelper('Component\Amazon')->getTitle()
+            Component\Ebay::NICK    => $this->getHelper('Component\Ebay')->getTitle(),
+            Component\Amazon::NICK  => $this->getHelper('Component\Amazon')->getTitle(),
+            Component\Walmart::NICK => $this->getHelper('Component\Walmart')->getTitle(),
         ];
     }
 
@@ -60,8 +70,34 @@ class Component extends AbstractHelper
         if ($this->getHelper('Component\Amazon')->isEnabled()) {
             $components[] = Component\Amazon::NICK;
         }
+        if ($this->getHelper('Component\Walmart')->isEnabled()) {
+            $components[] = Component\Walmart::NICK;
+        }
 
         return $components;
+    }
+
+    public function getEnabledComponentByView($viewNick)
+    {
+        $enabledComponents = $this->getEnabledComponents();
+
+        if ($viewNick == \Ess\M2ePro\Helper\View\Ebay::NICK &&
+            in_array(Component\Ebay::NICK, $enabledComponents)
+        ) {
+            return Component\Ebay::NICK;
+        }
+
+        if ($viewNick == \Ess\M2ePro\Helper\View\Amazon::NICK &&
+            in_array(Component\Amazon::NICK, $enabledComponents)
+        ) {
+            return Component\Amazon::NICK;
+        }
+
+        if ($viewNick == \Ess\M2ePro\Helper\View\Walmart::NICK &&
+            in_array(Component\Walmart::NICK, $enabledComponents)
+        ) {
+            return Component\Walmart::NICK;
+        }
     }
 
     // ---------------------------------------
@@ -75,6 +111,9 @@ class Component extends AbstractHelper
         }
         if ($this->getHelper('Component\Amazon')->isEnabled()) {
             $components[Component\Amazon::NICK] = $this->getHelper('Component\Amazon')->getTitle();
+        }
+        if ($this->getHelper('Component\Walmart')->isEnabled()) {
+            $components[Component\Walmart::NICK] = $this->getHelper('Component\Walmart')->getTitle();
         }
 
         return $components;
@@ -92,6 +131,9 @@ class Component extends AbstractHelper
         if (!$this->getHelper('Component\Amazon')->isEnabled()) {
             $components[] = Component\Amazon::NICK;
         }
+        if (!$this->getHelper('Component\Walmart')->isEnabled()) {
+            $components[] = Component\Walmart::NICK;
+        }
 
         return $components;
     }
@@ -107,6 +149,9 @@ class Component extends AbstractHelper
         }
         if (!$this->getHelper('Component\Amazon')->isEnabled()) {
             $components[Component\Amazon::NICK] = $this->getHelper('Component\Amazon')->getTitle();
+        }
+        if (!$this->getHelper('Component\Walmart')->isEnabled()) {
+            $components[Component\Walmart::NICK] = $this->getHelper('Component\Walmart')->getTitle();
         }
 
         return $components;
@@ -124,6 +169,9 @@ class Component extends AbstractHelper
                 break;
             case Component\Amazon::NICK:
                 $title = $this->getAmazonComponentHelper()->getTitle();
+                break;
+            case Component\Walmart::NICK:
+                $title = $this->getWalmartComponentHelper()->getTitle();
                 break;
         }
 

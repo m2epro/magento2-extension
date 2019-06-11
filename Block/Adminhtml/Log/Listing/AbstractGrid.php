@@ -11,12 +11,14 @@ namespace Ess\M2ePro\Block\Adminhtml\Log\Listing;
 abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
 {
     protected $moduleConfig;
+    protected $wrapperCollectionFactory;
     protected $customCollectionFactory;
 
     //#######################################
 
     public function __construct(
         \Ess\M2ePro\Model\Config\Manager\Module $moduleConfig,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -25,6 +27,7 @@ abstract class AbstractGrid extends \Ess\M2ePro\Block\Adminhtml\Log\AbstractGrid
     )
     {
         $this->moduleConfig = $moduleConfig;
+        $this->wrapperCollectionFactory = $wrapperCollectionFactory;
         $this->customCollectionFactory = $customCollectionFactory;
 
         parent::__construct($resourceConnection, $context, $backendHelper, $data);

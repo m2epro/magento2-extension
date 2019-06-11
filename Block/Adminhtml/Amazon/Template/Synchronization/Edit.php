@@ -51,7 +51,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
                 'label'     => $this->__('Duplicate'),
                 'onclick'   => 'AmazonTemplateSynchronizationObj.duplicateClick'
                     .'(\'amazon-template-synchronization\')',
-                'class'     => 'primary'
+                'class'     => 'add M2ePro_duplicate_button primary'
             ));
             // ---------------------------------------
 
@@ -59,7 +59,7 @@ class Edit extends \Ess\M2ePro\Block\Adminhtml\Amazon\Template\Edit
             $this->addButton('delete', array(
                 'label'     => $this->__('Delete'),
                 'onclick'   => 'AmazonTemplateSynchronizationObj.deleteClick()',
-                'class'     => 'delete primary'
+                'class'     => 'delete M2ePro_delete_button primary'
             ));
             // ---------------------------------------
         }

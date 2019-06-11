@@ -47,7 +47,7 @@ abstract class AbstractPlugin
 
     protected function canExecute()
     {
-        return !$this->helperFactory->getObject('Module\Maintenance\General')->isEnabled() &&
+        return !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
                !$this->helperFactory->getObject('Module')->isDisabled() &&
                $this->helperFactory->getObject('Module')->isReadyToWork();
     }

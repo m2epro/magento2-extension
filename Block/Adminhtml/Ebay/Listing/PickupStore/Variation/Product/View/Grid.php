@@ -19,23 +19,23 @@ class Grid extends AbstractGrid
     /** @var \Ess\M2ePro\Model\Listing\Product $listingProduct */
     protected $listingProduct;
     protected $resourceConnection;
-    protected $customCollectionFactory;
+    protected $wrapperCollectionFactory;
     protected $ebayFactory;
 
     //########################################
 
     public function __construct(
         \Magento\Framework\App\ResourceConnection $resourceConnection,
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Ebay\Factory $ebayFactory,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->resourceConnection = $resourceConnection;
-        $this->customCollectionFactory = $customCollectionFactory;
-        $this->ebayFactory = $ebayFactory;
+        $this->resourceConnection       = $resourceConnection;
+        $this->wrapperCollectionFactory = $wrapperCollectionFactory;
+        $this->ebayFactory              = $ebayFactory;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -94,8 +94,8 @@ class Grid extends AbstractGrid
             ]
         );
 
-        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $resultCollection */
-        $resultCollection = $this->customCollectionFactory->create();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper $resultCollection */
+        $resultCollection = $this->wrapperCollectionFactory->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             ['main_table' => $collection->getSelect()],

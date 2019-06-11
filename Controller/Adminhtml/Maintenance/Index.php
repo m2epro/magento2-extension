@@ -21,7 +21,7 @@ class Index extends Action
 
     public function __construct(
         PageFactory $pageFactory,
-        \Ess\M2ePro\Helper\Module\Maintenance\General $maintenanceHelper,
+        \Ess\M2ePro\Helper\Module\Maintenance $maintenanceHelper,
         Action\Context $context
     ) {
         $this->pageFactory = $pageFactory;
@@ -40,7 +40,7 @@ class Index extends Action
         $result = $this->pageFactory->create();
 
         $result->getConfig()->getTitle()->set(__(
-            'M2E Pro is currently in a maintenance mode (Module is not working now)'
+            'M2E Pro is currently under maintenance'
         ));
         $this->_setActiveMenu('Ess_M2ePro::m2epro_maintenance');
 

@@ -255,6 +255,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
             $attribute->setStoreId($this->getMagentoProduct()->getStoreId());
 
             if ($this->getMagentoProduct()->getStoreId()) {
+                $attribute->unsetData('store_label');
                 $attributeLabel = $attribute->getStoreLabel($this->getMagentoProduct()->getStoreId());
             } else {
                 $attributeLabel = $configurableAttribute->getLabel();
@@ -735,6 +736,7 @@ class Variation extends \Ess\M2ePro\Model\AbstractModel
                 throw new \Ess\M2ePro\Model\Exception($message);
             }
             $productAttribute->setStoreId($this->getMagentoProduct()->getStoreId());
+            $productAttribute->unsetData('store_label');
 
             $configurableOption = array(
                 'option_id' => $attribute->getAttributeId(),

@@ -159,7 +159,7 @@ class Category extends \Ess\M2ePro\Helper\AbstractHelper
             $fields[] = $mode.'_attribute';
         }
 
-        $select = $this->resourceConnection->getConnection('core_read')->select();
+        $select = $this->resourceConnection->getConnection()->select();
         $select->from($table, $fields);
         $select->where('id IN (?)', $ids);
 

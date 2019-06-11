@@ -194,7 +194,8 @@ class Ebay extends Command
             $listingProducts = $this->parentFactory->getObject(EbayHelper::NICK, 'Listing\Product')->getCollection();
         } else {
 
-            $listingProduct = $this->parentFactory->getObjectLoaded(EbayHelper::NICK, 'Listing\Product', $listingProductId);
+            $listingProduct = $this->parentFactory
+                ->getObjectLoaded(EbayHelper::NICK, 'Listing\Product', $listingProductId);
             $listingProduct && $listingProducts[] = $listingProduct;
         }
 

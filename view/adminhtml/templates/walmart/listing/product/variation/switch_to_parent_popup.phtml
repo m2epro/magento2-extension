@@ -1,0 +1,35 @@
+<div id="switch_to_parent_popup">
+    <style>
+        .list {
+            margin: 10px 0px !important;
+            padding-left: 30px !important;
+            list-style: disc outside;
+        }
+    </style>
+
+    <?php echo $block->createBlock('HelpBlock')->setData([
+        'no_collapse' => true,
+        'no_hide' => true,
+        'always_show' => true,
+        'style' => 'margin-bottom: 0px',
+        'content' => $block->__('M2E Pro is able to work with Magento Variational Products in two different Modes:
+            <ul class="list">
+                <li>Selling Magento Variational Product as an Walmart Product with Parent/Child relation;</li>
+                <li>Selling certain Variation of Magento Product as Individual Walmart Product.</li>
+            </ul>
+
+            You can read more about those two Modes in M2E Pro <a href="%url%" target="_blank" class="external-link">documentation</a>. <br/>
+            This Product is now being treated as <strong>Individual Walmart Product</strong>, do you want to
+            switch to <strong>Parent/Child Mode</strong>? <br/>',
+            $block->getHelper('Module\Support')->getDocumentationArticleUrl('x/O4oVAQ')
+        )
+    ])->toHtml(); ?>
+
+    <div class="admin__field admin__field-option" style="position: absolute; margin-left: 10px; margin-top: 30px;">
+        <input class="admin__control-checkbox" type="checkbox" id="switch_to_parent_remember_checkbox" name="switch_to_parent_remember_checkbox">&nbsp;
+        <label for="switch_to_parent_remember_checkbox" class="admin__field-label">
+            <span><?php echo $block->__('Remember my choice') ?></span>
+        </label>
+    </div>
+
+</div>

@@ -34,12 +34,10 @@ class CheckProductOptionStockAvailability extends Order
             $associatedProducts["{$optionId}::{$valueId}"] = $optionData['product_ids'];
         }
 
-        /** @var $optionsFinder \Ess\M2ePro\Model\Order\Item\OptionsFinder */
-        $optionsFinder = $this->modelFactory->getObject('Order\Item\OptionsFinder');
-        $optionsFinder->setProductId($orderItem->getMagentoProduct()->getProductId());
-        $optionsFinder->setProductType($orderItem->getMagentoProduct()->getTypeId());
-
-        $associatedProducts = $optionsFinder->prepareAssociatedProducts($associatedProducts);
+        $associatedProducts = $this->getHelper('Magento\Product')->prepareAssociatedProducts(
+            $associatedProducts,
+            $orderItem->getMagentoProduct()
+        );
 
         foreach ($associatedProducts as $productId) {
 

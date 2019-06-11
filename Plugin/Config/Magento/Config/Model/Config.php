@@ -14,13 +14,7 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
 
     protected function canExecute()
     {
-        if ($this->helperFactory->getObject('Module\Maintenance\General')->isEnabled()) {
-            return false;
-        }
-
-        if ($this->helperFactory->getObject('Module\Maintenance\Debug')->isEnabled() &&
-            !$this->helperFactory->getObject('Module\Maintenance\Debug')->isOwner()) {
-
+        if ($this->helperFactory->getObject('Module\Maintenance')->isEnabled()) {
             return false;
         }
 
@@ -41,6 +35,8 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
         $availableSections = [
             \Ess\M2ePro\Helper\View\Configuration::EBAY_SECTION_COMPONENT,
             \Ess\M2ePro\Helper\View\Configuration::AMAZON_SECTION_COMPONENT,
+            \Ess\M2ePro\Helper\View\Configuration::WALMART_SECTION_COMPONENT,
+            \Ess\M2ePro\Helper\View\Configuration::ADVANCED_SECTION_COMPONENT
         ];
 
         if (
@@ -63,6 +59,13 @@ class Config extends \Ess\M2ePro\Plugin\AbstractPlugin
             $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
                 '/component/amazon/', 'mode',
                 (int)$groups['amazon_mode']['fields']['amazon_mode_field']['value']
+            );
+        }
+
+        if (isset($groups['walmart_mode']['fields']['walmart_mode_field']['value'])) {
+            $this->helperFactory->getObject('Module')->getConfig()->setGroupValue(
+                '/component/walmart/', 'mode',
+                (int)$groups['walmart_mode']['fields']['walmart_mode_field']['value']
             );
         }
 

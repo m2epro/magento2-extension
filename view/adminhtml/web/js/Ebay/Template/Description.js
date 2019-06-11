@@ -79,7 +79,7 @@ define([
                 .simulate('change');
 
             $('description_template_show_hide_wysiwyg')
-                .observe('click', wysiwygdescription_template.toggle.bind(wysiwygdescription_template))
+                .observe('click', wysiwygdescription_template.toggle.bind(wysiwygdescription_template)).simulate('click')
                 .observe('click', EbayTemplateDescriptionObj.showHideWYSIWYG);
 
             $('image_main')
@@ -115,11 +115,6 @@ define([
 
             this.initCustomInsertsPopup();
             this.initPreviewPopup();
-        },
-
-        initWYSIWYG: function ()
-        {
-            tinymce.dom.Event._pageInit();
         },
 
         // ---------------------------------------
@@ -171,7 +166,7 @@ define([
                 }
 
                 if (typeof wysiwygdescription_template !== 'undefined' && $('description_editor_type').value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::EDITOR_TYPE_SIMPLE')) {
-                    wysiwygdescription_template.turnOff();
+                    wysiwygdescription_template.toggle();
                 }
 
                 $$('.c-custom_description_tr').invoke('show');
@@ -185,7 +180,7 @@ define([
         view_edit_custom_change: function()
         {
             if (typeof wysiwygdescription_template !== 'undefined' && $('description_editor_type').value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::EDITOR_TYPE_SIMPLE')) {
-                wysiwygdescription_template.turnOff();
+                wysiwygdescription_template.toggle();
             }
 
             $$('.c-custom_description_tr').invoke('show');
@@ -454,7 +449,7 @@ define([
         showHideWYSIWYG: function ()
         {
             var label;
-            if ($('description_template').visible()) {
+            if ($('description_editor_type').value == M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::EDITOR_TYPE_TINYMCE')) {
                 label = M2ePro.translator.translate('Show Editor');
                 $('description_editor_type').value = M2ePro.php.constant('Ess_M2ePro_Model_Ebay_Template_Description::EDITOR_TYPE_SIMPLE');
             } else {
@@ -511,20 +506,26 @@ define([
 
         insertProductAttribute: function ()
         {
-            this.customInsertsClosePopup(function () {
-                AttributeObj.appendToTextarea('#' + $('custom_inserts_product_attribute').value + '#');
+            var self = this;
+
+            self.customInsertsClosePopup(function () {
+                self.appendToTextarea('#' + $('custom_inserts_product_attribute').value + '#');
             });
         },
 
         insertM2eProAttribute: function ()
         {
-            this.customInsertsClosePopup(function () {
-                AttributeObj.appendToTextarea('#value[' + $('custom_inserts_m2epro_attribute').value + ']#');
+            var self = this;
+
+            self.customInsertsClosePopup(function () {
+                self.appendToTextarea('#value[' + $('custom_inserts_m2epro_attribute').value + ']#');
             });
         },
 
         insertGallery: function()
         {
+            var self = this;
+
             if (!jQuery('#description_custom_inserts_form').valid()) {
                 return;
             }
@@ -578,8 +579,8 @@ define([
 
             template += ']#';
 
-            this.customInsertsClosePopup(function () {
-                AttributeObj.appendToTextarea(template);
+            self.customInsertsClosePopup(function () {
+                self.appendToTextarea(template);
             });
         },
 
@@ -719,6 +720,49 @@ define([
                     }
                 }
             });
+        },
+
+        appendToTextarea: function(value)
+        {
+            if (value == '') {
+                return;
+            }
+
+            if (typeof tinymce != 'undefined' && typeof tinymce.get('description_template') != 'undefined'
+                && tinymce.get('description_template') != null) {
+
+                var data = tinymce.get('description_template').getContent();
+                tinymce.get('description_template').setContent(data + value);
+
+                return;
+            }
+
+            var element = $('description_template');
+
+            if (document.selection) {
+
+                /* IE */
+                element.focus();
+                document.selection.createRange().text = value;
+                element.focus();
+
+            } else if (element.selectionStart || element.selectionStart == '0') {
+
+                /* Webkit */
+                var startPos = element.selectionStart;
+                var endPos = element.selectionEnd;
+                var scrollTop = element.scrollTop;
+                element.value = element.value.substring(0, startPos) + value + element.value.substring(endPos, element.value.length);
+                element.focus();
+                element.selectionStart = startPos + value.length;
+                element.selectionEnd = startPos + value.length;
+                element.scrollTop = scrollTop;
+
+            } else {
+
+                element.value += value;
+                element.focus();
+            }
         }
 
         // ---------------------------------------

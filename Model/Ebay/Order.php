@@ -133,7 +133,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function hasExternalTransactions()
     {
-        return $this->getExternalTransactionsCollection()->count() > 0;
+        return $this->getExternalTransactionsCollection()->getSize() > 0;
     }
 
     //########################################
@@ -856,7 +856,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     /**
      * @return bool
      */
-    public function canCreateShipment()
+    public function canCreateShipments()
     {
         if (!$this->isShippingCompleted()) {
             return false;
@@ -883,9 +883,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
     /**
      * @return \Magento\Sales\Model\Order\Shipment|null
      */
-    public function createShipment()
+    public function createShipments()
     {
-        if (!$this->canCreateShipment()) {
+        if (!$this->canCreateShipments()) {
             return null;
         }
 
@@ -894,9 +894,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
         /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
         $shipmentBuilder = $this->modelFactory->getObject('Magento\Order\Shipment');
         $shipmentBuilder->setMagentoOrder($magentoOrder);
-        $shipmentBuilder->buildShipment();
+        $shipmentBuilder->buildShipments();
 
-        return $shipmentBuilder->getShipment();
+        return $shipmentBuilder->getShipments();
     }
 
     //########################################
@@ -1008,7 +1008,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Ebay\Abstract
      */
     public function canUpdateShippingStatus(array $trackingDetails = array())
     {
-        if (!$this->isPaymentCompleted() || $this->isShippingStatusUnknown()) {
+        if ($this->isShippingStatusUnknown()) {
             return false;
         }
 

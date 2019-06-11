@@ -123,7 +123,7 @@ class Processing extends AbstractModel
         );
 
         $table = $this->activeRecordFactory->getObject('Processing')->getResource()->getMainTable();
-        $this->resourceConnection->getConnection('core_write')->delete(
+        $this->resourceConnection->getConnection()->delete(
             $table, array('`id` = ?' => (int)$processing->getId())
         );
     }

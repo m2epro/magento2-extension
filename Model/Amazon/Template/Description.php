@@ -416,7 +416,7 @@ class Description extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\
     public function getAffectedListingsProducts($asArrays = true, $columns = '*', $onlyPhysicalUnits = false)
     {
         /** @var \Ess\M2ePro\Model\ResourceModel\Listing\Product\Collection $listingProductCollection */
-        $listingProductCollection = $listingCollection = $this->parentFactory->getObject(
+        $listingProductCollection = $this->parentFactory->getObject(
             \Ess\M2ePro\Helper\Component\Amazon::NICK, 'Listing\Product'
         )->getCollection();
         $listingProductCollection->addFieldToFilter('template_description_id', $this->getId());

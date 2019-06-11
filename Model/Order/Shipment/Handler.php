@@ -47,11 +47,14 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
         $handler = null;
 
         switch ($component) {
-            case\Ess\M2ePro\Helper\Component\Amazon::NICK:
+            case \Ess\M2ePro\Helper\Component\Amazon::NICK:
                 $handler = $this->modelFactory->getObject('Amazon\Order\Shipment\Handler');
                 break;
-            case\Ess\M2ePro\Helper\Component\Ebay::NICK:
+            case \Ess\M2ePro\Helper\Component\Ebay::NICK:
                 $handler = $this->modelFactory->getObject('Ebay\Order\Shipment\Handler');
+                break;
+            case \Ess\M2ePro\Helper\Component\Walmart::NICK:
+                $handler = $this->modelFactory->getObject('Walmart\Order\Shipment\Handler');
                 break;
         }
 

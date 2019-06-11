@@ -332,7 +332,7 @@ class Grid extends AbstractGrid
         $orderLogsCollection->getSelect()
             ->limit(\Ess\M2ePro\Block\Adminhtml\Log\Grid\LastActions::ACTIONS_COUNT);
 
-        if (!$orderLogsCollection->count()) {
+        if (!$orderLogsCollection->getSize()) {
             return '';
         }
         // ---------------------------------------
@@ -351,7 +351,9 @@ class Grid extends AbstractGrid
 
     public function callbackPurchaseCreateDate($value, $row, $column, $isExport)
     {
-        return $row->getChildObject()->getData('purchase_create_date');
+        return $this->_localeDate->formatDate(
+            $row->getChildObject()->getData('purchase_create_date'), \IntlDateFormatter::MEDIUM, true
+        );
     }
 
     public function callbackColumnEbayOrder($value, $row, $column, $isExport)
@@ -656,11 +658,7 @@ HTML;
             'ebay_order/view' => $this->getUrl(
                 '*/ebay_order/view',
                 array('back'=>$this->getHelper('Data')->makeBackUrlParam('*/ebay_order/index'))
-            ),
-            'amazon_order/view' => $this->getUrl(
-                '*/amazon_order/view',
-                array('back'=>$this->getHelper('Data')->makeBackUrlParam('*/amazon_order/index'))
-            ),
+            )
         ]);
 
         $this->jsTranslator->add('View Full Order Log', $this->__('View Full Order Log'));

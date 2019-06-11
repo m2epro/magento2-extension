@@ -75,7 +75,7 @@ class TableModel extends \Magento\Framework\DataObject
 
         if ($helper->isTableHorizontalChild($this->tableName)) {
 
-            preg_match('/(Ebay|Amazon|Buy)/i', $this->modelName, $matches);
+            preg_match('/(Ebay|Amazon|Walmart)/i', $this->modelName, $matches);
             $this->mergeModeComponent = isset($matches[1]) ? strtolower($matches[1]) : null;
             $this->modelName = str_replace($matches[1].'\\', '', $this->modelName);
         }

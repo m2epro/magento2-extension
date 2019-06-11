@@ -61,8 +61,8 @@ class CreateMagentoOrder extends Order
             $result && $this->messageManager->addSuccess($this->__('Invoice was created.'));
         }
 
-        if ($order->getChildObject()->canCreateShipment()) {
-            $result = $order->createShipment();
+        if ($order->getChildObject()->canCreateShipments()) {
+            $result = $order->createShipments();
             $result && $this->messageManager->addSuccess($this->__('Shipment was created.'));
         }
 

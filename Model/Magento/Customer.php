@@ -214,7 +214,7 @@ class Customer extends AbstractModel
 
     private function getDefaultAttributeGroupId($attributeSetId)
     {
-        $connRead = $this->resourceConnection->getConnection('core_read');
+        $connRead = $this->resourceConnection->getConnection();
 
         $select = $connRead->select()
             ->from(

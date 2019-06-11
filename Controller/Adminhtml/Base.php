@@ -209,13 +209,24 @@ abstract class Base extends Action
 
     protected function preDispatch(\Magento\Framework\App\RequestInterface $request)
     {
-        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
+        if ($this->getHelper('Module\Maintenance')->isEnabled()) {
             return $this->_redirect('*/maintenance');
         }
 
-        if (empty($this->getHelper('Component')->getEnabledComponents()) ||
-            $this->getHelper('Module')->isDisabled()) {
+        if ($this->getHelper('Module')->isDisabled()) {
+            $message = $this->__('M2E Pro is disabled. Inventory and Order synchronization is not
+                                  running at this moment.<br>
+                                  At any time, you can enable the Module under<strong>Stores > Settings >
+                                  Configuration > Multi Channels > Advanced Settings</strong>.');
+            $this->getMessageManager()->addNotice($message);
+            return $this->_redirect('admin/dashboard');
+        }
 
+        if (empty($this->getHelper('Component')->getEnabledComponents())) {
+            $message = $this->__('Channel Integrations are disabled. To start working with M2E Pro, please go to
+                                 <strong>Stores > Settings > Configuration > Multi Channels</strong>
+                                 and enable at least one Channel Integration.');
+            $this->getMessageManager()->addNotice($message);
             return $this->_redirect('admin/dashboard');
         }
 

@@ -26,6 +26,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         parent::__construct($context, $backendHelper, $data);
     }
 
+    //########################################
+
     public function _construct()
     {
         parent::_construct();
@@ -76,7 +78,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             'type'      => 'text',
             'sortable'  => false,
             'frame_callback' => array($this, 'callbackColumnMarketplace')
-        ), 'account');
+        ));
 
         $this->addColumn('products_total_count', array(
             'header'    => $this->__('Total Items'),

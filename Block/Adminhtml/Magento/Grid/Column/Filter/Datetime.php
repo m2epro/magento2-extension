@@ -47,8 +47,6 @@ class Datetime extends \Magento\Backend\Block\Widget\Grid\Column\Filter\Datetime
 
         try {
 
-            // todo this is not supported. Magento is always using \IntlDateFormatter::SHORT. parent::toHtml()
-            // $format   = $this->getColumn()->getFormat()?: \IntlDateFormatter::SHORT;
             $format = \IntlDateFormatter::SHORT;
             $timezone = $this->getColumn()->getTimezone() !== false ? $this->_localeDate->getConfigTimezone()
                                                                     : 'UTC';

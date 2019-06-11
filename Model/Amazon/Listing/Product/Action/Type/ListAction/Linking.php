@@ -228,7 +228,12 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->save();
 
-        $parentTypeModel->getProcessor()->process();
+        try {
+            $parentTypeModel->getProcessor()->process();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception, false);
+            return false;
+        }
 
         return true;
     }
@@ -271,7 +276,12 @@ class Linking extends \Ess\M2ePro\Model\AbstractModel
 
         $this->getListingProduct()->save();
 
-        $typeModel->getProcessor()->process();
+        try {
+            $typeModel->getProcessor()->process();
+        } catch (\Exception $exception) {
+            $this->getHelper('Module\Exception')->process($exception, false);
+            return false;
+        }
 
         return true;
     }

@@ -362,8 +362,8 @@ class Receive extends AbstractModel
             if ($order->getChildObject()->canCreateInvoice()) {
                 $order->createInvoice();
             }
-            if ($order->getChildObject()->canCreateShipment()) {
-                $order->createShipment();
+            if ($order->getChildObject()->canCreateShipments()) {
+                $order->createShipments();
             }
             if ($order->getStatusUpdateRequired()) {
                 $order->updateMagentoOrderStatus();

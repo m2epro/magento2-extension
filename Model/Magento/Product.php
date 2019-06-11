@@ -10,6 +10,10 @@ namespace Ess\M2ePro\Model\Magento;
 
 use Ess\M2ePro\Model\Magento\Product\Image;
 use \Magento\Catalog\Model\Product\Attribute\Source\Status;
+use Magento\InventorySalesApi\Api\Data\SalesChannelInterface;
+use Magento\InventorySalesApi\Api\GetProductSalableQtyInterface;
+use Magento\InventorySalesApi\Api\StockResolverInterface;
+use Magento\InventorySalesApi\Model\GetStockItemDataInterface;
 
 class Product extends \Ess\M2ePro\Model\AbstractModel
 {
@@ -451,7 +455,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         if (($attributeId = $cacheHelper->getValue(__METHOD__)) === NULL) {
 
-            $attributeId = $resource->getConnection('core_read')
+            $attributeId = $resource->getConnection()
                 ->select()
                 ->from(
                     $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('eav_attribute'),
@@ -511,7 +515,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
 
         $resource = $this->resourceModel;
 
-        $sku = $resource->getConnection('core_read')
+        $sku = $resource->getConnection()
              ->select()
              ->from(
                  $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('catalog_product_entity'),
@@ -800,19 +804,32 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
      */
     public function isStockAvailability()
     {
-        return $this->calculateStockAvailability(
-            $this->getStockItem()->getIsInStock(),
+        if (!$this->getHelper('Magento')->isMSISupportingVersion() || $this->isBundleType()) {
+            return $this->getHelper('Magento\Product')->calculateStockAvailability(
+                $this->getStockItem()->getIsInStock(),
+                $this->getStockItem()->getManageStock(),
+                $this->getStockItem()->getUseConfigManageStock()
+            );
+        }
+
+        /** @var StockResolverInterface $stockResolver */
+        $stockResolver    = $this->objectManager->get(StockResolverInterface::class);
+        /** @var GetStockItemDataInterface $getStockItemData */
+        $getStockItemData = $this->objectManager->get(GetStockItemDataInterface::class);
+
+        $website = $this->getProduct()->getStoreId() === 0 ?
+                   $this->getHelper('Magento\Store')->getDefaultWebsite() :
+                   $this->getProduct()->getStore()->getWebsite();
+
+        $stock = $stockResolver->execute(SalesChannelInterface::TYPE_WEBSITE, $website->getCode());
+        $stockItemData = $getStockItemData->execute($this->getSku(), $stock->getStockId());
+
+        $stockStatus = is_null($stockItemData) ? 0 : $stockItemData[GetStockItemDataInterface::IS_SALABLE];
+
+        return $this->getHelper('Magento\Product')->calculateStockAvailability(
+            $stockStatus,
             $this->getStockItem()->getManageStock(),
             $this->getStockItem()->getUseConfigManageStock()
-        );
-    }
-
-    private function calculateStockAvailability($isInStock, $manageStock, $useConfigManageStock)
-    {
-        return $this->getHelper('Magento\Product')->calculateStockAvailability(
-            $isInStock,
-            $manageStock,
-            $useConfigManageStock
         );
     }
 
@@ -983,7 +1000,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         return $this->calculateQty(
-            $this->getStockItem()->getQty(),
+            $this->getAggregatedQty($this->getSku(), $this->getStockItem()),
             $this->getStockItem()->getManageStock(),
             $this->getStockItem()->getUseConfigManageStock(),
             $this->getStockItem()->getBackorders(),
@@ -1004,7 +1021,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
                                     $manageStock, $useConfigManageStock,
                                     $backorders, $useConfigBackorders)
     {
-        $forceQtyMode = (int)$this->activeRecordFactory->getObject('Config\Module')->getGroupValue(
+        $forceQtyMode = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
             '/product/force_qty/','mode'
         );
 
@@ -1012,7 +1029,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             return $qty;
         }
 
-        $forceQtyValue = (int)$this->activeRecordFactory->getObject('Config\Module')->getGroupValue(
+        $forceQtyValue = (int)$this->getHelper('Module')->getConfig()->getGroupValue(
             '/product/force_qty/','value'
         );
 
@@ -1042,6 +1059,36 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         return $qty;
     }
 
+    /**
+     * @param $sku
+     * @return float
+     */
+    protected function getAggregatedQty($sku, \Magento\CatalogInventory\Api\Data\StockItemInterface $stockItem)
+    {
+        if (!$this->getHelper('Magento')->isMSISupportingVersion()) {
+            return $stockItem->getQty();
+        }
+
+        /** @var GetProductSalableQtyInterface $salableQtyResolver */
+        $salableQtyResolver = $this->objectManager->get(GetProductSalableQtyInterface::class);
+        /** @var StockResolverInterface $stockResolver */
+        $stockResolver = $this->objectManager->get(StockResolverInterface::class);
+
+        $website = $this->getProduct()->getStoreId() === 0 ?
+                   $this->getHelper('Magento\Store')->getDefaultWebsite() :
+                   $this->getProduct()->getStore()->getWebsite();
+
+        $stock = $stockResolver->execute(SalesChannelInterface::TYPE_WEBSITE, $website->getCode());
+
+        try {
+            $qty = $salableQtyResolver->execute($sku, $stock->getId());
+        } catch (\Magento\InventoryConfigurationApi\Exception\SkuIsNotAssignedToStockException $exception) {
+            $qty = 0;
+        }
+
+        return $qty;
+    }
+
     // ---------------------------------------
 
     /**
@@ -1062,7 +1109,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
-                $stockItem->getQty(),
+                $this->getAggregatedQty($childProduct->getSku(), $stockItem),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
@@ -1094,7 +1141,7 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
-                $stockItem->getQty(),
+                $this->getAggregatedQty($childProduct->getSku(), $stockItem),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
@@ -1132,21 +1179,21 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
         }
 
         $selectionsCollection = $productInstance->getSelectionsCollection($optionCollection->getAllIds(), $product);
-        $_items = $selectionsCollection->getItems();
+        $items = $selectionsCollection->getItems();
 
         $bundleOptionsQtyArray = array();
-        foreach ($_items as $_item) {
+        foreach ($items as $item) {
 
-            if (!isset($bundleOptionsArray[$_item->getOptionId()])) {
+            if (!isset($bundleOptionsArray[$item->getOptionId()])) {
                 continue;
             }
 
-            $stockItem = $this->stockRegistry->getStockItem($_item->getId());
+            $stockItem = $this->stockRegistry->getStockItem($item->getId());
 
             $isInStock = $stockItem->getIsInStock();
 
             $qty = $this->calculateQty(
-                $stockItem->getQty(),
+                $this->getAggregatedQty($item->getSku(), $stockItem),
                 $stockItem->getManageStock(),
                 $stockItem->getUseConfigManageStock(),
                 $stockItem->getBackorders(),
@@ -1154,13 +1201,13 @@ class Product extends \Ess\M2ePro\Model\AbstractModel
             );
 
             if ($lifeMode &&
-                (!$isInStock || $_item->getStatus() != Status::STATUS_ENABLED)) {
+                (!$isInStock || $item->getStatus() != Status::STATUS_ENABLED)) {
                 continue;
             }
 
             // Only positive
             // grouping qty by product id
-            $bundleOptionsQtyArray[$_item->getProductId()][$_item->getOptionId()] = $qty;
+            $bundleOptionsQtyArray[$item->getProductId()][$item->getOptionId()] = $qty;
         }
 
         foreach ($bundleOptionsQtyArray as $optionQty) {

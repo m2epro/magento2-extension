@@ -48,8 +48,11 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         return $select->query()->fetchAll(\PDO::FETCH_COLUMN);
     }
 
-    public function getItemsByProductId($productId, array $filters = array())
+    public function getItemsByProductId($productId,
+                                        array $listingFilters = array(),
+                                        array $listingProductFilters = array())
     {
+        $filters    = [$listingFilters, $listingProductFilters];
         $cacheKey   = __METHOD__.$productId.sha1($this->getHelper('Data')->jsonEncode($filters));
         $cacheValue = $this->getHelper('Data\Cache\Runtime')->getValue($cacheKey);
 
@@ -60,14 +63,34 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
         $simpleProductsSelect = $this->getConnection()
             ->select()
             ->from(
-                $this->getMainTable(),
+                array('lp' => $this->getMainTable()),
                 array('id','component_mode','option_id' => new \Zend_Db_Expr('NULL'))
             )
             ->where("`product_id` = ?",(int)$productId);
 
-        if (!empty($filters)) {
-            foreach ($filters as $column => $value) {
-                $simpleProductsSelect->where('`'.$column.'` = ?', $value);
+        if (!empty($listingProductFilters)) {
+            foreach ($listingProductFilters as $column => $value) {
+                if (is_array($value)) {
+                    $simpleProductsSelect->where('`'.$column.'` IN(?)', $value);
+                } else {
+                    $simpleProductsSelect->where('`'.$column.'` = ?', $value);
+                }
+            }
+        }
+
+        if (!empty($listingFilters)) {
+            $simpleProductsSelect->join(
+                array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
+                '`l`.`id` = `lp`.`listing_id`',
+                array()
+            );
+
+            foreach ($listingFilters as $column => $value) {
+                if (is_array($value)) {
+                    $simpleProductsSelect->where('`l`.`'.$column.'` IN(?)', $value);
+                } else {
+                    $simpleProductsSelect->where('`l`.`'.$column.'` = ?', $value);
+                }
             }
         }
 
@@ -95,9 +118,28 @@ class Product extends \Ess\M2ePro\Model\ResourceModel\ActiveRecord\Component\Par
             ->where("`lpvo`.`product_id` = ?",(int)$productId)
             ->where("`lpvo`.`product_type` != ?", "simple");
 
-        if (!empty($filters)) {
-            foreach ($filters as $column => $value) {
-                $variationsProductsSelect->where('`lp`.`'.$column.'` = ?', $value);
+        if (!empty($listingProductFilters)) {
+            foreach ($listingProductFilters as $column => $value) {
+                if (is_array($value)) {
+                    $variationsProductsSelect->where('`lp`.`'.$column.'` IN(?)', $value);
+                } else {
+                    $variationsProductsSelect->where('`lp`.`'.$column.'` = ?', $value);
+                }
+            }
+        }
+
+        if (!empty($listingFilters)) {
+            $variationsProductsSelect->join(
+                array('l' => $this->getHelper('Module\Database\Structure')->getTableNameWithPrefix('m2epro_listing')),
+                '`l`.`id` = `lp`.`listing_id`',
+                array()
+            );
+            foreach ($listingFilters as $column => $value) {
+                if (is_array($value)) {
+                    $variationsProductsSelect->where('`l`.`'.$column.'` IN(?)', $value);
+                } else {
+                    $variationsProductsSelect->where('`l`.`'.$column.'` = ?', $value);
+                }
             }
         }
 

@@ -13,19 +13,24 @@ use Ess\M2ePro\Controller\Adminhtml\ControlPanel\Command;
 use Ess\M2ePro\Helper\Component\Amazon;
 use Ess\M2ePro\Helper\Component\Ebay;
 use Ess\M2ePro\Model\Exception\Connection;
-use Ess\M2ePro\Model\Exception\Logic;
 
 class General extends Command
 {
+    /** @var \Magento\Store\Model\StoreManager $storeManager */
     private $storeManager;
+
+    /** @var \Magento\Framework\Data\Form\FormKey $formKey */
+    private $formKey;
 
     //########################################
 
     public function __construct(
         \Magento\Store\Model\StoreManager $storeManager,
+        \Magento\Framework\Data\Form\FormKey $formKey,
         Context $context
     ) {
         $this->storeManager = $storeManager;
+        $this->formKey = $formKey;
         parent::__construct($context);
     }
 
@@ -649,6 +654,235 @@ HTML;
 </span>
 HTML;
         return $result;
+    }
+
+    //########################################
+
+    /**
+     * @title "Change the date of the last order synchronization"
+     * @description "Change the date of the last order synchronization"
+     * @new_line
+     * @throws \Ess\M2ePro\Model\Exception\Logic
+     */
+    public function changeLastOrderSynchronizationAction()
+    {
+        ini_set('display_errors', 1);
+
+        //########################################
+
+        $amazonComponentTitle = (string)$this->getHelper('Component\Amazon');
+        $eBayComponentTitle = (string)$this->getHelper('Component\Ebay');
+        $logs = array();
+
+        /** @var \Ess\M2ePro\Helper\Data $dataHelper */
+        $dataHelper = $this->getHelper('Data');
+
+        //########################################
+
+        if ('' !== $this->getRequest()->getParam('account_data', '')) {
+
+            $accountData = $dataHelper->jsonDecode(
+                $this->getRequest()->getParam('account_data', '')
+            );
+
+            if (empty($accountData)) {
+                return $this->getEmptyResultsHtml('No account information is available.');
+            }
+
+            foreach ($accountData as $data) {
+
+                if (empty($data['time'])) {
+                    $logs[] = "Account: <b>\"{$data['title']}\"</b> skipped. The date empty.";
+                    continue;
+                }
+
+                $data['time'] = trim($data['time']);
+
+                if (false === \DateTime::createFromFormat('Y-m-d H:i:s', $data['time'])) {
+                    $logs[] = "Account: <b>\"{$data['title']}\"</b> skipped. The date or time was incorrect.";
+                    continue;
+                }
+
+                /** @var \Ess\M2ePro\Model\Account $account */
+                $account = $this->activeRecordFactory->getObjectLoaded('Account', (int)$data['id']);
+                $componentTitle = (string)$account->getComponentTitle();
+
+                if ($amazonComponentTitle === $componentTitle) {
+
+                    $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
+                    $registry = $this->activeRecordFactory->getObjectLoaded(
+                        'Registry', $key, 'key', false
+                    );
+                    $registry === null && $registry = $this->activeRecordFactory->getObject('Registry');
+                    $registry->setData('key', $key);
+                    $registry->setData('value', $data['time']);
+                    $registry->save();
+                    continue;
+                }
+
+                if ($eBayComponentTitle === $componentTitle) {
+                    $accountChildObject = $account->getChildObject();
+                    $accountChildObject->setData('orders_last_synchronization', $data['time']);
+                    $accountChildObject->save();
+                }
+            }
+
+            $this->getHelper('Magento')->clearCache();
+
+            $logs[] = 'The date(s) of the last order synchronization was update successfully.';
+            $logs[] = 'Magento cache was successfully cleared.';
+        }
+
+        //########################################
+
+        /** @var \Ess\M2ePro\Model\Account[] $accounts */
+        $accounts = $this->activeRecordFactory->getObject('Account')->getCollection()->getItems();
+
+        if (empty($accounts)) {
+            return $this->getEmptyResultsHtml('There are no accounts.');
+        }
+
+        $accountData = array();
+
+        foreach ($accounts as $account) {
+
+            $componentTitle = (string)$account->getComponentTitle();
+            $time = null;
+
+            if ($amazonComponentTitle === $componentTitle) {
+                $key = "/amazon/orders/receive/{$account->getChildObject()->getMerchantId()}/from_update_date/";
+                $registry = $this->activeRecordFactory->getObjectLoaded(
+                    'Registry', $key, 'key', false
+                );
+                $time = $registry->getData('value');
+            }
+
+            if ($eBayComponentTitle === $componentTitle) {
+                $time = $account->getChildObject()->getData('orders_last_synchronization');
+            }
+
+            $accountData[] = array(
+                'component' => $componentTitle,
+                'title'     => $account->getTitle(),
+                'id'        => $account->getId(),
+                'time'      => $time
+            );
+        }
+
+        //########################################
+
+        $currentActionURL = $this->getUrl('*/*/*', ['action' => 'changeLastOrderSynchronization']);
+        $formKey = $this->formKey->getFormKey();
+
+        /** @var \Ess\M2ePro\Model\M2ePro\Connector\Dispatcher $dispatcherObject */
+        $dispatcherObject = $this->modelFactory->getObject('M2ePro\Connector\Dispatcher');
+        $connectorObj = $dispatcherObject->getVirtualConnector('server','get','gmtTime');
+        $dispatcherObject->process($connectorObj);
+
+        $responseData = $connectorObj->getResponseData();
+
+        $serverTime = new \DateTime($responseData['time'], new \DateTimeZone('UTC'));
+        $dateTimeString = $serverTime->format('Y-m-d H:i:s');
+        $accountData = $dataHelper->jsonEncode($accountData);
+        $accountCounts = count($accounts);
+        $log = implode('<br>', $logs);
+        $title = $this->getEmptyResultsHtml('Change the date of the last order synchronization');
+
+        $html = <<<HTML
+<div style="/*max-width: 1280px; margin: 0 auto;*/">
+    <div style="text-align: center; /*margin-bottom: 0; padding-top: 25px*/">
+        {$title}
+        <span style="color: #808080; font-size: 15px">(%count% entries)</span>
+    </div>
+<br/>
+{$log}
+<p>Current time by UTC: <b>{$dateTimeString}</b></p>
+
+<form id="form" method="post" action="{$currentActionURL}">
+
+    <div style="display: flex; margin-bottom: 14px">
+        <div style="margin-right: 7px">
+            <select id="accounts" multiple autofocus size="{$accountCounts}" style="padding: 14px"></select>
+        </div>
+
+        <div style="margin-right: 7px">
+            <input type="text" id="last_synchronization" style="text-align: end"/>
+            <p style="text-align: end">Last synchronization.</p>
+        </div>
+    </div>
+
+    <div>
+        <input type="hidden" id="form_key" name="form_key" value="{$formKey}"/>
+        <input type="hidden" id="account_data" name="account_data"/>
+        <input type="submit" id="edit" value="Edit(s)"/>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    var accountData = {$accountData},
+        accountList = document.getElementById('accounts'),
+        lastSynchronizationTime = document.getElementById('last_synchronization'),
+        selected = [];
+
+    accountData.forEach(function(account, index) {
+
+        var option = document.createElement('option');
+
+        option.innerHTML = '[ ' + account['component'] + ' ] ' + account['title'];
+        option.id = account['id'];
+        if (0 === index) {
+            option.selected = true;
+            lastSynchronizationTime.value = account['time'];
+            selected.push(account['id']);
+        }
+
+        accountList.appendChild(option);
+    });
+
+    accountList.addEventListener('change', function() {
+
+        selected = [];
+
+        for (var i = 0; i < this.options.length; i++) {
+            if (this.options[i].selected === true) {
+                selected.push(this.options[i].id);
+            }
+        }
+
+        if (1 === selected.length) {
+            accountData.forEach(function(account) {
+                if (account.id === selected[0]) {
+                    lastSynchronizationTime.value = account['time'];
+                }
+            });
+            return;
+        }
+
+        lastSynchronizationTime.value = null;
+    });
+
+    lastSynchronizationTime.addEventListener('input', function () {
+        selected.forEach(function (value) {
+            accountData.forEach(function(account) {
+                if (account.id === value) {
+                    account['time'] = lastSynchronizationTime.value;
+                }
+            });
+        });
+    });
+
+    document.getElementById('edit').addEventListener('click', function() {
+
+        var data = document.getElementById('account_data'),
+            form = document.getElementById('form');
+
+        data.value = JSON.stringify(accountData);
+        form.submit();
+    });
+</script>
+HTML;
+        return str_replace('%count%', $accountCounts, $html . '</div>');
     }
 
     //########################################

@@ -880,7 +880,7 @@ class Revise extends AbstractModel
 
         $lastListingProduct = $collection->getLastItem()->getId();
 
-        if ($collection->count() < $itemsPerCycle) {
+        if ($collection->getSize() < $itemsPerCycle) {
 
             $this->setConfigValue(
                 $this->getFullSettingsPath().'total/', 'end_date',

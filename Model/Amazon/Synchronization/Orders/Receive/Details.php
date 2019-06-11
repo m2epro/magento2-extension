@@ -120,12 +120,15 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
 
     private function processAccount(\Ess\M2ePro\Model\Account $account)
     {
-        $fromDate = $this->getFromDate($account);
+        $from = new \DateTime('now', new \DateTimeZone('UTC'));
+        $from->modify('- 5 days');
 
         $orderCollection = $this->amazonFactory->getObject('Order')->getCollection();
         $orderCollection->addFieldToFilter('account_id', $account->getId());
         $orderCollection->addFieldToFilter('is_afn_channel', 1);
-        $orderCollection->addFieldToFilter('create_date', array('gt' => $fromDate));
+        $orderCollection->addFieldToFilter('status', array('neq' => \Ess\M2ePro\Model\Amazon\Order::STATUS_PENDING));
+        $orderCollection->addFieldToFilter('create_date', array('gt' => $from->format('Y-m-d H:i:s')));
+        $orderCollection->addFieldToFilter('additional_data', array('nlike' => '%fulfillment_details%'));
 
         $amazonOrdersIds = $orderCollection->getColumnValues('amazon_order_id');
         if (empty($amazonOrdersIds)) {
@@ -139,27 +142,6 @@ class Details extends \Ess\M2ePro\Model\Amazon\Synchronization\Orders\AbstractMo
             array('items' => $amazonOrdersIds), $account
         );
         $dispatcherObject->process($connectorObj);
-
-        $this->setFromDate($account);
-    }
-
-    //########################################
-
-    private function getFromDate(\Ess\M2ePro\Model\Account $account)
-    {
-        $accountAdditionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
-        return !empty($accountAdditionalData['amazon_last_receive_fulfillment_details_date']) ?
-            $accountAdditionalData['amazon_last_receive_fulfillment_details_date']
-            : $this->getHelper('Data')->getCurrentGmtDate();
-    }
-
-    private function setFromDate(\Ess\M2ePro\Model\Account $account)
-    {
-        $fromDate = $this->getHelper('Data')->getCurrentGmtDate();
-
-        $accountAdditionalData = $this->getHelper('Data')->jsonDecode($account->getAdditionalData());
-        $accountAdditionalData['amazon_last_receive_fulfillment_details_date'] = $fromDate;
-        $account->setSettings('additional_data', $accountAdditionalData)->save();
     }
 
     //########################################

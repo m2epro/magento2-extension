@@ -31,48 +31,6 @@ define([], function () {
             $(targetId).value = $(targetId).value + suffix;
         },
 
-        appendToTextarea: function(value)
-        {
-            if (value == '') {
-                return;
-            }
-
-            if (typeof tinymce != 'undefined' && typeof tinymce.get('description_template') != 'undefined') {
-
-                var data = tinymce.get('description_template').getContent();
-                tinymce.get('description_template').setContent(data + value);
-
-                return;
-            }
-
-            var element = $('description_template');
-
-            if (document.selection) {
-
-                /* IE */
-                element.focus();
-                document.selection.createRange().text = value;
-                element.focus();
-
-            } else if (element.selectionStart || element.selectionStart == '0') {
-
-                /* Webkit */
-                var startPos = element.selectionStart;
-                var endPos = element.selectionEnd;
-                var scrollTop = element.scrollTop;
-                element.value = element.value.substring(0, startPos) + value + element.value.substring(endPos, element.value.length);
-                element.focus();
-                element.selectionStart = startPos + value.length;
-                element.selectionEnd = startPos + value.length;
-                element.scrollTop = scrollTop;
-
-            } else {
-
-                element.value += value;
-                element.focus();
-            }
-        },
-
         // ---------------------------------------
 
         checkAttributesSelect: function(id, value)

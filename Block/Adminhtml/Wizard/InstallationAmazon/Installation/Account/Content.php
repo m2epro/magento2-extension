@@ -89,10 +89,13 @@ HTML
                             You will be redirected to the Amazon Website.<br /><br />
                             Sign-in and complete steps of getting access for M2E Pro:<br /><br />
                             <ul style="margin-left: 25px;">
-                                <li>Select - \'I want to use an application to access my Amazon Seller Account with MWS.\'</li>
-                                <li>Fill in Application Name and Application\'s Developer Account Number, which you can find in the Marketplaces Section on the current Page.</li>
+                                <li>Select - \'I want to use an application to access my Amazon
+                                Seller Account with MWS.\'</li>
+                                <li>Fill in Application Name and Application\'s Developer Account Number,
+                                which you can find in the Marketplaces Section on the current Page.</li>
                                 <li>Accept the Amazon MWS License Agreement.</li>
-                                <li>Copy generated "Merchant ID" / "MWS Auth Token" and paste it in the corresponding fields of the current Page.</li>
+                                <li>Copy generated "Merchant ID" / "MWS Auth Token" and paste it in
+                                the corresponding fields of the current Page.</li>
                             </ul>
                         '),
                         'type'    => MessageInterface::TYPE_NOTICE,
@@ -162,7 +165,8 @@ HTML
                     'style'    => 'width: 50%',
                     'required' => true,
                     'css_class' => 'manual-authorization M2ePro-marketplace-merchant',
-                    'tooltip' => $this->__('Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).')
+                    'tooltip' => $this->__(
+                        'Paste generated Merchant ID from Amazon. (It must look like: A15UFR7CZVW5YA).')
                 ]
             )->setFieldExtraAttributes('style="display: none"');
 

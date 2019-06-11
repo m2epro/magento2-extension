@@ -135,10 +135,7 @@ class Collection extends \Magento\Catalog\Model\ResourceModel\Product\Collection
         }
 
         // hack for selecting listing product ids instead entity ids
-        $idsSelect = clone $this->getSelect();
-        $idsSelect->reset(\Zend_Db_Select::ORDER);
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_COUNT);
-        $idsSelect->reset(\Zend_Db_Select::LIMIT_OFFSET);
+        $idsSelect = $this->_getClearSelect();
 
         $idsSelect->columns('lp.' . $this->getIdFieldName());
         $idsSelect->limit($limit, $offset);
@@ -211,7 +208,8 @@ SQL;
     {
         if (!in_array($this->listing->getComponentMode(), array(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            \Ess\M2ePro\Helper\Component\Walmart::NICK
         ))) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 "This component is not supported [{$this->listing->getComponentMode()}]"
@@ -228,6 +226,8 @@ SQL;
             $this->joinAmazonIndexerParent();
         } elseif ($this->listing->isComponentModeEbay()) {
             $this->joinEbayIndexerParent();
+        } elseif ($this->listing->isComponentModeWalmart()) {
+            $this->joinWalmartIndexerParent();
         }
     }
 
@@ -345,6 +345,31 @@ SQL;
         );
     }
 
+    private function joinWalmartIndexerParent()
+    {
+        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject('Walmart\Indexer\Listing\Product\VariationParent')
+                                              ->getResource();
+
+        $this->getSelect()->joinLeft(
+            array('indexer' => $resource->getMainTable()),
+            '(`wlp`.`listing_product_id` = `indexer`.`listing_product_id`)',
+            array(
+                'min_online_price' => new \Zend_Db_Expr('IF(
+                `indexer`.`min_price` IS NULL,
+                `wlp`.`online_price`,
+                `indexer`.`min_price`
+            )'),
+
+                'max_online_price' => new \Zend_Db_Expr('IF(
+                `indexer`.`max_price` IS NULL,
+                `wlp`.`online_price`,
+                `indexer`.`max_price`
+            )'),
+            )
+        );
+    }
+
     //----------------------------------------
 
     protected function _afterLoad()
@@ -362,7 +387,8 @@ SQL;
     {
         if (!in_array($this->listing->getComponentMode(), array(
             \Ess\M2ePro\Helper\Component\Ebay::NICK,
-            \Ess\M2ePro\Helper\Component\Amazon::NICK
+            \Ess\M2ePro\Helper\Component\Amazon::NICK,
+            \Ess\M2ePro\Helper\Component\Walmart::NICK
         ))) {
             throw new \Ess\M2ePro\Model\Exception\Logic(
                 "This component is not supported [{$this->listing->getComponentMode()}]"
@@ -373,6 +399,8 @@ SQL;
             $this->injectAmazonParentPrices();
         } else if ($this->listing->isComponentModeEbay()) {
             $this->injectEbayParentPrices();
+        } else if ($this->listing->isComponentModeWalmart()) {
+            $this->injectWalmartParentPrices();
         }
     }
 
@@ -446,6 +474,44 @@ SQL;
         $data = $this->getConnection()->fetchAll($selectStmt);
         foreach ($data as $row) {
             $listingProductsData[(int)$row['listing_product_id']] = array(
+                'min_online_price' => $row['variation_min_price'],
+                'max_online_price' => $row['variation_max_price'],
+            );
+        }
+
+        foreach ($this as $product) {
+            if (isset($listingProductsData[(int)$product->getData('id')])) {
+                $dataPart = $listingProductsData[(int)$product->getData('id')];
+                $product->setData('min_online_price',  $dataPart['min_online_price']);
+                $product->setData('max_online_price', $dataPart['max_online_price']);
+            }
+        }
+    }
+
+    private function injectWalmartParentPrices()
+    {
+        $listingProductsData = array();
+        foreach ($this as $product) {
+            $listingProductsData[(int)$product->getData('id')] = array(
+                'min_online_price' => $product->getData('online_price'),
+                'max_online_price' => $product->getData('online_price'),
+            );
+        }
+
+        if (empty($listingProductsData)) {
+            return;
+        }
+
+        /** @var \Ess\M2ePro\Model\ResourceModel\Walmart\Indexer\Listing\Product\VariationParent $resource */
+        $resource = $this->activeRecordFactory->getObject('Walmart\Indexer\Listing\Product\VariationParent')
+                                              ->getResource();
+
+        $selectStmt = $resource->getBuildIndexSelect($this->listing);
+        $selectStmt->where('mwlp.variation_parent_id IN (?)', array_keys($listingProductsData));
+
+        $data = $this->getConnection()->fetchAll($selectStmt);
+        foreach ($data as $row) {
+            $listingProductsData[(int)$row['variation_parent_id']] = array(
                 'min_online_price' => $row['variation_min_price'],
                 'max_online_price' => $row['variation_max_price'],
             );

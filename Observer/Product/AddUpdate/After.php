@@ -131,14 +131,13 @@ class After extends AbstractAddUpdate
 
         // for amazon, variation updater must not be called for parent and his children in one time
         foreach ($listingsProductsForProcess as $listingProduct) {
-            if (!$listingProduct->isComponentModeAmazon()) {
+            if (!$listingProduct->isComponentModeAmazon() && !$listingProduct->isComponentModeWalmart()) {
                 continue;
             }
 
-            /** @var \Ess\M2ePro\Model\Amazon\Listing\Product $amazonListingProduct */
-            $amazonListingProduct = $listingProduct->getChildObject();
+            $channelListingProduct = $listingProduct->getChildObject();
 
-            $variationManager = $amazonListingProduct->getVariationManager();
+            $variationManager = $channelListingProduct->getVariationManager();
 
             if ($variationManager->isRelationChildType() &&
                 isset($listingsProductsForProcess[$variationManager->getVariationParentId()])) {

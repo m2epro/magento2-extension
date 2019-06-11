@@ -8,7 +8,7 @@
 
 namespace Ess\M2ePro\Controller\Adminhtml\Amazon\Listing\View\Settings\Moving;
 
-class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Ebay\Listing
+class MoveToListingGrid extends \Ess\M2ePro\Controller\Adminhtml\Amazon\Listing
 {
     //########################################
 

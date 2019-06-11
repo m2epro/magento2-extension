@@ -10,7 +10,8 @@ namespace Ess\M2ePro\Model\Cron\Runner;
 
 abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 {
-    const MAX_MEMORY_LIMIT = 1024;
+    const MAX_INACTIVE_TIME = 300;
+    const MAX_MEMORY_LIMIT  = 2048;
 
     //########################################
 
@@ -30,9 +31,9 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
-    abstract protected function getNick();
+    abstract public function getNick();
 
-    abstract protected function getInitiator();
+    abstract public function getInitiator();
 
     //########################################
 
@@ -55,6 +56,13 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     public function process()
     {
+        if ($this->isDisabled()) {
+            return false;
+        }
+
+        $runnerSwitcher = $this->modelFactory->getObject('Cron\Runner\Switcher');
+        $runnerSwitcher->check($this);
+
         $transactionalManager = $this->modelFactory->getObject('Lock\Transactional\Manager');
         $transactionalManager->setNick('cron_runner');
 
@@ -114,6 +122,15 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     //########################################
 
+    protected function isDisabled()
+    {
+        if ($this->getHelper('Module')->getConfig()->getGroupValue('/cron/'.$this->getNick().'/', 'disabled')) {
+            return true;
+        }
+
+        return false;
+    }
+
     protected function initialize()
     {
         $this->previousStoreId = $this->storeManager->getStore()->getId();
@@ -142,7 +159,7 @@ abstract class AbstractModel extends \Ess\M2ePro\Model\AbstractModel
 
     protected function isPossibleToRun()
     {
-        if ($this->getHelper('Module\Maintenance\General')->isEnabled()) {
+        if ($this->getHelper('Module\Maintenance')->isEnabled()) {
             return false;
         }
 

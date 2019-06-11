@@ -140,5 +140,25 @@ class Index extends \Ess\M2ePro\Model\AbstractModel
             ->setGroupValue('/product/index/'.$code.'/', 'disabled', 0);
     }
 
+    // ---------------------------------------
+
+    public function isEnabledIndex($code)
+    {
+        return (bool)(int)$this->getHelper('Module')->getConfig()
+            ->getGroupValue('/product/index/'.$code.'/', 'enabled');
+    }
+
+    public function rememberEnabledIndex($code)
+    {
+        $this->getHelper('Module')->getConfig()
+            ->setGroupValue('/product/index/'.$code.'/', 'enabled', 1);
+    }
+
+    public function forgetEnabledIndex($code)
+    {
+        $this->getHelper('Module')->getConfig()
+            ->setGroupValue('/product/index/'.$code.'/', 'enabled', 0);
+    }
+
     //########################################
 }

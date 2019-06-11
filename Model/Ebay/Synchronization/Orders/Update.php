@@ -176,7 +176,6 @@ class Update extends AbstractModel
 
                 $action = \Ess\M2ePro\Model\Ebay\Connector\Order\Dispatcher::ACTION_SHIP_TRACK;
                 /**
-                 * TODO check(rewrite) during orders refactoring.
                  * Ess_M2ePro_Model_Ebay_Connector_Order_Dispatcher expects array of order to be proccessed.
                  * But $connectorData has no link to order instance, so appears like discrepancy between these
                  * two parameters.

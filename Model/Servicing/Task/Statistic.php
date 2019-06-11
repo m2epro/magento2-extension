@@ -458,8 +458,6 @@ class Statistic extends \Ess\M2ePro\Model\Servicing\Task
             $data['settings']['manage_stock_backorders'] = $config->getGroupValue('/product/force_qty/','value');
         }
 
-        $data['settings']['channels']['default'] = $this->getHelper('View\Amazon\Component')->getDefaultComponent();
-
         foreach ($this->getHelper('Component')->getComponents() as $componentNick) {
 
             $tempInfo = array();

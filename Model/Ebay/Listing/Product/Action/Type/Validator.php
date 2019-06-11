@@ -252,10 +252,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($qty <= 0) {
 
 // M2ePro\TRANSLATIONS
-// The Quantity must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Quantity must be greater than 0. Please, check the Price, Quantity and Format
-                Policy and Product Settings.'
+                'The Quantity must be greater than 0. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -390,10 +389,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
             if ($variationPrice < 0.99) {
 
 // M2ePro_TRANSLATIONS
-// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
                 $this->addMessage(
-                    'The Fixed Price must be greater than 0.99.
-                    Please, check the Price, Quantity and Format Policy and Product Settings.'
+                    'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
                 );
 
                 return false;
@@ -418,10 +416,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($price < 0.99) {
 
 // M2ePro\TRANSLATIONS
-// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Fixed Price must be greater than 0.99.
-                Please, check the Price, Quantity and Format Policy and Product Settings.'
+                'The Fixed Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -442,10 +439,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($price < 0.99) {
 
 // M2ePro\TRANSLATIONS
-// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Start Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Start Price must be greater than 0.99.
-                 Please, check the Price, Quantity and Format Policy and Product Settings.'
+                'The Start Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -470,10 +466,9 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($price < 0.99) {
 
 // M2ePro\TRANSLATIONS
-// The Price must be greater than 0.99. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Reserve Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
-                'The Reserve Price must be greater than 0.99.
-                 Please, check the Price, Quantity and Format Policy and Product Settings.'
+                'The Reserve Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.'
             );
 
             return false;
@@ -498,10 +493,10 @@ abstract class Validator extends \Ess\M2ePro\Model\AbstractModel
         if ($price < 0.99) {
 
 // M2ePro\TRANSLATIONS
-// The Price must be greater than 0. Please, check the Price, Quantity and Format Policy and Product Settings.
+// The Buy It Now Price must be greater than 0.99. Please, check the Selling Policy and Product Settings.
             $this->addMessage(
                 'The Buy It Now Price must be greater than 0.99.
-                 Please, check the Price, Quantity and Format Policy and Product Settings.'
+                Please, check the Selling Policy and Product Settings.'
             );
 
             return false;

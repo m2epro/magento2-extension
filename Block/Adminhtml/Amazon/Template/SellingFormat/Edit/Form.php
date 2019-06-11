@@ -364,8 +364,7 @@ class Form extends AbstractForm
                 'tooltip' => $this->__(
                     'If you have 2 pieces in Stock but set a Minimum Quantity to Be Listed of 5,
                     Item will not be Listed on Amazon.
-                    Otherwise, the Item will be Listed with Quantity according to the Settings in the
-                    Price, Quantity and Format Policy.'
+                    Otherwise, the Item will be Listed with Quantity according to the Settings in the Selling Policy.'
                 )
             ]
         );
@@ -1042,7 +1041,7 @@ class Form extends AbstractForm
                 <br/><b>Note:</b> The Final Price is only used for Simple Products.'
             ),
 
-            'Add Price, Quantity and Format Policy' => $this->__('Add Price, Quantity and Format Policy'),
+            'Add Selling Policy' => $this->__('Add Selling Policy'),
             'The specified Title is already used for other Policy. Policy Title must be unique.' => $this->__(
                 'The specified Title is already used for other Policy. Policy Title must be unique.'
             ),
@@ -1111,7 +1110,7 @@ JS
     {
         $this->appendHelpBlock([
             'content' => $this->__('
-                Price, Quantity and Format Policy contains Price and Quantity related data for the Items,
+                Selling Policy contains Price and Quantity related data for the Items,
                 which will be Listed on Amazon.<br/><br/>
 
                 While Listing on Amazon, the Magento Price can be modified by providing a Price Change Value.

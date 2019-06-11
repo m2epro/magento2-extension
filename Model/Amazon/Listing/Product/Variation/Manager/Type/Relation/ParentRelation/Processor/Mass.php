@@ -67,8 +67,12 @@ class Mass extends \Ess\M2ePro\Model\AbstractModel
             if (!$this->forceExecuting && count($alreadyProcessed) >= self::MAX_PROCESSORS_COUNT_PER_ONE_TIME) {
                 break;
             }
-
-            $processor->process();
+            try {
+                $processor->process();
+            } catch (\Exception $exception) {
+                $this->getHelper('Module\Exception')->process($exception, false);
+                continue;
+            }
 
             $alreadyProcessed[] = $listingProductId;
         }

@@ -144,7 +144,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
     protected function _prepareColumns()
     {
-        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\Parent $parentType */
+        /** @var \Ess\M2ePro\Model\Amazon\Listing\Product\Variation\Manager\Type\Relation\ParentRelation $parentType */
         $parentType = $this->getListingProduct()->getChildObject()->getVariationManager()->getTypeModel();
 
         $channelAttributesSets = $parentType->getChannelAttributesSets();

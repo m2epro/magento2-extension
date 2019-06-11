@@ -43,7 +43,7 @@ class Order extends \Ess\M2ePro\Observer\AbstractModel
 
         try {
             /** @var \Ess\M2ePro\Model\Order $order */
-            $order = $this->ebayFactory->getObjectLoaded('Order', $magentoOrder, 'magento_order_id');
+            $order = $this->ebayFactory->getObjectLoaded('Order', $magentoOrder->getId(), 'magento_order_id');
         } catch (\Exception $exception) {
             return;
         }

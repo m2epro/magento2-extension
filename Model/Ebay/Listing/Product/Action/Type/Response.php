@@ -496,13 +496,13 @@ abstract class Response extends \Ess\M2ePro\Model\AbstractModel
     protected function appendStartDateEndDateValues($data, $response)
     {
         if (isset($response['ebay_start_date_raw'])) {
-            $data['start_date'] = \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString(
+            $data['start_date'] = $this->getHelper('Component\Ebay')->timeToString(
                 $response['ebay_start_date_raw']
             );
         }
 
         if (isset($response['ebay_end_date_raw'])) {
-            $data['end_date'] = \Ess\M2ePro\Model\Ebay\Connector\Command\RealTime::ebayTimeToString(
+            $data['end_date'] = $this->getHelper('Component\Ebay')->timeToString(
                 $response['ebay_end_date_raw']
             );
         }

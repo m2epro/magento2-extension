@@ -39,6 +39,11 @@ class Grid extends AbstractGrid
     protected function _prepareCollection()
     {
         $pickupStoreCollection = $this->activeRecordFactory->getObject('Ebay\Account\PickupStore')->getCollection();
+
+        if ($this->getRequest()->getParam('account_id')) {
+            $pickupStoreCollection->addFieldToFilter('account_id', $this->getRequest()->getParam('account_id'));
+        }
+
         $pickupStoreCollection->getSelect()->join(
             ['mm' => $this->activeRecordFactory->getObject('Marketplace')->getResource()->getMainTable()],
             'main_table.marketplace_id = mm.id',

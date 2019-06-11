@@ -38,10 +38,6 @@ class Header extends \Ess\M2ePro\Block\Adminhtml\Magento\AbstractBlock
             return $this->__('Amazon');
         }
 
-        if ($this->getListing()->isComponentModeBuy()) {
-            return $this->__('Rakuten');
-        }
-
         return '';
     }
 

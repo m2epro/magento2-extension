@@ -56,7 +56,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         $data = array_slice($this->getData('charities'), 0, 10);
 
         $collection = $this->customCollectionFactory->create();
-        $collection->setConnection($this->resourceConnection->getConnection());
 
         foreach ($data as $item) {
             $temp = array(
@@ -67,12 +66,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             $collection->addItem(new \Magento\Framework\DataObject($temp));
         }
 
-        $collection->setCustomSize(count($data));
         $this->setCollection($collection);
 
         parent::_prepareCollection();
-
-        $collection->setCustomIsLoaded(true);
 
         return $this;
     }

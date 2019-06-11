@@ -17,7 +17,7 @@ class Configuration extends \Ess\M2ePro\Helper\AbstractHelper
 
     const EBAY_SECTION_COMPONENT     = 'm2epro_ebay_integration';
     const AMAZON_SECTION_COMPONENT   = 'm2epro_amazon_integration';
-    const BUY_SECTION_COMPONENT      = 'm2epro_buy_integration';
+    const WALMART_SECTION_COMPONENT  = 'm2epro_walmart_integration';
     const ADVANCED_SECTION_COMPONENT = 'm2epro_advanced_settings';
 
     protected $urlBuilder;

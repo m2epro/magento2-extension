@@ -8,7 +8,6 @@
 
 namespace Ess\M2ePro\Model\Magento\Quote;
 
-
 class Manager extends \Ess\M2ePro\Model\AbstractModel
 {
     /** @var \Magento\Quote\Api\CartRepositoryInterface  */
@@ -57,7 +56,7 @@ class Manager extends \Ess\M2ePro\Model\AbstractModel
     /**
      * @param \Magento\Quote\Model\Quote $quote
      * @return \Magento\Framework\Model\AbstractExtensibleModel|\Magento\Sales\Api\Data\OrderInterface|null|object
-     * @throws FailDuringEventProcessing
+     * @throws \Ess\M2ePro\Model\Magento\Quote\FailDuringEventProcessing
      * @throws \Exception
      */
     public function submit(\Magento\Quote\Model\Quote $quote)

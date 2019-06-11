@@ -625,7 +625,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /**
      * @return bool
      */
-    public function canCreateShipment()
+    public function canCreateShipments()
     {
         if (!$this->getAmazonAccount()->isMagentoOrdersShipmentEnabled()) {
             return false;
@@ -652,9 +652,9 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
     /**
      * @return \Magento\Sales\Model\Order\Shipment|null
      */
-    public function createShipment()
+    public function createShipments()
     {
-        if (!$this->canCreateShipment()) {
+        if (!$this->canCreateShipments()) {
             return NULL;
         }
 
@@ -665,10 +665,10 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         /** @var $shipmentBuilder \Ess\M2ePro\Model\Magento\Order\Shipment */
         $shipmentBuilder = $this->modelFactory->getObject('Magento\Order\Shipment');
         $shipmentBuilder->setMagentoOrder($magentoOrder);
-        $shipmentBuilder->buildShipment();
+        $shipmentBuilder->buildShipments();
         // ---------------------------------------
 
-        return $shipmentBuilder->getShipment();
+        return $shipmentBuilder->getShipments();
     }
 
     //########################################
@@ -687,7 +687,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             return false;
         }
 
-        if ($this->isUnshipped()) {
+        if ($this->isUnshipped() || $this->isPartiallyShipped()) {
             return true;
         }
 
@@ -741,11 +741,46 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
         $creatorType = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;
         $component   = \Ess\M2ePro\Helper\Component\Amazon::NICK;
 
-        $this->activeRecordFactory->getObject('Order\Change')->create(
-            $orderId, $action, $creatorType, $component, $params
-        );
+        /** @var \Ess\M2ePro\Model\Order\Change $change */
+        $change = $this->activeRecordFactory
+                       ->getObject('Order\Change')
+                       ->getCollection()
+                       ->addFieldToFilter('order_id', $orderId)
+                       ->addFieldToFilter('action', $action)
+                       ->addFieldToFilter('component', $component)
+                       ->addFieldToFilter('processing_attempt_count', 0)
+                       ->getFirstItem();
+
+        if ($change->getId() && empty($trackingDetails['tracking_number'])) {
+            $this->updateOrderChange($change, $params);
+        } else {
+            $this->activeRecordFactory->getObject('Order\Change')->create(
+                $orderId, $action, $creatorType, $component, $params
+            );
+        }
 
         return true;
+    }
+
+    /**
+     * @param \Ess\M2ePro\Model\Order\Change $change
+     * @param array $params
+     */
+    private function updateOrderChange(\Ess\M2ePro\Model\Order\Change $change, array $params)
+    {
+        $existingParams = $change->getParams();
+        foreach ($params['items'] as $newItem) {
+            foreach ($existingParams['items'] as &$existingItem) {
+                if ($newItem['amazon_order_item_id'] === $existingItem['amazon_order_item_id']) {
+                    $existingItem['qty'] += $newItem['qty'];
+                    continue 2;
+                }
+            }
+            unset($existingItem);
+            $existingParams['items'][] = $newItem;
+        }
+
+        $change->setParams($this->getHelper('Data')->jsonEncode($existingParams))->save();
     }
 
     //########################################
@@ -783,7 +818,7 @@ class Order extends \Ess\M2ePro\Model\ActiveRecord\Component\Child\Amazon\Abstra
             'items'    => $items,
         );
 
-        $totalItemsCount = $this->getParentObject()->getItemsCollection()->count();
+        $totalItemsCount = $this->getParentObject()->getItemsCollection()->getSize();
 
         $orderId     = $this->getParentObject()->getId();
         $creatorType = \Ess\M2ePro\Model\Order\Change::CREATOR_TYPE_OBSERVER;

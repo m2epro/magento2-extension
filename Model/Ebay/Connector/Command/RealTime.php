@@ -57,37 +57,4 @@ abstract class RealTime extends \Ess\M2ePro\Model\Connector\Command\RealTime
     }
 
     // ########################################
-
-    public static function ebayTimeToString($time)
-    {
-        return (string)self::getEbayDateTimeObject($time)->format('Y-m-d H:i:s');
-    }
-
-    public static function ebayTimeToTimeStamp($time)
-    {
-        return (int)self::getEbayDateTimeObject($time)->format('U');
-    }
-
-    // -----------------------------------------
-
-    private static function getEbayDateTimeObject($time)
-    {
-        $dateTime = NULL;
-
-        if ($time instanceof \DateTime) {
-            $dateTime = clone $time;
-            $dateTime->setTimezone(new \DateTimeZone('UTC'));
-        } else {
-            is_int($time) && $time = '@'.$time;
-            $dateTime = new \DateTime($time, new \DateTimeZone('UTC'));
-        }
-
-        if (is_null($dateTime)) {
-            throw new \Ess\M2ePro\Model\Exception('eBay DateTime object is null');
-        }
-
-        return $dateTime;
-    }
-
-    // ########################################
 }

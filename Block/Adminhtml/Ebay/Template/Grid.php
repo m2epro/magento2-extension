@@ -13,7 +13,7 @@ use Magento\Framework\DB\Select;
 
 class Grid extends AbstractGrid
 {
-    private $customCollectionFactory;
+    private $wrapperCollectionFactory;
     private $resourceConnection;
 
     private $enabledMarketplacesCollection = NULL;
@@ -21,15 +21,15 @@ class Grid extends AbstractGrid
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
         \Magento\Backend\Helper\Data $backendHelper,
         array $data = []
     )
     {
-        $this->customCollectionFactory = $customCollectionFactory;
-        $this->resourceConnection = $resourceConnection;
+        $this->wrapperCollectionFactory = $wrapperCollectionFactory;
+        $this->resourceConnection       = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -177,8 +177,8 @@ class Grid extends AbstractGrid
 
         // Prepare result collection
         // ---------------------------------------
-        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $resultCollection */
-        $resultCollection = $this->customCollectionFactory->create();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper $resultCollection */
+        $resultCollection = $this->wrapperCollectionFactory->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             array('main_table' => $unionSelect),
@@ -207,12 +207,9 @@ class Grid extends AbstractGrid
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_PAYMENT => $this->__('Payment'),
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SHIPPING => $this->__('Shipping'),
             \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_RETURN_POLICY => $this->__('Return'),
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT
-            => $this->__('Price, Quantity and Format'),
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION
-            => $this->__('Description'),
-            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION
-            => $this->__('Synchronization')
+            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
+            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_DESCRIPTION => $this->__('Description'),
+            \Ess\M2ePro\Model\Ebay\Template\Manager::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization')
         );
         $this->addColumn('nick', array(
             'header'        => $this->__('Type'),

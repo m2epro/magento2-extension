@@ -19,7 +19,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     const TEMPLATE_DESCRIPTION       = 'description';
     const TEMPLATE_PRODUCT_TAX_CODE  = 'product_tax_code';
 
-    protected $customCollectionFactory;
+    protected $wrapperCollectionFactory;
     protected $amazonFactory;
     protected $resourceConnection;
 
@@ -28,7 +28,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
     //########################################
 
     public function __construct(
-        \Ess\M2ePro\Model\ResourceModel\Collection\CustomFactory $customCollectionFactory,
+        \Ess\M2ePro\Model\ResourceModel\Collection\WrapperFactory $wrapperCollectionFactory,
         \Ess\M2ePro\Model\ActiveRecord\Component\Parent\Amazon\Factory $amazonFactory,
         \Magento\Framework\App\ResourceConnection $resourceConnection,
         \Ess\M2ePro\Block\Adminhtml\Magento\Context\Template $context,
@@ -36,9 +36,9 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         array $data = []
     )
     {
-        $this->customCollectionFactory = $customCollectionFactory;
-        $this->amazonFactory = $amazonFactory;
-        $this->resourceConnection = $resourceConnection;
+        $this->wrapperCollectionFactory = $wrapperCollectionFactory;
+        $this->amazonFactory            = $amazonFactory;
+        $this->resourceConnection       = $resourceConnection;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -214,8 +214,8 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
 
         // Prepare result collection
         // ---------------------------------------
-        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Custom $resultCollection */
-        $resultCollection = $this->customCollectionFactory->create();
+        /** @var \Ess\M2ePro\Model\ResourceModel\Collection\Wrapper $resultCollection */
+        $resultCollection = $this->wrapperCollectionFactory->create();
         $resultCollection->setConnection($this->resourceConnection->getConnection());
         $resultCollection->getSelect()->reset()->from(
             array('main_table' => $unionSelect),
@@ -232,8 +232,6 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
             )
         );
         // ---------------------------------------
-
-//        echo $resultCollection->getSelectSql(true); exit;
 
         $this->setCollection($resultCollection);
 
@@ -256,7 +254,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         ));
 
         $options = array(
-            self::TEMPLATE_SELLING_FORMAT => $this->__('Price, Quantity and Format'),
+            self::TEMPLATE_SELLING_FORMAT => $this->__('Selling'),
             self::TEMPLATE_SYNCHRONIZATION => $this->__('Synchronization')
         );
         $this->addColumn('type', array(
@@ -335,7 +333,7 @@ class Grid extends \Ess\M2ePro\Block\Adminhtml\Magento\Grid\AbstractGrid
         parent::_prepareColumns();
 
         $options = array(
-            self::TEMPLATE_SELLING_FORMAT    => $this->__('Price, Quantity and Format'),
+            self::TEMPLATE_SELLING_FORMAT    => $this->__('Selling'),
             self::TEMPLATE_DESCRIPTION       => $this->__('Description'),
             self::TEMPLATE_SYNCHRONIZATION   => $this->__('Synchronization'),
             self::TEMPLATE_SHIPPING_TEMPLATE => $this->__('Shipping Template'),
