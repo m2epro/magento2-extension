@@ -47,9 +47,18 @@ abstract class AbstractPlugin
 
     protected function canExecute()
     {
-        return !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
-               !$this->helperFactory->getObject('Module')->isDisabled() &&
-               $this->helperFactory->getObject('Module')->isReadyToWork();
+        return !$this->isInstalling() &&
+                !$this->helperFactory->getObject('Module\Maintenance')->isEnabled() &&
+                !$this->helperFactory->getObject('Module')->isDisabled() &&
+                $this->helperFactory->getObject('Module')->isReadyToWork();
+    }
+
+    private function isInstalling()
+    {
+        return isset($_SERVER['SCRIPT_NAME']) &&
+            $_SERVER['SCRIPT_NAME'] == 'bin/magento' &&
+            isset($_SERVER['argv']) &&
+            in_array('setup:install', $_SERVER['argv']);
     }
 
     //########################################
