@@ -78,35 +78,43 @@ class Handler extends \Ess\M2ePro\Model\AbstractModel
             : self::HANDLE_RESULT_FAILED;
     }
 
+    /**
+     * @param \Ess\M2ePro\Model\Order $order
+     * @param \Magento\Sales\Model\Order\Shipment $shipment
+     * @return array
+     */
     protected function getTrackingDetails(\Ess\M2ePro\Model\Order $order, \Magento\Sales\Model\Order\Shipment $shipment)
     {
-        // Sometimes Magento returns an array instead of Collection by a call of $shipment->getTracksCollection()
+        $track = null;
+        $hasTracks = false;
         if ($shipment->hasData(ShipmentInterface::TRACKS) &&
-            !($shipment->getData(ShipmentInterface::TRACKS) instanceof TrackCollection)) {
-
-            $shipment->unsetData(ShipmentInterface::TRACKS);
+            is_array($shipment->getData(ShipmentInterface::TRACKS))) {
+            $tracks = $shipment->getData(ShipmentInterface::TRACKS);
+            foreach ($tracks as $track) {
+                if ($track instanceof \Magento\Sales\Model\Order\Shipment\Track) {
+                    $hasTracks = true;
+                }
+            }
         }
-
-        $track = $shipment->getTracksCollection()->getLastItem();
-        $trackingDetails = array();
-
+        if (!$hasTracks) {
+            $track = $shipment
+                ->getTracksCollection()
+                ->addFieldToFilter('order_id', $order->getMagentoOrderId())
+                ->getLastItem();
+        }
+        $trackingDetails = [];
         $number = trim($track->getData('track_number'));
-
-        if (!empty($number)) {
-
+        if ($track && !empty($number)) {
             $carrierCode = $carrierTitle = trim($track->getData('carrier_code'));
-
             $carrier = $this->carrierFactory->create($carrierCode, $order->getStoreId());
             $carrier && $carrierTitle = $carrier->getConfigData('title');
-
-            $trackingDetails = array(
-                'carrier_code'    => $carrierCode,
-                'carrier_title'   => $carrierTitle,
+            $trackingDetails = [
+                'carrier_code' => $carrierCode,
+                'carrier_title' => $carrierTitle,
                 'shipping_method' => trim($track->getData('title')),
                 'tracking_number' => (string)$number
-            );
+            ];
         }
-
         return $trackingDetails;
     }
 
