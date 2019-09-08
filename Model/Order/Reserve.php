@@ -414,7 +414,7 @@ class Reserve extends \Ess\M2ePro\Model\AbstractModel
 
         $select = $resource->getConnection()
                            ->select()
-                           ->from($resource->getConnection()->getTableName('inventory_reservation'))
+                           ->from($resource->getTableName('inventory_reservation'))
                            ->reset(\Zend_Db_Select::COLUMNS)
                            ->columns('reservation_id')
                            ->where('metadata = ?', $encodedMetadata);
